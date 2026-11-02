@@ -291,7 +291,7 @@ export const ADMIN_HUBS: CabinetNavHub[] = [
     id: "payouts",
     label: "Деньги",
     href: "/admin/finance",
-    match: ["/admin/finance", "/admin/escrow"],
+    match: ["/admin/finance", "/admin/escrow", "/admin/gateway-logs"],
     badgeKeys: ["finance"],
   },
   {
@@ -304,7 +304,7 @@ export const ADMIN_HUBS: CabinetNavHub[] = [
     id: "audit",
     label: "Журнал действий",
     href: "/admin/logs",
-    match: ["/admin/logs", "/admin/gateway-logs"],
+    match: ["/admin/logs"],
   },
   {
     id: "cats",
@@ -373,6 +373,12 @@ export const ADMIN_SUBTABS: Record<string, CabinetSubtab[]> = {
       href: "/admin/finance?view=billing",
       match: [],
     },
+    {
+      id: "bank-logs",
+      label: "Логи банка",
+      href: "/admin/gateway-logs",
+      match: ["/admin/gateway-logs"],
+    },
   ],
   cats: [
     {
@@ -401,7 +407,7 @@ export const ADMIN_SECTION_TITLE: Record<string, SectionMeta> = {
   },
   payouts: {
     title: "Деньги",
-    description: "Выплаты поставщикам, подписки и доходы площадки",
+    description: "Выплаты, подписки и логи банка для сверки с шлюзом",
   },
   cats: {
     title: "Настройки",

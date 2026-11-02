@@ -95,7 +95,6 @@ export default function AdminSidebar({ onNavigate }: { onNavigate?: () => void }
           {[
             { href: "/admin/catalog", label: "Каталог" },
             { href: "/admin/staff", label: "Доступ" },
-            { href: "/admin/gateway-logs", label: "Логи шлюза" },
           ]
             .filter((item) => canSeeHref(user, item.href))
             .map((item) => (

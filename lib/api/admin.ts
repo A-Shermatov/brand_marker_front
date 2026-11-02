@@ -1572,6 +1572,24 @@ export const adminApi = {
   },
   getGatewayLog: (logId: number) =>
     apiFetch<AdminGatewayLogDetail>(`/admin/gateway-logs/${logId}`),
+  exportGatewayLogs: ({
+    orderId,
+    gateway,
+    operation,
+    direction,
+    period,
+    query,
+  }: Omit<AdminGatewayLogParams, "page" | "pageSize">) => {
+    const searchParams = new URLSearchParams({ period })
+    if (orderId.trim()) searchParams.set("order_id", orderId.trim())
+    if (gateway) searchParams.set("gateway", gateway)
+    if (operation) searchParams.set("operation", operation)
+    if (direction) searchParams.set("direction", direction)
+    if (query?.trim()) searchParams.set("query", query.trim())
+    return apiFetch<AdminGatewayLogExportResponse>(
+      `/admin/gateway-logs/export?${searchParams.toString()}`,
+    )
+  },
 }
 
 export type AdminLogAudience = "users" | "staff"
@@ -1747,6 +1765,9 @@ export type AdminGatewayLogItem = {
   url: string | null
   response_status: number | null
   error: string | null
+  external_transaction_id: string | null
+  amount: number | null
+  currency: string | null
 }
 
 export type AdminGatewayLogDetail = AdminGatewayLogItem & {
@@ -1759,6 +1780,8 @@ export type AdminGatewayLogDetail = AdminGatewayLogItem & {
   contract_id: number | null
   subscription_user_id: number | null
   plan: string | null
+  gateway_txn_status: string | null
+  paid_at: string | null
 }
 
 export type AdminGatewayLogListResponse = {
@@ -1767,6 +1790,13 @@ export type AdminGatewayLogListResponse = {
   page: number
   page_size: number
   pages: number
+}
+
+export type AdminGatewayLogExportResponse = {
+  generated_at: string
+  filters: Record<string, unknown>
+  total: number
+  items: AdminGatewayLogDetail[]
 }
 
 export type AdminRole = {

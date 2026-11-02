@@ -2,9 +2,11 @@
 
 import { Suspense, useCallback, useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Cable, ChevronLeft, ChevronRight, RefreshCcw, Search } from "lucide-react"
+import { Cable, ChevronLeft, ChevronRight, Download, RefreshCcw, Search } from "lucide-react"
+import { toast } from "sonner"
 import {
   formatGatewayDateTime,
+  formatGatewayMoney,
   GATEWAY_DIRECTION_LABELS,
   GATEWAY_OPERATION_LABELS,
   GatewayLogDetailsSheet,
@@ -31,7 +33,7 @@ import {
 } from "@/components/ui/table"
 import { useAdminGatewayLogsQuery } from "@/hooks/api/use-admin-gateway-logs-query"
 import { LOG_PERIOD_LABELS } from "@/lib/admin-log-labels"
-import type { AdminGatewayLogDirection, AdminLogPeriod } from "@/lib/api/admin"
+import { adminApi, type AdminGatewayLogDirection, type AdminLogPeriod } from "@/lib/api/admin"
 import { cn } from "@/lib/utils"
 import { DEFAULT_PAGE_SIZE } from "@/lib/pagination"
 
@@ -49,8 +51,18 @@ const PERIODS = Object.keys(LOG_PERIOD_LABELS) as AdminLogPeriod[]
 const pickOption = <T extends string>(value: string | null, options: readonly T[]): T | null =>
   value && (options as readonly string[]).includes(value) ? (value as T) : null
 
+const downloadJson = (filename: string, data: unknown) => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 const GatewayLogsSkeleton = () => (
-  <PageFrame className="animate-pulse" aria-label="Загрузка логов шлюза">
+  <PageFrame className="animate-pulse" aria-label="Загрузка логов банка">
     <div className="h-16 w-80 max-w-full rounded-xl bg-muted" />
     <div className="h-28 rounded-xl bg-muted" />
     <div className="h-96 rounded-xl bg-muted" />
@@ -109,19 +121,25 @@ const AdminGatewayLogsContent = () => {
   const direction = pickOption(searchParams.get("direction"), DIRECTIONS)
   const period = pickOption(searchParams.get("period"), PERIODS) ?? DEFAULT_PERIOD
   const page = Math.max(1, Number(searchParams.get("page")) || 1)
-  const orderId = searchParams.get("order_id") ?? ""
+  const query = searchParams.get("q") ?? searchParams.get("order_id") ?? ""
 
-  const [searchInput, setSearchInput] = useState(orderId)
+  const [searchInput, setSearchInput] = useState(query)
   const [selectedLogId, setSelectedLogId] = useState<number | null>(null)
+  const [exporting, setExporting] = useState(false)
 
-  const logsQuery = useAdminGatewayLogsQuery({
-    page,
-    pageSize: DEFAULT_PAGE_SIZE,
-    orderId,
+  const filterParams = {
+    orderId: "",
     gateway,
     operation,
     direction,
     period,
+    query,
+  }
+
+  const logsQuery = useAdminGatewayLogsQuery({
+    page,
+    pageSize: DEFAULT_PAGE_SIZE,
+    ...filterParams,
   })
 
   const replaceSearchParams = useCallback(
@@ -141,16 +159,16 @@ const AdminGatewayLogsContent = () => {
   )
 
   useEffect(() => {
-    if (searchInput === orderId) return
+    if (searchInput === query) return
     const timeout = window.setTimeout(() => {
-      replaceSearchParams({ order_id: searchInput.trim() || null, page: null })
+      replaceSearchParams({ q: searchInput.trim() || null, page: null })
     }, SEARCH_DEBOUNCE_MS)
     return () => window.clearTimeout(timeout)
-  }, [orderId, replaceSearchParams, searchInput])
+  }, [query, replaceSearchParams, searchInput])
 
   useEffect(() => {
-    setSearchInput(orderId)
-  }, [orderId])
+    setSearchInput(query)
+  }, [query])
 
   useEffect(() => {
     if (!logsQuery.data || page <= logsQuery.data.pages) return
@@ -175,6 +193,7 @@ const AdminGatewayLogsContent = () => {
       operation: null,
       direction: null,
       period: null,
+      q: null,
       order_id: null,
       page: null,
     })
@@ -184,6 +203,24 @@ const AdminGatewayLogsContent = () => {
     replaceSearchParams({ page: targetPage <= 1 ? null : String(targetPage) })
   }
 
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const payload = await adminApi.exportGatewayLogs(filterParams)
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")
+      downloadJson(`bank-logs-${stamp}.json`, payload)
+      toast.success(
+        payload.total > payload.items.length
+          ? `Экспорт: ${payload.items.length} из ${payload.total} записей`
+          : `Экспорт: ${payload.items.length} записей`,
+      )
+    } catch {
+      toast.error("Не удалось выгрузить логи")
+    } finally {
+      setExporting(false)
+    }
+  }
+
   if (logsQuery.isLoading) return <GatewayLogsSkeleton />
 
   if (logsQuery.isError || !logsQuery.data) {
@@ -191,7 +228,7 @@ const AdminGatewayLogsContent = () => {
       <div className="flex min-h-[55dvh] items-center justify-center">
         <div className="w-full max-w-lg rounded-xl border border-destructive/20 bg-card p-8 text-center">
           <Cable className="mx-auto text-destructive" aria-hidden="true" />
-          <h1 className="mt-4 text-xl font-bold">Не удалось загрузить логи шлюза</h1>
+          <h1 className="mt-4 text-xl font-bold">Не удалось загрузить логи банка</h1>
           <Button type="button" className="mt-5" onClick={() => logsQuery.refetch()}>
             <RefreshCcw aria-hidden="true" />
             Повторить
@@ -203,22 +240,34 @@ const AdminGatewayLogsContent = () => {
 
   const { items, total, pages } = logsQuery.data
   const hasFilters = Boolean(
-    gateway || operation || direction || orderId || period !== DEFAULT_PERIOD,
+    gateway || operation || direction || query || period !== DEFAULT_PERIOD,
   )
 
   return (
     <PageFrame>
       <PageHeader
-        title="Логи шлюза"
-        description="Запросы к платёжному шлюзу и ответы банка"
+        title="Логи банка"
+        description="HTTP-обмен с платёжным шлюзом — для сверки с разработчиками банка"
         actions={
-          <p className="text-sm text-muted-foreground">
-            Найдено <strong className="ml-1 text-foreground">{total}</strong>
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              Найдено <strong className="ml-1 text-foreground">{total}</strong>
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={exporting || total === 0}
+              onClick={handleExport}
+            >
+              <Download aria-hidden="true" />
+              {exporting ? "Выгрузка…" : "JSON для банка"}
+            </Button>
+          </div>
         }
       />
 
-      <PageSurface aria-label="Фильтры логов шлюза">
+      <PageSurface aria-label="Фильтры логов банка">
         <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
           <FilterSelect
             id="gateway-log-gateway"
@@ -267,10 +316,10 @@ const AdminGatewayLogsContent = () => {
               type="search"
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Номер заказа, например MS12-…"
-              maxLength={64}
+              placeholder="Заказ, ID банка, URL или ошибка…"
+              maxLength={255}
               className="pl-11"
-              aria-label="Поиск по номеру заказа"
+              aria-label="Поиск по заказу или ID банка"
             />
           </div>
           {hasFilters && (
@@ -307,7 +356,8 @@ const AdminGatewayLogsContent = () => {
                   <TableHead>Направление</TableHead>
                   <TableHead>Операция</TableHead>
                   <TableHead>Заказ</TableHead>
-                  <TableHead>Метод</TableHead>
+                  <TableHead>ID в банке</TableHead>
+                  <TableHead>Сумма</TableHead>
                   <TableHead>Статус</TableHead>
                   <TableHead className="px-5">Ошибка</TableHead>
                 </TableRow>
@@ -343,11 +393,19 @@ const AdminGatewayLogsContent = () => {
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {log.order_id ?? "—"}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{log.method ?? "—"}</TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {log.external_transaction_id ?? "—"}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-muted-foreground">
+                      {formatGatewayMoney(log.amount, log.currency)}
+                    </TableCell>
                     <TableCell>
                       <GatewayStatusBadge status={log.response_status} />
                     </TableCell>
-                    <TableCell className="max-w-64 truncate px-5 text-destructive" title={log.error ?? undefined}>
+                    <TableCell
+                      className="max-w-64 truncate px-5 text-destructive"
+                      title={log.error ?? undefined}
+                    >
                       {log.error ?? "—"}
                     </TableCell>
                   </TableRow>
@@ -359,7 +417,7 @@ const AdminGatewayLogsContent = () => {
       )}
 
       {items.length > 0 && pages > 1 && (
-        <nav className="flex items-center justify-between gap-3" aria-label="Страницы логов шлюза">
+        <nav className="flex items-center justify-between gap-3" aria-label="Страницы логов банка">
           <Button
             type="button"
             variant="outline"
