@@ -7,13 +7,11 @@ const roundMoney = (value: number) => Math.round(value * 100) / 100
 const isCommissionCurrency = (currency: string) =>
   currency.toUpperCase() === COMMISSION_CURRENCY
 
-/** The bank rejects any part of a split TJS payment below 1 TJS (mirrors the backend). */
-const MIN_PAYMENT_PART = 1
-
-const bankSplittable = (amount: number, commission: number): number => {
-  if (commission <= 0 || commission >= amount) return commission
-  if (amount < 2 * MIN_PAYMENT_PART) return 0
-  return Math.min(Math.max(commission, MIN_PAYMENT_PART), amount - MIN_PAYMENT_PART)
+/** Mirrors the backend marketplace_commission: each bank-split part must be >= minPart. */
+const bankSplittable = (amount: number, commission: number, minPart: number): number => {
+  if (minPart <= 0 || commission <= 0 || commission >= amount) return commission
+  if (amount < 2 * minPart) return 0
+  return Math.min(Math.max(commission, minPart), amount - minPart)
 }
 
 export const calculateCommission = (
@@ -27,7 +25,11 @@ export const calculateCommission = (
     Math.max(minimum, (amount * settings.commission_percent) / 100),
     amount,
   )
-  return roundMoney(isCommissionCurrency(currency) ? bankSplittable(amount, commission) : commission)
+  return roundMoney(
+    isCommissionCurrency(currency)
+      ? bankSplittable(amount, commission, settings.min_payment_part ?? 0)
+      : commission,
+  )
 }
 
 export const exceedsContractLimit = (

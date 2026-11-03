@@ -32,6 +32,8 @@ export type PlatformSettingsInput = {
   commission_percent: number
   commission_min: number
   max_contract_amount: number | null
+  /** Smallest commission part the bank accepts when it splits a payment (0 = no split). */
+  min_payment_part?: number
 }
 
 export type PlatformSettings = PlatformSettingsInput & {
