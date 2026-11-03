@@ -2,14 +2,7 @@
 
 import { use, useState } from "react"
 import Link from "next/link"
-import {
-  AlertTriangle,
-  ClipboardList,
-  EyeOff,
-  RefreshCcw,
-  Trash2,
-  XCircle,
-} from "lucide-react"
+import { WarningIcon as AlertTriangle, ClipboardTextIcon as ClipboardList, EyeSlashIcon as EyeOff, ArrowsCounterClockwiseIcon as RefreshCcw, TrashIcon as Trash2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { RfqActionDialog } from "@/components/admin/rfqs/rfq-action-dialog"
 import { AdminRfqDetailSections } from "@/components/admin/rfqs/rfq-detail-sections"
 import { Badge } from "@/components/ui/badge"
@@ -108,7 +101,7 @@ export default function AdminRfqDetailPage({ params }: PageProps) {
       <PageSurface className="p-5 sm:p-6">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[12.5px] font-medium text-muted-foreground">
               {rfqTypeLabel[rfq.type as RfqType] || rfq.type} · {rfq.id.slice(0, 8)}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">

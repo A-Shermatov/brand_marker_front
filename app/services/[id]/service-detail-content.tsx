@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { ChevronRight } from "lucide-react"
+import { CaretRightIcon as ChevronRight } from "@phosphor-icons/react/dist/ssr"
 import { ReportItemDialog } from "@/components/catalog/report-item-dialog"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { ServiceCard } from "@/components/marketplace/service-card"
@@ -318,7 +318,7 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
 
           {relatedServices.length > 0 && (
             <section className="mt-12 grid gap-4">
-              <h2 className="text-[22px] font-extrabold tracking-[-0.01em] text-ink">
+              <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
                 Другие рекомендации для вашего бизнеса
               </h2>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Send, Crown } from "lucide-react"
+import { PaperPlaneRightIcon as Send, CrownIcon as Crown } from "@phosphor-icons/react/dist/ssr"
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle,

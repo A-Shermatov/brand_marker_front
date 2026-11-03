@@ -4,17 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  Boxes,
-  CheckCircle2,
-  EyeOff,
-  Package,
-  RefreshCcw,
-  RotateCcw,
-  Search,
-  Trash2,
-  X,
-} from "lucide-react"
+import { StackIcon as Boxes, CheckCircleIcon as CheckCircle2, EyeSlashIcon as EyeOff, PackageIcon as Package, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowCounterClockwiseIcon as RotateCcw, MagnifyingGlassIcon as Search, TrashIcon as Trash2, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { AdminLink } from "@/components/admin/admin-link"
 import { CatalogBulkActionDialog } from "@/components/admin/catalog/catalog-bulk-action-dialog"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface, SegmentedControl } from "@/components/layout"

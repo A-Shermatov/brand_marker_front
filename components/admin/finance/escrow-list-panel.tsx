@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useState, Fragment} from "react"
 import { AdminLink } from "@/components/admin/admin-link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ChevronLeft, ChevronRight, RefreshCcw, Search, WalletCards } from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, CardholderIcon as WalletCards } from "@phosphor-icons/react/dist/ssr"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface, SegmentedControl } from "@/components/layout"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

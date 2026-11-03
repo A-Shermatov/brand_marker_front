@@ -1,4 +1,4 @@
-import { ShieldCheck } from "lucide-react"
+import { ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 
 type VerifiedChipProps = {

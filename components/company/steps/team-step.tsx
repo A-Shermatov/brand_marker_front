@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus, Trash2 } from "lucide-react"
+import { PlusIcon as Plus, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { COMPANY_ROLES } from "@/types/user"
 import type { CompanyWizardTeamMember, CompanyWizardInput } from "@/types"
 import { WizardField, wizardInputClass } from "@/components/company/wizard-field"

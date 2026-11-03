@@ -1,8 +1,10 @@
 "use client"
 
-import { Building2, MapPin, Globe, MessageSquare, User, UserPlus } from "lucide-react"
+import { BuildingsIcon as Building2, MapPinIcon as MapPin, GlobeIcon as Globe, ChatTextIcon as MessageSquare, UserIcon as User, UserPlusIcon as UserPlus } from "@phosphor-icons/react/dist/ssr"
 import type { Category, PublicSupplier } from "@/types"
 import { SupplierRatingLine, SupplierVerifiedBadge } from "@/components/cabinet/suppliers/supplier-trust-badges"
+import { CompanyName } from "@/components/bm"
+import { supplierMarks } from "@/lib/supplier-marks"
 
 type SupplierProfileHeaderProps = {
   supplier: PublicSupplier
@@ -28,7 +30,13 @@ export const SupplierProfileHeader = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl font-bold text-foreground">{supplier.display_name}</h1>
+            <CompanyName
+              as="h1"
+              name={supplier.display_name}
+              {...supplierMarks(supplier)}
+              size="lg"
+              nameClassName="text-[22px] tracking-[-0.02em]"
+            />
             <SupplierVerifiedBadge supplier={supplier} />
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
               {isIndividual ? "Физлицо" : "Компания"}

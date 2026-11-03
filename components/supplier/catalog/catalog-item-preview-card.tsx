@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ImageIcon } from "lucide-react"
+import { ImageIcon } from "@phosphor-icons/react/dist/ssr"
 import { formatCurrency } from "@/lib/format"
 import { resolveFileUrl } from "@/lib/file-url"
 import type { CatalogItemType } from "@/types"

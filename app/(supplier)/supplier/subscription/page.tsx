@@ -1,13 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { Crown, Check, ShieldCheck, Loader2 } from "lucide-react"
+import { CheckIcon, CircleNotchIcon, LockKeyIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
-import { PageFrame, PageHeader } from "@/components/layout"
+import { CompanyName, PlanMark } from "@/components/bm"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useSubscriptionStore } from "@/lib/store/subscription-store"
 import { useNotificationsStore } from "@/lib/store/notifications-store"
 import { useHydrated } from "@/hooks/use-hydrated"
+import { useSupplierMarks } from "@/hooks/use-supplier-marks"
 import { getApiErrorMessage } from "@/lib/api/client"
 import { isApiEnabled } from "@/lib/api/config"
 import {
@@ -18,6 +20,7 @@ import {
 } from "@/hooks/api/use-supplier-subscription-query"
 import { formatPrice } from "@/lib/format"
 import { plans, planName } from "@/lib/subscription"
+import { useAuthStore } from "@/lib/store/auth-store"
 import type { SubscriptionPlan } from "@/lib/store/subscription-store"
 import type { SubscriptionPaymentMethodId } from "@/lib/api/supplier/subscription"
 
@@ -35,6 +38,8 @@ const FALLBACK_METHODS: {
 export default function SubscriptionPage() {
   const hydrated = useHydrated()
   const useApi = isApiEnabled()
+  const user = useAuthStore((s) => s.user)
+  const marks = useSupplierMarks()
   const localPlan = useSubscriptionStore((s) => s.plan)
   const activeUntil = useSubscriptionStore((s) => s.activeUntil)
   const activate = useSubscriptionStore((s) => s.activate)
@@ -54,6 +59,7 @@ export default function SubscriptionPage() {
   const until = useApi ? apiSub?.active_until : activeUntil
   const methods = payConfig?.methods?.length ? payConfig.methods : FALLBACK_METHODS
   const isAlifLive = payConfig?.provider === "alif"
+  const companyTitle = marks.title ?? user?.company ?? "Ваша компания"
 
   const handleActivate = async (planId: (typeof plans)[number]["id"], name: string) => {
     const selected = methods.find((m) => m.id === method)
@@ -105,126 +111,134 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <PageFrame>
-      <PageHeader
-        title="Подписка для продвижения"
-        description="Поднимайте предложения и профиль в топ"
-      />
-
-      <div
-        className="rounded-xl p-5 mb-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-        style={{ background: "linear-gradient(135deg, oklch(0.20 0.06 155) 0%, oklch(0.32 0.09 150) 100%)" }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-card/15 flex items-center justify-center">
-            <Crown size={20} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-sm font-bold">
-              {active ? `Активен тариф «${planName(plan)}»` : "Подписка не активна"}
+    <div className="grid gap-5">
+      <section className="flex flex-col gap-4 rounded-2xl border border-line bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          {active ? (
+            <PlanMark plan={plan} size={48} />
+          ) : (
+            <span className="grid size-12 place-items-center rounded-xl border border-dashed border-line-strong text-faint">
+              <PlusIcon className="size-5" aria-hidden />
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="text-[15.5px] font-semibold text-ink">
+              {active ? `Тариф «${planName(plan)}»` : "Подписка не подключена"}
             </p>
-            <p className="text-xs text-white/70 mt-0.5">
+            <p className="text-[13.5px] text-mute">
               {active && until
-                ? `Действует до ${new Date(until).toLocaleDateString("ru-RU")}`
-                : "Оформите тариф, чтобы продвигать предложения"}
+                ? `Действует до ${new Date(until).toLocaleDateString("ru-RU")}. Значок тарифа уже стоит рядом с названием компании.`
+                : "Тариф поднимает товары в каталоге и добавляет значок рядом с названием компании."}
             </p>
           </div>
         </div>
-        {active && (
-          <button
+        {active ? (
+          <Button
             type="button"
+            variant="ghost"
+            className="self-start text-mute sm:self-auto"
             onClick={handleCancel}
-            className="h-10 px-4 rounded-xl bg-card/15 hover:bg-card/25 text-white text-sm font-semibold transition-colors self-start sm:self-auto"
+            disabled={cancelMutation.isPending}
           >
             Отменить подписку
-          </button>
-        )}
-      </div>
+          </Button>
+        ) : null}
+      </section>
 
-      <div className="mb-5 rounded-xl border border-border bg-card p-4">
-        <p className="text-sm font-semibold text-foreground mb-2">Способ оплаты</p>
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span className="text-[13.5px] text-mute">Оплата</span>
+        <div role="radiogroup" aria-label="Способ оплаты" className="inline-flex gap-1 rounded-lg bg-surface-muted p-1">
           {methods.map((m) => (
             <button
               key={m.id}
               type="button"
+              role="radio"
+              aria-checked={method === m.id}
               onClick={() => setMethod(m.id)}
               className={cn(
-                "h-10 px-3 rounded-xl text-sm font-semibold border transition-colors",
+                "h-8 rounded-md px-3 text-[13.5px] font-medium transition-colors",
                 method === m.id
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border text-muted-foreground hover:bg-secondary",
-                !m.supported && "opacity-70",
+                  ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
+                  : "text-mute hover:text-ink",
               )}
             >
               {m.label}
-              {!m.supported ? " · скоро" : ""}
+              {!m.supported ? <span className="ml-1 text-faint">скоро</span> : null}
             </button>
           ))}
         </div>
-        <p className="mt-2 text-[12px] text-muted-foreground">
-          {methods.find((m) => m.id === method)?.hint}
-        </p>
+        <span className="text-[12.5px] text-mute">{methods.find((m) => m.id === method)?.hint}</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {plans.map((p) => {
           const current = hydrated && active && plan === p.id
           const busy = pendingPlan === p.id && activateMutation.isPending
           return (
-            <div
+            <article
               key={p.id}
               className={cn(
-                "bg-card border rounded-xl p-6 flex flex-col relative",
-                p.highlighted ? "border-primary shadow-lg" : "border-border",
+                "relative flex flex-col rounded-2xl border bg-white p-5",
+                p.highlighted ? "border-brand-600 shadow-[0_0_0_1px_var(--brand-600)]" : "border-line",
               )}
             >
-              {p.highlighted && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground">
-                  Популярный
+              {p.highlighted ? (
+                <span className="absolute -top-2.5 left-5 rounded-full bg-brand-600 px-2 py-0.5 text-[11.5px] font-semibold text-white">
+                  Чаще выбирают
                 </span>
-              )}
-              <h2 className="text-lg font-bold text-foreground">{p.name}</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">{p.tagline}</p>
-              <div className="mt-4 mb-5">
-                <span className="text-3xl font-bold text-foreground">{formatPrice(p.price)}</span>
-                <span className="text-sm text-muted-foreground">/мес</span>
+              ) : null}
+              <div className="flex items-center gap-3">
+                <PlanMark plan={p.id} size={40} />
+                <div>
+                  <h2 className="text-[17px] font-semibold leading-tight text-ink">{p.name}</h2>
+                  <p className="text-[13px] text-mute">{p.tagline}</p>
+                </div>
               </div>
-              <ul className="space-y-2.5 flex-1">
+              <p className="mt-4 flex items-baseline gap-1">
+                <span className="text-[28px] font-semibold tracking-[-0.02em] text-ink tnum">
+                  {formatPrice(p.price)}
+                </span>
+                <span className="text-[13.5px] text-mute">в месяц</span>
+              </p>
+              <div className="mt-3 rounded-lg bg-canvas px-3 py-2">
+                <p className="mb-0.5 text-[11.5px] text-mute">Рядом с названием</p>
+                <CompanyName
+                  name={companyTitle}
+                  verified={marks.verified}
+                  tier={marks.tier}
+                  plan={p.id}
+                  size="sm"
+                />
+              </div>
+              <ul className="mt-4 grid flex-1 content-start gap-2">
                 {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
-                    <Check size={16} className="text-primary flex-shrink-0 mt-0.5" />
+                  <li key={f} className="flex items-start gap-2 text-[14px] text-ink-soft">
+                    <CheckIcon weight="bold" className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
                     {f}
                   </li>
                 ))}
               </ul>
-              <button
+              <Button
                 type="button"
                 onClick={() => handleActivate(p.id, p.name)}
                 disabled={current || busy}
-                className={cn(
-                  "mt-6 h-11 rounded-xl text-sm font-bold transition-colors inline-flex items-center justify-center gap-2",
-                  current
-                    ? "bg-secondary text-primary cursor-default"
-                    : p.highlighted
-                      ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-                      : "border border-primary text-primary hover:bg-secondary",
-                )}
+                variant={current ? "secondary" : p.highlighted ? "default" : "outline"}
+                className="mt-5 w-full"
               >
-                {busy ? <Loader2 size={16} className="animate-spin" /> : null}
-                {current ? "Текущий тариф" : "Оформить"}
-              </button>
-            </div>
+                {busy ? <CircleNotchIcon className="size-4 animate-spin" /> : null}
+                {current ? "Текущий тариф" : `Подключить «${p.name}»`}
+              </Button>
+            </article>
           )
         })}
       </div>
 
-      <div className="flex items-center gap-2 mt-5 text-[11px] text-muted-foreground">
-        <ShieldCheck size={14} className="text-primary flex-shrink-0" />
+      <p className="flex items-center gap-2 text-[12.5px] text-mute">
+        <LockKeyIcon className="size-4 shrink-0 text-brand-600" aria-hidden />
         {isAlifLive
-          ? "Оплата через Alif. Подписка активируется после успешного платежа на 30 дней."
-          : "Демо-оплата: реальное списание не выполняется. Подписка действует 30 дней."}
-      </div>
-    </PageFrame>
+          ? "Оплата через Alif. Подписка включается после успешного платежа и действует 30 дней."
+          : "Демо-оплата: деньги не списываются. Подписка действует 30 дней."}
+      </p>
+    </div>
   )
 }

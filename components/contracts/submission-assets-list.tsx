@@ -1,6 +1,6 @@
 "use client"
 
-import { Download, ExternalLink, FileText, ImageIcon, Link2, Video } from "lucide-react"
+import { DownloadSimpleIcon as Download, ArrowSquareOutIcon as ExternalLink, FileTextIcon as FileText, ImageIcon, LinkIcon as Link2, VideoCameraIcon as Video } from "@phosphor-icons/react/dist/ssr"
 import type { SubmissionAsset } from "@/types"
 
 type SubmissionAssetsListProps = {

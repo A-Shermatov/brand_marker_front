@@ -1,16 +1,7 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
-import {
-  ChevronDown,
-  FolderTree,
-  Loader2,
-  Pencil,
-  Plus,
-  RefreshCcw,
-  Search,
-  Trash2,
-} from "lucide-react"
+import { CaretDownIcon as ChevronDown, TreeStructureIcon as FolderTree, CircleNotchIcon as Loader2, PencilSimpleIcon as Pencil, PlusIcon as Plus, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import {
   CategoryDialog,
   type CategoryDialogState,

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { CreditCard, Lock, Truck, CircleCheck, ShieldCheck } from "lucide-react"
+import { CreditCardIcon as CreditCard, LockIcon as Lock, TruckIcon as Truck, CheckCircleIcon as CircleCheck, ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { PageHead, SurfaceCard } from "@/components/bm"
 import { Button } from "@/components/ui/button"
@@ -65,7 +65,7 @@ export default function GuaranteePage() {
 
           <SurfaceCard className="mt-6 grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
             <div>
-              <h2 className="text-[20px] font-extrabold text-ink">
+              <h2 className="text-[20px] font-bold text-ink">
                 Готовы закупить с гарантией?
               </h2>
               <p className="mt-1 text-[14.5px] text-mute">

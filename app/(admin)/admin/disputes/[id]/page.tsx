@@ -4,15 +4,7 @@ import { use, useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatCurrency } from "@/lib/format"
 import Link from "next/link"
-import {
-  Banknote,
-  CheckCircle2,
-  FileSearch,
-  Gavel,
-  RefreshCcw,
-  Undo2,
-  XCircle,
-} from "lucide-react"
+import { MoneyIcon as Banknote, CheckCircleIcon as CheckCircle2, FileMagnifyingGlassIcon as FileSearch, GavelIcon as Gavel, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowUUpLeftIcon as Undo2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { DisputeActionDialog } from "@/components/admin/disputes/dispute-action-dialog"
 import { AdminDisputeDetailSections } from "@/components/admin/disputes/dispute-detail-sections"
 import { Badge } from "@/components/ui/badge"
@@ -38,7 +30,7 @@ const sections = [
   ["evidence", "Доказательства"],
   ["files", "Файлы"],
   ["chat", "Чат"],
-  ["escrow", "Escrow"],
+  ["escrow", "Гарантия"],
   ["timeline", "Хронология"],
 ] as const
 
@@ -157,7 +149,7 @@ export default function AdminDisputeDetailPage({ params }: PageProps) {
       <PageSurface className="p-5 sm:p-6">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[12.5px] font-medium text-muted-foreground">
               Спор · #{dispute.id}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -165,7 +157,7 @@ export default function AdminDisputeDetailPage({ params }: PageProps) {
                 {statusMeta.label}
               </Badge>
               <Badge variant="outline">
-                Escrow:{" "}
+                На гарантии:{" "}
                 {formatMoney(escrowPool, dispute.escrow.currency)}
               </Badge>
             </div>

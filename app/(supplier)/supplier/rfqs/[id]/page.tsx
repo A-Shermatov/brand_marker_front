@@ -2,7 +2,7 @@
 
 import { use } from "react"
 import Link from "next/link"
-import { MessageSquare } from "lucide-react"
+import { ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 import { PageFrame, PageHeader } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { StatusBadge, VerifiedChip } from "@/components/bm"
@@ -200,7 +200,7 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
       <div className="grid items-start gap-5 lg:grid-cols-[1fr_400px]">
         <div className="grid gap-5">
           <section className="rounded-xl border border-line bg-white p-5">
-            <h2 className="text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">
+            <h2 className="text-[12.5px] font-medium text-mute">
               Покупатель
             </h2>
             <div className="mt-3 flex items-center gap-3">

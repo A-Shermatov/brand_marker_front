@@ -1,7 +1,7 @@
 "use client"
 
 import type { ChangeEvent, RefObject } from "react"
-import { Paperclip, Plus, X } from "lucide-react"
+import { PaperclipIcon as Paperclip, PlusIcon as Plus, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { formatCurrency, formatIsoDate } from "@/lib/format"
 import { DateInputRu } from "@/components/ui/date-input-ru"
@@ -340,7 +340,7 @@ export const ProductWhatStep = ({
           value={note}
           onChange={(e) => onNoteChange(e.target.value)}
           rows={3}
-          className="w-full resize-none rounded-[10px] border border-border bg-white px-3.5 py-3 text-[15px] outline-none focus:border-primary"
+          className="w-full resize-none rounded-lg border border-border bg-white px-3.5 py-3 text-[15px] outline-none focus:border-primary"
           placeholder="Бренды, сертификаты, упаковка, гарантия"
         />
       </div>

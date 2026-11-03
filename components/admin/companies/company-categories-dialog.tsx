@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Loader2, Search } from "lucide-react"
+import { CircleNotchIcon as Loader2, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { CompanyConfirmDialog } from "@/components/admin/companies/company-confirm-dialog"
 import { Checkbox } from "@/components/ui/checkbox"

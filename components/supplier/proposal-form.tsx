@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Send } from "lucide-react"
+import { PaperPlaneRightIcon as Send } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { InlineHint } from "@/components/process"
 import { usePlatformSettingsQuery } from "@/hooks/api/use-public-query"
@@ -114,7 +114,7 @@ export const ProposalForm = ({
 
   const inputClass = (field: string) =>
     cn(
-      "h-11 w-full rounded-[10px] border bg-white px-3.5 text-[15px] outline-none transition-[color,border-color] mono",
+      "h-11 w-full rounded-lg border bg-white px-3.5 text-[15px] outline-none transition-[color,border-color] mono",
       errors[field]
         ? "border-red-500"
         : "border-line focus:border-brand-600",
@@ -187,7 +187,7 @@ export const ProposalForm = ({
             type="text"
             value={currency}
             readOnly
-            className="h-11 w-full rounded-[10px] border border-line bg-canvas px-3.5 text-[15px] text-mute"
+            className="h-11 w-full rounded-lg border border-line bg-canvas px-3.5 text-[15px] text-mute"
           />
         </div>
       </div>
@@ -206,7 +206,7 @@ export const ProposalForm = ({
           rows={3}
           placeholder="Модели, что входит в цену, условия доставки"
           className={cn(
-            "w-full resize-none rounded-[10px] border bg-white px-3.5 py-3 text-[15px] outline-none",
+            "w-full resize-none rounded-lg border bg-white px-3.5 py-3 text-[15px] outline-none",
             errors.message
               ? "border-red-500"
               : "border-line focus:border-brand-600",
@@ -254,7 +254,7 @@ export const ProposalForm = ({
           className,
         )}
       >
-        <div className="bg-brand-500 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-white">
+        <div className="bg-brand-500 px-5 py-2 text-[12.5px] font-medium text-white">
           Коммерческое предложение
         </div>
         <div className="grid gap-4 p-5">

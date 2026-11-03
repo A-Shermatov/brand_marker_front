@@ -2,16 +2,7 @@
 
 import { statusPillClass } from "@/components/ui/status-badge"
 import { useRef, useState, type ChangeEvent, type KeyboardEvent } from "react"
-import {
-  FileText,
-  ImageIcon,
-  Link2,
-  Package,
-  Plus,
-  Upload,
-  Video,
-  X,
-} from "lucide-react"
+import { FileTextIcon as FileText, ImageIcon, LinkIcon as Link2, PackageIcon as Package, PlusIcon as Plus, UploadSimpleIcon as Upload, VideoCameraIcon as Video, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import type { ContractWithRelations, SubmissionAsset, SubmissionAssetKind } from "@/types"
 import {
   getSubmissionTypeLabel,

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Search } from "lucide-react"
+import { MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { catalogCategories as mockCatalogCategories } from "@/lib/mock/catalog-categories"
 import { usePublicCategoriesQuery } from "@/hooks/api/use-public-query"
 import { mapCategoryTreeToMarketplace } from "@/lib/marketplace-hybrid"

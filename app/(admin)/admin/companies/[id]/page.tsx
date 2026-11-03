@@ -3,21 +3,7 @@
 import { use, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  Ban,
-  Building2,
-  CheckCircle2,
-  ChevronDown,
-  Crown,
-  FileQuestion,
-  PauseCircle,
-  Pencil,
-  RefreshCcw,
-  RotateCcw,
-  ShieldCheck,
-  Star,
-  XCircle,
-} from "lucide-react"
+import { ProhibitIcon as Ban, BuildingsIcon as Building2, CheckCircleIcon as CheckCircle2, CaretDownIcon as ChevronDown, CrownIcon as Crown, FileDashedIcon as FileQuestion, PauseCircleIcon as PauseCircle, PencilSimpleIcon as Pencil, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowCounterClockwiseIcon as RotateCcw, ShieldCheckIcon as ShieldCheck, StarIcon as Star, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { CompanyActionDialog } from "@/components/admin/companies/company-action-dialog"
 import { CompanyCategoriesDialog } from "@/components/admin/companies/company-categories-dialog"
@@ -192,7 +178,7 @@ export default function AdminCompanyDetailPage({ params }: PageProps) {
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <p className="text-[12.5px] font-medium text-muted-foreground">
                 Компания #{company.id}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">

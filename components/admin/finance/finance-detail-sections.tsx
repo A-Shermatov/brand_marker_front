@@ -61,19 +61,19 @@ export const AdminFinanceDetailSections = ({
         </p>
         <dl className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               ID
             </dt>
             <dd className="mt-1 text-sm font-medium">#{payment.id}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               External ID
             </dt>
             <dd className="mt-1 text-sm font-medium">{payment.external_id || "—"}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Сумма
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -81,14 +81,14 @@ export const AdminFinanceDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Создан
             </dt>
             <dd className="mt-1 text-sm font-medium">{formatDate(payment.created_at)}</dd>
           </div>
           {payment.paid_at && (
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Оплачен
               </dt>
               <dd className="mt-1 text-sm font-medium">{formatDate(payment.paid_at)}</dd>
@@ -96,7 +96,7 @@ export const AdminFinanceDetailSections = ({
           )}
           {payment.contract && (
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Контракт
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -148,19 +148,19 @@ export const AdminFinanceDetailSections = ({
         {payment.invoice ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Номер
               </dt>
               <dd className="mt-1 text-sm font-medium">{payment.invoice.number}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Статус
               </dt>
               <dd className="mt-1 text-sm font-medium">{payment.invoice.status}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Сумма
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -168,7 +168,7 @@ export const AdminFinanceDetailSections = ({
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Название
               </dt>
               <dd className="mt-1 text-sm font-medium">{payment.invoice.title}</dd>
@@ -184,19 +184,19 @@ export const AdminFinanceDetailSections = ({
         {payment.actor ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Имя
               </dt>
               <dd className="mt-1 text-sm font-medium">{partyLabel(payment.actor)}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Email
               </dt>
               <dd className="mt-1 text-sm font-medium">{payment.actor.email || "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Профиль
               </dt>
               <dd className="mt-1 text-sm font-medium">

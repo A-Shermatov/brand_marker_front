@@ -1,6 +1,6 @@
 "use client"
 
-import { Search } from "lucide-react"
+import { MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { Input } from "@/components/ui/input"
 import { PageToolbar, SegmentedControl } from "@/components/layout"
 

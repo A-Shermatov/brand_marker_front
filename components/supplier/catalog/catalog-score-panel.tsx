@@ -1,6 +1,6 @@
 "use client"
 
-import { Check } from "lucide-react"
+import { CheckIcon as Check } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import {
   scoreLevel,
@@ -25,12 +25,12 @@ export const CatalogScorePanel = ({
     <div className={cn("rounded-2xl border border-line bg-white p-5", className)}>
       <div className="flex items-end justify-between">
         <span className="text-[14px] font-semibold">Качество карточки</span>
-        <b className={cn("tnum text-[28px] font-extrabold leading-none", level.textClass)}>
+        <b className={cn("tnum text-[28px] font-bold leading-none", level.textClass)}>
           {score.total}
           <span className="text-[15px] font-semibold text-mute">/100</span>
         </b>
       </div>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#ECEEF2]">
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface-muted">
         <div
           className={cn("h-full rounded-full transition-all", level.barClass)}
           style={{ width: `${score.total}%` }}

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Building2, Plus } from "lucide-react"
+import { BuildingsIcon as Building2, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useCompaniesStore } from "@/lib/store/companies-store"
 import { useSubscriptionStore } from "@/lib/store/subscription-store"

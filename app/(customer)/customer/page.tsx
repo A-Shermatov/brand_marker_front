@@ -2,14 +2,7 @@
 
 import { useMemo } from "react"
 import Link from "next/link"
-import {
-  BadgeCheck,
-  Lock,
-  Plus,
-  ShoppingCart,
-  UserPlus,
-  Wallet,
-} from "lucide-react"
+import { SealCheckIcon as BadgeCheck, PlusIcon as Plus, ShoppingCartIcon as ShoppingCart, WalletIcon as Wallet } from "@phosphor-icons/react/dist/ssr"
 import { useQueries } from "@tanstack/react-query"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useRfqsStore } from "@/lib/store/rfqs-store"
@@ -37,11 +30,11 @@ import { useApprovalsQuery } from "@/hooks/api/use-approvals-query"
 import { usePaymentHistoryQuery } from "@/hooks/api/use-payments-query"
 import { Button } from "@/components/ui/button"
 import { PageFrame } from "@/components/layout"
-import { HeroCard, VerifiedChip } from "@/components/bm"
+import { CompanyName } from "@/components/bm"
 import { SpendChart } from "@/components/cabinet/dashboard/spend-chart"
 import { HomeDealsPanel } from "@/components/cabinet/dashboard/home-deals-panel"
 import { DashboardPanel } from "@/components/cabinet/dashboard/dashboard-panel"
-import { QuickActions } from "@/components/cabinet/dashboard/quick-actions"
+import { MoneyPanel } from "@/components/cabinet/dashboard/money-panel"
 import {
   OpsList,
   type OpsItem,
@@ -211,7 +204,6 @@ export default function CustomerDashboard() {
 
   const companyTitle = hydrated && user?.company ? user.company : "Покупатель"
   const name = firstName(user?.name)
-  const verified = Boolean(user?.company)
 
   return (
     <PageFrame className="max-w-none space-y-5">
@@ -222,96 +214,63 @@ export default function CustomerDashboard() {
       />
 
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-[14.5px] text-mute">
+        <div className="min-w-0 flex-[1_1_18rem]">
+          <p className="text-[14px] text-mute">
             {greet()}
             {name ? `, ${name}` : ""}
           </p>
-          <h1 className="text-[26px] font-extrabold tracking-[-0.02em] text-ink">
-            {companyTitle}
-          </h1>
+          <CompanyName as="h1" name={companyTitle} size="xl" className="mt-0.5" />
         </div>
-        <VerifiedChip verified={verified} />
-      </div>
-
-      <HeroCard>
-        <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
-          <div>
-            <span className="inline-flex items-center gap-2 text-[14px] text-white/70">
-              <Lock className="size-4" aria-hidden />
-              На гарантии в банке‑партнёре
-            </span>
-            <div className="mt-1 tnum text-[40px] font-extrabold leading-tight tracking-[-0.02em]">
-              {loading ? "—" : formatPrice(heldAmount)}
-            </div>
-            <p className="mt-1 text-[14px] text-white/70">
-              Поставщики получат деньги только после вашей приёмки
-            </p>
-          </div>
-          <dl className="grid grid-cols-2 gap-3 md:min-w-[320px]">
-            <div className="rounded-xl bg-white/10 p-3">
-              <dt className="text-[12.5px] text-white/70">Ждёт оплаты</dt>
-              <dd className="tnum text-[17px] font-bold">
-                {loading ? "—" : formatPrice(toPayAmount)}
-              </dd>
-            </div>
-            <div className="rounded-xl bg-white/10 p-3">
-              <dt className="text-[12.5px] text-white/70">Расходы за месяц</dt>
-              <dd className="tnum text-[17px] font-bold">
-                {loading ? "—" : formatPrice(lastSpend)}
-              </dd>
-            </div>
-          </dl>
-        </div>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Button
-            asChild
-            variant="outline"
-            className="border-white bg-white text-ink hover:bg-canvas"
-          >
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link href="/services">
+              <ShoppingCart className="size-4" />
+              Каталог
+            </Link>
+          </Button>
+          <Button asChild>
             <Link href="/customer/rfqs/new">
-              <Plus className="size-4" />
+              <Plus weight="bold" className="size-4" />
               Новая заявка
             </Link>
           </Button>
-          <Button
-            asChild
-            variant="outline"
-            className="border-white/25 bg-white/10 text-white hover:bg-white/20"
-          >
-            <Link href="/customer/payments">Оплатить</Link>
-          </Button>
         </div>
-      </HeroCard>
+      </div>
 
-      <QuickActions
-        actions={[
+      <MoneyPanel
+        label="На гарантии в банке‑партнёре"
+        amount={loading ? "—" : formatPrice(heldAmount)}
+        hint="Поставщики получат деньги только после вашей приёмки"
+        stats={[
           {
-            href: "/customer/rfqs/new",
-            label: "Новая заявка",
-            Icon: Plus,
+            label: "Ждёт оплаты",
+            value: loading ? "—" : formatPrice(toPayAmount),
           },
           {
-            href: "/services",
-            label: "Купить в каталоге",
-            Icon: ShoppingCart,
+            label: "Расходы за месяц",
+            value: loading ? "—" : formatPrice(lastSpend),
           },
           {
-            href: "/customer/payments",
-            label: "Оплатить счёт",
-            Icon: Wallet,
-          },
-          {
-            href: "/customer/approvals",
-            label: "Согласовать",
-            Icon: BadgeCheck,
-          },
-          {
-            href: "/customer/company",
-            label: "Пригласить сотрудника",
-            Icon: UserPlus,
+            label: "Активных сделок",
+            value: loading ? "—" : openDeals.length,
           },
         ]}
+        actions={
+          <>
+            <Button asChild>
+              <Link href="/customer/payments">
+                <Wallet className="size-4" />
+                Оплатить
+              </Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link href="/customer/approvals">
+                <BadgeCheck className="size-4" />
+                Согласования
+              </Link>
+            </Button>
+          </>
+        }
       />
 
       <div className="grid items-start gap-5 xl:grid-cols-[1.15fr_1fr]">
@@ -319,7 +278,7 @@ export default function CustomerDashboard() {
           title="Нужно сделать"
           badge={
             todo.length > 0 ? (
-              <span className="grid h-6 place-items-center rounded-full bg-amber-50 px-2 text-[12.5px] font-bold text-amber-800">
+              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-amber-100 px-1.5 text-[12px] font-semibold text-amber-900 tnum">
                 {todo.length}
               </span>
             ) : null

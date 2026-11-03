@@ -2,7 +2,7 @@
 
 import { use, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { AlertTriangle, FileCheck, MessageSquare, Paperclip, Upload, Gavel } from "lucide-react"
+import { WarningIcon as AlertTriangle, CertificateIcon as FileCheck, ChatTextIcon as MessageSquare, PaperclipIcon as Paperclip, UploadSimpleIcon as Upload, GavelIcon as Gavel } from "@phosphor-icons/react/dist/ssr"
 import { PageFrame, PageHeader } from "@/components/layout"
 import { DealStepper } from "@/components/process"
 import { SupplierDealNextAction } from "@/components/supplier/contracts/supplier-deal-next-action"
@@ -30,7 +30,7 @@ import {
 } from "@/hooks/api/use-reviews-query"
 import { canUploadContractFiles, contractStatusMeta } from "@/lib/contract-display"
 import { formatCurrency, formatIsoDate } from "@/lib/format"
-import { DeadlineBanner, DeadlineCountdown } from "@/components/contracts/deadline-countdown"
+import { DeadlineCountdown } from "@/components/contracts/deadline-countdown"
 import { ContractBuyerCard } from "@/components/supplier/contracts/contract-buyer-card"
 import { ContractMilestonesPanel } from "@/components/supplier/contracts/contract-milestones-panel"
 import { ContractEscrowCard } from "@/components/supplier/contracts/contract-escrow-card"
@@ -221,7 +221,7 @@ export default function SupplierContractDetailPage({ params }: PageProps) {
         }
       />
 
-      <div className="grid gap-4 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)]">
+      <div className="grid gap-4 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
         <DealStepper contract={contract} />
         <div className="flex flex-wrap items-center gap-3">
           <DeadlineCountdown
@@ -250,7 +250,6 @@ export default function SupplierContractDetailPage({ params }: PageProps) {
             <span className="ml-auto text-xs text-destructive font-semibold">Спор открыт</span>
           )}
         </div>
-        <DeadlineBanner dueDate={contract.due_date} status={contract.status} />
       </div>
 
       <SupplierDealNextAction

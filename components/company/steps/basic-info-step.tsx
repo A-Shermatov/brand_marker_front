@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState, type ChangeEvent } from "react"
-import { ImagePlus, Loader2 } from "lucide-react"
+import { ImageSquareIcon as ImagePlus, CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
 import type { ActorType, CompanyWizardInput } from "@/types"
 import { WizardField, wizardInputClass, wizardTextareaClass } from "@/components/company/wizard-field"
 import { isApiEnabled } from "@/lib/api/config"

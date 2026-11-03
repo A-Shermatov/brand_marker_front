@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { BrandLogo, BmInput } from "@/components/bm"
 import { Button } from "@/components/ui/button"
@@ -163,7 +163,7 @@ function LoginContent() {
       </div>
 
       <div className="grid flex-1 place-items-center px-4 py-10">
-        <div className="w-full max-w-[440px] rounded-2xl border border-line bg-white p-7 shadow-[0_24px_60px_-24px_rgba(16,24,40,.25)] sm:p-9">
+        <div className="w-full max-w-[420px] rounded-2xl border border-line bg-white p-7 shadow-[0_1px_2px_rgba(28,28,26,.05),0_20px_40px_-28px_rgba(28,28,26,.35)] sm:p-8">
           {challengeToken ? (
             <TwoFactorChallenge
               busy={otpBusy}
@@ -196,7 +196,7 @@ function LoginContent() {
                 className={cn(
                   "h-10 rounded-lg text-[15px] font-semibold transition",
                   tab === key
-                    ? "bg-white text-ink shadow-[0_1px_3px_rgba(16,24,40,.12)]"
+                    ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                     : "text-mute hover:text-ink",
                 )}
               >
@@ -205,7 +205,7 @@ function LoginContent() {
             ))}
           </div>
 
-          <h1 className="mb-1 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
+          <h1 className="mb-1 text-[24px] font-semibold tracking-[-0.02em] text-ink">
             Вход в Brend Market
           </h1>
           <p className="mb-6 text-[15px] text-mute">
@@ -213,7 +213,7 @@ function LoginContent() {
           </p>
 
           <div className="mb-5 grid gap-2">
-            <span className="text-[14px] font-semibold text-ink">Что вы хотите делать?</span>
+            <span className="text-[13.5px] font-medium text-ink">Что вы хотите делать?</span>
             <div className="grid grid-cols-2 gap-2">
               {roleCards.map(({ role: r, title, desc }) => {
                 const active = role === r
@@ -224,13 +224,13 @@ function LoginContent() {
                     onClick={() => setRole(r)}
                     aria-pressed={active}
                     className={cn(
-                      "rounded-xl border-2 p-3.5 text-left transition",
+                      "rounded-xl border p-3.5 text-left transition-[border-color,box-shadow,background-color]",
                       active
-                        ? "border-ink bg-white"
-                        : "border-line hover:border-[#C9CED6]",
+                        ? "border-brand-600 bg-brand-50/50 shadow-[0_0_0_1px_var(--brand-600)]"
+                        : "border-line-strong hover:border-faint",
                     )}
                   >
-                    <b className="block text-[15px] text-ink">{title}</b>
+                    <b className="block text-[14.5px] font-semibold text-ink">{title}</b>
                     <span className="text-[13px] text-mute">{desc}</span>
                   </button>
                 )
@@ -240,7 +240,7 @@ function LoginContent() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4" noValidate>
             <div className="grid gap-1.5">
-              <label htmlFor="email" className="text-[14px] font-semibold text-ink">
+              <label htmlFor="email" className="text-[13.5px] font-medium text-ink">
                 Email
               </label>
               <BmInput
@@ -258,7 +258,7 @@ function LoginContent() {
             </div>
 
             <div className="grid gap-1.5">
-              <label htmlFor="password" className="text-[14px] font-semibold text-ink">
+              <label htmlFor="password" className="text-[13.5px] font-medium text-ink">
                 Пароль
               </label>
               <BmInput
@@ -289,7 +289,7 @@ function LoginContent() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="mt-1 h-12 w-full text-[16px]"
+              className="mt-1 h-11 w-full text-[15px]"
             >
               Войти
               <ArrowRight className="size-4" />

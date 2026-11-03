@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { AlertTriangle, RefreshCcw } from "lucide-react"
+import { WarningIcon as AlertTriangle, ArrowsCounterClockwiseIcon as RefreshCcw } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { useAdminDashboardQuery } from "@/hooks/api/use-admin-dashboard-query"
 import { PageFrame, PageHeader } from "@/components/layout"
@@ -249,7 +249,7 @@ export default function AdminDashboardPage() {
         </section>
 
         <section className="grid gap-5 lg:grid-cols-2">
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6">
+          <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
             <span className="text-[13px] font-semibold text-mute">
               Безопасность за сутки
             </span>
@@ -273,7 +273,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6">
+          <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
             <div className="flex items-center justify-between gap-3">
               <span className="text-[13px] font-semibold text-mute">
                 Последние действия

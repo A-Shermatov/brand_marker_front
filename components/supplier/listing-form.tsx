@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, ShoppingCart, Briefcase, Check } from "lucide-react"
+import { ArrowLeftIcon as ArrowLeft, ShoppingCartIcon as ShoppingCart, BriefcaseIcon as Briefcase, CheckIcon as Check } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import {
   MAX_NUMERIC_INPUT_LENGTH,

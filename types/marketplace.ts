@@ -45,6 +45,10 @@ export type MarketplaceService = {
   categoryId: string
   /** Accepts company invoice payment; defaults to true when omitted. */
   invoice?: boolean
+  /** Reliability tier of the supplier: silver / gold / diamond */
+  providerTier?: string
+  /** Active subscription plan of the supplier */
+  providerPlan?: string | null
 }
 
 export type MarketplacePerformer = {
@@ -67,6 +71,10 @@ export type MarketplacePerformer = {
   featured: boolean
   vip?: boolean
   promoted?: boolean
+  /** Reliability tier: silver / gold / diamond */
+  tier?: string
+  /** Active subscription plan */
+  plan?: string | null
   worldwide: boolean
   icon: string
   description: string

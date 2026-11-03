@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense, useMemo, useState } from "react"
-import { Briefcase } from "lucide-react"
+import { BriefcaseIcon as Briefcase } from "@phosphor-icons/react/dist/ssr"
 import {
   PageEmptyState,
   PageFrame,

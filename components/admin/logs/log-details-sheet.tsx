@@ -1,6 +1,6 @@
 "use client"
 
-import { Loader2, RefreshCcw } from "lucide-react"
+import { CircleNotchIcon as Loader2, ArrowsCounterClockwiseIcon as RefreshCcw } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {

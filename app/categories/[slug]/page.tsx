@@ -3,7 +3,7 @@
 import { use, useMemo } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { ServiceCard } from "@/components/marketplace/service-card"
 import { getCategoryBySlug } from "@/lib/mock/categories"
@@ -84,7 +84,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               <Icon size={26} className={category.iconColor} />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-foreground">{category.label}</h1>
+              <h1 className="text-2xl font-bold text-foreground">{category.label}</h1>
               <p className="text-sm text-muted-foreground mt-1">{category.count} услуг в каталоге</p>
             </div>
           </div>

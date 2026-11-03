@@ -9,7 +9,7 @@ import {
   useState,
 } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Search, X, Layers, Briefcase, Users, ArrowRight } from "lucide-react"
+import { MagnifyingGlassIcon as Search, XIcon as X, StackIcon as Layers, BriefcaseIcon as Briefcase, UsersIcon as Users, ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { CategoryMegaMenu } from "@/components/marketplace/category-mega-menu"
 import {
   filterCategoriesByQuery,
@@ -342,8 +342,8 @@ export const MarketplaceSearch = ({
       <div
         className={
           isCompact
-            ? "relative flex items-center rounded-[10px] border border-transparent bg-canvas focus-within:border-brand-600 focus-within:bg-white"
-            : "flex items-center overflow-hidden rounded-[10px] border border-line bg-white shadow-[0_1px_2px_rgba(16,24,40,.04)]"
+            ? "relative flex items-center rounded-lg border border-transparent bg-canvas focus-within:border-brand-600 focus-within:bg-white"
+            : "flex items-center overflow-hidden rounded-lg border border-line bg-white shadow-[0_1px_2px_rgba(28,28,26,.04)]"
         }
       >
         {!isCompact ? (

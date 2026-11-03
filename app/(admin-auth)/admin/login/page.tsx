@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -124,7 +124,7 @@ const AdminLoginContent = () => {
       </div>
 
       <div className="grid flex-1 place-items-center px-4 py-10">
-        <div className="w-full max-w-[440px] rounded-2xl border border-line bg-white p-7 shadow-[0_24px_60px_-24px_rgba(16,24,40,.25)] sm:p-9">
+        <div className="w-full max-w-[440px] rounded-2xl border border-line bg-white p-7 shadow-[0_1px_2px_rgba(28,28,26,.05),0_20px_40px_-28px_rgba(28,28,26,.35)] sm:p-9">
           {challengeToken ? (
             <TwoFactorChallenge
               busy={otpBusy}
@@ -137,7 +137,7 @@ const AdminLoginContent = () => {
             />
           ) : (
             <>
-          <h1 className="mb-1 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
+          <h1 className="mb-1 text-[26px] font-bold tracking-[-0.02em] text-ink">
             Вход администратора
           </h1>
           <p className="mb-6 text-[15px] text-mute">

@@ -1,4 +1,5 @@
 import { API_URL } from "./config"
+import { translateApiMessage } from "./error-messages"
 
 export type ApiError = {
   status: number
@@ -24,7 +25,7 @@ const readErrorMessage = (err: unknown, fallback: string): string => {
 }
 
 export const getApiErrorMessage = (err: unknown, fallback: string): string =>
-  readErrorMessage(err, err instanceof Error ? err.message : fallback)
+  translateApiMessage(readErrorMessage(err, err instanceof Error ? err.message : fallback))
 
 export const isUnauthorizedError = (err: unknown): boolean =>
   Boolean(err && typeof err === "object" && "status" in err && (err as ApiError).status === 401)
@@ -199,7 +200,7 @@ export const apiFetch = async <T>(
     } catch {
       // ignore
     }
-    const error: ApiError = { status: res.status, message: String(message) }
+    const error: ApiError = { status: res.status, message: translateApiMessage(String(message)) }
     throw error
   }
 

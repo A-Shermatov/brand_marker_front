@@ -1,4 +1,4 @@
-import { Check } from "lucide-react"
+import { CheckIcon as Check } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import type { ContractWithRelations } from "@/types"
 import { getDealPhase, getDealStepIndex, getDealSteps } from "@/lib/process/deal-stages"
@@ -34,7 +34,7 @@ export const DealStepper = ({ contract, className }: { contract: DealContract; c
                     ? "bg-brand-600 text-white"
                     : now
                       ? "border-2 border-brand-600 bg-white text-brand-700"
-                      : "bg-[#EEF0F3] text-mute",
+                      : "bg-surface-muted text-mute",
                 )}
               >
                 {done ? <Check className="size-3.5" aria-hidden /> : index + 1}

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { BadgeCheck, Info, Loader2, Settings } from "lucide-react"
+import { SealCheckIcon as BadgeCheck, InfoIcon as Info, CircleNotchIcon as Loader2, GearIcon as Settings } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/bm"
 import {
@@ -145,7 +145,7 @@ export default function CustomerApprovalsPage() {
           {list.map((a) => (
             <article
               key={a.id}
-              className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6"
+              className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
             >
               <div className="flex flex-wrap items-start gap-4">
                 <div className="grid min-w-[240px] flex-1 gap-1">

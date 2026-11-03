@@ -1,14 +1,20 @@
 import type { Metadata } from 'next'
 
-import { Golos_Text } from 'next/font/google'
+import { IBM_Plex_Mono, Onest } from 'next/font/google'
 import { QueryProvider } from '@/components/providers/query-provider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const golos = Golos_Text({
+const onest = Onest({
   subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-golos',
+  variable: '--font-onest',
+  display: 'swap',
+})
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500'],
+  variable: '--font-plex-mono',
   display: 'swap',
 })
 
@@ -17,7 +23,6 @@ export const metadata: Metadata = {
   title: "Brend Market — B2B маркетплейс для бизнеса",
   description:
     "B2B-площадка для закупок компаний Таджикистана. Каталог, заявки, сделки с гарантией оплаты через банк-партнёр.",
-  generator: "v0.app",
   openGraph: {
     title: "Brend Market — B2B маркетплейс для бизнеса",
     description:
@@ -58,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" className={`bg-canvas ${golos.variable}`}>
+    <html lang="ru" className={`bg-canvas ${onest.variable} ${plexMono.variable}`}>
       <body className="bg-canvas font-sans text-[15px] text-ink antialiased">
         <QueryProvider>
           {children}

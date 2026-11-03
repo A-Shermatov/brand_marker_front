@@ -47,35 +47,67 @@ const CONFIG = {
   },
 } as const
 
-/** HTML `sectionWrap` — section H1 + underline subtabs for merged CNAV hubs. */
-export function SectionHub({ role, badges }: SectionHubProps) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const search = searchParams.toString()
+const roleForPath = (pathname: string): CabinetRole | null => {
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return "admin"
+  if (pathname === "/supplier" || pathname.startsWith("/supplier/")) return "supplier"
+  if (pathname === "/customer" || pathname.startsWith("/customer/")) return "buyer"
+  return null
+}
+
+const resolveSection = (role: CabinetRole, pathname: string, search: string) => {
   const cfg = CONFIG[role]
   const hub = matchHub(cfg.hubs, pathname, cfg.home)
   if (!hub) return null
   const tabs = cfg.subtabs[hub.id]
   if (!tabs?.length) return null
-  const meta: SectionMeta | undefined = cfg.titles[hub.id]
   const active = matchSubtab(tabs, pathname, search)
+  // Only list pages own the section header; a deal or a dispute opened from
+  // the list gets its own title and a back link instead of a second heading.
+  const isRoot = Boolean(
+    active &&
+      [active.href.split("?")[0], ...(active.match ?? [])].some((p) => p === pathname),
+  )
+  return { hub, tabs, active, isRoot, meta: cfg.titles[hub.id] as SectionMeta | undefined }
+}
+
+/**
+ * True when the current page sits under a section header with subtabs, so its
+ * own H1 would repeat the section title.
+ */
+export const isSectionHubRoot = (pathname: string): boolean => {
+  const role = roleForPath(pathname)
+  if (!role) return false
+  return Boolean(resolveSection(role, pathname, "")?.isRoot)
+}
+
+export function useInSectionHub(): boolean {
+  return isSectionHubRoot(usePathname())
+}
+
+/** Section H1 + underline subtabs for merged cabinet hubs. */
+export function SectionHub({ role, badges }: SectionHubProps) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const section = resolveSection(role, pathname, searchParams.toString())
+  if (!section?.isRoot) return null
+  const { hub, tabs, active, meta } = section
 
   return (
     <div className="mb-6">
       {meta ? (
         <div className="mb-1">
-          <h1 className="text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-ink">
+          <h1 className="text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">
             {meta.title}
           </h1>
           {meta.description ? (
-            <p className="mt-1 text-[15px] text-mute">{meta.description}</p>
+            <p className="mt-1 text-[14.5px] text-mute">{meta.description}</p>
           ) : null}
         </div>
       ) : null}
       <div
         role="tablist"
         aria-label={meta?.title ?? hub.label}
-        className="mt-4 flex gap-6 overflow-x-auto border-b border-line no-scrollbar"
+        className="mt-4 flex gap-5 overflow-x-auto border-b border-line no-scrollbar"
       >
         {tabs.map((tab: CabinetSubtab) => {
           const on = active?.id === tab.id
@@ -87,18 +119,17 @@ export function SectionHub({ role, badges }: SectionHubProps) {
               role="tab"
               aria-selected={on}
               className={cn(
-                "-mb-px inline-flex h-11 shrink-0 items-center gap-2 border-b-2 text-[15px] font-semibold transition",
+                "-mb-px inline-flex h-10 shrink-0 items-center gap-2 border-b-2 text-[14.5px] transition-colors",
                 on
-                  ? "border-brand-600 text-ink"
-                  : "border-transparent text-mute hover:text-ink",
+                  ? "border-ink font-semibold text-ink"
+                  : "border-transparent font-medium text-mute hover:text-ink",
               )}
             >
               {tab.label}
               {badge > 0 ? (
                 <span
                   className={cn(
-                    "grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11px] font-bold text-white",
-                    on ? "bg-brand-600" : "bg-red-500",
+                    "grid h-5 min-w-5 place-items-center rounded-full bg-brand-600 px-1.5 text-[11px] font-semibold text-white tnum",
                   )}
                 >
                   {badge}

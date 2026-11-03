@@ -12,7 +12,7 @@ type FinanceHubTab = "ledger" | "escrow" | "merchants"
 
 const HUB_TABS: { value: FinanceHubTab; label: string }[] = [
   { value: "ledger", label: "Операции" },
-  { value: "escrow", label: "Escrow" },
+  { value: "escrow", label: "На гарантии" },
   { value: "merchants", label: "Мерчанты" },
 ]
 

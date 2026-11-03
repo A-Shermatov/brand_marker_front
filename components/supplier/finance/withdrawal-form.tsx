@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowDownToLine, Building2, Wallet } from "lucide-react"
+import { ArrowLineDownIcon as ArrowDownToLine, BuildingsIcon as Building2, WalletIcon as Wallet } from "@phosphor-icons/react/dist/ssr"
 import type { SupplierBalanceSummary, WithdrawalBank, WithdrawalDestination } from "@/types"
 import { withdrawalBankLabel } from "@/lib/finance-display"
 import { formatCurrency } from "@/lib/format"
@@ -89,7 +89,7 @@ export const WithdrawalForm = ({
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[12.5px] font-medium text-muted-foreground">
           Банк
         </p>
         <div
@@ -140,7 +140,7 @@ export const WithdrawalForm = ({
       <div>
         <label
           htmlFor="withdrawal-destination"
-          className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
+          className="text-[12.5px] font-medium text-muted-foreground"
         >
           Счёт / кошелёк
         </label>
@@ -181,7 +181,7 @@ export const WithdrawalForm = ({
       <div>
         <label
           htmlFor="withdrawal-amount"
-          className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
+          className="text-[12.5px] font-medium text-muted-foreground"
         >
           Сумма
         </label>

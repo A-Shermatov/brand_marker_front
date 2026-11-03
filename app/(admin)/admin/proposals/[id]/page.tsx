@@ -3,13 +3,7 @@
 import { use, useState } from "react"
 import { formatCurrency } from "@/lib/format"
 import Link from "next/link"
-import {
-  FileInput,
-  RefreshCcw,
-  Search,
-  ShieldBan,
-  Trash2,
-} from "lucide-react"
+import { FileArrowUpIcon as FileInput, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, ShieldSlashIcon as ShieldBan, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { ProposalActionDialog } from "@/components/admin/proposals/proposal-action-dialog"
 import { AdminProposalDetailSections } from "@/components/admin/proposals/proposal-detail-sections"
 import { Badge } from "@/components/ui/badge"
@@ -114,7 +108,7 @@ export default function AdminProposalDetailPage({ params }: PageProps) {
       <PageSurface className="p-5 sm:p-6">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[12.5px] font-medium text-muted-foreground">
               Предложение #{proposal.id}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">

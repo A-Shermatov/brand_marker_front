@@ -1,6 +1,6 @@
 "use client"
 
-import { Landmark } from "lucide-react"
+import { BankIcon as Landmark } from "@phosphor-icons/react/dist/ssr"
 import type { WithdrawalDestination } from "@/types"
 import { Button } from "@/components/ui/button"
 
@@ -13,7 +13,7 @@ export const PayoutAccountCard = ({
   destination,
   onEdit,
 }: PayoutAccountCardProps) => (
-  <aside className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6">
+  <aside className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
     <span className="text-[13px] font-semibold text-mute">Счёт для выплат</span>
     {destination ? (
       <div className="mt-3 flex items-center gap-3">

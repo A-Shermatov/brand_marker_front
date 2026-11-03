@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Trash2, Users } from "lucide-react"
+import { TrashIcon as Trash2, UsersIcon as Users } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -48,7 +48,7 @@ export const EmployeeList = ({
 
   if (employees.length === 0) {
     return (
-      <div className="grid place-items-center gap-2 rounded-xl border border-dashed border-[#D5DAE1] bg-canvas/40 px-5 py-10 text-center">
+      <div className="grid place-items-center gap-2 rounded-xl border border-dashed border-line-strong bg-canvas/40 px-5 py-10 text-center">
         <Users className="size-7 text-mute" aria-hidden />
         <div>
           <b className="text-[15px]">В команде пока никого</b>
@@ -84,7 +84,7 @@ export const EmployeeList = ({
               className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
             >
               <div className="flex min-w-0 flex-1 items-start gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#EEF0F3] text-[13px] font-bold text-ink">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-muted text-[13px] font-bold text-ink">
                   {initialsFromName(employee.name)}
                 </span>
                 <div className="min-w-0">
@@ -121,7 +121,7 @@ export const EmployeeList = ({
                           e.target.value as CompanyRole,
                         )
                       }
-                      className="h-9 w-full rounded-[10px] border border-line bg-white px-3 text-[14px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 disabled:opacity-60 sm:w-[200px]"
+                      className="h-9 w-full rounded-lg border border-line bg-white px-3 text-[14px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 disabled:opacity-60 sm:w-[200px]"
                     >
                       {ASSIGNABLE_COMPANY_ROLES.map((role) => (
                         <option key={role} value={role}>

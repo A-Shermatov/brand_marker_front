@@ -1,6 +1,6 @@
 "use client"
 
-import { Package } from "lucide-react"
+import { PackageIcon as Package } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { formatItemPricing } from "@/lib/item-display"
 import { resolveFileUrl } from "@/lib/file-url"

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Check, Plus, Trash2 } from "lucide-react"
+import { CheckIcon as Check, PlusIcon as Plus, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { formatCurrency } from "@/lib/format"
 import { parseBoundedInt } from "@/lib/bounded-number-input"

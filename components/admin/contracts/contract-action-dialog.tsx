@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,7 +31,7 @@ const actionMetadata: Record<
     title: "Заморозить escrow?",
     description:
       "Средства в held-состояниях этапов будут переведены в статус спора. Контракт может остаться активным.",
-    success: "Escrow заморожен",
+    success: "Деньги на гарантии заморожены",
     reasonRequired: false,
     destructive: true,
   },

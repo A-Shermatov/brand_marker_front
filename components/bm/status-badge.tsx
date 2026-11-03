@@ -77,11 +77,12 @@ export function StatusBadge({ status, label, className }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md border px-2 py-0.5 text-[12px] font-semibold whitespace-nowrap",
+        "inline-flex items-center gap-1.5 rounded-md border px-1.5 py-px text-[12px] leading-[18px] font-medium whitespace-nowrap",
         STATUS_STYLES[key] ?? "bg-canvas text-mute border-line",
         className,
       )}
     >
+      <span className="size-1.5 shrink-0 rounded-full bg-current opacity-80" aria-hidden />
       {label ?? STATUS_LABELS[key] ?? status}
     </span>
   )

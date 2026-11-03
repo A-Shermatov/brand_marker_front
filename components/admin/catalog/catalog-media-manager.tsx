@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import Image from "next/image"
-import { ArrowLeft, ArrowRight, FileText, ImageIcon, Loader2, Trash2, Upload } from "lucide-react"
+import { ArrowLeftIcon as ArrowLeft, ArrowRightIcon as ArrowRight, FileTextIcon as FileText, ImageIcon, CircleNotchIcon as Loader2, TrashIcon as Trash2, UploadSimpleIcon as Upload } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {

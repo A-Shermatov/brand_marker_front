@@ -3,10 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import {
-  ShoppingCart, Minus, Plus, Trash2, Package, Briefcase,
-  Truck, ShieldCheck,
-} from "lucide-react"
+import { ShoppingCartIcon as ShoppingCart, MinusIcon as Minus, PlusIcon as Plus, TrashIcon as Trash2, PackageIcon as Package, BriefcaseIcon as Briefcase, TruckIcon as Truck, ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { useCartStore } from "@/lib/store/cart-store"
 import { useNotificationsStore } from "@/lib/store/notifications-store"

@@ -75,7 +75,7 @@ export function AdminBillingSummaryPanel() {
         {stats.map((s) => (
           <SurfaceCard key={s.label} className="grid gap-1 p-4" padded={false}>
             <span className="text-[12.5px] text-mute">{s.label}</span>
-            <b className="tnum text-[22px] font-extrabold text-ink">{s.value}</b>
+            <b className="tnum text-[22px] font-bold text-ink">{s.value}</b>
             <span className="text-[12.5px] text-mute">{s.hint}</span>
           </SurfaceCard>
         ))}
@@ -94,7 +94,7 @@ export function AdminBillingSummaryPanel() {
             </span>
           </div>
           <div className="flex items-center gap-3 rounded-xl bg-canvas p-3">
-            <span className="grid size-8 place-items-center rounded-lg bg-[#E3E6EB] text-[12px] font-bold text-ink">
+            <span className="grid size-8 place-items-center rounded-lg bg-line text-[12px] font-bold text-ink">
               Free
             </span>
             <span>
@@ -104,7 +104,7 @@ export function AdminBillingSummaryPanel() {
           </div>
         </div>
         <p className="text-[13px] text-mute">
-          Цены тарифов и правила щита — в{" "}
+          Цены тарифов и правила знака надёжности — в{" "}
           <Link href="/admin/settings" className="font-semibold text-brand-700 underline">
             настройках
           </Link>

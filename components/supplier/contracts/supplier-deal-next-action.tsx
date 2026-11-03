@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { MessageSquare, Upload } from "lucide-react"
+import { ChatTextIcon as MessageSquare, UploadSimpleIcon as Upload } from "@phosphor-icons/react/dist/ssr"
 import type { ContractWithRelations } from "@/types"
 import { Button } from "@/components/ui/button"
 import { NextActionCard } from "@/components/process"

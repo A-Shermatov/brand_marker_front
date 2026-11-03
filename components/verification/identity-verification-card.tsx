@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { FileText, Loader2, ShieldCheck, Trash2, Upload } from "lucide-react"
+import { FileTextIcon as FileText, CircleNotchIcon as Loader2, ShieldCheckIcon as ShieldCheck, TrashIcon as Trash2, UploadSimpleIcon as Upload } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { PageSurface } from "@/components/layout"
 import { Button } from "@/components/ui/button"

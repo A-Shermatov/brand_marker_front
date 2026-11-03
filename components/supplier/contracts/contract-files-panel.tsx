@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { Paperclip } from "lucide-react"
+import { PaperclipIcon as Paperclip } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { FilePreviewLink } from "@/components/shared/file-preview-link"
 import { Button } from "@/components/ui/button"

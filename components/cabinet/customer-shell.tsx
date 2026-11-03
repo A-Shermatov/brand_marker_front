@@ -1,9 +1,7 @@
 "use client"
 
 import { Suspense, useState } from "react"
-import {
-  LayoutDashboard, FileText, Briefcase, MessageSquare, Menu, Loader2,
-} from "lucide-react"
+import { HouseIcon as LayoutDashboard, FileTextIcon as FileText, HandshakeIcon as Briefcase, ChatsCircleIcon as MessageSquare, ListIcon as Menu, CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
 import CustomerSidebar from "@/components/cabinet/sidebar"
 import CustomerTopbar from "@/components/cabinet/topbar"
 import { CabinetShell } from "@/components/layout/cabinet-shell"

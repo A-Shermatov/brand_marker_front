@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, Clock, Users } from "lucide-react"
+import { ArrowRightIcon as ArrowRight, ClockIcon as Clock, UsersIcon as Users } from "@phosphor-icons/react/dist/ssr"
 import type { Proposal, PublicSupplier } from "@/types"
 import { ProposalReviewCard } from "@/components/cabinet/rfq/proposal-review-card"
 import { PageEmptyState } from "@/components/layout"

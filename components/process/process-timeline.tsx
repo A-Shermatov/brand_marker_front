@@ -1,4 +1,4 @@
-import { Check } from "lucide-react"
+import { CheckIcon as Check } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import type { ProcessStep } from "@/lib/process/rfq-timeline"
 

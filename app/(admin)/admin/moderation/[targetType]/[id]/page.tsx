@@ -3,14 +3,7 @@
 import { use } from "react"
 import { useState } from "react"
 import Link from "next/link"
-import {
-  AlertTriangle,
-  Ban,
-  CheckCircle2,
-  RefreshCcw,
-  ShieldCheck,
-  Trash2,
-} from "lucide-react"
+import { WarningIcon as AlertTriangle, ProhibitIcon as Ban, CheckCircleIcon as CheckCircle2, ArrowsCounterClockwiseIcon as RefreshCcw, ShieldCheckIcon as ShieldCheck, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { ReportActionDialog } from "@/components/admin/moderation/report-action-dialog"
 import { AdminReportDetailSections } from "@/components/admin/moderation/report-detail-sections"
 import { Badge } from "@/components/ui/badge"
@@ -118,7 +111,7 @@ export default function AdminReportDetailPage({ params }: PageProps) {
       <PageSurface className="p-5 sm:p-6">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[12.5px] font-medium text-muted-foreground">
               Жалоба · {adminLabel(adminReportTargetLabels, report.target_type)} · #
               {report.id}
             </p>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { MessageSquare, Search } from "lucide-react"
+import { ChatTextIcon as MessageSquare, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import {
   filterChatGroups,

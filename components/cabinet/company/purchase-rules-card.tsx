@@ -12,7 +12,7 @@ type PurchaseRulesCardProps = {
 }
 
 export const PurchaseRulesCard = ({ rules, onChange }: PurchaseRulesCardProps) => (
-  <section className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6">
+  <section className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
     <span className="text-[13px] font-semibold text-mute">Правила закупок</span>
     <div className="mt-3 grid gap-3">
       {(Object.keys(PURCHASE_RULE_LABELS) as PurchaseRuleId[]).map((id) => (

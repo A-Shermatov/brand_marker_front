@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { AdminLink } from "@/components/admin/admin-link"
 import {
   getLogFieldLabel,

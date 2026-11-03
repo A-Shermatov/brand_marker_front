@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { AlertTriangle, ExternalLink, FileText, RefreshCcw, ShieldCheck } from "lucide-react"
+import { WarningIcon as AlertTriangle, ArrowSquareOutIcon as ExternalLink, FileTextIcon as FileText, ArrowsCounterClockwiseIcon as RefreshCcw, ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import {
   CompanyOperationalBadge,
   CompanyVerificationBadge,

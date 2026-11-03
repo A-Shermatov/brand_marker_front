@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, ArrowRight, ShoppingCart, Briefcase, Paperclip, Send, X } from "lucide-react"
+import { ArrowLeftIcon as ArrowLeft, ArrowRightIcon as ArrowRight, ShoppingCartIcon as ShoppingCart, BriefcaseIcon as Briefcase, PaperclipIcon as Paperclip, PaperPlaneRightIcon as Send, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { validateRfqForm, type RfqFormValues } from "@/lib/schemas/rfq-form"
 import { isoDateBounds, sanitizeIsoDateInput } from "@/lib/iso-date"
@@ -389,7 +389,7 @@ export const RfqForm = ({
   const inputClass = (field: string) =>
     cn(
       values.type === "product"
-        ? "w-full h-10 px-3.5 rounded-[10px] border bg-white text-[15px] outline-none transition-colors"
+        ? "w-full h-10 px-3.5 rounded-lg border bg-white text-[15px] outline-none transition-colors"
         : "w-full h-11 px-4 rounded-xl border bg-card text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20",
       errors[field]
         ? "border-destructive"

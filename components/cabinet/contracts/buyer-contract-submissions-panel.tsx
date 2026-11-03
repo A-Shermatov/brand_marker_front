@@ -1,7 +1,7 @@
 "use client"
 
 import { statusPillClass } from "@/components/ui/status-badge"
-import { Check, Package, X } from "lucide-react"
+import { CheckIcon as Check, PackageIcon as Package, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import type { ContractWithRelations } from "@/types"
 import {
   getSubmissionTypeLabel,

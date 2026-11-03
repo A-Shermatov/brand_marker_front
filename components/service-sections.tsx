@@ -2,11 +2,7 @@
 
 import { useMemo } from "react"
 import Link from "next/link"
-import {
-  TrendingUp, ChevronRight, Users, Clock, Zap, Award,
-  FileText, Building2, Briefcase, CircleDollarSign,
-  Star, MapPin, BadgeCheck, ArrowRight,
-} from "lucide-react"
+import { TrendUpIcon as TrendingUp, CaretRightIcon as ChevronRight, UsersIcon as Users, ClockIcon as Clock, LightningIcon as Zap, MedalIcon as Award, FileTextIcon as FileText, BuildingsIcon as Building2, BriefcaseIcon as Briefcase, CurrencyCircleDollarIcon as CircleDollarSign, StarIcon as Star, MapPinIcon as MapPin, SealCheckIcon as BadgeCheck, ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { useMarketplaceCategories } from "@/hooks/use-marketplace-categories"
 import { getFeaturedServices } from "@/lib/mock/marketplace-services"
 import { getTopPerformers } from "@/lib/mock/marketplace-performers"
@@ -201,9 +197,9 @@ export function TrustBanners() {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <BadgeCheck size={15} className="text-primary" />
-                <span className="text-primary text-xs font-bold uppercase tracking-widest">Для заказчиков</span>
+                <span className="text-primary text-[12.5px] font-medium">Для заказчиков</span>
               </div>
-              <h3 className="text-white text-xl font-black leading-tight mb-1.5">
+              <h3 className="text-white text-xl font-bold leading-tight mb-1.5">
                 Найдите исполнителя<br />за 24 часа
               </h3>
               <p className="text-white/65 text-xs leading-relaxed mb-5 max-w-xs">
@@ -224,10 +220,10 @@ export function TrustBanners() {
             </div>
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
-                <Star size={15} className="text-primary fill-primary" />
-                <span className="text-primary text-xs font-bold uppercase tracking-widest">Для исполнителей</span>
+                <Star size={15} className="text-primary fill-primary" weight="fill" />
+                <span className="text-primary text-[12.5px] font-medium">Для исполнителей</span>
               </div>
-              <h3 className="text-foreground text-xl font-black leading-tight mb-1.5">
+              <h3 className="text-foreground text-xl font-bold leading-tight mb-1.5">
                 Получайте новых<br />клиентов каждый день
               </h3>
               <p className="text-muted-foreground text-xs leading-relaxed mb-5 max-w-xs">
@@ -301,7 +297,7 @@ export function RecentRequests() {
                 </div>
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
                   <div>
-                    <div className="text-sm font-black text-primary">{req.budget}</div>
+                    <div className="text-sm font-bold text-primary">{req.budget}</div>
                     <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
                       <MapPin size={9} />{req.city}
                     </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Check, ShieldCheck } from "lucide-react"
+import { CheckIcon as Check, ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle,

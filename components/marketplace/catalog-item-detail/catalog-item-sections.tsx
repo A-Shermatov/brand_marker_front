@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BadgeCheck, FileText, Flag, MapPin, Star } from "lucide-react"
+import { SealCheckIcon as BadgeCheck, FileTextIcon as FileText, FlagIcon as Flag, MapPinIcon as MapPin, StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import type {
   ItemAttribute,
   ItemMedia,
@@ -120,7 +120,7 @@ export const CatalogItemSections = ({
       </div>
 
       <section id="pspecs" className="scroll-mt-36 grid gap-4">
-        <h2 className="text-[22px] font-extrabold tracking-[-0.01em] text-ink">
+        <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
           Основные характеристики
         </h2>
         {sortedAttrs.length === 0 ? (
@@ -152,7 +152,7 @@ export const CatalogItemSections = ({
       </section>
 
       <section id="ppack" className="scroll-mt-36 grid gap-4">
-        <h2 className="text-[22px] font-extrabold tracking-[-0.01em] text-ink">
+        <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
           Упаковка и сроки отгрузки
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
@@ -178,13 +178,13 @@ export const CatalogItemSections = ({
       </section>
 
       <section id="previews" className="scroll-mt-36 grid gap-5">
-        <h2 className="text-[22px] font-extrabold tracking-[-0.01em] text-ink">
+        <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
           Рейтинги и отзывы
         </h2>
         <div className="grid gap-5 rounded-2xl border border-line bg-white p-5 md:p-6">
           {supplier.reviews_count > 0 ? (
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              <b className="text-[52px] font-extrabold leading-none tnum">
+              <b className="text-[52px] font-bold leading-none tnum">
                 {supplier.rating.toFixed(1)}
               </b>
               <div className="grid gap-1.5">
@@ -222,12 +222,12 @@ export const CatalogItemSections = ({
       </section>
 
       <section id="psup" className="scroll-mt-36 grid gap-4">
-        <h2 className="text-[22px] font-extrabold tracking-[-0.01em] text-ink">
+        <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
           Информация о поставщике
         </h2>
-        <div className="grid gap-5 rounded-2xl bg-[#EEF0F3] p-5 md:p-6">
+        <div className="grid gap-5 rounded-2xl bg-surface-muted p-5 md:p-6">
           <div className="flex flex-wrap items-start gap-4">
-            <span className="grid size-16 place-items-center rounded-xl border border-line bg-white text-[20px] font-extrabold text-ink">
+            <span className="grid size-16 place-items-center rounded-xl border border-line bg-white text-[20px] font-bold text-ink">
               {supplier.display_name
                 .split(/\s+/)
                 .slice(0, 2)
@@ -238,7 +238,7 @@ export const CatalogItemSections = ({
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={supplierHref}
-                  className="text-left text-[18px] font-extrabold underline underline-offset-2"
+                  className="text-left text-[18px] font-bold underline underline-offset-2"
                 >
                   {supplier.display_name}
                 </Link>
@@ -257,7 +257,7 @@ export const CatalogItemSections = ({
                 <Star
                   size={14}
                   className="fill-amber-400 text-amber-400"
-                  aria-hidden
+                  aria-hidden weight="fill"
                 />
                 {supplier.rating.toFixed(1)}
                 <span className="font-normal text-mute">
@@ -285,7 +285,7 @@ export const CatalogItemSections = ({
 
       <section id="pdesc" className="scroll-mt-36 grid gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-[22px] font-extrabold tracking-[-0.01em] text-ink">
+          <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
             Описание товара от поставщика
           </h2>
           {canReport &&

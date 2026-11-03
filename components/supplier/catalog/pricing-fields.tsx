@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus, X } from "lucide-react"
+import { PlusIcon as Plus, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import type { PricingType } from "@/types"
 import {
@@ -59,7 +59,7 @@ const MODE_CARDS: Array<{
 export const PricingFields = ({ values, onChange, errors }: PricingFieldsProps) => {
   const inputClass = (field: string) =>
     cn(
-      "h-11 w-full rounded-[10px] border bg-white px-3 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
+      "h-11 w-full rounded-lg border bg-white px-3 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
       errors?.[field] ? "border-red-400" : "border-line",
     )
 
@@ -86,7 +86,7 @@ export const PricingFields = ({ values, onChange, errors }: PricingFieldsProps) 
                 "rounded-xl border-2 p-3.5 text-left transition-colors",
                 values.pricing_type === mode.type
                   ? "border-ink"
-                  : "border-line hover:border-[#C9CED6]",
+                  : "border-line hover:border-line-strong",
               )}
             >
               <b className="block text-[15px]">{mode.title}</b>

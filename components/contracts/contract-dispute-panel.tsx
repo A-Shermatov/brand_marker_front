@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { AlertTriangle, FileText, Paperclip } from "lucide-react"
+import { WarningIcon as AlertTriangle, FileTextIcon as FileText, PaperclipIcon as Paperclip } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { FilePreviewLink } from "@/components/shared/file-preview-link"
 import { Button } from "@/components/ui/button"

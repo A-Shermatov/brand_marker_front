@@ -1,5 +1,5 @@
 import type { ContractWithRelations } from "@/types"
-import { Shield } from "lucide-react"
+import { ShieldIcon as Shield } from "@phosphor-icons/react/dist/ssr"
 import { statusPillClass } from "@/components/ui/status-badge"
 import {
   contractStatusMeta,

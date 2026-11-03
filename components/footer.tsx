@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Smartphone } from "lucide-react"
+import { DeviceMobileIcon as Smartphone } from "@phosphor-icons/react/dist/ssr"
 import { BrandLogo } from "@/components/bm"
 import {
   forSuppliersUrl,
@@ -21,14 +21,14 @@ export default function Footer() {
             B2B‑площадка для закупок компаний Таджикистана. Платежи проводит банк‑партнёр,
             площадка не хранит данные карт.
           </p>
-          <span className="inline-flex h-10 items-center gap-2 justify-self-start rounded-[10px] border border-line px-4 text-[14px] font-semibold text-ink">
+          <span className="inline-flex items-center gap-2 text-[13px] text-mute">
             <Smartphone className="size-4" aria-hidden />
-            Мобильное приложение
+            Мобильное приложение готовим
           </span>
         </div>
 
         <div className="grid content-start gap-3">
-          <b className="text-[14px] text-ink">Покупателям</b>
+          <b className="text-[13.5px] font-semibold text-ink">Покупателям</b>
           <ul className="grid gap-2.5 text-[14.5px] text-mute">
             <li>
               <Link href="/services" className="hover:text-ink">
@@ -49,7 +49,7 @@ export default function Footer() {
         </div>
 
         <div className="grid content-start gap-3">
-          <b className="text-[14px] text-ink">Поставщикам</b>
+          <b className="text-[13.5px] font-semibold text-ink">Поставщикам</b>
           <ul className="grid gap-2.5 text-[14.5px] text-mute">
             <li>
               <Link href={forSuppliersUrl()} className="hover:text-ink">
@@ -70,7 +70,7 @@ export default function Footer() {
         </div>
 
         <div className="grid content-start gap-3">
-          <b className="text-[14px] text-ink">Помощь</b>
+          <b className="text-[13.5px] font-semibold text-ink">Помощь</b>
           <ul className="grid gap-2.5 text-[14.5px] text-mute">
             <li>
               <Link href={guaranteeUrl()} className="hover:text-ink">

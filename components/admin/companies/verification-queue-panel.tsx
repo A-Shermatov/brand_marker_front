@@ -3,18 +3,7 @@
 import { Suspense, useCallback, useEffect, useState, Fragment} from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
-  FileCheck2,
-  FileText,
-  Loader2,
-  RefreshCcw,
-  Search,
-  X,
-} from "lucide-react"
+import { CheckIcon as Check, CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ArrowSquareOutIcon as ExternalLink, CertificateIcon as FileCheck2, FileTextIcon as FileText, CircleNotchIcon as Loader2, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { CompanyActionDialog } from "@/components/admin/companies/company-action-dialog"
 import { VERIFICATION_CHECKLIST_LABELS } from "@/components/admin/companies/company-detail-sections"
 import { CompanyVerificationBadge } from "@/components/admin/companies/company-status-badges"
@@ -96,7 +85,7 @@ const ChecklistRow = ({ label, complete }: { label: string; complete: boolean })
 
 const InfoRow = ({ label, value }: { label: string; value: string | null | undefined }) => (
   <div>
-    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+    <dt className="text-[12.5px] font-medium text-muted-foreground">{label}</dt>
     <dd className="mt-1 text-sm font-medium text-foreground">{value || "Не указано"}</dd>
   </div>
 )

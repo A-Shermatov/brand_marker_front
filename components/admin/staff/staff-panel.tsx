@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, Fragment} from "react"
-import { Ban, Pencil, Plus, RefreshCcw, Search, UserCheck, UserCog } from "lucide-react"
+import { ProhibitIcon as Ban, PencilSimpleIcon as Pencil, PlusIcon as Plus, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, UserCheckIcon as UserCheck, UserGearIcon as UserCog } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import {
   StaffFormDialog,

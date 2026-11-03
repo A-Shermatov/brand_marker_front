@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Crown, Loader2, Trash2, UserPlus, UserRound } from "lucide-react"
+import { CrownIcon as Crown, CircleNotchIcon as Loader2, TrashIcon as Trash2, UserPlusIcon as UserPlus, UserCircleIcon as UserRound } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { CompanyConfirmDialog } from "@/components/admin/companies/company-confirm-dialog"
 import { Badge } from "@/components/ui/badge"

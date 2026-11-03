@@ -13,7 +13,7 @@ export const EscrowExplainer = ({ className }: { className?: string }) => (
     aria-labelledby="escrow-explainer-title"
   >
     <div>
-      <h2 id="escrow-explainer-title" className="text-[20px] font-extrabold tracking-[-0.02em]">
+      <h2 id="escrow-explainer-title" className="text-[20px] font-bold tracking-[-0.02em]">
         Как защищены ваши деньги
       </h2>
       <p className="mt-1 text-[14.5px] text-white/70">

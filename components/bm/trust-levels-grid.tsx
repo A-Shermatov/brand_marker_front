@@ -15,6 +15,7 @@ export function TrustLevelsGrid({
   className,
   onSelect,
 }: TrustLevelsGridProps) {
+  const currentIndex = TRUST_LEVELS.findIndex((l) => l.id === currentTier)
   return (
     <div
       className={cn(
@@ -22,13 +23,14 @@ export function TrustLevelsGrid({
         className,
       )}
       role="list"
-      aria-label="Уровни доверия"
+      aria-label="Уровни знака надёжности"
     >
-      {TRUST_LEVELS.map((level) => (
+      {TRUST_LEVELS.map((level, index) => (
         <div key={level.id} role="listitem">
           <TrustLevelCard
             level={level}
             current={currentTier === level.id}
+            reached={currentIndex > index}
             onSelect={onSelect}
           />
         </div>

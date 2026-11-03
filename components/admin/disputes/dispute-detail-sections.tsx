@@ -3,7 +3,7 @@
 import { useRef, useState } from "react"
 import { AdminLink } from "@/components/admin/admin-link"
 import { formatCurrency } from "@/lib/format"
-import { FileText, Paperclip } from "lucide-react"
+import { FileTextIcon as FileText, PaperclipIcon as Paperclip } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -55,19 +55,19 @@ const PartySection = ({
     {party ? (
       <dl className="grid gap-4 sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <dt className="text-[12.5px] font-medium text-muted-foreground">
             Имя
           </dt>
           <dd className="mt-1 text-sm font-medium">{partyLabel(party)}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <dt className="text-[12.5px] font-medium text-muted-foreground">
             Email
           </dt>
           <dd className="mt-1 text-sm font-medium">{party.email || "—"}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <dt className="text-[12.5px] font-medium text-muted-foreground">
             Профиль
           </dt>
           <dd className="mt-1 text-sm font-medium">
@@ -76,7 +76,7 @@ const PartySection = ({
         </div>
         {party.company_id && (
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Компания
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -168,7 +168,7 @@ export const AdminDisputeDetailSections = ({
         </p>
         <dl className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Контракт
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -181,7 +181,7 @@ export const AdminDisputeDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Сумма
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -189,7 +189,7 @@ export const AdminDisputeDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Решение
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -198,7 +198,7 @@ export const AdminDisputeDetailSections = ({
           </div>
           {dispute.partial_buyer_amount != null && (
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Частичный возврат
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -380,7 +380,7 @@ export const AdminDisputeDetailSections = ({
       </section>
 
       <section id="escrow" className={sectionClassName}>
-        <h2 className="mb-5 text-lg font-bold">Escrow</h2>
+        <h2 className="mb-5 text-lg font-semibold">Деньги на гарантии</h2>
         <dl className="grid gap-4 sm:grid-cols-3">
           {(
             [
@@ -390,7 +390,7 @@ export const AdminDisputeDetailSections = ({
             ] as const
           ).map(([key, value]) => (
             <div key={key} className="rounded-xl border border-border p-4">
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 {escrowSummaryMeta[key].label}
               </dt>
               <dd className="mt-2 text-lg font-bold">

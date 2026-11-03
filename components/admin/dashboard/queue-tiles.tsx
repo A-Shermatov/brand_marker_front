@@ -1,14 +1,6 @@
 import Link from "next/link"
-import {
-  Building2,
-  Boxes,
-  Flag,
-  RefreshCw,
-  MessageSquare,
-  Scale,
-  Landmark,
-  type LucideIcon,
-} from "lucide-react"
+import { BuildingsIcon as Building2, StackIcon as Boxes, FlagIcon as Flag, ArrowsClockwiseIcon as RefreshCw, ChatTextIcon as MessageSquare, ScalesIcon as Scale, BankIcon as Landmark } from "@phosphor-icons/react/dist/ssr"
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 export type QueueTile = {
@@ -17,7 +9,7 @@ export type QueueTile = {
   hint: string
   count: number
   href: string
-  Icon: LucideIcon
+  Icon: PhosphorIcon
 }
 
 type QueueTilesProps = {
@@ -50,7 +42,7 @@ export const QueueTiles = ({ tiles }: QueueTilesProps) => (
               />
               <b
                 className={cn(
-                  "tnum text-[24px] font-extrabold",
+                  "tnum text-[24px] font-bold",
                   !hot && "text-mute",
                 )}
               >

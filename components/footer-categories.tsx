@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { useMarketplaceCategories } from "@/hooks/use-marketplace-categories"
 import {
   categoriesUrl,

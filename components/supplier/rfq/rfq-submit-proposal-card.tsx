@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { ArrowRight, CheckCircle2, Loader2, Lock, MessageSquare, Send, XCircle } from "lucide-react"
+import { ArrowRightIcon as ArrowRight, CheckCircleIcon as CheckCircle2, CircleNotchIcon as Loader2, LockIcon as Lock, ChatTextIcon as MessageSquare, PaperPlaneRightIcon as Send, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import type { Proposal, ProposalStatus } from "@/types"
 import { formatDeliveryTime, formatMoneyDisplay } from "@/lib/format"

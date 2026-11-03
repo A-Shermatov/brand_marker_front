@@ -3,15 +3,7 @@
 import { Suspense, useCallback, useMemo, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  AlertTriangle,
-  ChevronLeft,
-  ChevronRight,
-  Loader2,
-  MessageSquare,
-  Send,
-  Trash2,
-} from "lucide-react"
+import { WarningIcon as AlertTriangle, CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, CircleNotchIcon as Loader2, ChatTextIcon as MessageSquare, PaperPlaneRightIcon as Send, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import {
   PageEmptyState,
@@ -147,7 +139,7 @@ const AdminChatsContent = () => {
                 if (e.key === "Enter") setParams({ q: draftQ.trim() || null, chat: null, page: null })
               }}
               placeholder="Компания, сделка или слово"
-              className="h-10 mb-2 rounded-[10px] border border-line bg-white px-3.5 text-[14px] outline-none focus:border-brand-600"
+              className="h-10 mb-2 rounded-lg border border-line bg-white px-3.5 text-[14px] outline-none focus:border-brand-600"
             />
             <SegmentedControl
               value={filter}
@@ -259,7 +251,7 @@ const AdminChatsContent = () => {
                 {entityHref ? (
                   <Link
                     href={entityHref}
-                    className="inline-flex h-9 items-center rounded-[10px] border border-line px-3 text-[13px] font-semibold hover:bg-canvas"
+                    className="inline-flex h-9 items-center rounded-lg border border-line px-3 text-[13px] font-semibold hover:bg-canvas"
                   >
                     {chat.kind === "contract" ? "Сделка" : "КП"}
                   </Link>
@@ -348,13 +340,13 @@ const AdminChatsContent = () => {
                           }
                         }}
                         placeholder="Сообщение от модератора — увидят обе стороны"
-                        className="h-11 flex-1 rounded-[10px] border border-line bg-white px-3.5 text-[14px] outline-none focus:border-brand-600"
+                        className="h-11 flex-1 rounded-lg border border-line bg-white px-3.5 text-[14px] outline-none focus:border-brand-600"
                       />
                       <button
                         type="button"
                         disabled={!text.trim() || sendMessage.isPending}
                         onClick={() => void handleSend(text)}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] bg-ink text-white disabled:opacity-40"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-ink text-white disabled:opacity-40"
                         aria-label="Отправить"
                       >
                         <Send className="size-4" />

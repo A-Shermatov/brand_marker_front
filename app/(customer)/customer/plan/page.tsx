@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Check, Star } from "lucide-react"
+import { CheckIcon as Check, StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import { SurfaceCard } from "@/components/bm"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,7 +22,7 @@ export default function CustomerPlanPage() {
         <SurfaceCard className="grid content-start gap-4">
           <span className="text-[13px] text-mute">Ваш тариф</span>
           <div className="flex flex-wrap items-center gap-3">
-            <b className="text-[24px] font-extrabold text-ink">
+            <b className="text-[24px] font-bold text-ink">
               {onPlus ? BUYER_PLUS_PLAN.name : "Бесплатный"}
             </b>
             {onPlus ? (
@@ -60,7 +60,7 @@ export default function CustomerPlanPage() {
 
         <section className="grid gap-4 rounded-2xl bg-ink p-6 text-white">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <b className="text-[22px] font-extrabold">{BUYER_PLUS_PLAN.name}</b>
+            <b className="text-[22px] font-bold">{BUYER_PLUS_PLAN.name}</b>
             <span className="text-[15px]">
               <b className="tnum text-[28px]">{BUYER_PLUS_PLAN.price}</b>{" "}
               <span className="text-white/60">
@@ -95,7 +95,7 @@ export default function CustomerPlanPage() {
       </div>
 
       <section className="grid gap-4">
-        <h2 className="text-[20px] font-extrabold tracking-[-0.02em] text-ink">
+        <h2 className="text-[20px] font-bold tracking-[-0.02em] text-ink">
           Услуги площадки
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

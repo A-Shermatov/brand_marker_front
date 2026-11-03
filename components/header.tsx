@@ -3,9 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import {
-  User, Menu, X, LogOut, ShoppingBag, LayoutGrid,
-} from "lucide-react"
+import { UserIcon as User, ListIcon as Menu, XIcon as X, SignOutIcon as LogOut, ShoppingBagIcon as ShoppingBag, GridFourIcon as LayoutGrid } from "@phosphor-icons/react/dist/ssr"
 import { MarketplaceSearch } from "@/components/marketplace/marketplace-search"
 import {
   DropdownMenu,
@@ -88,8 +86,8 @@ export default function Header() {
   const closeMobileMenu = () => setMobileMenuOpen(false)
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-line bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-2 px-4 sm:gap-3 lg:h-[68px] lg:gap-6 lg:px-8">
+    <header className="sticky top-0 z-30 w-full border-b border-line bg-white/90 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-2 px-4 sm:gap-3 lg:h-16 lg:gap-6 lg:px-8">
         <span className="shrink-0 sm:hidden">
           <BrandLogo small showWordmark={false} />
         </span>
@@ -108,10 +106,10 @@ export default function Header() {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "inline-flex h-9 items-center whitespace-nowrap rounded-lg px-3 text-[15px] font-semibold transition",
+                  "relative inline-flex h-9 items-center whitespace-nowrap rounded-md px-3 text-[14.5px] transition-colors",
                   on
-                    ? "bg-canvas text-ink"
-                    : "text-ink/70 hover:bg-canvas hover:text-ink",
+                    ? "font-semibold text-ink after:absolute after:inset-x-3 after:-bottom-[13px] after:h-[2px] after:rounded-full after:bg-brand-600"
+                    : "font-medium text-ink-soft hover:bg-surface-muted hover:text-ink",
                 )}
               >
                 {item.label}
@@ -136,12 +134,12 @@ export default function Header() {
               <button
                 type="button"
                 aria-label="Кабинет"
-                className="flex h-10 shrink-0 items-center gap-2 rounded-[10px] pl-1 pr-3 transition hover:bg-canvas"
+                className="flex h-10 shrink-0 items-center gap-2 rounded-lg pl-1 pr-3 transition-colors hover:bg-surface-muted"
               >
-                <span className="grid size-8 place-items-center rounded-lg bg-ink text-[12px] font-bold text-white">
+                <span className="grid size-8 place-items-center rounded-full bg-surface-muted text-[12px] font-semibold text-ink ring-1 ring-line">
                   {initials}
                 </span>
-                <span className="hidden text-[14.5px] font-semibold sm:block">
+                <span className="hidden text-[14px] font-medium sm:block">
                   Кабинет
                 </span>
               </button>
@@ -183,7 +181,7 @@ export default function Header() {
         ) : (
           <Link
             href="/login"
-            className="hidden h-10 shrink-0 items-center rounded-[10px] px-3 text-[15px] font-semibold text-ink transition hover:bg-canvas sm:inline-flex"
+            className="hidden h-10 shrink-0 items-center rounded-lg px-3 text-[14.5px] font-medium text-ink transition-colors hover:bg-surface-muted sm:inline-flex"
           >
             Войти
           </Link>
@@ -198,7 +196,7 @@ export default function Header() {
 
         <button
           type="button"
-          className="grid size-10 shrink-0 place-items-center rounded-[10px] hover:bg-canvas lg:hidden"
+          className="grid size-10 shrink-0 place-items-center rounded-lg hover:bg-canvas lg:hidden"
           aria-label={mobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={mobileMenuOpen}
           onClick={() => setMobileMenuOpen((v) => !v)}
@@ -215,14 +213,14 @@ export default function Header() {
                 <Link
                   href="/login"
                   onClick={closeMobileMenu}
-                  className="flex h-11 items-center rounded-lg px-3 text-[16px] font-semibold hover:bg-canvas"
+                  className="flex h-11 items-center rounded-lg px-3 text-[15px] font-medium hover:bg-surface-muted"
                 >
                   Войти
                 </Link>
                 <Link
                   href={registerUrl()}
                   onClick={closeMobileMenu}
-                  className="flex h-11 items-center rounded-lg px-3 text-[16px] font-semibold hover:bg-canvas"
+                  className="flex h-11 items-center rounded-lg px-3 text-[15px] font-medium hover:bg-surface-muted"
                 >
                   Регистрация
                 </Link>
@@ -231,7 +229,7 @@ export default function Header() {
               <Link
                 href={getCabinetBase(authedUser.role)}
                 onClick={closeMobileMenu}
-                className="flex h-11 items-center rounded-lg px-3 text-[16px] font-semibold hover:bg-canvas"
+                className="flex h-11 items-center rounded-lg px-3 text-[15px] font-medium hover:bg-surface-muted"
               >
                 Кабинет
               </Link>
@@ -242,7 +240,7 @@ export default function Header() {
                 href={item.href}
                 onClick={closeMobileMenu}
                 className={cn(
-                  "flex h-11 items-center rounded-lg px-3 text-[16px] font-semibold hover:bg-canvas",
+                  "flex h-11 items-center rounded-lg px-3 text-[15px] font-medium hover:bg-surface-muted",
                   item.match(pathname) && "bg-canvas",
                 )}
               >

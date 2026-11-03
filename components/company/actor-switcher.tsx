@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Building2, ChevronDown, Plus, User } from "lucide-react"
+import { BuildingsIcon as Building2, CaretDownIcon as ChevronDown, PlusIcon as Plus, UserIcon as User } from "@phosphor-icons/react/dist/ssr"
 import {
   DropdownMenu,
   DropdownMenuContent,

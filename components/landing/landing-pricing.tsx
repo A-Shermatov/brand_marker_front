@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { CreditCard, Lock, Truck, CircleCheck } from "lucide-react"
+import { CreditCardIcon as CreditCard, LockIcon as Lock, TruckIcon as Truck, CheckCircleIcon as CircleCheck } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { guaranteeUrl } from "@/lib/marketplace-routes"
 
@@ -14,7 +14,7 @@ export const LandingPricing = () => (
   <section id="pricing" className="mt-16 bg-ink text-white">
     <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-14 lg:grid-cols-[340px_1fr] lg:px-8">
       <div className="grid content-start gap-4">
-        <h2 className="text-[30px] font-extrabold leading-tight tracking-[-0.02em]">
+        <h2 className="text-[30px] font-semibold leading-tight tracking-[-0.02em]">
           Как работает гарантия сделки
         </h2>
         <p className="text-[16px] text-white/70">

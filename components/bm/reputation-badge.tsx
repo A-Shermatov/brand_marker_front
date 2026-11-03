@@ -1,13 +1,11 @@
-"use client"
-
-import { useMemo } from "react"
 import { cn } from "@/lib/utils"
 import {
   normalizeReputationTier,
-  reputationTierLabel,
+  reputationTierHint,
   trustLevelMeta,
+  type ReputationTier,
 } from "@/lib/trust-levels"
-import { TrustShieldIcon } from "@/components/bm/trust-shield-icon"
+import { TrustMark } from "@/components/bm/trust-mark"
 
 type ReputationBadgeProps = {
   tier: string | null | undefined
@@ -16,42 +14,36 @@ type ReputationBadgeProps = {
   size?: number
 }
 
-let _d = 0
-const nextD = () => {
-  _d += 1
-  return `${((_d * 0.53) % 3.2).toFixed(2)}s`
+const TONES: Record<Exclude<ReputationTier, "none">, string> = {
+  silver: "bg-[#F1F2F4] text-[#48505B] ring-[#D6DADF]",
+  gold: "bg-[#FBF3DC] text-[#744E00] ring-[#EACB7C]",
+  diamond:
+    "bg-[linear-gradient(100deg,#3A0C7A,#7A22C8_55%,#C2389F)] text-white ring-[#FF7BD5]/60 shadow-[0_1px_6px_rgba(170,40,170,.35)]",
 }
 
-/** Trust badge with shine — BrendMarket-v7.2 `trustBadge`. */
+/** Reliability mark with its name, for profile headers and cards. */
 export function ReputationBadge({
   tier,
   className,
   showLabel = true,
   size = 18,
 }: ReputationBadgeProps) {
-  const delay = useMemo(() => nextD(), [])
   const id = normalizeReputationTier(tier)
-  if (id === "none") return null
   const meta = trustLevelMeta(id)
-  if (!meta) return null
+  if (id === "none" || !meta) return null
 
   return (
     <span
       className={cn(
-        "bm-shine inline-flex items-center gap-1 whitespace-nowrap rounded-md font-extrabold shrink-0",
-        size <= 15 ? "h-5 pl-0.5 pr-1.5 text-[11px]" : "h-6 pl-0.5 pr-2 text-[12px]",
+        "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full font-semibold ring-1 ring-inset",
+        size <= 16 ? "h-5 pl-0.5 pr-2 text-[11.5px]" : "h-6 pl-0.5 pr-2.5 text-[12.5px]",
+        TONES[id],
         className,
       )}
-      style={{
-        ["--d" as string]: delay,
-        background: meta.bg,
-        color: meta.fg,
-        boxShadow: `inset 0 0 0 1px ${meta.bd}`,
-      }}
-      title={`${meta.name} щит доверия: выдан площадкой за успешные сделки и высокий рейтинг. Купить нельзя`}
+      title={reputationTierHint(id)}
     >
-      <TrustShieldIcon tier={id} size={size <= 15 ? 15 : 18} still />
-      {showLabel ? <span>{reputationTierLabel(id)}</span> : null}
+      <TrustMark tier={id} size={size <= 16 ? 16 : 20} decorative />
+      {showLabel ? <span>{meta.name}</span> : null}
     </span>
   )
 }

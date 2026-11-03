@@ -1,17 +1,10 @@
-import {
-  Building2,
-  FileText,
-  Inbox,
-  Send,
-  ShieldCheck,
-  Wallet,
-  type LucideIcon,
-} from "lucide-react"
+import { BuildingsIcon as Building2, FileTextIcon as FileText, TrayIcon as Inbox, PaperPlaneRightIcon as Send, ShieldCheckIcon as ShieldCheck, WalletIcon as Wallet } from "@phosphor-icons/react/dist/ssr"
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 
 export type LandingRole = "buyer" | "supplier"
 
 export type LandingStep = {
-  Icon: LucideIcon
+  Icon: PhosphorIcon
   title: string
   description: string
 }
