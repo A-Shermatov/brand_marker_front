@@ -245,6 +245,7 @@ export type PublicSupplier = {
   country: string | null
   description: string | null
   website: string | null
+  logo?: string | null
   rating: number
   verification_status: VerificationStatus
   reviews_count: number

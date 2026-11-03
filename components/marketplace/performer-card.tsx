@@ -1,8 +1,10 @@
 import Link from "next/link"
+import Image from "next/image"
 import { BadgeCheck, Clock, Crown, MapPin, Star, Users } from "lucide-react"
 import type { MarketplacePerformer } from "@/types/marketplace"
 import { getIcon } from "@/lib/icon-map"
 import { performerUrl } from "@/lib/marketplace-routes"
+import { resolveFileUrl } from "@/lib/file-url"
 
 type PerformerCardProps = {
   performer: MarketplacePerformer
@@ -18,7 +20,16 @@ export const PerformerCard = ({ performer }: PerformerCardProps) => {
     >
       <div className="flex items-start gap-4">
         <div className={`${performer.color} w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm`}>
-          {performer.initials}
+          {performer.imageUrl ? (
+            <Image
+              src={resolveFileUrl(performer.imageUrl)}
+              alt=""
+              width={48}
+              height={48}
+              unoptimized
+              className="h-12 w-12 rounded-xl object-cover"
+            />
+          ) : performer.initials}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">

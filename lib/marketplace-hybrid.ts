@@ -77,6 +77,7 @@ export const mapCompanyToPerformer = (
       ? `${new Date().getFullYear() - company.profile.founded_year}+`
       : "3+",
     initials: initials || "BM",
+    imageUrl: company.logo,
     color: "bg-primary",
     specialties: company.profile?.industries ?? [],
     verified: company.verification_status === "verified",
@@ -108,6 +109,7 @@ export const mapPublicSupplierToPerformer = (
     clients: String(supplier.active_catalog_count),
     years: "—",
     initials: initials || "BM",
+    imageUrl: supplier.logo,
     color: "bg-primary",
     specialties: supplier.industries,
     verified: supplier.verification_status === "verified",

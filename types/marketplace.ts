@@ -58,6 +58,7 @@ export type MarketplacePerformer = {
   clients: string
   years: string
   initials: string
+  imageUrl?: string | null
   color: string
   specialties: string[]
   verified: boolean
