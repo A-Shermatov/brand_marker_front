@@ -1,22 +1,19 @@
 "use client"
 
 import Link from "next/link"
-import { useMemo } from "react"
+import { CheckIcon, LockSimpleIcon, SealCheckIcon } from "@phosphor-icons/react/dist/ssr"
 import {
-  ReputationBadge,
+  CompanyName,
   SurfaceCard,
   TrustLevelsGrid,
-  TrustShieldIcon,
+  TrustMark,
 } from "@/components/bm"
 import { Button } from "@/components/ui/button"
-import { isApiEnabled } from "@/lib/api/config"
-import { useSupplierCompaniesQuery } from "@/hooks/api/use-supplier-companies-query"
+import { useSupplierMarks } from "@/hooks/use-supplier-marks"
 import { useAuthStore } from "@/lib/store/auth-store"
-import { useHydrated } from "@/hooks/use-hydrated"
 import {
-  resolveReputationTier,
   TRUST_LEVELS,
-  type ReputationTier,
+  TRUST_MARK_NAME,
   type TrustLevelMeta,
 } from "@/lib/trust-levels"
 import { cn } from "@/lib/utils"
@@ -48,17 +45,14 @@ function conditionsFor(
     },
     {
       key: "deals",
-      label: `Не меньше ${target.minCompleted} успешных сделок`,
-      value:
-        stats.completed >= target.minCompleted
-          ? `${stats.completed} сделок`
-          : `${stats.completed} из ${target.minCompleted}`,
+      label: `Завершённых сделок: от ${target.minCompleted}`,
+      value: `${stats.completed} из ${target.minCompleted}`,
       ok: stats.completed >= target.minCompleted,
       pct: Math.min(1, stats.completed / Math.max(1, target.minCompleted)),
     },
     {
       key: "rating",
-      label: `Рейтинг от ${target.minRating.toFixed(1)}`,
+      label: `Рейтинг: от ${target.minRating.toFixed(1)}`,
       value: stats.rating > 0 ? stats.rating.toFixed(1) : "нет оценок",
       ok: stats.rating >= target.minRating,
       pct: Math.min(1, stats.rating / Math.max(0.1, target.minRating)),
@@ -67,7 +61,7 @@ function conditionsFor(
       ? [
           {
             key: "onTime",
-            label: `Поставки в срок от ${target.minOnTime}%`,
+            label: `Сделок без споров: от ${target.minOnTime}%`,
             value:
               stats.onTime == null ? "нет данных" : `${Math.round(stats.onTime)}%`,
             ok: stats.onTime != null && stats.onTime >= target.minOnTime,
@@ -82,131 +76,144 @@ function conditionsFor(
 }
 
 export default function SupplierTrustPage() {
-  const hydrated = useHydrated()
-  const useApi = isApiEnabled()
   const user = useAuthStore((s) => s.user)
-  const { data: companies } = useSupplierCompaniesQuery(hydrated && useApi)
-  const myCompany =
-    companies?.items?.find((c) => c.id === user?.activeCompanyId) ??
-    companies?.items?.[0]
+  const { stats, tier, plan, title } = useSupplierMarks()
 
-  const stats = useMemo(() => {
-    const verified = myCompany?.verification_status === "verified"
-    const completed = Number(myCompany?.stats?.completed_contracts ?? 0)
-    const disputes = Number(myCompany?.stats?.disputes_count ?? 0)
-    const rating = Number(
-      myCompany?.stats?.average_rating ?? myCompany?.rating ?? 0,
-    )
-    const denom = completed + disputes
-    const onTime = denom > 0 ? (completed / denom) * 100 : null
-    return { verified, completed, rating, onTime }
-  }, [myCompany])
-
-  const tier: ReputationTier = resolveReputationTier({
-    verification_status: myCompany?.verification_status,
-    completed_contracts: stats.completed,
-    rating: stats.rating,
-    success_rate: stats.onTime,
-  })
-
-  const currentMeta = TRUST_LEVELS.find((t) => t.id === tier)
-  const nextMeta =
-    TRUST_LEVELS.find(
-      (t) =>
-        TRUST_LEVELS.findIndex((x) => x.id === t.id) >
-        TRUST_LEVELS.findIndex((x) => x.id === tier),
-    ) ?? null
-
-  const nextConditions = nextMeta
-    ? conditionsFor(nextMeta, stats)
-    : tier === "none"
-      ? conditionsFor(TRUST_LEVELS[0]!, stats)
-      : []
+  const currentIndex = TRUST_LEVELS.findIndex((t) => t.id === tier)
+  const currentMeta = currentIndex >= 0 ? TRUST_LEVELS[currentIndex] : null
+  const nextMeta = TRUST_LEVELS[currentIndex + 1] ?? null
+  const nextConditions = nextMeta ? conditionsFor(nextMeta, stats) : []
   const nextPassed = nextConditions.filter((c) => c.ok).length
+  const companyTitle = title ?? user?.company ?? "Ваша компания"
 
   return (
     <div className="grid gap-5">
-      <SurfaceCard className="grid items-center gap-6 lg:grid-cols-2">
-        <div className="flex items-center gap-5">
-          {tier !== "none" ? (
-            <TrustShieldIcon tier={tier} size={96} />
-          ) : (
-            <TrustShieldIcon tier="none" size={96} />
-          )}
-          <div>
-            <span className="text-[13px] text-mute">Ваш уровень</span>
-            <h2 className="flex flex-wrap items-center gap-2 text-[26px] font-extrabold leading-tight text-ink">
-              {currentMeta ? `${currentMeta.name} щит` : "Пока без щита"}
-              {tier !== "none" ? <ReputationBadge tier={tier} size={15} /> : null}
+      <SurfaceCard padded={false} className="grid overflow-hidden lg:grid-cols-[1fr_1.1fr]">
+        <div className="flex items-center gap-5 p-6">
+          <TrustMark tier={tier} size={88} />
+          <div className="min-w-0">
+            <p className="text-[13px] text-mute">{TRUST_MARK_NAME}</p>
+            <h2 className="mt-0.5 text-[24px] font-semibold leading-tight text-ink">
+              {currentMeta ? currentMeta.name : "Пока без знака"}
             </h2>
-            <p className="mt-0.5 text-[14.5px] text-mute">
+            <p className="mt-1 max-w-sm text-[14px] text-mute">
               {currentMeta
-                ? "Проверяется автоматически — уровень сохранится, пока условия выполняются"
-                : `Выполнено ${nextPassed} из ${nextConditions.length} условий для первого уровня`}
+                ? "Пересчитывается автоматически. Знак остаётся, пока условия выполняются."
+                : "Знак появится рядом с названием компании, когда вы выполните условия первого уровня."}
             </p>
           </div>
         </div>
 
-        {nextMeta || tier === "none" ? (
-          <div className="grid gap-3 rounded-xl bg-canvas p-4">
-            <div className="flex items-center gap-3">
-              <TrustShieldIcon
-                tier={nextMeta?.id ?? "silver"}
-                size={36}
-              />
-              <b className="flex-1 text-[15px] text-ink">
-                {nextMeta
-                  ? `До уровня «${nextMeta.name}»`
-                  : "До уровня «Серебряный»"}
-              </b>
-              <span className="text-[13.5px] text-mute">
-                {nextPassed} из {nextConditions.length}
-              </span>
-            </div>
-            {nextConditions
-              .filter((c) => !c.ok)
-              .map((c) => (
-                <div key={c.key} className="grid gap-1">
-                  <span className="flex justify-between text-[14px]">
-                    <span>{c.label}</span>
-                    <b className="tnum">{c.value}</b>
-                  </span>
-                  {c.key !== "verified" ? (
-                    <span className="h-1.5 overflow-hidden rounded-full bg-[#E3E6EB]">
+        <div className="border-t border-line bg-canvas/60 p-6 lg:border-t-0 lg:border-l">
+          {nextMeta ? (
+            <>
+              <div className="mb-4 flex items-center gap-3">
+                <TrustMark tier={nextMeta.id} size={30} still decorative />
+                <b className="flex-1 text-[15px] font-semibold text-ink">
+                  До знака «{nextMeta.name}»
+                </b>
+                <span className="text-[13px] text-mute tnum">
+                  {nextPassed} из {nextConditions.length}
+                </span>
+              </div>
+              <ul className="grid gap-3.5">
+                {nextConditions.map((c) => (
+                  <li key={c.key} className="grid gap-1.5">
+                    <span className="flex items-center gap-2 text-[14px]">
                       <span
-                        className={cn("block h-full rounded-full bg-brand-600")}
-                        style={{ width: `${Math.round(c.pct * 100)}%` }}
-                      />
+                        className={cn(
+                          "grid size-[18px] shrink-0 place-items-center rounded-full",
+                          c.ok ? "bg-brand-600 text-white" : "border border-line-strong bg-white",
+                        )}
+                        aria-hidden
+                      >
+                        {c.ok ? <CheckIcon weight="bold" className="size-3" /> : null}
+                      </span>
+                      <span className={cn("flex-1", c.ok ? "text-mute" : "text-ink")}>{c.label}</span>
+                      <span className={cn("tnum", c.ok ? "text-mute" : "font-semibold text-ink")}>
+                        {c.value}
+                      </span>
                     </span>
-                  ) : null}
-                </div>
-              ))}
-            {nextConditions.every((c) => c.ok) ? (
-              <p className="text-[14px] text-mute">
-                Условия выполнены — уровень обновится после пересчёта.
-              </p>
-            ) : null}
-          </div>
-        ) : (
-          <div className="rounded-xl bg-canvas p-4 text-[14.5px] text-ink">
-            У вас высший уровень щита. Так держать.
-          </div>
-        )}
+                    {!c.ok && c.key !== "verified" ? (
+                      <span className="ml-[26px] h-1 overflow-hidden rounded-full bg-line">
+                        <span
+                          className="block h-full rounded-full"
+                          style={{
+                            width: `${Math.max(3, Math.round(c.pct * 100))}%`,
+                            background: nextMeta.accent,
+                          }}
+                        />
+                      </span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+              {nextConditions.every((c) => c.ok) ? (
+                <p className="mt-4 text-[13.5px] text-mute">
+                  Условия выполнены, знак обновится при следующем пересчёте.
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <div className="flex h-full items-center gap-3 text-[14.5px] text-ink">
+              <TrustMark tier="diamond" size={30} still decorative />
+              У вас высший знак площадки. Его видят все покупатели в каталоге.
+            </div>
+          )}
+        </div>
       </SurfaceCard>
 
       <section className="grid gap-3">
-        <h2 className="text-[18px] font-bold text-ink">Уровни щита</h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-[17px] font-semibold text-ink">Уровни</h2>
+          <p className="text-[13px] text-mute">
+            «Сделки без споров»: доля завершённых сделок, по которым не открывали спор
+          </p>
+        </div>
         <TrustLevelsGrid currentTier={tier === "none" ? null : tier} />
       </section>
 
-      <SurfaceCard className="grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-        <p className="text-[14.5px] text-mute">
-          Щит нельзя купить. Подписка отдельно повышает видимость в каталоге.
-        </p>
-        <Button asChild variant="outline">
-          <Link href="/supplier/subscription">К тарифам подписки</Link>
-        </Button>
-      </SurfaceCard>
+      <section className="grid gap-3 md:grid-cols-2">
+        <SurfaceCard className="grid content-start gap-3">
+          <h2 className="text-[15px] font-semibold text-ink">Как вас видят покупатели</h2>
+          <div className="rounded-xl border border-line bg-canvas/60 p-4">
+            <CompanyName
+              name={companyTitle}
+              verified={stats.verified}
+              tier={tier}
+              plan={plan}
+              size="lg"
+            />
+            <p className="mt-1 text-[13px] text-mute">
+              В каталоге, заявках, сделках и чатах значки стоят рядом с названием
+            </p>
+          </div>
+          <ul className="grid gap-1.5 text-[13px] text-mute">
+            <li className="flex items-center gap-2">
+              <SealCheckIcon weight="fill" className="size-[18px] text-brand-600" aria-hidden />
+              Проверка документов
+            </li>
+            <li className="flex items-center gap-2">
+              <TrustMark tier="gold" size={18} still decorative />
+              {TRUST_MARK_NAME}: зарабатывается сделками
+            </li>
+          </ul>
+        </SurfaceCard>
+
+        <SurfaceCard className="grid content-start gap-3">
+          <div className="flex items-center gap-2">
+            <LockSimpleIcon className="size-[18px] text-mute" aria-hidden />
+            <h2 className="text-[15px] font-semibold text-ink">Знак нельзя купить</h2>
+          </div>
+          <p className="text-[14px] text-mute">
+            Тариф подписки работает отдельно: он поднимает ваши товары в каталоге и
+            добавляет значок тарифа. На знак надёжности он не влияет.
+          </p>
+          <Button asChild variant="outline" className="justify-self-start">
+            <Link href="/supplier/subscription">Тарифы подписки</Link>
+          </Button>
+        </SurfaceCard>
+      </section>
     </div>
   )
 }

@@ -169,7 +169,7 @@ export const SUPPLIER_HUBS: CabinetNavHub[] = [
   },
   {
     id: "tariff",
-    label: "Тариф и доверие",
+    label: "Надёжность и тариф",
     href: "/supplier/trust",
     match: ["/supplier/trust", "/supplier/subscription"],
   },
@@ -221,7 +221,7 @@ export const SUPPLIER_SUBTABS: Record<string, CabinetSubtab[]> = {
   tariff: [
     {
       id: "trust",
-      label: "Щит доверия",
+      label: "Знак надёжности",
       href: "/supplier/trust",
       match: ["/supplier/trust"],
     },
@@ -248,8 +248,8 @@ export const SUPPLIER_SECTION_TITLE: Record<string, SectionMeta> = {
     description: "Ваши товары и страница компании",
   },
   tariff: {
-    title: "Тариф и доверие",
-    description: "Щит доверия и подписка",
+    title: "Надёжность и тариф",
+    description: "Знак надёжности зарабатывается сделками, тариф подписки поднимает в каталоге",
   },
 }
 
@@ -341,7 +341,7 @@ export const ADMIN_SUBTABS: Record<string, CabinetSubtab[]> = {
     },
     {
       id: "trustadm",
-      label: "Щит доверия",
+      label: "Знак надёжности",
       href: "/admin/trust",
       match: ["/admin/trust"],
     },

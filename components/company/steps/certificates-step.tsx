@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus, Trash2 } from "lucide-react"
+import { PlusIcon as Plus, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import type { CompanyWizardCertificate, CompanyWizardInput } from "@/types"
 import { isoDateBounds } from "@/lib/iso-date"
 import { WizardField, wizardInputClass } from "@/components/company/wizard-field"

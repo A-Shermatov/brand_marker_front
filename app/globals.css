@@ -6,40 +6,43 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Brend Market — tokens from BrendMarket-v7.1.html */
-  --brand-50: #E9F6F0;
-  --brand-100: #CDEBDD;
-  --brand-200: #9BD5BB;
-  --brand-300: #6CC39E;
-  --brand-500: #12A06E;
-  --brand-600: #0E8A5E;
-  --brand-700: #0A6E4B;
-  --brand-900: #064A32;
+  /* Brend Market v8. Green is the brand and the "money is safe" signal;
+     neutrals are slightly warm so the UI reads like paper, not a template. */
+  --brand-50: #EDF6F1;
+  --brand-100: #D3EADD;
+  --brand-200: #A6D3BC;
+  --brand-300: #6FB696;
+  --brand-500: #17936A;
+  --brand-600: #0F7D58;
+  --brand-700: #0B6346;
+  --brand-900: #073D2B;
 
-  --navy-700: #3A3F48;
-  --navy-800: #23262C;
-  --navy-900: #16181D;
+  --navy-700: #3B3C38;
+  --navy-800: #262623;
+  --navy-900: #1A1A18;
 
-  --verify-50: #EEF3FF;
-  --verify-600: #2453C6;
+  --verify-50: #EEF2FC;
+  --verify-600: #2F55B8;
 
-  --safe-50: #E9F6F0;
-  --safe-100: #CDEBDD;
-  --safe-500: #0E8A5E;
-  --safe-700: #0A6E4B;
+  --safe-50: #EDF6F1;
+  --safe-100: #D3EADD;
+  --safe-500: #0F7D58;
+  --safe-700: #0B6346;
 
-  --ink: #16181D;
-  --mute: #5F6672;
-  --line: #E4E7EC;
-  --canvas: #F5F6F8;
-  --surface-muted: #ECEEF2;
+  --ink: #1C1C1A;
+  --ink-soft: #3F3F3B;
+  --mute: #6A6A64;
+  --faint: #9B9A93;
+  --line: #E5E4DF;
+  --line-strong: #D2D0C9;
+  --canvas: #F5F4F1;
+  --surface-muted: #EDECE8;
 
-  /* Cabinet bank hero (bHomeBank / sHomeBank) */
-  --bank-hero-from: #0B5A40;
-  --bank-hero-to: #083B2B;
+  /* Cabinet balance panel */
+  --bank-hero-from: #0D4F39;
+  --bank-hero-to: #0A3A2B;
 
-  /* Control radius matches HTML btn/input (10px) */
-  --radius-control: 10px;
+  --radius-control: 8px;
   --content-max: 1280px;
 
   --background: var(--canvas);
@@ -54,8 +57,9 @@
   --secondary-foreground: var(--brand-700);
   --muted: var(--canvas);
   --muted-foreground: var(--mute);
-  --accent: var(--brand-50);
-  --accent-foreground: var(--brand-700);
+  /* Hover and focus fills in menus and lists stay neutral. */
+  --accent: var(--surface-muted);
+  --accent-foreground: var(--ink);
   --destructive: #DC2626;
   --destructive-foreground: #ffffff;
   --border: var(--line);
@@ -72,7 +76,7 @@
   --chart-3: var(--navy-700);
   --chart-4: #F59E0B;
   --chart-5: #EF4444;
-  --radius: 0.75rem;
+  --radius: 10px;
   --sidebar: var(--canvas);
   --sidebar-foreground: var(--ink);
   --sidebar-primary: var(--brand-600);
@@ -120,8 +124,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-golos), 'Golos Text', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--font-onest), 'Onest', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --color-brand-50: var(--brand-50);
   --color-brand-100: var(--brand-100);
   --color-brand-200: var(--brand-200);
@@ -140,8 +144,11 @@
   --color-safe-500: var(--safe-500);
   --color-safe-700: var(--safe-700);
   --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
   --color-mute: var(--mute);
+  --color-faint: var(--faint);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-canvas: var(--canvas);
   --color-surface-muted: var(--surface-muted);
   --color-background: var(--background);
@@ -174,10 +181,13 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Tighter corners than the template defaults: cards 12px, controls 8px. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -199,6 +209,24 @@
     @apply bg-background text-foreground font-sans;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.015em;
+  }
+  ::selection {
+    background: var(--brand-100);
+    color: var(--ink);
+  }
+  /* Phosphor icons without an explicit size render at 1em; keep the 24px
+     default the layout was built around. Utilities (size-4 …) still win. */
+  svg[width='1em'][height='1em'][viewBox='0 0 256 256'] {
+    width: 24px;
+    height: 24px;
+  }
+  table {
+    font-variant-numeric: tabular-nums;
   }
   :focus-visible {
     outline: 2px solid var(--brand-600);
@@ -243,7 +271,7 @@
 
 @utility bm-input {
   width: 100%;
-  height: 2.75rem;
+  height: 2.625rem;
   border-radius: var(--radius-control);
   border: 1px solid var(--line);
   background: #fff;
@@ -255,14 +283,14 @@
     box-shadow 0.15s ease,
     background-color 0.15s ease;
   &::placeholder {
-    color: #9aa1ad;
+    color: var(--faint);
   }
   &:hover {
-    border-color: #c9ced6;
+    border-color: var(--line-strong);
   }
   &:focus {
     border-color: var(--brand-600);
-    box-shadow: 0 0 0 4px rgb(14 138 94 / 0.1);
+    box-shadow: 0 0 0 3px rgb(15 125 88 / 0.12);
   }
 }
 
@@ -286,13 +314,13 @@
 
 @utility scroll-thin {
   scrollbar-width: thin;
-  scrollbar-color: #c9d1dc transparent;
+  scrollbar-color: var(--line-strong) transparent;
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #c9d1dc;
+    background: var(--line-strong);
     border-radius: 3px;
   }
 }
@@ -304,102 +332,91 @@
   }
 }
 
-/* Trust badge shine / glow — BrendMarket-v7.1 */
-.bm-sw {
-  animation: bmSw 4.2s cubic-bezier(0.45, 0, 0.25, 1) infinite;
-  transform: translateX(0) skewX(-18deg);
+/* Reliability marks: light sweep, soft glow, sparkles (components/bm/trust-mark.tsx). */
+.bm-mark-sweep {
+  animation: bmMarkSweep 4.8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  transform: translateX(0) skewX(-16deg);
 }
-.bm-sw-slow {
-  animation-duration: 6.5s;
-}
-@keyframes bmSw {
+@keyframes bmMarkSweep {
   0%,
-  58% {
-    transform: translateX(0) skewX(-18deg);
+  62% {
+    transform: translateX(0) skewX(-16deg);
   }
-  88%,
+  92%,
   100% {
-    transform: translateX(190px) skewX(-18deg);
-  }
-}
-.bm-shine {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.bm-shine::after {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 45%;
-  background: linear-gradient(
-    100deg,
-    transparent,
-    rgba(255, 255, 255, 0.7),
-    transparent
-  );
-  transform: translateX(-120%) skewX(-18deg);
-  animation: bmShine 4.2s cubic-bezier(0.45, 0, 0.25, 1) infinite;
-  animation-delay: var(--d, 0s);
-  pointer-events: none;
-  z-index: 1;
-}
-@keyframes bmShine {
-  0%,
-  58% {
-    transform: translateX(-120%) skewX(-18deg);
-  }
-  88%,
-  100% {
-    transform: translateX(330%) skewX(-18deg);
+    transform: translateX(76px) skewX(-16deg);
   }
 }
 .bm-glow-gold {
-  animation: bmGlowG 3.2s ease-in-out infinite;
+  animation: bmGlowG 3.6s ease-in-out infinite;
 }
 @keyframes bmGlowG {
   0%,
   100% {
-    filter: drop-shadow(0 2px 3px rgba(217, 154, 30, 0.25));
+    filter: drop-shadow(0 1px 1.5px rgba(150, 100, 10, 0.25));
   }
   50% {
-    filter: drop-shadow(0 0 9px rgba(245, 190, 60, 0.75));
+    filter: drop-shadow(0 0 5px rgba(240, 190, 70, 0.55));
   }
 }
 .bm-glow-diamond {
-  animation: bmGlowD 2.8s ease-in-out infinite;
+  animation: bmGlowD 3s ease-in-out infinite;
 }
 @keyframes bmGlowD {
   0%,
   100% {
-    filter: drop-shadow(0 2px 4px rgba(109, 53, 217, 0.3));
+    filter: drop-shadow(0 1px 2px rgba(120, 20, 140, 0.4));
   }
   50% {
-    filter: drop-shadow(0 0 12px rgba(167, 121, 255, 0.9));
+    filter: drop-shadow(0 0 7px rgba(225, 80, 230, 0.8));
   }
 }
-.bm-glow-blue {
-  animation: bmGlowB 3.6s ease-in-out infinite;
+/* A facet of the diamond catching the light. */
+.bm-facet {
+  animation: bmFacet 3.6s ease-in-out infinite;
 }
-@keyframes bmGlowB {
+@keyframes bmFacet {
   0%,
   100% {
-    filter: drop-shadow(0 2px 3px rgba(36, 83, 198, 0.2));
+    opacity: 0.08;
   }
-  50% {
-    filter: drop-shadow(0 0 8px rgba(61, 116, 230, 0.6));
+  45% {
+    opacity: 0.38;
   }
 }
-.bm-glow-dark {
-  animation: bmGlowK 3.4s ease-in-out infinite;
+/* Plan marks: chevrons climb one after another, like a rank going up. */
+.bm-chev {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bmChev 5s cubic-bezier(0.3, 0.7, 0.3, 1) infinite;
 }
-@keyframes bmGlowK {
-  0%,
+@keyframes bmChev {
+  0% {
+    transform: translateY(2.2px);
+    opacity: 0.35;
+  }
+  9% {
+    transform: translateY(-0.8px);
+    opacity: 1;
+  }
+  15%,
   100% {
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+    transform: none;
+    opacity: 1;
   }
-  50% {
-    filter: drop-shadow(0 0 9px rgba(242, 207, 107, 0.55));
+}
+.bm-plan-sweep {
+  animation: bmPlanSweep 5s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  transform: translateX(0) skewX(-18deg);
+}
+@keyframes bmPlanSweep {
+  0%,
+  20% {
+    transform: translateX(0) skewX(-18deg);
+  }
+  42%,
+  100% {
+    transform: translateX(40px) skewX(-18deg);
   }
 }
 .bm-tw {
@@ -484,9 +501,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bm-sw,
+  .bm-mark-sweep,
+  .bm-plan-sweep,
+  .bm-chev,
+  .bm-facet,
   .bm-tw,
-  .bm-shine::after,
   [class*='bm-glow-'] {
     animation: none !important;
   }

@@ -3,15 +3,7 @@
 import { use, useMemo, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import {
-  AlertTriangle,
-  Ban,
-  FileText,
-  Mail,
-  RefreshCcw,
-  Star,
-  UserCheck,
-} from "lucide-react"
+import { WarningIcon as AlertTriangle, ProhibitIcon as Ban, FileTextIcon as FileText, EnvelopeIcon as Mail, ArrowsCounterClockwiseIcon as RefreshCcw, StarIcon as Star, UserCheckIcon as UserCheck } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import {
   PageEmptyState,
@@ -336,7 +328,7 @@ export default function AdminUserDetailPage({ params }: PageProps) {
           </div>
           <div className="min-w-[220px] flex-1 space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">
+              <h2 className="text-2xl font-bold tracking-[-0.02em] text-foreground">
                 {fullName}
               </h2>
               <span className="text-sm text-muted-foreground">ID {user.id}</span>

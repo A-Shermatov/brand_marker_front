@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, Briefcase } from "lucide-react"
+import { ArrowRightIcon as ArrowRight, BriefcaseIcon as Briefcase } from "@phosphor-icons/react/dist/ssr"
 import type { ContractWithRelations } from "@/types"
 import { PageEmptyState } from "@/components/layout"
 import { Button } from "@/components/ui/button"

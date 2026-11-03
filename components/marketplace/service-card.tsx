@@ -3,7 +3,8 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, Crown, ShieldCheck } from "lucide-react"
+import { ClockIcon as Clock, CrownIcon as Crown } from "@phosphor-icons/react/dist/ssr"
+import { CompanyName } from "@/components/bm"
 import type { MarketplaceService } from "@/types/marketplace"
 import { getIcon } from "@/lib/icon-map"
 import { serviceUrl } from "@/lib/marketplace-routes"
@@ -26,7 +27,7 @@ export const ServiceCard = ({ service }: ServiceCardProps) => {
   const requestPrice = isRequestPrice(service.price)
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white transition hover:border-[#C9CED6] hover:shadow-[0_8px_24px_rgba(16,24,40,.08)]">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]">
       <Link
         href={detailHref}
         className="relative aspect-square w-full overflow-hidden bg-canvas"
@@ -44,12 +45,12 @@ export const ServiceCard = ({ service }: ServiceCardProps) => {
           />
         ) : (
           <span className={`absolute inset-0 grid place-items-center ${service.iconBg}`}>
-            <Icon size={36} className="text-[#59606C]" aria-hidden />
+            <Icon size={36} weight="duotone" className="text-faint" aria-hidden />
           </span>
         )}
         {showVip ? (
           <span
-            className="absolute right-2 top-2 inline-flex h-5 items-center gap-1 rounded-md bg-gradient-to-r from-[#F6D365] to-[#E9A73B] px-1.5 text-[11px] font-extrabold tracking-wide text-[#4A3000]"
+            className="absolute right-2 top-2 inline-flex h-5 items-center gap-1 rounded-md bg-gradient-to-r from-[#F6D365] to-[#E9A73B] px-1.5 text-[11px] font-bold tracking-wide text-[#4A3000]"
             title="VIP‑поставщик"
           >
             <Crown className="size-3" aria-hidden />
@@ -69,9 +70,9 @@ export const ServiceCard = ({ service }: ServiceCardProps) => {
         </h3>
 
         {requestPrice ? (
-          <b className="text-[17px] font-extrabold text-ink">Цена по запросу</b>
+          <b className="text-[15.5px] font-semibold text-ink">Цена по запросу</b>
         ) : (
-          <b className="text-[18px] font-extrabold tracking-[-0.01em] text-ink tnum">
+          <b className="text-[17px] font-semibold tracking-[-0.01em] text-ink tnum">
             {service.price}
           </b>
         )}
@@ -81,22 +82,20 @@ export const ServiceCard = ({ service }: ServiceCardProps) => {
         ) : null}
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-2.5">
-          <span className="truncate text-[12.5px] font-medium text-ink">
-            {service.provider || "…"}
-          </span>
-          {service.verified ? (
-            <ShieldCheck
-              size={17}
-              className="shrink-0 text-brand-600"
-              aria-label="Проверенная компания"
-            />
-          ) : (
-            <Clock
-              size={17}
-              className="shrink-0 text-amber-600"
-              aria-label="На проверке"
-            />
-          )}
+          <CompanyName
+            name={service.provider || "…"}
+            verified={service.verified}
+            tier={service.providerTier}
+            plan={service.providerPlan}
+            size="sm"
+            nameClassName="text-[12.5px] font-medium text-ink-soft"
+            className="relative z-10"
+          />
+          {!service.verified ? (
+            <span title="Компания на проверке" className="relative z-10 inline-flex">
+              <Clock size={16} className="shrink-0 text-amber-600" aria-label="Компания на проверке" />
+            </span>
+          ) : null}
         </div>
       </div>
     </article>

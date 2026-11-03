@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { Building2, Check, Loader2, X } from "lucide-react"
+import { BuildingsIcon as Building2, CheckIcon as Check, CircleNotchIcon as Loader2, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { PageEmptyState, PageSurface, SegmentedControl } from "@/components/layout"
 import { Button } from "@/components/ui/button"
@@ -32,7 +32,7 @@ const DiffRow = ({
   after: string | null | undefined
 }) => (
   <div className="rounded-lg border border-border p-3">
-    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+    <p className="text-[12.5px] font-medium text-muted-foreground">
       {label}
     </p>
     <div className="mt-2 grid gap-2 sm:grid-cols-2">

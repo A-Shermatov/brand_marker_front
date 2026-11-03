@@ -23,7 +23,7 @@ export const RfqPositionsCard = ({ rfq }: RfqPositionsCardProps) => {
 
   return (
     <section className={cardClass}>
-      <h2 className="text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">
+      <h2 className="text-[12.5px] font-medium text-mute">
         Позиции
       </h2>
       <table className="mt-2 w-full text-[14px]">
@@ -88,7 +88,7 @@ export const RfqTermsCard = ({
 
   return (
     <section className={cardClass}>
-      <h2 className="text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">
+      <h2 className="text-[12.5px] font-medium text-mute">
         Условия
       </h2>
       <dl className="mt-2 grid gap-2 text-[14px]">

@@ -1,7 +1,10 @@
 /**
- * Trust / reputation shields — BrendMarket-v7.2.
- * Earned automatically; not sold. Levels: silver → gold → diamond.
+ * Reliability marks («знак надёжности»): earned automatically for completed
+ * deals, rating and on-time delivery; never sold. Ladder: silver → gold → diamond.
+ * Thresholds must match the backend (app/modules/trust/levels.py).
  */
+
+export const TRUST_MARK_NAME = "Знак надёжности"
 
 export const REPUTATION_TIERS = [
   "none",
@@ -12,7 +15,7 @@ export const REPUTATION_TIERS = [
 
 export type ReputationTier = (typeof REPUTATION_TIERS)[number]
 
-/** Legacy API / UI values remapped to v7.2 tiers. */
+/** Legacy API / UI values remapped to the current tiers. */
 export type LegacyReputationTier =
   | ReputationTier
   | "verified"
@@ -28,62 +31,48 @@ export type TrustLevelMeta = {
   /** On-time / success rate %, null = not required */
   minOnTime: number | null
   minMonths: number
-  glow: "" | "gold" | "diamond"
-  rim: [string, string]
-  body: [string, string]
-  fg: string
-  bg: string
-  bd: string
+  /** Accent for borders and progress bars */
+  accent: string
+  /** Soft background behind the mark on cards */
+  soft: string
 }
 
 export const TRUST_LEVELS: TrustLevelMeta[] = [
   {
     id: "silver",
-    name: "Серебряный",
-    condition: "от 10 сделок · рейтинг ≥ 4.5 · в срок ≥ 90%",
-    description: "Первый щит: стабильные сделки после проверки документов.",
+    name: "Серебро",
+    condition: "от 10 сделок · рейтинг от 4.5 · 90% без споров",
+    description: "Первые стабильные сделки после проверки документов.",
     minCompleted: 10,
     minRating: 4.5,
     minOnTime: 90,
     minMonths: 3,
-    glow: "",
-    rim: ["#C7CDD6", "#7E8794"],
-    body: ["#FBFCFD", "#C5CBD4"],
-    fg: "#363C46",
-    bg: "linear-gradient(135deg,#F4F6F8,#D3D8DF)",
-    bd: "#C3C9D2",
+    accent: "#8A919B",
+    soft: "#F2F3F5",
   },
   {
     id: "gold",
-    name: "Золотой",
-    condition: "от 40 сделок · рейтинг ≥ 4.7 · в срок ≥ 95%",
-    description: "Высокий рейтинг и поставки в срок на дистанции.",
+    name: "Золото",
+    condition: "от 40 сделок · рейтинг от 4.7 · 95% без споров",
+    description: "Высокий рейтинг и спокойные сделки на длинной дистанции.",
     minCompleted: 40,
     minRating: 4.7,
     minOnTime: 95,
     minMonths: 12,
-    glow: "gold",
-    rim: ["#F0C04F", "#A8700C"],
-    body: ["#FFE98F", "#F2B12A"],
-    fg: "#2E1F00",
-    bg: "linear-gradient(135deg,#FFE38A,#E9A825)",
-    bd: "#D99A1E",
+    accent: "#C08A17",
+    soft: "#FBF4E2",
   },
   {
     id: "diamond",
-    name: "Алмазный",
-    condition: "от 100 сделок · рейтинг ≥ 4.8 · в срок ≥ 98%",
-    description: "Лучшие на площадке: почти без срывов и споров.",
+    name: "Алмаз",
+    condition: "от 100 сделок · рейтинг от 4.8 · 98% без споров",
+    description: "Высший знак площадки: почти без срывов и споров.",
     minCompleted: 100,
     minRating: 4.8,
     minOnTime: 98,
     minMonths: 24,
-    glow: "diamond",
-    rim: ["#9F6BFF", "#4B1A9E"],
-    body: ["#EBDDFF", "#8B5CF6"],
-    fg: "#FFFFFF",
-    bg: "linear-gradient(135deg,#A779FF,#5B21B6)",
-    bd: "#6D35D9",
+    accent: "#A12BC0",
+    soft: "#F8EBFB",
   },
 ]
 
@@ -109,17 +98,17 @@ export const normalizeReputationTier = (
 export const reputationTierLabel = (
   tier: LegacyReputationTier | string | null | undefined,
 ): string => {
-  const n = normalizeReputationTier(tier)
-  switch (n) {
-    case "silver":
-      return "Серебряный щит"
-    case "gold":
-      return "Золотой щит"
-    case "diamond":
-      return "Алмазный щит"
-    default:
-      return "Без уровня"
-  }
+  const meta = trustLevelMeta(tier)
+  return meta ? meta.name : "Без знака"
+}
+
+/** Full sentence for tooltips and screen readers. */
+export const reputationTierHint = (
+  tier: LegacyReputationTier | string | null | undefined,
+): string => {
+  const meta = trustLevelMeta(tier)
+  if (!meta) return `${TRUST_MARK_NAME} пока не получен`
+  return `${TRUST_MARK_NAME} «${meta.name}»: ${meta.condition}. Выдаёт площадка, купить нельзя`
 }
 
 export const trustLevelMeta = (
@@ -175,4 +164,13 @@ export const resolveReputationTier = (stats: ReputationStats): ReputationTier =>
     if (meets(L)) return L.id
   }
   return "none"
+}
+
+/** Prefer the tier computed by the API; fall back to local stats. */
+export const pickReputationTier = (
+  apiTier: string | null | undefined,
+  stats: ReputationStats,
+): ReputationTier => {
+  const fromApi = normalizeReputationTier(apiTier)
+  return fromApi !== "none" ? fromApi : resolveReputationTier(stats)
 }

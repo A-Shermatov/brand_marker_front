@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, type FormEvent } from "react"
-import { Loader2 } from "lucide-react"
+import { CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,

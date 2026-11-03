@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { KeyRound, Loader2 } from "lucide-react"
+import { KeyIcon as KeyRound, CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

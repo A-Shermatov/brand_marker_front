@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { CheckCircle2, Loader2, MessageSquare } from "lucide-react"
+import { CheckCircleIcon as CheckCircle2, CircleNotchIcon as Loader2, ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import type { BudgetType, Currency, Proposal, ProposalStatus } from "@/types"
 import { StatusBadge } from "@/components/bm"
@@ -63,7 +63,7 @@ export const SupplierLeadAside = ({
       <section className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-20">
         <div className="mb-2 flex items-center gap-2">
           <CheckCircle2 size={18} className="text-brand-700" />
-          <h2 className="text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">
+          <h2 className="text-[12.5px] font-medium text-mute">
             Сделка
           </h2>
         </div>
@@ -115,7 +115,7 @@ export const SupplierLeadAside = ({
 
     return (
       <section className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-20">
-        <h2 className="text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">
+        <h2 className="text-[12.5px] font-medium text-mute">
           Запрос от заказчика
         </h2>
         <p className="mt-2 text-[14px] text-mute">
@@ -156,7 +156,7 @@ export const SupplierLeadAside = ({
     return (
       <section className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-20">
         <div className="flex items-start justify-between gap-3">
-          <h2 className="text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">
+          <h2 className="text-[12.5px] font-medium text-mute">
             Ваше КП
           </h2>
           <StatusBadge status={badge.status} label={badge.label} />

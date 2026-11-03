@@ -1,6 +1,6 @@
 "use client"
 
-import { Download, FileText } from "lucide-react"
+import { DownloadSimpleIcon as Download, FileTextIcon as FileText } from "@phosphor-icons/react/dist/ssr"
 import { isImageFile, resolveFileUrl } from "@/lib/file-url"
 
 type FilePreviewLinkProps = {

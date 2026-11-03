@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Bell, CheckCheck, Trash2 } from "lucide-react"
+import { BellIcon as Bell, ChecksIcon as CheckCheck, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { formatRelativeTime } from "@/lib/format"

@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { SupportMessageList } from "@/components/support/support-message-list"
 import "@/components/support/support-chat.css"

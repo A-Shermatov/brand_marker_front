@@ -2,14 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import {
-  ChevronRight,
-  MessageCircle,
-  Minus,
-  Plus,
-  RefreshCw,
-  ShieldCheck,
-} from "lucide-react"
+import { CaretRightIcon as ChevronRight, ChatCircleIcon as MessageCircle, MinusIcon as Minus, PlusIcon as Plus, ArrowsClockwiseIcon as RefreshCw, ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import type { ItemAttribute, ItemPricing, PublicSupplier } from "@/types"
 import { guaranteeUrl, loginRedirect, performerUrl } from "@/lib/marketplace-routes"
@@ -89,7 +82,7 @@ export const CatalogItemBuyCard = ({
 
   return (
     <aside className="grid content-start gap-4 self-start lg:sticky lg:top-[88px] lg:col-start-2 lg:row-span-2 lg:row-start-1">
-      <div className="grid gap-5 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)]">
+      <div className="grid gap-5 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
         <div id="pbuy" className="grid scroll-mt-32 gap-4">
           {!req && (
             <>
@@ -97,7 +90,7 @@ export const CatalogItemBuyCard = ({
                 <span className="text-[14px] font-semibold">
                   Количество, {unit}
                 </span>
-                <div className="flex h-11 rounded-[10px] border border-line bg-white">
+                <div className="flex h-11 rounded-lg border border-line bg-white">
                   <button
                     type="button"
                     className="grid w-11 place-items-center rounded-l-[10px] hover:bg-canvas disabled:opacity-40"
@@ -136,7 +129,7 @@ export const CatalogItemBuyCard = ({
               <div className="flex items-end justify-between gap-3">
                 <span className="text-[14px] text-mute">Итого</span>
                 <span className="text-right">
-                  <b className="block text-[24px] font-extrabold leading-none tnum">
+                  <b className="block text-[24px] font-bold leading-none tnum">
                     {total != null ? formatCurrency(total, currency) : "—"}
                   </b>
                   {savings > 0 && (
@@ -150,7 +143,7 @@ export const CatalogItemBuyCard = ({
           )}
           {req && (
             <div>
-              <b className="block text-[24px] font-extrabold leading-none tnum">
+              <b className="block text-[24px] font-bold leading-none tnum">
                 Цена по запросу
               </b>
               <span className="mt-1 block text-[13px] text-mute">
@@ -219,7 +212,7 @@ export const CatalogItemBuyCard = ({
         </div>
 
         <div className="grid gap-1.5 border-t border-line pt-4">
-          <b className="text-[16px] font-extrabold">Доставка</b>
+          <b className="text-[16px] font-bold">Доставка</b>
           <p className="text-[14px]">
             {city} · отгрузка {lead}
           </p>
@@ -231,7 +224,7 @@ export const CatalogItemBuyCard = ({
             href={guaranteeUrl()}
             className="flex items-center justify-between text-left"
           >
-            <b className="text-[16px] font-extrabold">Защита заказа Brend Market</b>
+            <b className="text-[16px] font-bold">Защита заказа Brend Market</b>
             <ChevronRight className="size-4 text-mute" aria-hidden />
           </Link>
           <div className="grid gap-1">

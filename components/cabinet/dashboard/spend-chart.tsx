@@ -33,7 +33,7 @@ export const SpendChart = ({
   }, [data])
 
   return (
-    <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6">
+    <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
       <div className="mb-3 flex items-center justify-between gap-3">
         <span className="text-[13px] font-semibold text-mute">
           Расходы по месяцам, TJS

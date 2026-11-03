@@ -3,14 +3,7 @@
 import { use, useState } from "react"
 import { formatCurrency } from "@/lib/format"
 import Link from "next/link"
-import {
-  CheckCircle2,
-  CircleDollarSign,
-  Download,
-  RefreshCcw,
-  RotateCcw,
-  Undo2,
-} from "lucide-react"
+import { CheckCircleIcon as CheckCircle2, CurrencyCircleDollarIcon as CircleDollarSign, DownloadSimpleIcon as Download, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowCounterClockwiseIcon as RotateCcw, ArrowUUpLeftIcon as Undo2 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { FinanceActionDialog } from "@/components/admin/finance/finance-action-dialog"
 import { AdminFinanceDetailSections } from "@/components/admin/finance/finance-detail-sections"
@@ -149,7 +142,7 @@ export default function AdminFinanceDetailPage({ params }: PageProps) {
       <PageSurface className="p-5 sm:p-6">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[12.5px] font-medium text-muted-foreground">
               {adminLabel(adminFinanceTypeLabels, payment.type)} · #{payment.id}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">

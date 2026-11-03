@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ChevronLeft, ChevronRight, RefreshCcw, ScrollText, Search, X } from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ArrowsCounterClockwiseIcon as RefreshCcw, ScrollIcon as ScrollText, MagnifyingGlassIcon as Search, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { formatLogDateTime, LogDetailsSheet } from "@/components/admin/logs/log-details-sheet"
 import { LogChangesSummary, LogResourceLink } from "@/components/admin/logs/log-event-details"
 import {

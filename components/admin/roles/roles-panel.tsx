@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, Fragment} from "react"
-import { KeyRound, Loader2, Lock, Pencil, Plus, RefreshCcw, Trash2, Undo2 } from "lucide-react"
+import { KeyIcon as KeyRound, CircleNotchIcon as Loader2, LockIcon as Lock, PencilSimpleIcon as Pencil, PlusIcon as Plus, ArrowsCounterClockwiseIcon as RefreshCcw, TrashIcon as Trash2, ArrowUUpLeftIcon as Undo2 } from "@phosphor-icons/react/dist/ssr"
 import {
   RoleFormDialog,
   type RoleFormDialogState,

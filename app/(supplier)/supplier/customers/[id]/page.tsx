@@ -2,13 +2,7 @@
 
 import { use, useState } from "react"
 import Link from "next/link"
-import {
-  Building2,
-  MapPin,
-  ShieldCheck,
-  Star,
-  Users,
-} from "lucide-react"
+import { BuildingsIcon as Building2, MapPinIcon as MapPin, ShieldCheckIcon as ShieldCheck, StarIcon as Star, UsersIcon as Users } from "@phosphor-icons/react/dist/ssr"
 import { ListPagination } from "@/components/list-pagination"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { BuyerRating } from "@/components/supplier/rfq/buyer-rating"
@@ -192,7 +186,7 @@ export default function SupplierCustomerDetailPage({ params }: PageProps) {
                     className="rounded-xl border border-border p-3"
                   >
                     <div className="flex items-center gap-2">
-                      <Star size={14} className="fill-amber-400 text-amber-400" />
+                      <Star size={14} className="fill-amber-400 text-amber-400" weight="fill" />
                       <span className="text-sm font-semibold">{review.rating}</span>
                       <span className="text-xs text-muted-foreground">
                         {formatIsoDate(review.created_at)}

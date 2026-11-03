@@ -13,6 +13,7 @@ import type {
 } from "@/types/marketplace"
 import { formatPrice, formatRelativeIso } from "@/lib/format"
 import { resolveFileUrl } from "@/lib/file-url"
+import { pickReputationTier } from "@/lib/trust-levels"
 
 const CATEGORY_ICONS: Record<string, { icon: string; color: string; iconBg: string; iconColor: string }> = {
   it: { icon: "Monitor", color: "bg-blue-50 hover:bg-blue-100/80", iconBg: "bg-blue-100", iconColor: "text-blue-600" },
@@ -88,6 +89,14 @@ export const mapCompanyToPerformer = (
   }
 }
 
+const supplierTier = (supplier: PublicSupplier) =>
+  pickReputationTier(supplier.reputation_tier, {
+    verification_status: supplier.verification_status,
+    completed_contracts: supplier.completed_contracts,
+    rating: supplier.rating,
+    success_rate: supplier.success_rate,
+  })
+
 export const mapPublicSupplierToPerformer = (
   supplier: import("@/types").PublicSupplier,
 ): MarketplacePerformer => {
@@ -104,7 +113,7 @@ export const mapPublicSupplierToPerformer = (
       ?? (supplier.kind === "individual" ? "Физлицо" : "Исполнитель"),
     categoryId: supplier.industries[0] ?? "services",
     city: supplier.city ?? "—",
-    rating: supplier.rating || 4.5,
+    rating: supplier.rating || 0,
     reviews: supplier.reviews_count,
     clients: String(supplier.active_catalog_count),
     years: "—",
@@ -117,6 +126,8 @@ export const mapPublicSupplierToPerformer = (
     featured: Boolean(supplier.vip || supplier.promoted || (supplier.rating ?? 0) >= 4.5),
     vip: Boolean(supplier.vip),
     promoted: Boolean(supplier.promoted),
+    tier: supplierTier(supplier),
+    plan: supplier.subscription_plan ?? null,
     worldwide: Boolean(supplier.country && supplier.country !== "Таджикистан"),
     icon: supplier.kind === "individual" ? "User" : "Building2",
     description: supplier.description ?? "",
@@ -198,7 +209,7 @@ export const mapCatalogItemToService = (
     supplier?.rating
     ?? company?.rating
     ?? company?.stats?.average_rating
-    ?? 4.5,
+    ?? 0,
   reviews: supplier?.reviews_count ?? company?.reviews?.length ?? 0,
   price: formatCatalogPrice(item),
   tags: item.attributes.slice(0, 3).map((a) => a.value),
@@ -215,6 +226,8 @@ export const mapCatalogItemToService = (
   views: String(item.stats?.views ?? 0),
   categoryId: item.category?.slug ?? "services",
   invoice: item.invoice !== false,
+  providerTier: supplier ? supplierTier(supplier) : undefined,
+  providerPlan: supplier?.subscription_plan ?? item.actor?.subscription_plan ?? null,
 })
 
 export const mapRfqToRequest = (rfq: RfqWithRelations): MarketplaceRequest => {

@@ -1,16 +1,11 @@
 import Link from "next/link"
-import {
-  FileText,
-  Lock,
-  FileCheck,
-  Building2,
-  Package,
-  Inbox,
-} from "lucide-react"
+import { CheckIcon, LockIcon as Lock, LockSimpleIcon, CertificateIcon as FileCheck, TrayIcon as Inbox } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
-import { TrustLevelsGrid } from "@/components/bm"
+import { PlanMark, TrustLevelsGrid } from "@/components/bm"
 import { Button } from "@/components/ui/button"
-import { PUBLIC_TIERS, formatTierPrice } from "@/lib/public-tiers"
+import { formatPrice } from "@/lib/format"
+import { plans } from "@/lib/subscription"
+import { TRUST_MARK_NAME } from "@/lib/trust-levels"
 import { loginRedirect, registerUrl } from "@/lib/marketplace-routes"
 import { cn } from "@/lib/utils"
 
@@ -32,6 +27,15 @@ const BENEFITS = [
   },
 ] as const
 
+// Limits mirror the backend (app/modules/subscription/services/common.py).
+const COMPARE: readonly (readonly [string, ...string[]])[] = [
+  ["Цена в месяц", "0 TJS", ...plans.map((p) => formatPrice(p.price))],
+  ["Активных позиций", "10", "10", "50", "без лимита"],
+  ["Компаний в аккаунте", "1", "2", "5", "без лимита"],
+  ["Место в каталоге", "обычное", "обычное", "выше бесплатных", "выше бесплатных"],
+  ["Значок у названия", "—", "Старт", "Про", "Бизнес"],
+]
+
 const HOW_TO = [
   ["1", "Выберите тариф", "В кабинете продавца → «Подписка»."],
   [
@@ -42,7 +46,7 @@ const HOW_TO = [
   [
     "3",
     "Значок и функции включатся",
-    "Значок появится на товарах, комиссия снизится со следующей сделки.",
+    "Значок тарифа появится рядом с названием компании, товары поднимутся в каталоге.",
   ],
 ] as const
 
@@ -51,18 +55,18 @@ export default function ForSuppliersPage() {
     <PageShell>
       <div className="mx-auto max-w-[1200px] px-4 pb-16 pt-10 lg:px-8">
         <section className="max-w-[960px]">
-          <h1 className="text-[40px] font-extrabold leading-[1.1] tracking-[-0.03em] text-balance text-ink">
+          <h1 className="text-[40px] font-semibold leading-[1.08] tracking-[-0.035em] text-balance text-ink md:text-[48px]">
             Продавайте компаниям по всему Таджикистану
           </h1>
-          <p className="mt-4 max-w-2xl text-[18px] text-mute">
+          <p className="mt-4 max-w-2xl text-[17px] text-mute">
             Покупатель оплачивает заказ до отгрузки — вы видите, что деньги есть, и
             отгружаете без риска.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
-            <Button asChild className="h-12 px-6 text-[16px]">
+            <Button asChild size="lg">
               <Link href={registerUrl()}>Зарегистрировать компанию</Link>
             </Button>
-            <Button asChild variant="outline" className="h-12">
+            <Button asChild variant="outline" size="lg">
               <Link href={loginRedirect("/supplier")}>Открыть кабинет продавца</Link>
             </Button>
           </div>
@@ -71,131 +75,116 @@ export default function ForSuppliersPage() {
             {BENEFITS.map(({ Icon, title, text }) => (
               <div
                 key={title}
-                className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)]"
+                className="rounded-2xl border border-line bg-white p-5"
               >
-                <span className="mb-4 grid size-11 place-items-center rounded-xl bg-canvas text-ink">
-                  <Icon className="size-5" aria-hidden />
-                </span>
-                <b className="text-[17px] text-ink">{title}</b>
-                <p className="mt-1 text-[15px] text-mute">{text}</p>
+                <Icon weight="duotone" className="mb-4 size-7 text-brand-700" aria-hidden />
+                <b className="text-[16px] font-semibold text-ink">{title}</b>
+                <p className="mt-1 text-[14.5px] text-mute">{text}</p>
               </div>
             ))}
           </div>
         </section>
 
         <section id="tariffs" className="scroll-mt-28 pt-14">
-          <div className="mb-8 grid justify-items-center gap-5 text-center">
-            <span className="grid h-8 place-items-center rounded-full bg-brand-50 px-3 text-[13px] font-bold text-brand-700">
+          <div className="mb-8 grid max-w-3xl gap-3">
+            <h2 className="text-[32px] font-semibold leading-[1.1] tracking-[-0.03em] text-balance text-ink md:text-[40px]">
               Тарифы для поставщиков
-            </span>
-            <h2 className="max-w-3xl text-[34px] font-extrabold leading-[1.1] tracking-[-0.03em] text-balance text-ink md:text-[44px]">
-              Больше заявок, ниже комиссия, выше в поиске
             </h2>
-            <p className="max-w-2xl text-[17px] text-mute">
-              Подписка Pro, VIP или Premium даёт продвижение и инструменты. Щит доверия
-              купить нельзя: площадка выдаёт его автоматически за успешные сделки и
-              высокий рейтинг.
+            <p className="text-[16.5px] text-mute">
+              Начать можно без подписки. Тариф поднимает товары в каталоге, расширяет
+              лимиты и добавляет значок рядом с названием компании. Знак надёжности
+              купить нельзя: его выдаёт площадка за сделки.
             </p>
           </div>
 
           <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {PUBLIC_TIERS.map((tier) => (
+            <article className="grid content-start gap-4 rounded-2xl border border-dashed border-line-strong bg-white/60 p-5">
+              <span className="grid size-10 place-items-center rounded-xl border border-dashed border-line-strong text-[13px] font-medium text-mute">
+                0
+              </span>
+              <div>
+                <b className="text-[18px] font-semibold text-ink">Без подписки</b>
+                <p className="mt-1 text-[14px] text-mute">Чтобы попробовать площадку</p>
+                <p className="mt-3 text-[24px] font-semibold text-ink tnum">0 TJS</p>
+              </div>
+              <ul className="grid gap-2 text-[14px] text-ink-soft">
+                <li className="flex gap-2">
+                  <CheckIcon weight="bold" className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
+                  До 10 активных позиций
+                </li>
+                <li className="flex gap-2">
+                  <CheckIcon weight="bold" className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
+                  Одна компания
+                </li>
+                <li className="flex gap-2">
+                  <CheckIcon weight="bold" className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
+                  Ответы на заявки и сделки с гарантией
+                </li>
+              </ul>
+              <Button asChild variant="outline" className="mt-auto">
+                <Link href={registerUrl()}>Зарегистрироваться</Link>
+              </Button>
+            </article>
+
+            {plans.map((plan) => (
               <article
-                key={tier.id}
+                key={plan.id}
                 className={cn(
-                  "relative grid gap-4 rounded-2xl border bg-white p-5",
-                  tier.popular
-                    ? "border-brand-500 shadow-[0_12px_32px_rgba(16,24,40,.12)]"
+                  "relative grid content-start gap-4 rounded-2xl border bg-white p-5",
+                  plan.highlighted
+                    ? "border-brand-600 shadow-[0_0_0_1px_var(--brand-600)]"
                     : "border-line",
                 )}
               >
-                {tier.popular ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-0.5 text-[12px] font-bold text-white">
-                    Популярный
+                {plan.highlighted ? (
+                  <span className="absolute -top-2.5 left-5 rounded-full bg-brand-600 px-2 py-0.5 text-[11.5px] font-semibold text-white">
+                    Чаще выбирают
                   </span>
                 ) : null}
-                <div
-                  className="grid size-12 place-items-center rounded-xl text-[15px] font-extrabold"
-                  style={{
-                    background: `linear-gradient(135deg, ${tier.colors[0]}, ${tier.colors[1]})`,
-                    color: tier.fg,
-                  }}
-                >
-                  {tier.name.slice(0, 1)}
-                </div>
+                <PlanMark plan={plan.id} size={40} />
                 <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <b className="text-[20px] text-ink">{tier.name}</b>
-                    <span className="rounded-md bg-canvas px-2 py-0.5 text-[12px] font-semibold text-mute">
-                      {tier.tag}
+                  <b className="text-[18px] font-semibold text-ink">{plan.name}</b>
+                  <p className="mt-1 text-[14px] text-mute">{plan.tagline}</p>
+                  <p className="mt-3 flex items-baseline gap-1">
+                    <span className="text-[24px] font-semibold text-ink tnum">
+                      {formatPrice(plan.price)}
                     </span>
-                  </div>
-                  <p className="mt-2 text-[15px]">
-                    <b className="tnum text-[22px] font-extrabold text-ink">
-                      {formatTierPrice(tier.price)}
-                    </b>
-                    <span className="text-mute"> /мес</span>
-                  </p>
-                  <p className="mt-1 text-[14px] text-mute">
-                    Комиссия {tier.fee}%
+                    <span className="text-[13.5px] text-mute">в месяц</span>
                   </p>
                 </div>
-                <ul className="grid gap-2 text-[14px] text-ink/85">
-                  <li className="flex gap-2">
-                    <Package className="mt-0.5 size-4 shrink-0 text-brand-600" />
-                    Товаров: {tier.products == null ? "безлимит" : tier.products}
-                  </li>
-                  <li className="flex gap-2">
-                    <FileText className="mt-0.5 size-4 shrink-0 text-brand-600" />
-                    Заявок / мес: {tier.leads == null ? "безлимит" : tier.leads}
-                  </li>
-                  <li className="flex gap-2">
-                    <Building2 className="mt-0.5 size-4 shrink-0 text-brand-600" />
-                    Сотрудников: {tier.staff == null ? "безлимит" : tier.staff}
-                  </li>
-                  <li className="text-mute">Поиск: {tier.search}</li>
+                <ul className="grid gap-2 text-[14px] text-ink-soft">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex gap-2">
+                      <CheckIcon weight="bold" className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
+                      {feature}
+                    </li>
+                  ))}
                 </ul>
-                <Button asChild variant={tier.popular ? "default" : "outline"} className="mt-auto">
-                  <Link href={loginRedirect("/supplier/subscription")}>
-                    {tier.price === 0 ? "Начать бесплатно" : "Выбрать"}
-                  </Link>
+                <Button asChild variant={plan.highlighted ? "default" : "outline"} className="mt-auto">
+                  <Link href={loginRedirect("/supplier/subscription")}>Подключить</Link>
                 </Button>
               </article>
             ))}
           </div>
 
-          <div className="mt-10 overflow-x-auto rounded-2xl border border-line bg-white">
+          <div className="mt-8 overflow-x-auto rounded-2xl border border-line bg-white">
             <table className="w-full min-w-[640px] text-left text-[14px]">
               <thead>
                 <tr className="border-b border-line bg-canvas/60">
-                  <th className="px-4 py-3 font-semibold text-mute">Параметр</th>
-                  {PUBLIC_TIERS.map((t) => (
-                    <th key={t.id} className="px-4 py-3 font-bold text-ink">
-                      {t.name}
+                  <th className="px-4 py-3 font-medium text-mute">Что входит</th>
+                  <th className="px-4 py-3 font-semibold text-ink">Без подписки</th>
+                  {plans.map((plan) => (
+                    <th key={plan.id} className="px-4 py-3">
+                      <span className="inline-flex items-center gap-2 font-semibold text-ink">
+                        <PlanMark plan={plan.id} size={18} decorative still />
+                        {plan.name}
+                      </span>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {(
-                  [
-                    ["Цена / мес", ...PUBLIC_TIERS.map((t) => formatTierPrice(t.price))],
-                    ["Комиссия", ...PUBLIC_TIERS.map((t) => `${t.fee}%`)],
-                    [
-                      "Товары",
-                      ...PUBLIC_TIERS.map((t) =>
-                        t.products == null ? "∞" : String(t.products),
-                      ),
-                    ],
-                    [
-                      "Заявки",
-                      ...PUBLIC_TIERS.map((t) =>
-                        t.leads == null ? "∞" : String(t.leads),
-                      ),
-                    ],
-                    ["Поиск", ...PUBLIC_TIERS.map((t) => t.search)],
-                  ] as const
-                ).map(([label, ...cells]) => (
+                {COMPARE.map(([label, ...cells]) => (
                   <tr key={label}>
                     <td className="px-4 py-3 text-mute">{label}</td>
                     {cells.map((cell, i) => (
@@ -210,18 +199,19 @@ export default function ForSuppliersPage() {
           </div>
         </section>
 
-        <section className="mt-14 grid gap-6 rounded-3xl border border-line bg-white p-6 lg:grid-cols-2 lg:items-end lg:p-8">
+        <section className="mt-14 grid gap-6 rounded-2xl border border-line bg-white p-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:p-8">
           <div className="grid gap-3">
-            <span className="text-[13px] font-bold uppercase tracking-wider text-brand-700">
+            <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-mute">
+              <LockSimpleIcon className="size-4" aria-hidden />
               Не продаётся
             </span>
-            <h2 className="text-[28px] font-extrabold tracking-[-0.02em] text-ink">
-              Щит доверия: серебро, золото, алмаз
+            <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-ink">
+              {TRUST_MARK_NAME}: серебро, золото, алмаз
             </h2>
-            <p className="text-[15.5px] text-ink/80">
-              Подписка даёт продвижение, а щит — заслуженное доверие. Площадка выдаёт его
-              автоматически даже на бесплатном тарифе и повышает уровень за успешные
-              сделки, высокий рейтинг и поставки в срок.
+            <p className="text-[15.5px] text-ink-soft">
+              Тариф даёт продвижение, знак надёжности показывает заслуженное доверие.
+              Площадка выдаёт его автоматически даже без подписки и повышает уровень за
+              завершённые сделки, рейтинг и сделки без споров.
             </p>
           </div>
           <TrustLevelsGrid className="lg:justify-self-stretch" />
@@ -233,10 +223,8 @@ export default function ForSuppliersPage() {
               key={n}
               className="rounded-2xl border border-line bg-white p-5"
             >
-              <span className="grid size-8 place-items-center rounded-full bg-ink text-[14px] font-bold text-white">
-                {n}
-              </span>
-              <b className="mt-3 block text-[16px] text-ink">{title}</b>
+              <span className="text-[13px] font-medium text-mute tnum">Шаг {n}</span>
+              <b className="mt-1 block text-[16px] font-semibold text-ink">{title}</b>
               <p className="mt-1 text-[14px] text-mute">{text}</p>
             </div>
           ))}

@@ -4,14 +4,7 @@ import { Suspense, useCallback, useEffect, useState, Fragment} from "react"
 import { formatCurrency } from "@/lib/format"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  ChevronLeft,
-  ChevronRight,
-  CircleDollarSign,
-  Download,
-  RefreshCcw,
-  Search,
-} from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, CurrencyCircleDollarIcon as CircleDollarSign, DownloadSimpleIcon as Download, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

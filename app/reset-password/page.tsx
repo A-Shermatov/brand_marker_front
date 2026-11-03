@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { AuthShell } from "@/components/auth/auth-shell"
 import { Button } from "@/components/ui/button"
@@ -67,7 +67,7 @@ function ResetPasswordContent() {
     return (
       <AuthShell>
         <div className="grid gap-4 text-center">
-          <h1 className="text-[24px] font-extrabold tracking-[-0.02em] text-ink">
+          <h1 className="text-[24px] font-bold tracking-[-0.02em] text-ink">
             Ссылка недействительна
           </h1>
           <p className="text-[15px] text-mute">
@@ -83,7 +83,7 @@ function ResetPasswordContent() {
 
   return (
     <AuthShell>
-      <h1 className="mb-1 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
+      <h1 className="mb-1 text-[26px] font-bold tracking-[-0.02em] text-ink">
         Новый пароль
       </h1>
       <p className="mb-6 text-[15px] text-mute">

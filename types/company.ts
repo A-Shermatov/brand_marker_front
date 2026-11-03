@@ -237,6 +237,8 @@ export const emptyCompanyWizardInput = (): CompanyWizardInput => ({
 export type PublicSupplier = {
   vip?: boolean
   promoted?: boolean
+  /** Active paid plan: start / pro / business */
+  subscription_plan?: string | null
   actor_id: number
   kind: "individual" | "company"
   display_name: string

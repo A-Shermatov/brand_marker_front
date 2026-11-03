@@ -1,17 +1,7 @@
 "use client"
 
 import { useState, type ChangeEvent, type DragEvent } from "react"
-import {
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  Loader2,
-  Plus,
-  Star,
-  Trash2,
-  Upload,
-  Video,
-} from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, FileTextIcon as FileText, CircleNotchIcon as Loader2, PlusIcon as Plus, StarIcon as Star, TrashIcon as Trash2, UploadSimpleIcon as Upload, VideoCameraIcon as Video } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { isApiEnabled } from "@/lib/api/config"
 import { supplierCatalogApi } from "@/lib/api/supplier/catalog"
@@ -242,7 +232,7 @@ export const PhotoGalleryFields = ({
                 ? "border-red-400 bg-red-50/40"
                 : dragging
                   ? "border-brand-600 bg-brand-50/40"
-                  : "border-[#C9CED6] hover:border-brand-600 hover:bg-brand-50/40",
+                  : "border-line-strong hover:border-brand-600 hover:bg-brand-50/40",
             )}
           >
             <input
@@ -363,7 +353,7 @@ export const VideoMediaFields = ({ media, onChange }: VideoMediaFieldsProps) => 
             </button>
           </div>
         ) : (
-          <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-[#C9CED6] p-3.5 hover:border-brand-600">
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-line-strong p-3.5 hover:border-brand-600">
             <input
               type="file"
               accept="video/mp4,video/quicktime,video/webm"
@@ -403,7 +393,7 @@ export const VideoMediaFields = ({ media, onChange }: VideoMediaFieldsProps) => 
           onChange={(e) => handleUrlChange(e.target.value)}
           placeholder="https://youtu.be/..."
           disabled={uploadedFile}
-          className="h-11 w-full rounded-[10px] border border-line bg-white px-4 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15 disabled:bg-canvas disabled:text-mute"
+          className="h-11 w-full rounded-lg border border-line bg-white px-4 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15 disabled:bg-canvas disabled:text-mute"
         />
         <p className="mt-1.5 text-[12.5px] text-mute">YouTube или другой сервис</p>
       </div>
@@ -470,7 +460,7 @@ export const DocumentMediaFields = ({
           </button>
         </div>
       ))}
-      <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-[#C9CED6] p-4 hover:border-brand-600">
+      <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-line-strong p-4 hover:border-brand-600">
         <input
           type="file"
           multiple

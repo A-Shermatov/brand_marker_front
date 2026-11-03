@@ -50,7 +50,7 @@ export function BrandLogo({
       {showWordmark ? (
         <span
           className={cn(
-            "whitespace-nowrap leading-none font-extrabold tracking-[-0.02em]",
+            "whitespace-nowrap leading-none font-bold tracking-[-0.02em]",
             small ? "text-[17px]" : "text-[20px]",
             dark ? "text-white" : "text-ink",
           )}

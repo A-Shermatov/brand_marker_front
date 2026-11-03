@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { CheckCircle2, Clock, Loader2, XCircle } from "lucide-react"
+import { CheckCircleIcon as CheckCircle2, ClockIcon as Clock, CircleNotchIcon as Loader2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { useHydrated } from "@/hooks/use-hydrated"

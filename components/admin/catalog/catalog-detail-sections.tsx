@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { FileText, ImageIcon, Star } from "lucide-react"
+import { FileTextIcon as FileText, ImageIcon, StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import type { AdminCatalogDetail } from "@/lib/api/admin"
 import {
@@ -105,13 +105,13 @@ export const AdminCatalogDetailSections = ({
         </p>
         <dl className="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Категория
             </dt>
             <dd className="mt-1 text-sm font-medium">{item.category?.name || "—"}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Цена
             </dt>
             <dd className="mt-1 text-sm font-medium">{formatItemPricing(pricing)}</dd>
@@ -143,7 +143,7 @@ export const AdminCatalogDetailSections = ({
         {item.owner ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Имя / компания
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -151,13 +151,13 @@ export const AdminCatalogDetailSections = ({
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Email
               </dt>
               <dd className="mt-1 text-sm font-medium">{item.owner.email || "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Профиль
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -166,7 +166,7 @@ export const AdminCatalogDetailSections = ({
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Метрики
               </dt>
               <dd className="mt-1 text-sm font-medium">

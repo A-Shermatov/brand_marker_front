@@ -1,5 +1,5 @@
 import Link from "next/link"
-import type { LucideIcon } from "lucide-react"
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 type MetricTileProps = {
@@ -12,7 +12,7 @@ type MetricTileProps = {
   href?: string
   valueClassName?: string
   /** Optional icon — template v5 stats have no icon. */
-  Icon?: LucideIcon
+  Icon?: PhosphorIcon
 }
 
 export const MetricTile = ({
@@ -37,7 +37,7 @@ export const MetricTile = ({
       <div
         title={valueTitle ?? value}
         className={cn(
-          "tnum min-w-0 truncate text-[26px] font-extrabold leading-tight tracking-[-0.02em] text-ink",
+          "tnum min-w-0 truncate text-[26px] font-bold leading-tight tracking-[-0.02em] text-ink",
           valueClassName,
         )}
       >
@@ -47,13 +47,13 @@ export const MetricTile = ({
     </>
   )
   const className =
-    "grid min-w-0 content-start gap-1.5 overflow-hidden rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)]"
+    "grid min-w-0 content-start gap-1.5 overflow-hidden rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]"
 
   if (!href) return <div className={className}>{content}</div>
   return (
     <Link
       href={href}
-      className={cn(className, "transition hover:border-[#C9CED6]")}
+      className={cn(className, "transition hover:border-line-strong")}
     >
       {content}
     </Link>

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ArrowDownUp, Building2, Crown, MapPin, RefreshCcw, Search } from "lucide-react"
+import { ArrowsDownUpIcon as ArrowDownUp, BuildingsIcon as Building2, CrownIcon as Crown, MapPinIcon as MapPin, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import {
   CompanyOperationalBadge,
   CompanyVerificationBadge,

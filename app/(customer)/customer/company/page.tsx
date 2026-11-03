@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { Info, Plus } from "lucide-react"
+import { InfoIcon as Info, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useCompaniesStore } from "@/lib/store/companies-store"
@@ -332,7 +332,7 @@ export default function CustomerCompanyPage() {
           title="Компания и сотрудники"
           description="Реквизиты, роли и команда"
         />
-        <div className="rounded-2xl border border-dashed border-[#D5DAE1] bg-white px-6 py-14 text-center">
+        <div className="rounded-2xl border border-dashed border-line-strong bg-white px-6 py-14 text-center">
           <b className="text-[17px]">Компания ещё не создана</b>
           <p className="mx-auto mt-2 max-w-md text-[15px] text-mute">
             Создайте компанию, чтобы управлять сотрудниками и реквизитами.
@@ -380,7 +380,7 @@ export default function CustomerCompanyPage() {
           />
 
           {!useApi ? (
-            <section className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6">
+            <section className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
               <span className="text-[13px] font-semibold text-mute">
                 История изменений
               </span>

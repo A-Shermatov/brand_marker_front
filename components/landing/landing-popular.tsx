@@ -29,7 +29,7 @@ export function LandingPopular() {
   return (
     <section className="mx-auto mt-16 max-w-[1200px] px-4 lg:px-8">
       <div className="mb-5 flex items-end justify-between gap-4">
-        <h2 className="text-[28px] font-extrabold tracking-[-0.02em] text-ink">
+        <h2 className="text-[28px] font-semibold tracking-[-0.02em] text-ink">
           Популярные предложения
         </h2>
         <Link

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Check, Eye } from "lucide-react"
+import { CheckIcon as Check, EyeIcon as Eye } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { PageFrame } from "@/components/layout"
 import { BackLink, PageHead } from "@/components/bm/page-head"
@@ -107,7 +107,7 @@ const SectionHead = ({
       {ok ? <Check className="size-4" aria-hidden /> : index}
     </span>
     <div>
-      <h2 className="text-[19px] font-extrabold tracking-[-0.01em]">{title}</h2>
+      <h2 className="text-[19px] font-bold tracking-[-0.01em]">{title}</h2>
       <p className="mt-0.5 text-[14px] text-mute">{subtitle}</p>
     </div>
   </div>
@@ -259,7 +259,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
 
   const inputClass = (field: string) =>
     cn(
-      "h-11 w-full rounded-[10px] border bg-white px-4 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
+      "h-11 w-full rounded-lg border bg-white px-4 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
       errors[field] ? "border-red-400" : "border-line",
     )
 
@@ -385,7 +385,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
               ok={sectionComplete(score, "s1")}
             />
             <div className="grid gap-5">
-              <div className="grid max-w-sm grid-cols-2 rounded-xl bg-[#ECEEF2] p-1">
+              <div className="grid max-w-sm grid-cols-2 rounded-xl bg-surface-muted p-1">
                 {(["product", "service"] as const).map((value) => (
                   <button
                     key={value}
@@ -394,7 +394,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
                     className={cn(
                       "h-10 rounded-lg text-[15px] font-semibold transition-colors",
                       type === value
-                        ? "bg-white shadow-[0_1px_3px_rgba(16,24,40,.12)]"
+                        ? "bg-white shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                         : "text-mute",
                     )}
                   >
@@ -519,7 +519,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
               rows={8}
               placeholder="Из чего сделано, чем лучше аналогов, что в комплекте, как упаковано, какая гарантия…"
               className={cn(
-                "w-full resize-y rounded-[10px] border bg-white px-4 py-3 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
+                "w-full resize-y rounded-lg border bg-white px-4 py-3 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
                 errors.description ? "border-red-400" : "border-line",
               )}
             />

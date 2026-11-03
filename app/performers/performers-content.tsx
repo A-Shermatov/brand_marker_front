@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { Award } from "lucide-react"
+import { MedalIcon as Award } from "@phosphor-icons/react/dist/ssr"
 import { ListPagination } from "@/components/list-pagination"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { PerformerCard } from "@/components/marketplace/performer-card"
@@ -69,7 +69,7 @@ export const PerformersPageContent = () => {
               <Award size={20} className="text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-foreground">{pageTitle}</h1>
+              <h1 className="text-2xl font-bold text-foreground">{pageTitle}</h1>
               <p className="text-sm text-muted-foreground">{pageSubtitle}</p>
             </div>
           </div>

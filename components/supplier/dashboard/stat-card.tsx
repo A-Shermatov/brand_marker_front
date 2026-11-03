@@ -1,8 +1,8 @@
 import Link from "next/link"
-import type { LucideIcon } from "lucide-react"
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 
 type StatCardProps = {
-  Icon: LucideIcon
+  Icon: PhosphorIcon
   label: string
   value: string
   accent: string

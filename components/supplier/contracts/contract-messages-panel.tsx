@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react"
 import { useDocumentVisible } from "@/hooks/use-document-visible"
-import { Check, CheckCheck, MessageSquare, Send, ShieldAlert } from "lucide-react"
+import { CheckIcon as Check, ChecksIcon as CheckCheck, ChatTextIcon as MessageSquare, PaperPlaneRightIcon as Send, ShieldWarningIcon as ShieldAlert } from "@phosphor-icons/react/dist/ssr"
 import { formatIsoDate } from "@/lib/format"
 import type { ContractWithRelations, MessageDeliveryStatus } from "@/types"
 

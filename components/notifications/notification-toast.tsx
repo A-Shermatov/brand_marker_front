@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight, X } from "lucide-react"
+import { ArrowRightIcon as ArrowRight, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { getNotificationIcon } from "@/lib/notification-display"

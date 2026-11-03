@@ -4,14 +4,7 @@ import { Suspense, useCallback, useEffect, useState, Fragment} from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  Boxes,
-  ChevronLeft,
-  ChevronRight,
-  Package,
-  RefreshCcw,
-  Search,
-} from "lucide-react"
+import { StackIcon as Boxes, CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, PackageIcon as Package, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {

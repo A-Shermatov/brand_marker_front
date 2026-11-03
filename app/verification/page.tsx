@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BadgeCheck, FileCheck, Building2, Shield } from "lucide-react"
+import { SealCheckIcon as BadgeCheck, CertificateIcon as FileCheck, BuildingsIcon as Building2, ShieldIcon as Shield } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { TrustLevelsGrid } from "@/components/bm/trust-levels-grid"
 import { TRUST_LEVELS } from "@/lib/trust-levels"
@@ -15,7 +15,7 @@ export default function VerificationPage() {
               <BadgeCheck size={24} className="text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-foreground">
+              <h1 className="text-3xl font-bold text-foreground">
                 Доверие на платформе
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -53,11 +53,11 @@ export default function VerificationPage() {
           <div className="mb-8">
             <div className="mb-4 flex items-center gap-2">
               <Shield size={18} className="text-primary" />
-              <h2 className="text-lg font-bold text-foreground">Уровни доверия</h2>
+              <h2 className="text-lg font-semibold text-foreground">Знак надёжности</h2>
             </div>
             <p className="mb-4 text-sm text-muted-foreground">
-              Дальше щиты открываются автоматически: рейтинг, число сделок и доля
-              успешных. Оплата не нужна.
+              После проверки знак выдаётся автоматически: за завершённые сделки, рейтинг
+              и сделки без споров. Оплата не нужна.
             </p>
             <TrustLevelsGrid />
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">

@@ -28,7 +28,7 @@ export function TwoFactorChallenge({ busy, error, onSubmit, onBack }: Props) {
   return (
     <form onSubmit={handleSubmit} className="grid gap-5" noValidate>
       <div>
-        <h1 className="mb-1 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
+        <h1 className="mb-1 text-[26px] font-bold tracking-[-0.02em] text-ink">
           Код подтверждения
         </h1>
         <p className="text-[15px] text-mute">

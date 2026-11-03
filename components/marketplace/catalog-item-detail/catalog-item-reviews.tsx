@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Star, ThumbsUp } from "lucide-react"
+import { StarIcon as Star, ThumbsUpIcon as ThumbsUp } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import type { Review } from "@/types"
 import { formatRelativeIso } from "@/lib/format"

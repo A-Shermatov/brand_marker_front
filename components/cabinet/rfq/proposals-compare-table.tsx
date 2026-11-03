@@ -1,8 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { Clock } from "lucide-react"
+import { ClockIcon as Clock } from "@phosphor-icons/react/dist/ssr"
 import type { Proposal, PublicSupplier, RfqWithRelations } from "@/types"
+import { CompanyName } from "@/components/bm"
+import { supplierMarks } from "@/lib/supplier-marks"
 import { StatusBadge } from "@/components/bm"
 import { Button } from "@/components/ui/button"
 import { PageEmptyState } from "@/components/layout"
@@ -59,6 +61,11 @@ export const ProposalsCompareTable = ({
   const cap = budgetCap(rfq)
   const minWidth = 220 + proposals.length * 190
 
+  const supplierFor = (actorId: number) => {
+    const supplier = getSupplier(actorId)
+    return supplier ? supplierMarks(supplier) : null
+  }
+
   return (
     <div className="grid gap-2">
       <div className="overflow-x-auto rounded-xl border border-line bg-white scroll-thin">
@@ -68,7 +75,7 @@ export const ProposalsCompareTable = ({
         >
           <thead>
             <tr className="border-b border-line">
-              <th className="w-[190px] px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">
+              <th className="w-[190px] px-4 py-3 text-left text-[12.5px] font-medium text-mute">
                 Сравнение КП
               </th>
               {proposals.map((proposal) => {
@@ -81,9 +88,14 @@ export const ProposalsCompareTable = ({
                   >
                     <Link
                       href={`/customer/suppliers/${proposal.supplier_actor_id}`}
-                      className="text-left text-[14px] font-semibold text-ink underline decoration-line underline-offset-2 hover:text-brand-700"
+                      className="flex min-w-0 hover:[&_*]:text-brand-700"
                     >
-                      {name}
+                      <CompanyName
+                        name={name}
+                        {...(supplierFor(proposal.supplier_actor_id) ?? {})}
+                        size="sm"
+                        nameClassName="text-[14px]"
+                      />
                     </Link>
                     <Link
                       href={`/customer/suppliers/${proposal.supplier_actor_id}`}

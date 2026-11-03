@@ -2,7 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Building2, Landmark, RefreshCcw, Search, Wallet } from "lucide-react"
+import { BuildingsIcon as Building2, BankIcon as Landmark, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, WalletIcon as Wallet } from "@phosphor-icons/react/dist/ssr"
 import { AdminLink } from "@/components/admin/admin-link"
 import { ListPagination } from "@/components/list-pagination"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"

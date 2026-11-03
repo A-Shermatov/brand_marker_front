@@ -41,7 +41,7 @@ export const AdminReportDetailSections = ({
         <h2 className="mb-5 text-lg font-bold">Заявитель</h2>
         <dl className="grid gap-4 sm:grid-cols-2">
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Имя
             </dt>
             <dd className="mt-1 text-sm font-semibold">
@@ -49,19 +49,19 @@ export const AdminReportDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Email
             </dt>
             <dd className="mt-1 text-sm">{report.reporter.email}</dd>
           </div>
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               ID
             </dt>
             <dd className="mt-1 text-sm">#{report.reporter.id}</dd>
           </div>
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Дата жалобы
             </dt>
             <dd className="mt-1 text-sm">{formatDate(report.created_at)}</dd>
@@ -73,7 +73,7 @@ export const AdminReportDetailSections = ({
         <h2 className="mb-5 text-lg font-bold">Объект</h2>
         <dl className="grid gap-4 sm:grid-cols-2">
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Тип
             </dt>
             <dd className="mt-1 text-sm font-semibold">
@@ -81,7 +81,7 @@ export const AdminReportDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Причина
             </dt>
             <dd className="mt-1 text-sm font-semibold">
@@ -89,7 +89,7 @@ export const AdminReportDetailSections = ({
             </dd>
           </div>
           <div className="sm:col-span-2">
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Название
             </dt>
             <dd className="mt-1">
@@ -102,7 +102,7 @@ export const AdminReportDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Статус объекта
             </dt>
             <dd className="mt-1 text-sm">
@@ -110,13 +110,13 @@ export const AdminReportDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Владелец
             </dt>
             <dd className="mt-1 text-sm">{ownerName}</dd>
           </div>
           <div>
-            <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Статус жалобы
             </dt>
             <dd className="mt-1 text-sm">

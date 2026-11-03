@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { BrandLogo } from "@/components/bm"
 import { Button } from "@/components/ui/button"
@@ -114,7 +114,7 @@ function RegisterContent() {
       </div>
 
       <div className="grid flex-1 place-items-center px-4 py-10">
-        <div className="w-full max-w-[440px] rounded-2xl border border-line bg-white p-7 shadow-[0_24px_60px_-24px_rgba(16,24,40,.25)] sm:p-9">
+        <div className="w-full max-w-[440px] rounded-2xl border border-line bg-white p-7 shadow-[0_1px_2px_rgba(28,28,26,.05),0_20px_40px_-28px_rgba(28,28,26,.35)] sm:p-9">
           <div className="mb-6 grid grid-cols-2 rounded-xl bg-surface-muted p-1">
             {(
               [
@@ -135,7 +135,7 @@ function RegisterContent() {
                 className={cn(
                   "h-10 rounded-lg text-[15px] font-semibold transition",
                   tab === key
-                    ? "bg-white text-ink shadow-[0_1px_3px_rgba(16,24,40,.12)]"
+                    ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                     : "text-mute hover:text-ink",
                 )}
               >
@@ -144,7 +144,7 @@ function RegisterContent() {
             ))}
           </div>
 
-          <h1 className="mb-1 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
+          <h1 className="mb-1 text-[26px] font-bold tracking-[-0.02em] text-ink">
             Регистрация в Brend Market
           </h1>
           <p className="mb-6 text-[15px] text-mute">
@@ -163,10 +163,10 @@ function RegisterContent() {
                     onClick={() => setRole(r)}
                     aria-pressed={active}
                     className={cn(
-                      "rounded-xl border-2 p-3.5 text-left transition",
+                      "rounded-xl border p-3.5 text-left transition-[border-color,box-shadow,background-color]",
                       active
-                        ? "border-ink bg-white"
-                        : "border-line hover:border-[#C9CED6]",
+                        ? "border-brand-600 bg-brand-50/50 shadow-[0_0_0_1px_var(--brand-600)]"
+                        : "border-line-strong hover:border-faint",
                     )}
                   >
                     <b className="block text-[15px] text-ink">{title}</b>

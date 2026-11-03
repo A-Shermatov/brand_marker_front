@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { Clock, ShieldCheck, ShieldOff, Star } from "lucide-react"
+import { CompanyName } from "@/components/bm"
+import { supplierMarks } from "@/lib/supplier-marks"
+import { ClockIcon as Clock, ShieldCheckIcon as ShieldCheck, ShieldSlashIcon as ShieldOff, StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import type { PublicSupplier } from "@/types"
 import { formatCount } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -88,18 +90,15 @@ export const SupplierDirectoryCard = ({
     <article className="grid content-start gap-4 rounded-2xl border border-line bg-white p-5">
       <div className="flex items-start gap-3">
         <span
-          className="grid size-12 shrink-0 place-items-center rounded-xl bg-[#EEF0F3] text-[15px] font-bold text-ink"
+          className="grid size-12 shrink-0 place-items-center rounded-xl bg-surface-muted text-[15px] font-bold text-ink"
           aria-hidden
         >
           {initialsFromName(supplier.display_name)}
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href={href}
-              className="text-left text-[16px] font-bold hover:underline"
-            >
-              {supplier.display_name}
+            <Link href={href} className="flex min-w-0 hover:[&_*]:text-brand-700">
+              <CompanyName name={supplier.display_name} {...supplierMarks(supplier)} size="md" />
             </Link>
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-mute">
@@ -141,7 +140,7 @@ export const SupplierDirectoryCard = ({
         >
           <Star
             className={cn("size-5", favorited && "fill-amber-400")}
-            aria-hidden
+            aria-hidden weight="fill"
           />
         </button>
       </div>
@@ -160,7 +159,7 @@ export const SupplierDirectoryCard = ({
           ] as const
         ).map(([value, label]) => (
           <div key={label}>
-            <dd className="tnum text-[15px] font-extrabold">{value}</dd>
+            <dd className="tnum text-[15px] font-bold">{value}</dd>
             <dt className="text-[11.5px] text-mute">{label}</dt>
           </div>
         ))}

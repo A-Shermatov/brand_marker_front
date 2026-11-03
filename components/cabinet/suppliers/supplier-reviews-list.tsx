@@ -1,4 +1,4 @@
-import { Star } from "lucide-react"
+import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import type { Review } from "@/types"
 import { formatRelativeIso } from "@/lib/format"
 

@@ -1,8 +1,9 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { FileText, Plus } from "lucide-react"
+import { FileTextIcon as FileText, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
 import { useQueries } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { ListPagination } from "@/components/list-pagination"
@@ -47,7 +48,12 @@ import {
 const MyRfqsContent = () => {
   const hydrated = useHydrated()
   const [page, setPage] = useState(1)
-  const [searchInput, setSearchInput] = useState("")
+  const searchParams = useSearchParams()
+  const queryFromUrl = searchParams.get("q") ?? ""
+  const [searchInput, setSearchInput] = useState(queryFromUrl)
+  useEffect(() => {
+    setSearchInput(queryFromUrl)
+  }, [queryFromUrl])
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const user = useAuthStore((s) => s.user)
   const actorId = getActorId(user)

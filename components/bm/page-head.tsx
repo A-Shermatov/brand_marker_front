@@ -1,6 +1,9 @@
+"use client"
+
 import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
+import { CaretLeftIcon as ChevronLeft } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
+import { useInSectionHub } from "@/components/layout/section-hub"
 
 type PageHeadProps = {
   title: React.ReactNode
@@ -24,7 +27,8 @@ export function PageHead({
   sub = false,
   className,
 }: PageHeadProps) {
-  if (sub) {
+  const inHub = useInSectionHub()
+  if (sub || inHub) {
     if (!description && !actions) return null
     return (
       <div
@@ -34,7 +38,7 @@ export function PageHead({
         )}
       >
         {description ? (
-          <p className="min-w-0 text-[15px] text-mute">{description}</p>
+          <p className="min-w-0 text-[14.5px] text-mute">{description}</p>
         ) : (
           <span />
         )}
@@ -54,13 +58,13 @@ export function PageHead({
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-[28px] leading-tight font-extrabold tracking-[-0.02em] text-balance text-ink">
+          <h1 className="text-[24px] leading-tight font-semibold tracking-[-0.02em] text-balance text-ink">
             {title}
           </h1>
           {badge}
         </div>
         {description ? (
-          <p className="mt-1.5 text-[16px] text-mute">{description}</p>
+          <p className="mt-1 text-[14.5px] text-mute">{description}</p>
         ) : null}
       </div>
       {actions ? (
@@ -81,7 +85,7 @@ export function BackLink({ href, children, className }: BackLinkProps) {
     <Link
       href={href}
       className={cn(
-        "mb-4 inline-flex h-9 -ml-2 items-center gap-1.5 rounded-lg pl-2 pr-3 text-[14px] font-medium text-mute hover:bg-white hover:text-ink",
+        "mb-3 inline-flex h-8 -ml-2 items-center gap-1 rounded-md pl-1.5 pr-2.5 text-[13.5px] font-medium text-mute hover:bg-surface-muted hover:text-ink",
         className,
       )}
     >

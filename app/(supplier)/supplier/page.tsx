@@ -1,16 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import {
-  ArrowRight,
-  Inbox,
-  Plus,
-  Search,
-  Send,
-  ShieldCheck,
-  Sparkles,
-  Truck,
-} from "lucide-react"
+import { ArrowRightIcon as ArrowRight, TrayIcon as Inbox, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
 import { useRfqsStore } from "@/lib/store/rfqs-store"
@@ -42,18 +33,15 @@ import {
 import { dealNeedsAction, getDealPhase, isDealOpen } from "@/lib/process/deal-stages"
 import { buildSupplierTodo } from "@/lib/process/todo"
 import { planName } from "@/lib/subscription"
+import { reputationTierLabel } from "@/lib/trust-levels"
+import { useSupplierMarks } from "@/hooks/use-supplier-marks"
 import { Button } from "@/components/ui/button"
 import { PageFrame } from "@/components/layout"
-import {
-  HeroCard,
-  ReputationBadge,
-  TrustShieldIcon,
-  VerifiedChip,
-} from "@/components/bm"
+import { CompanyName, PlanMark, TrustMark } from "@/components/bm"
 import { ActivateRoleBanner } from "@/components/company/activate-role-banner"
 import { ActiveContractsPanel } from "@/components/supplier/dashboard/active-contracts-panel"
 import { DashboardPanel } from "@/components/cabinet/dashboard/dashboard-panel"
-import { QuickActions } from "@/components/cabinet/dashboard/quick-actions"
+import { MoneyPanel } from "@/components/cabinet/dashboard/money-panel"
 import {
   OpsList,
   type OpsItem,
@@ -63,6 +51,15 @@ import { firstName, greet } from "@/lib/greet"
 import type { ContractWithRelations } from "@/types"
 import type { SubscriptionPlan } from "@/lib/store/subscription-store"
 import { useMemo } from "react"
+
+const OPS_STATUS_LABELS: Record<string, string> = {
+  refunded: "возвращено покупателю",
+  cancelled: "отменено",
+  canceled: "отменено",
+  disputed: "в споре",
+  pending: "ожидает оплаты",
+  awaiting_payment: "ожидает оплаты",
+}
 
 /** Net amount the supplier still expects from a deal (unreleased milestones minus commission). */
 const getExpectedPayout = (contract: ContractWithRelations): number => {
@@ -91,6 +88,7 @@ export default function SupplierDashboard() {
   const getBalanceSummary = useFinanceStore((s) => s.getBalanceSummary)
 
   const apiEnabled = hydrated && useApi
+  const marks = useSupplierMarks()
   const { data: apiContracts, isLoading: contractsLoading } =
     useSupplierContractsQuery(apiEnabled)
   const { data: apiRfqs, isLoading: rfqsLoading } =
@@ -240,19 +238,18 @@ export default function SupplierDashboard() {
           ? "зачислено"
           : isFunding
             ? "поступит после приёмки"
-            : item.status,
+            : (OPS_STATUS_LABELS[item.status] ?? item.status),
         tone: isRelease ? "in" : isFunding ? "hold" : "out",
       }
     })
   }, [paymentHistoryPage?.items])
 
+  // Same profile as the marks next to it (the active seller, not the first company).
   const companyTitle =
-    myCompany?.title ?? (hydrated && user?.company ? user.company : "Поставщик")
+    marks.title ?? myCompany?.title ?? (hydrated && user?.company ? user.company : "Поставщик")
   const name = firstName(user?.name)
-  const verified = myCompany?.verification_status === "verified"
-  const tier = (myCompany as { reputation_tier?: string } | undefined)
-    ?.reputation_tier
   const subPlan = (apiSub?.plan ?? "none") as SubscriptionPlan
+  const planActive = Boolean(apiSub?.is_active)
   const incompleteChecklist = checklist.filter((c) => !c.done)
 
   return (
@@ -264,105 +261,75 @@ export default function SupplierDashboard() {
       />
 
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-[14.5px] text-mute">
+        <div className="min-w-0 flex-[1_1_18rem]">
+          <p className="text-[14px] text-mute">
             {greet()}
             {name ? `, ${name}` : ""}
           </p>
-          <h1 className="flex flex-wrap items-center gap-2 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
-            {companyTitle}
-            <VerifiedChip verified={verified} compact />
-            {tier && tier !== "none" ? (
-              <ReputationBadge tier={tier} size={28} />
-            ) : null}
-          </h1>
+          <CompanyName
+            as="h1"
+            name={companyTitle}
+            verified={marks.verified}
+            tier={marks.tier}
+            plan={marks.plan}
+            size="xl"
+            className="mt-0.5"
+          />
         </div>
-        <Button asChild>
-          <Link href="/supplier/catalog/new">
-            <Plus className="size-4" />
-            Добавить товар
+        <Button asChild variant="outline">
+          <Link href="/supplier/rfqs?response=open">
+            <Inbox className="size-4" />
+            Новые заявки
+            {newRfqs.length > 0 ? (
+              <span className="rounded-full bg-brand-600 px-1.5 text-[11.5px] font-semibold text-white tnum">
+                {newRfqs.length}
+              </span>
+            ) : null}
           </Link>
         </Button>
       </div>
 
-      <HeroCard>
-        <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
-          <div>
-            <span className="inline-flex items-center gap-2 text-[14px] text-white/70">
-              <ShieldCheck className="size-4" aria-hidden />
-              Поступит после приёмки покупателем
-            </span>
-            <div className="mt-1 tnum text-[40px] font-extrabold leading-tight tracking-[-0.02em]">
-              {loading ? "—" : formatPrice(expectedAmount)}
-            </div>
-            <p className="mt-1 text-[14px] text-white/70">
-              {expectedDeals.length > 0
-                ? `По ${formatCount(expectedDeals.length, "сделке", "сделкам", "сделкам")} в работе`
-                : "Нет сделок с деньгами на гарантии"}
-            </p>
-          </div>
-          <dl className="grid grid-cols-2 gap-3 md:min-w-[320px]">
-            <div className="rounded-xl bg-white/10 p-3">
-              <dt className="text-[12.5px] text-white/70">Зачислено на счёт</dt>
-              <dd className="tnum text-[15px] font-bold">
-                {loading || !balance ? "—" : formatPrice(balance.available)}
-              </dd>
-            </div>
-            <div className="rounded-xl bg-white/10 p-3">
-              <dt className="text-[12.5px] text-white/70">Счёт для выплат</dt>
-              <dd className="truncate text-[15px] font-bold">{payoutLabel}</dd>
-            </div>
-          </dl>
-        </div>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Button
-            asChild
-            variant="outline"
-            className="border-white bg-white text-ink hover:bg-canvas"
-          >
-            <Link href="/supplier/contracts?tab=active">Сделки и деньги</Link>
-          </Button>
-          <Button
-            asChild
-            variant="outline"
-            className="border-white/25 bg-white/10 text-white hover:bg-white/20"
-          >
-            <Link href="/supplier/rfqs?response=open">
-              Новые заявки
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-        </div>
-      </HeroCard>
-
-      <QuickActions
-        actions={[
+      <MoneyPanel
+        label="Поступит после приёмки покупателем"
+        amount={loading ? "—" : formatPrice(expectedAmount)}
+        hint={
+          expectedDeals.length > 0
+            ? `По ${formatCount(expectedDeals.length, "сделке", "сделкам", "сделкам")} в работе. Деньги уже у банка‑партнёра.`
+            : "Сделок с деньгами на гарантии пока нет"
+        }
+        stats={[
           {
-            href: "/supplier/catalog/new",
-            label: "Добавить товар",
-            Icon: Plus,
+            label: "Зачислено на счёт",
+            value: loading || !balance ? "—" : formatPrice(balance.available),
           },
           {
-            href: "/supplier/rfqs?response=open",
-            label: "Новые заявки",
-            Icon: Search,
+            label: "Счёт для выплат",
+            value: payoutAccount ? (
+              payoutLabel
+            ) : (
+              <Link href="/supplier/finance#payout" className="text-brand-700 hover:underline">
+                Добавить
+              </Link>
+            ),
           },
           {
-            href: "/supplier/proposals",
-            label: "Мои КП",
-            Icon: Send,
-          },
-          {
-            href: "/supplier/contracts?tab=active",
-            label: "Отгрузки",
-            Icon: Truck,
-          },
-          {
-            href: "/supplier/trust",
-            label: "Тариф и доверие",
-            Icon: Sparkles,
+            label: "Активных сделок",
+            value: loading ? "—" : openDeals.length,
           },
         ]}
+        actions={
+          <>
+            <Button asChild>
+              <Link href="/supplier/contracts?tab=active">Сделки и деньги</Link>
+            </Button>
+            <Button asChild variant="ghost">
+              <Link href="/supplier/finance">
+                История выплат
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+          </>
+        }
       />
 
       {incompleteChecklist.length > 0 ? (
@@ -374,7 +341,7 @@ export default function SupplierDashboard() {
           title="Нужно сделать"
           badge={
             todo.length > 0 ? (
-              <span className="grid h-6 place-items-center rounded-full bg-amber-50 px-2 text-[12.5px] font-bold text-amber-800">
+              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-amber-100 px-1.5 text-[12px] font-semibold text-amber-900 tnum">
                 {todo.length}
               </span>
             ) : null
@@ -392,59 +359,37 @@ export default function SupplierDashboard() {
         </DashboardPanel>
       </div>
 
-      <div className="grid items-start gap-5 md:grid-cols-2">
-        <section className="grid gap-4 rounded-2xl border border-line bg-white p-5">
-          <div className="flex items-center gap-4">
-            {tier && tier !== "none" ? (
-              <TrustShieldIcon tier={tier} size={56} />
-            ) : (
-              <span className="grid size-14 place-items-center rounded-2xl bg-canvas text-brand-600">
-                <ShieldCheck className="size-7" />
-              </span>
-            )}
-            <div>
-              <h2 className="text-[17px] font-bold text-ink">
-                {tier && tier !== "none"
-                  ? "Щит доверия"
-                  : "Щит доверия ещё не выдан"}
-              </h2>
-              <p className="text-[14px] text-mute">
-                Условия и прогресс — в разделе «Тариф и доверие»
-              </p>
-            </div>
-          </div>
-          <Link
-            href="/supplier/trust"
-            className="text-[14px] font-semibold text-brand-700 hover:underline"
-          >
-            Условия и прогресс →
-          </Link>
-        </section>
-
-        <section className="grid gap-4 rounded-2xl border border-line bg-white p-5">
-          <div>
-            <h2 className="text-[17px] font-bold text-ink">
-              Тариф: {planName(subPlan)}
-            </h2>
-            <p className="mt-1 text-[14px] text-mute">
-              {apiSub?.is_active && apiSub.active_until
-                ? `Активен до ${new Date(apiSub.active_until).toLocaleDateString("ru-RU")}`
-                : "Подписка повышает видимость в каталоге"}
+      <section className="grid gap-4 rounded-2xl border border-line bg-white p-5 md:grid-cols-[1fr_1fr_auto] md:items-center">
+        <div className="flex items-center gap-3.5">
+          <TrustMark tier={marks.tier} size={44} />
+          <div className="min-w-0">
+            <p className="text-[13px] text-mute">Знак надёжности</p>
+            <p className="text-[15.5px] font-semibold text-ink">
+              {marks.tier !== "none" ? reputationTierLabel(marks.tier) : "Пока без знака"}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/supplier/subscription">Управление подпиской</Link>
-            </Button>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/supplier/rfqs?response=open">
-                <Inbox className="size-4" />
-                Заявки
-              </Link>
-            </Button>
+        </div>
+        <div className="flex items-center gap-3.5 border-line md:border-l md:pl-5">
+          {planActive ? (
+            <PlanMark plan={subPlan} size={36} />
+          ) : (
+            <span className="grid size-9 place-items-center rounded-lg border border-dashed border-line-strong text-faint">
+              <Plus className="size-4" aria-hidden />
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="text-[13px] text-mute">Тариф подписки</p>
+            <p className="text-[15.5px] font-semibold text-ink">
+              {planActive && apiSub?.active_until
+                ? `${planName(subPlan)} · до ${new Date(apiSub.active_until).toLocaleDateString("ru-RU")}`
+                : "Не подключён"}
+            </p>
           </div>
-        </section>
-      </div>
+        </div>
+        <Button asChild variant="outline" size="sm" className="justify-self-start">
+          <Link href="/supplier/trust">Условия и тарифы</Link>
+        </Button>
+      </section>
 
       <ActiveContractsPanel
         contracts={openDeals}

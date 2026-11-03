@@ -29,7 +29,7 @@ export const NextActionCard = ({
     <section
       aria-label={`${eyebrow}: ${title}`}
       className={cn(
-        "grid gap-3 rounded-2xl border p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)]",
+        "grid gap-3 rounded-2xl border p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]",
         isDanger
           ? "border-destructive/30 bg-destructive/5"
           : hot
@@ -40,13 +40,13 @@ export const NextActionCard = ({
     >
       <span
         className={cn(
-          "text-[12px] font-bold uppercase tracking-wider",
+          "text-[12.5px] font-medium",
           isDanger ? "text-destructive" : hot ? "text-brand-700" : "text-mute",
         )}
       >
         {eyebrow}
       </span>
-      <h2 className="text-[20px] font-extrabold tracking-[-0.02em] text-balance text-ink">
+      <h2 className="text-[20px] font-bold tracking-[-0.02em] text-balance text-ink">
         {title}
       </h2>
       {text ? <div className="text-[15px] text-mute">{text}</div> : null}

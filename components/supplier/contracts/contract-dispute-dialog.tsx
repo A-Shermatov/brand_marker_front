@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle } from "lucide-react"
+import { WarningIcon as AlertTriangle } from "@phosphor-icons/react/dist/ssr"
 import {
   Dialog,
   DialogContent,

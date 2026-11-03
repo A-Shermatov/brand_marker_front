@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Eye, Package, Sparkles } from "lucide-react"
+import { EyeIcon as Eye, PackageIcon as Package, SparkleIcon as Sparkles } from "@phosphor-icons/react/dist/ssr"
 import type { CatalogItemWithRelations } from "@/types"
 import { cn } from "@/lib/utils"
 import {
@@ -73,7 +73,7 @@ export const CatalogProductRow = ({ item }: CatalogProductRowProps) => {
           <span className="text-mute">Качество</span>
           <b className={cn("tnum", level.textClass)}>{score}/100</b>
         </span>
-        <span className="h-1.5 overflow-hidden rounded-full bg-[#ECEEF2]">
+        <span className="h-1.5 overflow-hidden rounded-full bg-surface-muted">
           <span
             className={cn("block h-full", level.barClass)}
             style={{ width: `${score}%` }}

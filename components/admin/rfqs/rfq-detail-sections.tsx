@@ -1,7 +1,7 @@
 "use client"
 
 import { AdminLink } from "@/components/admin/admin-link"
-import { FileText } from "lucide-react"
+import { FileTextIcon as FileText } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import type { AdminRfqDetail } from "@/lib/api/admin"
 import {
@@ -60,7 +60,7 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
         </p>
         <dl className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Тип
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -68,13 +68,13 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Категория
             </dt>
             <dd className="mt-1 text-sm font-medium">{requirements.category_id}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Бюджет
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -86,13 +86,13 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Дедлайн
             </dt>
             <dd className="mt-1 text-sm font-medium">{requirements.deadline}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Видимость
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -101,7 +101,7 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
           </div>
           {requirements.project_duration && (
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Длительность
               </dt>
               <dd className="mt-1 text-sm font-medium">{requirements.project_duration}</dd>
@@ -109,7 +109,7 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
           )}
           {requirements.quantity != null && (
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Количество
               </dt>
               <dd className="mt-1 text-sm font-medium">{requirements.quantity}</dd>
@@ -139,19 +139,19 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
         {rfq.buyer ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Имя
               </dt>
               <dd className="mt-1 text-sm font-medium">{partyLabel(rfq.buyer)}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Email
               </dt>
               <dd className="mt-1 text-sm font-medium">{rfq.buyer.email || "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Профиль
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -161,7 +161,7 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
             </div>
             {rfq.buyer.company_id && (
               <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <dt className="text-[12.5px] font-medium text-muted-foreground">
                   Компания
                 </dt>
                 <dd className="mt-1 text-sm font-medium">

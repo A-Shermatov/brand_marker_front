@@ -60,13 +60,14 @@ const DisputesHub = () => {
       <PageHeader
         title="Споры"
         description="Деньги по спорной сделке остаются на гарантии до решения"
-      />
-
-      <SegmentedControl
-        value={tab}
-        options={tabs}
-        onChange={setTab}
-        ariaLabel="Споры и контракты"
+        actions={
+          <SegmentedControl
+            value={tab}
+            options={tabs}
+            onChange={setTab}
+            ariaLabel="Споры и контракты"
+          />
+        }
       />
 
       {tab === "contracts" ? (

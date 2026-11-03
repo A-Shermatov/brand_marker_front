@@ -26,7 +26,7 @@ export function HubTabs({ items, ariaLabel, className }: HubTabsProps) {
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        "mb-5 inline-flex max-w-full gap-1 overflow-x-auto rounded-xl bg-surface-muted p-1 no-scrollbar",
+        "mb-5 inline-flex max-w-full gap-1 overflow-x-auto rounded-lg bg-surface-muted p-1 no-scrollbar",
         className,
       )}
     >
@@ -37,9 +37,9 @@ export function HubTabs({ items, ariaLabel, className }: HubTabsProps) {
           role="tab"
           aria-selected={item.active}
           className={cn(
-            "inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-lg px-4 text-[14px] font-semibold transition",
+            "inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-md px-3.5 text-[13.5px] font-medium transition-colors",
             item.active
-              ? "bg-white text-ink shadow-[0_1px_3px_rgba(16,24,40,.12)]"
+              ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
               : "text-mute hover:text-ink",
           )}
         >

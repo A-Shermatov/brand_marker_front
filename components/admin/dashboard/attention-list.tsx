@@ -1,12 +1,13 @@
 import Link from "next/link"
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { CaretRightIcon as ChevronRight } from "@phosphor-icons/react/dist/ssr"
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 
 export type AttentionItem = {
   id: string
   title: string
   hint: string
   href: string
-  Icon: LucideIcon
+  Icon: PhosphorIcon
 }
 
 type AttentionListProps = {

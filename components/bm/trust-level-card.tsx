@@ -1,16 +1,15 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import {
-  type TrustLevelMeta,
-  type ReputationTier,
-} from "@/lib/trust-levels"
-import { TrustShieldIcon } from "@/components/bm/trust-shield-icon"
+import { type TrustLevelMeta } from "@/lib/trust-levels"
+import { TrustMark } from "@/components/bm/trust-mark"
 
 type TrustLevelCardProps = {
   level: TrustLevelMeta
   /** Highlight as the actor's current tier */
   current?: boolean
+  /** Already passed on the way to a higher tier */
+  reached?: boolean
   className?: string
   onSelect?: (id: TrustLevelMeta["id"]) => void
 }
@@ -18,11 +17,13 @@ type TrustLevelCardProps = {
 export function TrustLevelCard({
   level,
   current = false,
+  reached = false,
   className,
   onSelect,
 }: TrustLevelCardProps) {
   const interactive = Boolean(onSelect)
   const Comp = interactive ? "button" : "div"
+  const premium = level.id === "diamond"
 
   return (
     <Comp
@@ -30,27 +31,54 @@ export function TrustLevelCard({
       onClick={interactive ? () => onSelect?.(level.id) : undefined}
       aria-pressed={interactive ? current : undefined}
       className={cn(
-        "flex flex-col items-start gap-3 rounded-2xl border bg-white p-5 text-left transition-colors",
-        current ? "border-2" : "border-line hover:border-ink/30",
+        "relative flex h-full w-full flex-col items-start gap-4 overflow-hidden rounded-2xl border p-5 text-left transition-colors",
+        premium
+          ? "border-[#5A1890] bg-[radial-gradient(120%_90%_at_85%_0%,#B0309F_0%,#5B1AAE_45%,#250A52_100%)] text-white"
+          : "border-line bg-white",
+        current && !premium && "ring-2 ring-inset",
         interactive && "cursor-pointer",
         className,
       )}
-      style={current ? { borderColor: level.bd } : undefined}
+      style={current && !premium ? { ["--tw-ring-color" as string]: level.accent } : undefined}
     >
-      <TrustShieldIcon tier={level.id as ReputationTier} size={56} />
+      <div className="flex w-full items-start justify-between gap-3">
+        <TrustMark tier={level.id} size={premium ? 64 : 52} still={!premium} />
+        {current ? (
+          <span
+            className={cn(
+              "rounded-full px-2 py-0.5 text-[11.5px] font-semibold",
+              premium ? "bg-white text-[#5B1AAE]" : "bg-surface-muted text-ink",
+            )}
+          >
+            Ваш уровень
+          </span>
+        ) : reached ? (
+          <span className="rounded-full bg-surface-muted px-2 py-0.5 text-[11.5px] font-medium text-mute">
+            Пройден
+          </span>
+        ) : null}
+      </div>
       <div className="min-w-0">
-        <p className="text-[17px] font-bold leading-tight text-ink">
-          {level.name} щит
+        <p
+          className={cn(
+            "text-[17px] font-semibold leading-tight",
+            premium ? "text-white" : "text-ink",
+          )}
+        >
+          {level.name}
         </p>
-        <p className="mt-1 text-[13px] text-mute">
-          {current ? "ваш уровень" : level.condition}
+        <p className={cn("mt-1 text-[13.5px]", premium ? "text-white/75" : "text-mute")}>
+          {level.description}
         </p>
       </div>
-      {current ? (
-        <span className="mt-auto rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-semibold text-brand-700">
-          Ваш уровень
-        </span>
-      ) : null}
+      <p
+        className={cn(
+          "mt-auto w-full border-t pt-3 text-[12.5px] tnum",
+          premium ? "border-white/15 text-white/80" : "border-line text-ink-soft",
+        )}
+      >
+        {level.condition}
+      </p>
     </Comp>
   )
 }

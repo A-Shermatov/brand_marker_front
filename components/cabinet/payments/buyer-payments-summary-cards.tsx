@@ -30,7 +30,7 @@ export const BuyerPaymentsSummaryCards = ({
       {cards.map((card) => (
         <SurfaceCard key={card.label} className="grid gap-1 p-4" padded={false}>
           <p className="text-[12.5px] font-semibold text-mute">{card.label}</p>
-          <p className="tnum text-[22px] font-extrabold text-ink">
+          <p className="tnum text-[22px] font-bold text-ink">
             {hydrated ? formatCurrency(card.value, currency) : "—"}
           </p>
           <p className="text-[12.5px] text-mute">{card.hint}</p>

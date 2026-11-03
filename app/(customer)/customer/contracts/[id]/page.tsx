@@ -2,7 +2,7 @@
 
 import { use, useState } from "react"
 import Link from "next/link"
-import { AlertTriangle, FileCheck, MessageSquare, Paperclip, Clock, Package, Gavel } from "lucide-react"
+import { WarningIcon as AlertTriangle, CertificateIcon as FileCheck, ChatTextIcon as MessageSquare, PaperclipIcon as Paperclip, ClockIcon as Clock, PackageIcon as Package, GavelIcon as Gavel } from "@phosphor-icons/react/dist/ssr"
 import { ConfirmActionDialog, DealStepper } from "@/components/process"
 import { BuyerDealNextAction } from "@/components/cabinet/contracts/buyer-deal-next-action"
 import { PageFrame, PageHeader } from "@/components/layout"
@@ -39,7 +39,7 @@ import {
 } from "@/components/cabinet/payments/alif-payment-note"
 import { canUploadContractFiles, contractStatusMeta } from "@/lib/contract-display"
 import { formatCurrency, formatIsoDate } from "@/lib/format"
-import { DeadlineBanner, DeadlineCountdown } from "@/components/contracts/deadline-countdown"
+import { DeadlineCountdown } from "@/components/contracts/deadline-countdown"
 import { ContractSupplierCard } from "@/components/cabinet/contracts/contract-supplier-card"
 import { BuyerContractMilestonesPanel } from "@/components/cabinet/contracts/buyer-contract-milestones-panel"
 import { BuyerContractSubmissionsPanel } from "@/components/cabinet/contracts/buyer-contract-submissions-panel"
@@ -367,7 +367,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
         }
       />
 
-      <div className="grid gap-4 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)]">
+      <div className="grid gap-4 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
         <DealStepper contract={contract} />
         <div className="flex flex-wrap items-center gap-3">
           <DeadlineCountdown
@@ -396,7 +396,6 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
             <span className="ml-auto text-xs font-semibold text-destructive">Спор открыт</span>
           )}
         </div>
-        <DeadlineBanner dueDate={contract.due_date} status={contract.status} />
       </div>
 
       <BuyerDealNextAction

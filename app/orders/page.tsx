@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useMemo } from "react"
-import { Clock, FileText, MapPin, Users } from "lucide-react"
+import { ClockIcon as Clock, FileTextIcon as FileText, MapPinIcon as MapPin, UsersIcon as Users } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { getRecentRequests } from "@/lib/mock/marketplace-requests"
 import { getIcon } from "@/lib/icon-map"
@@ -34,7 +34,7 @@ export default function OrdersPage() {
                 <FileText size={20} className="text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl font-black text-foreground">Свежие заказы</h1>
+                <h1 className="text-2xl font-bold text-foreground">Свежие заказы</h1>
                 <p className="text-sm text-muted-foreground">Актуальные B2B-запросы от компаний</p>
               </div>
             </div>
@@ -68,7 +68,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
                     <div>
-                      <div className="text-sm font-black text-primary">{order.budget}</div>
+                      <div className="text-sm font-bold text-primary">{order.budget}</div>
                       <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
                         <MapPin size={9} />
                         {order.city}

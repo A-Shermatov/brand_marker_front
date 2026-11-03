@@ -2,7 +2,7 @@
 
 import { AdminLink } from "@/components/admin/admin-link"
 import { formatCurrency } from "@/lib/format"
-import { FileText } from "lucide-react"
+import { FileTextIcon as FileText } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import type { AdminProposalDetail } from "@/lib/api/admin"
 import {
@@ -54,20 +54,20 @@ export const AdminProposalDetailSections = ({
         {proposal.supplier ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Имя
               </dt>
               <dd className="mt-1 text-sm font-medium">{partyLabel(proposal.supplier)}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Email
               </dt>
               <dd className="mt-1 text-sm font-medium">{proposal.supplier.email || "—"}</dd>
             </div>
             {proposal.supplier.company_id && (
               <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <dt className="text-[12.5px] font-medium text-muted-foreground">
                   Компания
                 </dt>
                 <dd className="mt-1 text-sm font-medium">
@@ -91,20 +91,20 @@ export const AdminProposalDetailSections = ({
         {proposal.buyer ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Имя
               </dt>
               <dd className="mt-1 text-sm font-medium">{partyLabel(proposal.buyer)}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Email
               </dt>
               <dd className="mt-1 text-sm font-medium">{proposal.buyer.email || "—"}</dd>
             </div>
             {proposal.rfq && (
               <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <dt className="text-[12.5px] font-medium text-muted-foreground">
                   Заявка
                 </dt>
                 <dd className="mt-1 text-sm font-medium">
@@ -127,7 +127,7 @@ export const AdminProposalDetailSections = ({
         <h2 className="mb-5 text-lg font-bold">Цена</h2>
         <dl className="grid gap-4 sm:grid-cols-2">
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Сумма
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -135,13 +135,13 @@ export const AdminProposalDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Срок
             </dt>
             <dd className="mt-1 text-sm font-medium">{proposal.delivery_time || "—"}</dd>
           </div>
           <div className="sm:col-span-2">
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Сообщение предложения
             </dt>
             <dd className="mt-1 text-sm leading-6 text-muted-foreground">
@@ -192,13 +192,13 @@ export const AdminProposalDetailSections = ({
         {proposal.contract ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Название
               </dt>
               <dd className="mt-1 text-sm font-medium">{proposal.contract.title}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Статус
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -208,7 +208,7 @@ export const AdminProposalDetailSections = ({
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Сумма
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -216,7 +216,7 @@ export const AdminProposalDetailSections = ({
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Создан
               </dt>
               <dd className="mt-1 text-sm font-medium">

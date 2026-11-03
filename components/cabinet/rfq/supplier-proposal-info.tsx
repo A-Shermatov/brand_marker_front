@@ -1,7 +1,9 @@
 import Link from "next/link"
-import { Building2, MapPin, ShieldCheck, User } from "lucide-react"
+import { BuildingsIcon as Building2, MapPinIcon as MapPin, ShieldCheckIcon as ShieldCheck, UserIcon as User } from "@phosphor-icons/react/dist/ssr"
 import type { PublicSupplier } from "@/types"
 import { BuyerRating } from "@/components/supplier/rfq/buyer-rating"
+import { CompanyName } from "@/components/bm"
+import { supplierMarks } from "@/lib/supplier-marks"
 
 type SupplierProposalInfoProps = {
   supplier: PublicSupplier | undefined
@@ -28,15 +30,16 @@ export const SupplierProposalInfo = ({
 
   return (
     <div className="flex items-start gap-3">
-      <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
-        <Icon size={22} className="text-primary" />
+      <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-surface-muted">
+        <Icon size={22} className="text-ink-soft" />
       </div>
       <div className="flex-1 min-w-0">
-        <Link
-          href={profileHref}
-          className="block text-sm font-bold text-foreground hover:text-primary transition-colors wrap-anywhere"
-        >
-          {supplierName}
+        <Link href={profileHref} className="flex min-w-0 hover:[&_*]:text-brand-700">
+          <CompanyName
+            name={supplierName}
+            {...(supplier ? supplierMarks(supplier) : {})}
+            size="md"
+          />
         </Link>
         {supplier ? (
           <>

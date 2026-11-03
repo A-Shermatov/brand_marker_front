@@ -1,6 +1,6 @@
 "use client"
 
-import { Info } from "lucide-react"
+import { InfoIcon as Info } from "@phosphor-icons/react/dist/ssr"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { cn } from "@/lib/utils"
 import { glossary, type GlossaryKey } from "@/lib/glossary"

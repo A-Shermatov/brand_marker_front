@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Clock } from "lucide-react"
+import { ClockIcon as Clock } from "@phosphor-icons/react/dist/ssr"
 import type { ContractStatus } from "@/types"
 import { cn } from "@/lib/utils"
 import { formatIsoDate } from "@/lib/format"
@@ -87,53 +87,6 @@ export const DeadlineCountdown = ({
       {showAbsoluteDate && (
         <p className="text-[10px] text-muted-foreground">до {formatIsoDate(dueDate)}</p>
       )}
-    </div>
-  )
-}
-
-type DeadlineBannerProps = {
-  dueDate: string
-  status: ContractStatus
-}
-
-export const DeadlineBanner = ({ dueDate, status }: DeadlineBannerProps) => {
-  const showCountdown = shouldShowContractCountdown(status)
-  const [remaining, setRemaining] = useState(() => getTimeRemaining(dueDate))
-
-  useEffect(() => {
-    if (!showCountdown) return
-    const update = () => setRemaining(getTimeRemaining(dueDate))
-    update()
-    const timer = setInterval(update, 60_000)
-    return () => clearInterval(timer)
-  }, [dueDate, showCountdown])
-
-  if (!showCountdown) return null
-
-  const label = formatCountdownLabel(remaining)
-  const colorClass = remaining.expired
-    ? "bg-destructive/10 border-destructive/20 text-destructive"
-    : isUrgentDeadline(remaining)
-      ? "bg-warning/10 border-warning/20 text-amber-800"
-      : "bg-secondary border-border text-foreground"
-
-  return (
-    <div
-      className={cn("rounded-xl border px-4 py-3 flex items-center gap-2 text-sm mt-4", colorClass)}
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <Clock size={16} className="flex-shrink-0" />
-      <span>
-        {remaining.expired ? (
-          <><span className="font-bold">{label}</span></>
-        ) : (
-          <>
-            До завершения работ осталось:{" "}
-            <span className="font-bold">{label}</span>
-          </>
-        )}
-      </span>
     </div>
   )
 }

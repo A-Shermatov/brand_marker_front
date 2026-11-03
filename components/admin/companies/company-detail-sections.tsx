@@ -4,17 +4,7 @@ import { type ReactNode, useState } from "react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { formatCurrency } from "@/lib/format"
-import {
-  Check,
-  ExternalLink,
-  Eye,
-  EyeOff,
-  Package,
-  Star,
-  Tags,
-  Wrench,
-  X,
-} from "lucide-react"
+import { CheckIcon as Check, ArrowSquareOutIcon as ExternalLink, EyeIcon as Eye, EyeSlashIcon as EyeOff, PackageIcon as Package, StarIcon as Star, TagIcon as Tags, WrenchIcon as Wrench, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { CompanyConfirmDialog } from "@/components/admin/companies/company-confirm-dialog"
 import { CompanyDocumentsManager } from "@/components/admin/companies/company-documents-manager"
 import { CompanyMembersManager } from "@/components/admin/companies/company-members-manager"
@@ -70,7 +60,7 @@ const Section = ({
 
 const InfoField = ({ label, value }: { label: string; value: ReactNode }) => (
   <div>
-    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+    <dt className="text-[12.5px] font-medium text-muted-foreground">
       {label}
     </dt>
     <dd className="mt-1 text-sm font-medium text-foreground">{value || "Не указано"}</dd>
@@ -426,7 +416,7 @@ export const AdminCompanyDetailSections = ({
                   <article key={review.id} className="rounded-xl border border-border p-4">
                     <div className="flex items-center justify-between gap-3">
                       <span className="flex items-center gap-1 font-bold">
-                        <Star size={16} className="fill-amber-400 text-amber-400" aria-hidden="true" />
+                        <Star size={16} className="fill-amber-400 text-amber-400" aria-hidden="true" weight="fill" />
                         {review.rating}/5
                       </span>
                       <span className="text-xs text-muted-foreground">

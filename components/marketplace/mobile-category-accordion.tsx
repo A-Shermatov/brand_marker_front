@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ChevronDown, ChevronRight } from "lucide-react"
+import { CaretDownIcon as ChevronDown, CaretRightIcon as ChevronRight } from "@phosphor-icons/react/dist/ssr"
 import { useMarketplaceCategories } from "@/hooks/use-marketplace-categories"
 import { categoryUrl } from "@/lib/marketplace-routes"
 

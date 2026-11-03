@@ -3,13 +3,7 @@
 import { Suspense, useCallback, useEffect, useState, Fragment} from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  ChevronLeft,
-  ChevronRight,
-  ClipboardList,
-  RefreshCcw,
-  Search,
-} from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ClipboardTextIcon as ClipboardList, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {

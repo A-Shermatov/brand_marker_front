@@ -1,25 +1,27 @@
 import Link from "next/link"
 import Image from "next/image"
-import { BadgeCheck, Clock, Crown, MapPin, Star, Users } from "lucide-react"
+import { ClockIcon, MapPinIcon, PackageIcon, StarIcon } from "@phosphor-icons/react/dist/ssr"
 import type { MarketplacePerformer } from "@/types/marketplace"
-import { getIcon } from "@/lib/icon-map"
+import { CompanyName } from "@/components/bm"
 import { performerUrl } from "@/lib/marketplace-routes"
 import { resolveFileUrl } from "@/lib/file-url"
+import { formatCount } from "@/lib/format"
 
 type PerformerCardProps = {
   performer: MarketplacePerformer
 }
 
 export const PerformerCard = ({ performer }: PerformerCardProps) => {
-  const Icon = getIcon(performer.icon)
+  const products = Number(performer.clients) || 0
+  const rated = performer.reviews > 0 && performer.rating > 0
 
   return (
     <Link
       href={performerUrl(performer.id)}
-      className="border border-border rounded-2xl p-5 hover:border-primary/30 hover:shadow-lg transition-all duration-200 group bg-white"
+      className="group grid content-start gap-4 rounded-2xl border border-line bg-white p-5 transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]"
     >
-      <div className="flex items-start gap-4">
-        <div className={`${performer.color} w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm`}>
+      <div className="flex items-start gap-3.5">
+        <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-brand-700 text-[14px] font-semibold text-white">
           {performer.imageUrl ? (
             <Image
               src={resolveFileUrl(performer.imageUrl)}
@@ -27,65 +29,62 @@ export const PerformerCard = ({ performer }: PerformerCardProps) => {
               width={48}
               height={48}
               unoptimized
-              className="h-12 w-12 rounded-xl object-cover"
+              className="size-12 object-cover"
             />
-          ) : performer.initials}
+          ) : (
+            performer.initials
+          )}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="font-bold text-sm text-foreground group-hover:text-primary transition-colors truncate">
-              {performer.name}
-            </span>
-            {performer.verified && <BadgeCheck size={14} className="text-primary flex-shrink-0" />}
-            {performer.vip && (
-              <span className="inline-flex items-center gap-0.5 rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">
-                <Crown size={10} aria-hidden="true" />
-                VIP
+        <div className="grid min-w-0 flex-1 gap-1">
+          <CompanyName
+            name={performer.name}
+            verified={performer.verified}
+            tier={performer.tier}
+            plan={performer.plan}
+            size="md"
+            nameClassName="group-hover:text-brand-700"
+          />
+          <p className="truncate text-[13px] text-mute">{performer.category}</p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-mute">
+            {rated ? (
+              <span className="inline-flex items-center gap-1">
+                <StarIcon weight="fill" className="size-3.5 text-amber-500" aria-hidden />
+                <b className="font-semibold text-ink tnum">{performer.rating.toFixed(1)}</b>
+                <span className="tnum">· {formatCount(performer.reviews, "отзыв", "отзыва", "отзывов")}</span>
               </span>
+            ) : (
+              <span>Пока без отзывов</span>
             )}
-            {performer.promoted && !performer.vip && (
-              <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
-                Продвигается
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <Icon size={11} className="text-muted-foreground" />
-            <div className="text-xs text-muted-foreground">{performer.category}</div>
-          </div>
-          <div className="flex items-center gap-2 mt-1.5">
-            <div className="flex items-center gap-0.5">
-              <Star size={11} className="text-amber-400 fill-amber-400" />
-              <span className="text-xs font-bold">{performer.rating}</span>
-              <span className="text-xs text-muted-foreground">({performer.reviews})</span>
-            </div>
-            <span className="text-muted-foreground/40 text-xs">•</span>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin size={10} />
+            <span className="inline-flex items-center gap-1">
+              <MapPinIcon className="size-3.5" aria-hidden />
               {performer.city}
-            </div>
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground border-t border-border pt-3">
-        <span className="flex items-center gap-1.5">
-          <Users size={12} className="text-primary" />
-          <span className="font-semibold text-foreground">{performer.clients}</span> клиентов
+      <div className="flex items-center gap-4 border-t border-line pt-3 text-[12.5px] text-mute">
+        <span className="inline-flex items-center gap-1.5">
+          <PackageIcon className="size-4 text-ink-soft" aria-hidden />
+          {products > 0 ? formatCount(products, "товар", "товара", "товаров") : "Товаров пока нет"}
         </span>
-        <span className="flex items-center gap-1.5">
-          <Clock size={12} className="text-primary" />
-          на рынке <span className="font-semibold text-foreground">{performer.years}</span>
-        </span>
+        {!performer.verified ? (
+          <span className="inline-flex items-center gap-1.5 text-amber-700">
+            <ClockIcon className="size-4" aria-hidden />
+            На проверке
+          </span>
+        ) : null}
       </div>
 
-      <div className="mt-2.5 flex flex-wrap gap-1.5">
-        {performer.specialties.map((spec) => (
-          <span key={spec} className="text-[10px] bg-muted text-muted-foreground px-2.5 py-1 rounded-lg font-medium">
-            {spec}
-          </span>
-        ))}
-      </div>
+      {performer.specialties.length > 0 ? (
+        <div className="-mt-1 flex flex-wrap gap-1.5">
+          {performer.specialties.slice(0, 4).map((spec) => (
+            <span key={spec} className="rounded-md bg-surface-muted px-2 py-0.5 text-[12px] text-ink-soft">
+              {spec}
+            </span>
+          ))}
+        </div>
+      ) : null}
     </Link>
   )
 }

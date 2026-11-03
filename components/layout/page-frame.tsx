@@ -8,7 +8,9 @@ type PageFrameProps = React.HTMLAttributes<HTMLDivElement> & {
 export const PageFrame = ({ children, className, ...props }: PageFrameProps) => {
   return (
     <div
-      className={cn("mx-auto w-full max-w-6xl space-y-6", className)}
+      // The cabinet column already limits the width; centring again here
+      // shifted page content away from the section header above it.
+      className={cn("w-full space-y-6", className)}
       {...props}
     >
       {children}

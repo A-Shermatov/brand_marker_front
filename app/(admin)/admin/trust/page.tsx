@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useMemo, useState } from "react"
-import { ReputationBadge, SurfaceCard, TrustShieldIcon } from "@/components/bm"
+import { ReputationBadge, SurfaceCard, TrustMark } from "@/components/bm"
 import { PageFrame, PageHeader } from "@/components/layout"
 import { Input } from "@/components/ui/input"
 import { useAdminCompaniesQuery } from "@/hooks/api/use-admin-companies-query"
@@ -69,8 +69,8 @@ export default function AdminTrustPage() {
   return (
     <PageFrame>
       <PageHeader
-        title="Щит доверия"
-        description={`Серебро ${counts.silver} · золото ${counts.gold} · алмаз ${counts.diamond} · без щита ${counts.none}. Выдаётся автоматически, пересчёт по правилам площадки.`}
+        title="Знак надёжности"
+        description={`Серебро ${counts.silver} · золото ${counts.gold} · алмаз ${counts.diamond} · без знака ${counts.none}. Выдаётся автоматически, пересчёт по правилам площадки.`}
       />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -80,7 +80,7 @@ export default function AdminTrustPage() {
             className="flex items-center gap-3 p-4"
             padded={false}
           >
-            <TrustShieldIcon tier={tier === "none" ? "none" : tier} size={36} />
+            <TrustMark tier={tier === "none" ? "none" : tier} size={36} />
             <span>
               <b className="tnum block text-[20px] text-ink">{counts[tier]}</b>
               <span className="text-[12.5px] text-mute">
@@ -124,7 +124,7 @@ export default function AdminTrustPage() {
               <thead className="border-b border-line bg-canvas text-[12.5px] text-mute">
                 <tr>
                   <th className="px-4 py-3 font-semibold">Поставщик</th>
-                  <th className="px-4 py-3 font-semibold">Статус щита</th>
+                  <th className="px-4 py-3 font-semibold">Знак надёжности</th>
                   <th className="px-4 py-3 font-semibold">Проверка</th>
                   <th className="px-4 py-3 font-semibold">Сделки</th>
                   <th className="px-4 py-3 font-semibold">Рейтинг</th>
@@ -146,7 +146,7 @@ export default function AdminTrustPage() {
                         <ReputationBadge tier={row.tier} />
                       ) : (
                         <span className="whitespace-nowrap text-[13px] text-mute">
-                          нет щита
+                          без знака
                         </span>
                       )}
                     </td>

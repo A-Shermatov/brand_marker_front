@@ -40,7 +40,7 @@ export const SegmentedControl = <T extends string>({
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex max-w-full gap-1 overflow-x-auto rounded-xl bg-surface-muted p-1 no-scrollbar",
+        "inline-flex max-w-full gap-1 overflow-x-auto rounded-lg bg-surface-muted p-1 no-scrollbar",
         className,
       )}
     >
@@ -54,9 +54,9 @@ export const SegmentedControl = <T extends string>({
             aria-selected={isActive}
             tabIndex={0}
             className={cn(
-              "h-9 shrink-0 whitespace-nowrap rounded-lg px-4 text-[14px] font-semibold transition",
+              "h-8 shrink-0 whitespace-nowrap rounded-md px-3.5 text-[13.5px] font-medium transition-colors",
               isActive
-                ? "bg-white text-ink shadow-[0_1px_3px_rgba(16,24,40,.12)]"
+                ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                 : "text-mute hover:text-ink",
             )}
             onClick={() => handleSelect(option.value)}
@@ -66,8 +66,8 @@ export const SegmentedControl = <T extends string>({
             {option.count !== undefined ? (
               <span
                 className={cn(
-                  "ml-1 text-[12px]",
-                  isActive ? "text-brand-700" : "text-mute",
+                  "ml-1.5 text-[12px] tnum",
+                  isActive ? "text-brand-700" : "text-faint",
                 )}
               >
                 {option.count}

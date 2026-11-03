@@ -3,21 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
-  FileCheck2,
-  FileText,
-  Loader2,
-  RefreshCcw,
-  Search,
-  ShieldOff,
-  Trash2,
-  Upload,
-  X,
-} from "lucide-react"
+import { CheckIcon as Check, CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ArrowSquareOutIcon as ExternalLink, CertificateIcon as FileCheck2, FileTextIcon as FileText, CircleNotchIcon as Loader2, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, ShieldSlashIcon as ShieldOff, TrashIcon as Trash2, UploadSimpleIcon as Upload, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import {
   IndividualVerificationDialog,
@@ -196,7 +182,7 @@ const DocumentTile = ({
 
 const InfoRow = ({ label, value }: { label: string; value: string | null | undefined }) => (
   <div>
-    <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+    <dt className="text-[12.5px] font-medium text-muted-foreground">{label}</dt>
     <dd className="mt-1 text-sm font-medium text-foreground">{value || "Не указано"}</dd>
   </div>
 )

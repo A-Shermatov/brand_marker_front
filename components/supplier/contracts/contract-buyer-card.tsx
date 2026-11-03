@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Building2, MapPin, ShieldCheck } from "lucide-react"
+import { BuildingsIcon as Building2, MapPinIcon as MapPin, ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import type { PublicBuyer } from "@/types"
 import { BuyerRating } from "@/components/supplier/rfq/buyer-rating"
 import { formatCount } from "@/lib/format"

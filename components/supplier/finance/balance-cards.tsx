@@ -1,4 +1,4 @@
-import { Lock, TrendingUp, Wallet } from "lucide-react"
+import { LockIcon as Lock, TrendUpIcon as TrendingUp, WalletIcon as Wallet } from "@phosphor-icons/react/dist/ssr"
 import type { SupplierBalanceSummary } from "@/types"
 import { formatCurrency } from "@/lib/format"
 import { SurfaceCard } from "@/components/bm"
@@ -49,7 +49,7 @@ export const BalanceCards = ({ balances, hydrated }: BalanceCardsProps) => (
           <span className="block text-[12.5px] font-semibold text-mute">
             {label}
           </span>
-          <span className="tnum block text-[22px] font-extrabold text-ink">
+          <span className="tnum block text-[22px] font-bold text-ink">
             {hydrated ? formatCurrency(balances[key], balances.currency) : "—"}
           </span>
           <span className="block text-[12.5px] text-mute">{hint}</span>

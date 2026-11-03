@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Truck, Check, LogOut } from "lucide-react"
+import { TruckIcon as Truck, CheckIcon as Check, SignOutIcon as LogOut } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { useRouter } from "next/navigation"

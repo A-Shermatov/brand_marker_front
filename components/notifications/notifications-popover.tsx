@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Bell, CheckCheck } from "lucide-react"
+import { BellIcon as Bell, ChecksIcon as CheckCheck } from "@phosphor-icons/react/dist/ssr"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -91,7 +91,7 @@ export const NotificationsPopover = ({ role }: NotificationsPopoverProps) => {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="relative grid size-10 place-items-center rounded-[10px] hover:bg-canvas"
+          className="relative grid size-10 place-items-center rounded-lg hover:bg-canvas"
           aria-label="Уведомления"
         >
           <Bell className="size-5" />

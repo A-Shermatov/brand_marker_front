@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { Headphones, Loader2, MessageCircle, X } from "lucide-react"
+import { HeadsetIcon as Headphones, CircleNotchIcon as Loader2, ChatCircleIcon as MessageCircle, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { SupportMessageList } from "@/components/support/support-message-list"
 import { useSupportChat } from "@/components/support/support-chat-context"
 import {

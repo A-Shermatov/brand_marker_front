@@ -3,11 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  ChevronLeft, ChevronRight, CheckCircle2, Users, Layers,
-  ThumbsUp, TrendingUp, ChevronRight as ChevronRightIcon, ShieldCheck,
-  FileText,
-} from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, CheckCircleIcon as CheckCircle2, UsersIcon as Users, StackIcon as Layers, ThumbsUpIcon as ThumbsUp, TrendUpIcon as TrendingUp, CaretRightIcon as ChevronRightIcon, ShieldCheckIcon as ShieldCheck, FileTextIcon as FileText } from "@phosphor-icons/react/dist/ssr"
 import { CategorySidebar } from "@/components/marketplace/category-sidebar"
 import {
   categoryUrl,
@@ -115,7 +111,7 @@ export default function HeroBanner() {
                 <CheckCircle2 size={12} />
                 {slide.badge}
               </span>
-              <h1 className="text-white text-[2.1rem] font-black leading-[1.15] mb-3 whitespace-pre-line">
+              <h1 className="text-white text-[2.1rem] font-bold leading-[1.15] mb-3 whitespace-pre-line">
                 {slide.title}
               </h1>
               <p className="text-white/75 text-sm mb-6 max-w-xs leading-relaxed">
@@ -213,7 +209,7 @@ export default function HeroBanner() {
                   <Icon size={18} className="text-primary" />
                 </div>
                 <div>
-                  <div className="text-lg font-black text-foreground leading-none">{value}</div>
+                  <div className="text-lg font-bold text-foreground leading-none">{value}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
                 </div>
               </div>

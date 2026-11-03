@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Building2, MapPin, Star, CheckCircle2 } from "lucide-react"
+import { BuildingsIcon as Building2, MapPinIcon as MapPin, StarIcon as Star, CheckCircleIcon as CheckCircle2 } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import type { CompanyWithRelations } from "@/types"
 
@@ -45,7 +45,7 @@ export const CompanyCard = ({
         </div>
       </div>
       {isActive && (
-        <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-primary bg-primary/10 px-2 py-1 rounded-md">
+        <span className="shrink-0 text-[12.5px] font-medium text-primary bg-primary/10 px-2 py-1 rounded-md">
           Активна
         </span>
       )}

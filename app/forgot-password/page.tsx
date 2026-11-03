@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { ArrowRight, MailCheck } from "lucide-react"
+import { ArrowRightIcon as ArrowRight, EnvelopeOpenIcon as MailCheck } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { AuthShell } from "@/components/auth/auth-shell"
 import { Button } from "@/components/ui/button"
@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
           <div className="mx-auto grid size-12 place-items-center rounded-full bg-emerald-50 text-emerald-700">
             <MailCheck className="size-6" />
           </div>
-          <h1 className="text-[24px] font-extrabold tracking-[-0.02em] text-ink">
+          <h1 className="text-[24px] font-bold tracking-[-0.02em] text-ink">
             Проверьте почту
           </h1>
           <p className="text-[15px] text-mute">
@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
         </div>
       ) : (
         <>
-          <h1 className="mb-1 text-[26px] font-extrabold tracking-[-0.02em] text-ink">
+          <h1 className="mb-1 text-[26px] font-bold tracking-[-0.02em] text-ink">
             Восстановление пароля
           </h1>
           <p className="mb-6 text-[15px] text-mute">

@@ -2,7 +2,7 @@
 
 import { Suspense, useMemo, useState } from "react"
 import Link from "next/link"
-import { Boxes, Plus } from "lucide-react"
+import { StackIcon as Boxes, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useItemsStore } from "@/lib/store/items-store"
 import { useHydrated } from "@/hooks/use-hydrated"

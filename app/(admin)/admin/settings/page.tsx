@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, type FormEvent } from "react"
-import { Loader2, Lock, RefreshCcw, Settings } from "lucide-react"
+import { CircleNotchIcon as Loader2, LockIcon as Lock, ArrowsCounterClockwiseIcon as RefreshCcw, GearIcon as Settings } from "@phosphor-icons/react/dist/ssr"
 import { ChangePasswordCard } from "@/components/auth/change-password-card"
 import { TwoFactorSettings } from "@/components/auth/two-factor-settings"
 import { PageFrame, PageHeader, PageSurface } from "@/components/layout"
@@ -121,7 +121,7 @@ const CommissionExamples = ({ settings }: { settings: PlatformSettingsInput | nu
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-105 text-sm">
           <thead>
-            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <tr className="border-b border-border text-left text-[12.5px] font-medium text-muted-foreground">
               <th className="py-2 pr-4 font-semibold">Сумма договора</th>
               <th className="py-2 pr-4 font-semibold">Комиссия</th>
               <th className="py-2 font-semibold">Исполнитель получит</th>

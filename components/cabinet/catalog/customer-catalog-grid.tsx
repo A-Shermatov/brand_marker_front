@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Package, Briefcase } from "lucide-react"
+import { PackageIcon as Package, BriefcaseIcon as Briefcase } from "@phosphor-icons/react/dist/ssr"
 import type { CatalogItemWithRelations } from "@/types"
 import { catalogItemTypeLabel, formatItemPricing, resolveListPrice } from "@/lib/item-display"
 import { serviceUrl } from "@/lib/marketplace-routes"
@@ -58,7 +58,7 @@ export const CustomerCatalogGrid = ({
                   )}
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  <span className="text-[12.5px] font-medium text-muted-foreground">
                     {catalogItemTypeLabel[item.type]}
                   </span>
                   <Link

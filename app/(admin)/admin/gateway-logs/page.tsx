@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Cable, ChevronLeft, ChevronRight, Download, RefreshCcw, Search } from "lucide-react"
+import { PlugIcon as Cable, CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, DownloadSimpleIcon as Download, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import {
   formatGatewayDateTime,

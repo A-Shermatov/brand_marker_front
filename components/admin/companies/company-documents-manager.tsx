@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FilePlus2, FileText, Trash2 } from "lucide-react"
+import { FilePlusIcon as FilePlus2, FileTextIcon as FileText, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { CompanyConfirmDialog } from "@/components/admin/companies/company-confirm-dialog"
 import { Button } from "@/components/ui/button"

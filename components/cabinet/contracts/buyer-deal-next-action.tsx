@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle, Check, MessageSquare } from "lucide-react"
+import { WarningIcon as AlertTriangle, CheckIcon as Check, ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 import type { ContractWithRelations } from "@/types"
 import { Button } from "@/components/ui/button"
 import { NextActionCard } from "@/components/process"

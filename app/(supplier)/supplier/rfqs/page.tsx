@@ -1,7 +1,8 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useMemo, useState } from "react"
-import { Search } from "lucide-react"
+import { MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useRfqsStore } from "@/lib/store/rfqs-store"
 import { useProposalsStore } from "@/lib/store/proposals-store"
@@ -49,7 +50,12 @@ import type { Currency, ProposalStatus, RfqWithRelations } from "@/types"
 const SupplierRfqsContent = () => {
   const hydrated = useHydrated()
   const [page, setPage] = useState(1)
-  const [searchInput, setSearchInput] = useState("")
+  const searchParams = useSearchParams()
+  const queryFromUrl = searchParams.get("q") ?? ""
+  const [searchInput, setSearchInput] = useState(queryFromUrl)
+  useEffect(() => {
+    setSearchInput(queryFromUrl)
+  }, [queryFromUrl])
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const user = useAuthStore((s) => s.user)
   const actorId = getActorId(user)

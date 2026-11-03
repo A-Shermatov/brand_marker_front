@@ -1,6 +1,6 @@
 "use client"
 
-import { Star } from "lucide-react"
+import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import type { ItemAttribute, ItemPricing, PublicSupplier } from "@/types"
 import { formatCurrency } from "@/lib/format"
 import {
@@ -44,7 +44,7 @@ export const CatalogItemInfo = ({
   return (
     <div id="pinfo" className="grid min-w-0 content-start gap-5">
       <div className="grid gap-2">
-        <h1 className="text-[22px] font-extrabold leading-snug tracking-[-0.01em] text-ink lg:text-[24px]">
+        <h1 className="text-[22px] font-bold leading-snug tracking-[-0.01em] text-ink lg:text-[24px]">
           {title}
         </h1>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px]">
@@ -83,7 +83,7 @@ export const CatalogItemInfo = ({
         {tiers.length > 1 ? (
           <div className="grid gap-3">
             <div>
-              <b className="text-[30px] font-extrabold leading-none tracking-[-0.02em] tnum text-ink">
+              <b className="text-[30px] font-bold leading-none tracking-[-0.02em] tnum text-ink">
                 {headline.includes("от") ? headline : `${headline}`}
               </b>
               <p className="mt-1.5 text-[14px] text-mute">
@@ -120,7 +120,7 @@ export const CatalogItemInfo = ({
                     </span>
                     <b
                       className={cn(
-                        "block text-[17px] font-extrabold tnum",
+                        "block text-[17px] font-bold tnum",
                         on && "text-brand-700",
                       )}
                     >
@@ -133,7 +133,7 @@ export const CatalogItemInfo = ({
           </div>
         ) : unitPrice != null ? (
           <div>
-            <b className="text-[30px] font-extrabold leading-none tracking-[-0.02em] tnum text-ink">
+            <b className="text-[30px] font-bold leading-none tracking-[-0.02em] tnum text-ink">
               {formatCurrency(unitPrice, currency)}
             </b>
             <p className="mt-1.5 text-[14px] text-mute">
@@ -142,7 +142,7 @@ export const CatalogItemInfo = ({
           </div>
         ) : (
           <div className="rounded-xl bg-canvas p-4">
-            <b className="text-[24px] font-extrabold">Цена по запросу</b>
+            <b className="text-[24px] font-bold">Цена по запросу</b>
             <p className="mt-1 text-[13.5px] text-mute">
               Поставщик пришлёт коммерческое предложение под ваш объём.
             </p>
@@ -152,7 +152,7 @@ export const CatalogItemInfo = ({
 
       {keyAttrs.length > 0 && (
         <div className="grid gap-3 border-t border-line pt-5">
-          <h2 className="text-[17px] font-extrabold text-ink">
+          <h2 className="text-[17px] font-bold text-ink">
             Основные характеристики
           </h2>
           <dl className="grid grid-cols-2 gap-y-4 rounded-xl bg-canvas p-4 sm:grid-cols-3">

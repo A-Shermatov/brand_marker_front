@@ -3,17 +3,7 @@
 import { use, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  Boxes,
-  CheckCircle2,
-  EyeOff,
-  Package,
-  Pencil,
-  RefreshCcw,
-  RotateCcw,
-  Trash2,
-  XCircle,
-} from "lucide-react"
+import { StackIcon as Boxes, CheckCircleIcon as CheckCircle2, EyeSlashIcon as EyeOff, PackageIcon as Package, PencilSimpleIcon as Pencil, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowCounterClockwiseIcon as RotateCcw, TrashIcon as Trash2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { AdminLink } from "@/components/admin/admin-link"
 import { CatalogActionDialog } from "@/components/admin/catalog/catalog-action-dialog"
 import { AdminCatalogDetailSections } from "@/components/admin/catalog/catalog-detail-sections"
@@ -145,7 +135,7 @@ export default function AdminCatalogDetailPage({ params }: PageProps) {
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <p className="text-[12.5px] font-medium text-muted-foreground">
                 {catalogItemTypeLabel[item.type]} #{item.id}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">

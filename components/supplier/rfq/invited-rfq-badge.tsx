@@ -1,4 +1,4 @@
-import { UserCheck } from "lucide-react"
+import { UserCheckIcon as UserCheck } from "@phosphor-icons/react/dist/ssr"
 import { statusPillClass } from "@/components/ui/status-badge"
 import { cn } from "@/lib/utils"
 

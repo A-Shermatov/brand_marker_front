@@ -2,7 +2,7 @@
 
 import { statusPillClass } from "@/components/ui/status-badge"
 import Link from "next/link"
-import { Package, Briefcase, Pencil } from "lucide-react"
+import { PackageIcon as Package, BriefcaseIcon as Briefcase, PencilSimpleIcon as Pencil } from "@phosphor-icons/react/dist/ssr"
 import type { CatalogItemWithRelations } from "@/types"
 import { itemStatusMeta, formatItemPricing, catalogItemTypeLabel } from "@/lib/item-display"
 import { isApiEnabled } from "@/lib/api/config"

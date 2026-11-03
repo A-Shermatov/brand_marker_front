@@ -4,13 +4,7 @@ import { Suspense, useCallback, useEffect, useState, Fragment} from "react"
 import { formatCurrency } from "@/lib/format"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCcw,
-  Search,
-} from "lucide-react"
+import { BookOpenIcon as BookOpen, CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -197,7 +191,7 @@ export function AdminContractsContent({ embedded = true }: { embedded?: boolean 
                 <TableHead>Контракт</TableHead>
                 <TableHead>Стороны</TableHead>
                 <TableHead>Сумма</TableHead>
-                <TableHead>Escrow</TableHead>
+                <TableHead>На гарантии</TableHead>
                 <TableHead>Статус</TableHead>
                 <TableHead>Дата</TableHead>
               </TableRow>

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Star } from "lucide-react"
+import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import type { Review } from "@/types"
 import { formatReviewParty } from "@/lib/review-party"
 

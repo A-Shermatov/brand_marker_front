@@ -6,7 +6,7 @@ import type { Proposal, PublicSupplier } from "@/types"
 import { proposalStatusMeta } from "@/lib/proposal-display"
 import { formatDeliveryTime, formatMoneyDisplay } from "@/lib/format"
 import { SupplierProposalInfo } from "@/components/cabinet/rfq/supplier-proposal-info"
-import { Banknote, Clock, MessageSquare } from "lucide-react"
+import { MoneyIcon as Banknote, ClockIcon as Clock, ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 
 type ProposalReviewCardProps = {
   proposal: Proposal

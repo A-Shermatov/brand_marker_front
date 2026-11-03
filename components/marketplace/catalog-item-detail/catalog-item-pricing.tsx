@@ -26,7 +26,7 @@ export const CatalogItemPricing = ({ pricing }: CatalogItemPricingProps) => {
   return (
     <div className="space-y-3">
       <div>
-        <div className="text-2xl font-black text-primary sm:text-3xl">
+        <div className="text-2xl font-bold text-primary sm:text-3xl">
           {headline}
         </div>
         {moq != null && (

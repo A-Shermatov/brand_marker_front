@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense, useEffect, useRef } from "react"
-import { Loader2, ShieldOff } from "lucide-react"
+import { CircleNotchIcon as Loader2, ShieldSlashIcon as ShieldOff } from "@phosphor-icons/react/dist/ssr"
 import { usePathname, useRouter } from "next/navigation"
 import AdminSidebar from "@/components/admin/admin-sidebar"
 import AdminTopbar from "@/components/admin/admin-topbar"

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { CategoryCard } from "@/components/marketplace/category-card"
 import { useMarketplaceCategories } from "@/hooks/use-marketplace-categories"
@@ -16,7 +16,7 @@ export default function CategoriesPage() {
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-black text-foreground">Категории услуг</h1>
+              <h1 className="text-2xl font-bold text-foreground">Категории услуг</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Выберите направление и найдите подходящего исполнителя
               </p>

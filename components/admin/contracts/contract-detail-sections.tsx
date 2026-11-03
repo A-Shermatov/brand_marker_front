@@ -2,7 +2,7 @@
 
 import { AdminLink } from "@/components/admin/admin-link"
 import { formatCurrency } from "@/lib/format"
-import { FileText } from "lucide-react"
+import { FileTextIcon as FileText } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import type { AdminContractDetail, AdminParty } from "@/lib/api/admin"
 import {
@@ -72,19 +72,19 @@ const PartySection = ({
     {party ? (
       <dl className="grid gap-4 sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <dt className="text-[12.5px] font-medium text-muted-foreground">
             Имя
           </dt>
           <dd className="mt-1 text-sm font-medium">{partyLabel(party)}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <dt className="text-[12.5px] font-medium text-muted-foreground">
             Email
           </dt>
           <dd className="mt-1 text-sm font-medium">{party.email || "—"}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <dt className="text-[12.5px] font-medium text-muted-foreground">
             Профиль
           </dt>
           <dd className="mt-1 text-sm font-medium">
@@ -93,7 +93,7 @@ const PartySection = ({
         </div>
         {party.company_id && (
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Компания
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -139,7 +139,7 @@ export const AdminContractDetailSections = ({
         </p>
         <dl className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Сумма
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -147,25 +147,25 @@ export const AdminContractDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Тип оплаты
             </dt>
             <dd className="mt-1 text-sm font-medium">{paymentLabel}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Старт
             </dt>
             <dd className="mt-1 text-sm font-medium">{contract.start_date}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Срок
             </dt>
             <dd className="mt-1 text-sm font-medium">{contract.due_date}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               RFQ
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -182,7 +182,7 @@ export const AdminContractDetailSections = ({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12.5px] font-medium text-muted-foreground">
               Предложение
             </dt>
             <dd className="mt-1 text-sm font-medium">
@@ -210,13 +210,13 @@ export const AdminContractDetailSections = ({
         {contract.payment_plan ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 ID плана
               </dt>
               <dd className="mt-1 text-sm font-medium">#{contract.payment_plan.id}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Тип
               </dt>
               <dd className="mt-1 text-sm font-medium">
@@ -225,7 +225,7 @@ export const AdminContractDetailSections = ({
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 Этапов
               </dt>
               <dd className="mt-1 text-sm font-medium">{contract.milestones.length}</dd>
@@ -325,7 +325,7 @@ export const AdminContractDetailSections = ({
       </section>
 
       <section id="escrow" className={sectionClassName}>
-        <h2 className="mb-5 text-lg font-bold">Escrow</h2>
+        <h2 className="mb-5 text-lg font-semibold">Деньги на гарантии</h2>
         <dl className="grid gap-4 sm:grid-cols-3">
           {(
             [
@@ -335,7 +335,7 @@ export const AdminContractDetailSections = ({
             ] as const
           ).map(([key, value]) => (
             <div key={key} className="rounded-xl border border-border p-4">
-              <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
                 {escrowSummaryMeta[key].label}
               </dt>
               <dd className="mt-2 text-lg font-bold">

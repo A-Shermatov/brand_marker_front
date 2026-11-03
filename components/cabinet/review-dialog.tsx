@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { ImagePlus, Star, X } from "lucide-react"
+import { ImageSquareIcon as ImagePlus, StarIcon as Star, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter,
   DialogHeader, DialogTitle,

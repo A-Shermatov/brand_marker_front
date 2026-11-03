@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus, Trash2 } from "lucide-react"
+import { PlusIcon as Plus, TrashIcon as Trash2 } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import type { ItemAttributeValueType } from "@/types"
 

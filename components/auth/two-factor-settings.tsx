@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Check, Copy, Loader2, ShieldCheck, ShieldOff } from "lucide-react"
+import { CheckIcon as Check, CopyIcon as Copy, CircleNotchIcon as Loader2, ShieldCheckIcon as ShieldCheck, ShieldSlashIcon as ShieldOff } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { OtpInput } from "@/components/auth/otp-input"
 import { Button } from "@/components/ui/button"

@@ -3,7 +3,7 @@
 import { use, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowRight, Pencil, Plus, Send } from "lucide-react"
+import { ArrowRightIcon as ArrowRight, PencilSimpleIcon as Pencil, PlusIcon as Plus, PaperPlaneRightIcon as Send } from "@phosphor-icons/react/dist/ssr"
 import { PageFrame, PageHeader } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/bm"

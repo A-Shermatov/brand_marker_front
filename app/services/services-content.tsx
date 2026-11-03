@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Check, ChevronDown, FileText, Search } from "lucide-react"
+import { CheckIcon as Check, CaretDownIcon as ChevronDown, FileTextIcon as FileText, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { ListPagination } from "@/components/list-pagination"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { ServiceCard } from "@/components/marketplace/service-card"
@@ -134,13 +134,13 @@ export const ServicesPageContent = () => {
       : "Каталог"
 
   const selectClass =
-    "h-10 appearance-none rounded-[10px] border border-line bg-white pl-3.5 pr-9 text-[14px] font-semibold text-ink outline-none hover:border-[#C9CED6]"
+    "h-10 appearance-none rounded-lg border border-line bg-white pl-3.5 pr-9 text-[14px] font-semibold text-ink outline-none hover:border-line-strong"
 
   return (
     <PageShell>
       <section className="bg-canvas py-6 sm:py-8">
         <div className="mx-auto max-w-[1200px] px-4 lg:px-8">
-          <h1 className="text-[28px] font-extrabold tracking-[-0.02em] text-ink sm:text-[32px]">
+          <h1 className="text-[28px] font-bold tracking-[-0.02em] text-ink sm:text-[32px]">
             {title}
           </h1>
           <p className="mt-1 text-[15px] text-mute">
@@ -154,7 +154,7 @@ export const ServicesPageContent = () => {
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
             <div
-              className="inline-flex rounded-xl bg-[#ECEEF2] p-1"
+              className="inline-flex rounded-xl bg-surface-muted p-1"
               role="tablist"
               aria-label="Раздел каталога"
             >
@@ -172,7 +172,7 @@ export const ServicesPageContent = () => {
                   onClick={() => go({ view: key })}
                   className={`h-9 rounded-lg px-4 text-[14px] font-semibold transition ${
                     view === key
-                      ? "bg-white text-ink shadow-[0_1px_3px_rgba(16,24,40,.12)]"
+                      ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                       : "text-mute hover:text-ink"
                   }`}
                 >
@@ -274,7 +274,7 @@ export const ServicesPageContent = () => {
             </div>
             <Link
               href={newRfqRedirect()}
-              className="inline-flex h-11 items-center justify-center rounded-[10px] bg-brand-600 px-5 text-[15px] font-semibold text-white hover:bg-brand-700"
+              className="inline-flex h-11 items-center justify-center rounded-lg bg-brand-600 px-5 text-[15px] font-semibold text-white hover:bg-brand-700"
             >
               Разместить заявку
             </Link>
@@ -298,10 +298,10 @@ const FilterChip = ({
     type="button"
     aria-pressed={pressed}
     onClick={onClick}
-    className={`inline-flex h-10 items-center gap-2 rounded-[10px] border px-3.5 text-[14px] font-semibold transition ${
+    className={`inline-flex h-10 items-center gap-2 rounded-lg border px-3.5 text-[14px] font-semibold transition ${
       pressed
         ? "border-ink bg-ink text-white"
-        : "border-line bg-white text-ink hover:border-[#C9CED6]"
+        : "border-line bg-white text-ink hover:border-line-strong"
     }`}
   >
     {pressed ? <Check className="size-4" aria-hidden /> : null}
@@ -310,7 +310,7 @@ const FilterChip = ({
 )
 
 const EmptyState = ({ kind }: { kind: "items" | "suppliers" }) => (
-  <div className="grid justify-items-center gap-2 rounded-2xl border border-dashed border-[#D5DAE1] bg-white px-6 py-14 text-center">
+  <div className="grid justify-items-center gap-2 rounded-2xl border border-dashed border-line-strong bg-white px-6 py-14 text-center">
     <Search size={28} className="text-mute" />
     <b className="text-[17px] text-ink">
       {kind === "items" ? "Ничего не нашли" : "Поставщиков не нашли"}
@@ -323,7 +323,7 @@ const EmptyState = ({ kind }: { kind: "items" | "suppliers" }) => (
     {kind === "items" ? (
       <Link
         href={newRfqRedirect()}
-        className="mt-2 inline-flex h-10 items-center justify-center rounded-[10px] border border-line bg-white px-4 text-[14px] font-semibold text-ink hover:border-[#C9CED6]"
+        className="mt-2 inline-flex h-10 items-center justify-center rounded-lg border border-line bg-white px-4 text-[14px] font-semibold text-ink hover:border-line-strong"
       >
         Разместить заявку
       </Link>

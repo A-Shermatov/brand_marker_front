@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { HelpCircle } from "lucide-react"
+import { QuestionIcon as HelpCircle } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { guaranteeUrl, newRfqRedirect, verificationUrl } from "@/lib/marketplace-routes"
 
@@ -20,7 +20,7 @@ export default function HelpPage() {
               <HelpCircle size={24} className="text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-foreground">Помощь и поддержка</h1>
+              <h1 className="text-3xl font-bold text-foreground">Помощь и поддержка</h1>
               <p className="text-sm text-muted-foreground mt-1">Ответы на частые вопросы о работе платформы</p>
             </div>
           </div>

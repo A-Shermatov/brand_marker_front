@@ -106,11 +106,23 @@ export type ItemWithRelations = Item & {
   attributes: ItemAttribute[]
 }
 
+/** Seller summary returned with a public catalog item. */
+export type CatalogItemActor = {
+  id: number
+  name: string
+  rating: number
+  photo: string | null
+  vip: boolean
+  promoted: boolean
+  subscription_plan?: string | null
+}
+
 export type CatalogItemWithRelations = ItemWithRelations & {
   pricing: ItemPricing | null
   media: ItemMedia[]
   stats: ItemStats | null
   rejection_reason?: string | null
+  actor?: CatalogItemActor | null
 }
 
 export type ItemCreate = Omit<Item, "id" | "created_at"> & {

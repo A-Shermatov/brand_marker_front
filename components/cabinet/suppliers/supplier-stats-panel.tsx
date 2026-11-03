@@ -1,4 +1,4 @@
-import { CheckCircle2, Briefcase, Star, MessageSquare, AlertTriangle } from "lucide-react"
+import { CheckCircleIcon as CheckCircle2, BriefcaseIcon as Briefcase, StarIcon as Star, ChatTextIcon as MessageSquare, WarningIcon as AlertTriangle } from "@phosphor-icons/react/dist/ssr"
 import { formatRating } from "@/lib/format"
 import type { PublicSupplier } from "@/types"
 

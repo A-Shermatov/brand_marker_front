@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useRef, useState } from "react"
-import { FileText, Landmark } from "lucide-react"
+import { FileTextIcon as FileText, BankIcon as Landmark } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { AddPayoutDestinationDialog } from "@/components/supplier/finance/add-payout-destination-dialog"
 import { PayoutAccountCard } from "@/components/supplier/finance/payout-account-card"
@@ -350,7 +350,7 @@ export default function SupplierFinancePage() {
       <div
         ref={payoutRef}
         id="payout"
-        className="mt-8 scroll-mt-24 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-6"
+        className="mt-8 scroll-mt-24 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
       >
         <b className="text-[15px]">Вывести через банк</b>
         <p className="mt-1 text-[13.5px] text-mute">

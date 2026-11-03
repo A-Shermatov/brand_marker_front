@@ -3,14 +3,7 @@
 import { use, useState } from "react"
 import { formatCurrency } from "@/lib/format"
 import Link from "next/link"
-import {
-  BookOpen,
-  CheckCircle2,
-  Gavel,
-  RefreshCcw,
-  Snowflake,
-  XCircle,
-} from "lucide-react"
+import { BookOpenIcon as BookOpen, CheckCircleIcon as CheckCircle2, GavelIcon as Gavel, ArrowsCounterClockwiseIcon as RefreshCcw, SnowflakeIcon as Snowflake, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { ContractActionDialog } from "@/components/admin/contracts/contract-action-dialog"
 import { AdminContractDetailSections } from "@/components/admin/contracts/contract-detail-sections"
 import { Badge } from "@/components/ui/badge"
@@ -33,7 +26,7 @@ const sections = [
   ["milestones", "Этапы"],
   ["files", "Файлы"],
   ["messages", "Сообщения"],
-  ["escrow", "Escrow"],
+  ["escrow", "Гарантия"],
   ["history", "История"],
 ] as const
 
@@ -129,7 +122,7 @@ export default function AdminContractDetailPage({ params }: PageProps) {
       <PageSurface className="p-5 sm:p-6">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-[12.5px] font-medium text-muted-foreground">
               Контракт · #{contract.id}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -138,7 +131,7 @@ export default function AdminContractDetailPage({ params }: PageProps) {
               </Badge>
               {contract.escrow_held > 0 && (
                 <Badge variant="outline">
-                  Escrow: {formatMoney(contract.escrow_held, contract.currency)}
+                  На гарантии: {formatMoney(contract.escrow_held, contract.currency)}
                 </Badge>
               )}
             </div>

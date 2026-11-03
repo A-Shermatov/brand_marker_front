@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ChevronRight, FileText, Plus, ShoppingCart } from "lucide-react"
+import { CaretRightIcon as ChevronRight, FileTextIcon as FileText, PlusIcon as Plus, ShoppingCartIcon as ShoppingCart } from "@phosphor-icons/react/dist/ssr"
 import type { RfqWithRelations } from "@/types"
 import { RfqStatusBadge } from "@/components/rfq/rfq-status-badge"
 import { PageEmptyState } from "@/components/layout"

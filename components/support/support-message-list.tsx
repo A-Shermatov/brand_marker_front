@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useRef, type KeyboardEvent } from "react"
 import { useDocumentVisible } from "@/hooks/use-document-visible"
-import { Check, CheckCheck, FileIcon, Paperclip, Send, X } from "lucide-react"
+import { CheckIcon as Check, ChecksIcon as CheckCheck, FileIcon, PaperclipIcon as Paperclip, PaperPlaneRightIcon as Send, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { resolveFileUrl } from "@/lib/file-url"
 import { cn } from "@/lib/utils"
@@ -94,7 +94,7 @@ const MessageStatusTicks = ({
         style={{ color: "var(--tg-tick-read)" }}
         title={statusLabel.viewed}
       >
-        <CheckCheck size={14} strokeWidth={2.4} />
+        <CheckCheck size={14} weight="bold" />
       </span>
     )
   }
@@ -105,7 +105,7 @@ const MessageStatusTicks = ({
         style={{ color: "var(--tg-tick)" }}
         title={statusLabel.delivered}
       >
-        <CheckCheck size={14} strokeWidth={2.4} />
+        <CheckCheck size={14} weight="bold" />
       </span>
     )
   }
@@ -115,7 +115,7 @@ const MessageStatusTicks = ({
       style={{ color: "var(--tg-meta)" }}
       title={statusLabel.sent}
     >
-      <Check size={14} strokeWidth={2.4} />
+      <Check size={14} weight="bold" />
     </span>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react"
-import { MessageSquare, Send } from "lucide-react"
+import { ChatTextIcon as MessageSquare, PaperPlaneRightIcon as Send } from "@phosphor-icons/react/dist/ssr"
 import { isApiEnabled } from "@/lib/api/config"
 import { formatRelativeIso } from "@/lib/format"
 import { PROPOSAL_CHAT_OPEN_STATUSES } from "@/lib/proposal-display"

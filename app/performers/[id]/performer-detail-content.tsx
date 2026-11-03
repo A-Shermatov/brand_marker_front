@@ -4,16 +4,11 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
-import {
-  ArrowLeft,
-  Check,
-  Eye,
-  MessageSquare,
-  Star,
-} from "lucide-react"
+import { ArrowLeftIcon as ArrowLeft, CheckIcon as Check, EyeIcon as Eye, ChatTextIcon as MessageSquare, StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { ReputationBadge } from "@/components/bm/reputation-badge"
-import { resolveReputationTier } from "@/lib/trust-levels"
+import { CompanyName } from "@/components/bm"
+import { pickReputationTier } from "@/lib/trust-levels"
 import { ServiceCard } from "@/components/marketplace/service-card"
 import { Button } from "@/components/ui/button"
 import { getPerformer } from "@/lib/mock/marketplace-performers"
@@ -135,6 +130,12 @@ export const PerformerDetailContent = ({
     apiSupplier?.success_rate != null
       ? `${Math.round(apiSupplier.success_rate)}%`
       : "—"
+  const profileTier = pickReputationTier(apiSupplier?.reputation_tier, {
+    verification_status: performer.verificationStatus,
+    completed_contracts: apiSupplier?.completed_contracts,
+    rating: performer.rating,
+    success_rate: apiSupplier?.success_rate,
+  })
   const yearsLabel = performer.years !== "—" ? performer.years : "—"
   const profile = apiCompany?.profile
   const gallery = Array.isArray(profile?.gallery) ? profile.gallery : []
@@ -182,7 +183,7 @@ export const PerformerDetailContent = ({
           </Link>
         )}
 
-        <section className="grid gap-6 rounded-2xl border border-line bg-white p-6 shadow-[0_1px_2px_rgba(16,24,40,.04)] md:p-8 lg:grid-cols-[1fr_auto]">
+        <section className="grid gap-6 rounded-2xl border border-line bg-white p-6 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-8 lg:grid-cols-[1fr_auto]">
           <div className="flex flex-col gap-5 sm:flex-row">
             <div
               className={cn(
@@ -194,21 +195,15 @@ export const PerformerDetailContent = ({
             </div>
             <div className="grid content-start gap-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-[30px] leading-tight font-extrabold tracking-[-0.02em]">
-                  {performer.name}
-                </h1>
-                <ReputationBadge
-                  tier={
-                    apiSupplier?.reputation_tier ??
-                    resolveReputationTier({
-                      verification_status: performer.verificationStatus,
-                      completed_contracts: apiSupplier?.completed_contracts,
-                      rating: performer.rating,
-                      success_rate: apiSupplier?.success_rate,
-                    })
-                  }
-                  size={22}
+                <CompanyName
+                  as="h1"
+                  name={performer.name}
+                  verified={performer.verified}
+                  tier={profileTier}
+                  plan={apiSupplier?.subscription_plan ?? performer.plan}
+                  size="xl"
                 />
+                <ReputationBadge tier={profileTier} size={22} />
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
                 {performer.verified ? (
@@ -234,7 +229,7 @@ export const PerformerDetailContent = ({
                   </span>
                 )}
                 <span className="inline-flex items-center gap-1 text-[14px]">
-                  <Star className="size-4 fill-amber-400 text-amber-400" />
+                  <Star className="size-4 fill-amber-400 text-amber-400" weight="fill" />
                   <b>{performer.rating.toFixed(1)}</b>
                   <span className="text-mute">({performer.reviews})</span>
                 </span>
@@ -312,14 +307,14 @@ export const PerformerDetailContent = ({
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl bg-canvas p-4">
                 <dt className="text-[13px] text-mute">{label}</dt>
-                <dd className="mt-0.5 text-[20px] font-extrabold">{value}</dd>
+                <dd className="mt-0.5 text-[20px] font-bold">{value}</dd>
               </div>
             ))}
           </dl>
         </section>
 
         <div className="mt-8">
-          <div className="mb-5 flex flex-wrap gap-1 rounded-xl bg-[#ECEEF2] p-1">
+          <div className="mb-5 flex flex-wrap gap-1 rounded-xl bg-surface-muted p-1">
             {tabs.map((item) => (
               <button
                 key={item.id}
@@ -328,7 +323,7 @@ export const PerformerDetailContent = ({
                 className={cn(
                   "h-10 rounded-lg px-4 text-[14px] font-semibold transition-colors",
                   tab === item.id
-                    ? "bg-white text-ink shadow-[0_1px_3px_rgba(16,24,40,.12)]"
+                    ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                     : "text-mute hover:text-ink",
                 )}
               >
@@ -348,7 +343,7 @@ export const PerformerDetailContent = ({
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-[#D5DAE1] bg-white px-6 py-14 text-center">
+              <div className="rounded-2xl border border-dashed border-line-strong bg-white px-6 py-14 text-center">
                 <b className="text-[16px]">Пока нет товаров</b>
                 <p className="mt-1 text-[14px] text-mute">
                   Компания ещё не добавила предложения.
@@ -440,7 +435,7 @@ export const PerformerDetailContent = ({
                               "size-3.5",
                               i < review.rating
                                 ? "fill-amber-400 text-amber-400"
-                                : "text-[#D5DAE1]",
+                                : "text-line-strong",
                             )}
                           />
                         ))}

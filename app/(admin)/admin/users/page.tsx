@@ -9,14 +9,7 @@ import {
 } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  Ban,
-  ChevronLeft,
-  ChevronRight,
-  MoreHorizontal,
-  RefreshCcw,
-  Search,
-} from "lucide-react"
+import { ProhibitIcon as Ban, CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, DotsThreeIcon as MoreHorizontal, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {

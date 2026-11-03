@@ -1,27 +1,29 @@
 import Link from "next/link"
-import { BmIcon, type BmIconName } from "@/components/bm/bm-icon"
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 type CabinetNavLinkProps = {
   href: string
   label: string
-  /** Phosphor icon name from BrendMarket-v7.2 CNAV */
-  icon: BmIconName
+  icon: PhosphorIcon
   active?: boolean
   badge?: number
   onClick?: () => void
   badgeTone?: "brand" | "danger"
+  /** Secondary links under «Ещё» */
+  quiet?: boolean
 }
 
-/** CNAV item — white sidebar (`bg-brand-50` active), Phosphor icons. */
+/** Sidebar item: neutral active state, filled icon in the brand colour. */
 export function CabinetNavLink({
   href,
   label,
-  icon,
+  icon: Icon,
   active,
   badge,
   onClick,
   badgeTone = "brand",
+  quiet = false,
 }: CabinetNavLinkProps) {
   return (
     <Link
@@ -29,26 +31,31 @@ export function CabinetNavLink({
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-[15px] transition",
+        "group flex w-full items-center gap-3 rounded-lg px-2.5 text-left transition-colors",
+        quiet ? "h-9 text-[13.5px]" : "h-10 text-[14.5px]",
         active
-          ? "bg-brand-50 font-bold text-brand-700"
-          : "font-semibold text-ink/80 hover:bg-canvas hover:text-ink",
+          ? "bg-surface-muted font-semibold text-ink"
+          : "font-medium text-ink-soft hover:bg-surface-muted/70 hover:text-ink",
       )}
     >
-      <BmIcon name={icon} className="size-[18px]" />
+      <Icon
+        weight={active ? "fill" : "regular"}
+        className={cn(
+          "shrink-0",
+          quiet ? "size-[17px]" : "size-[19px]",
+          active ? "text-brand-600" : "text-mute group-hover:text-ink-soft",
+        )}
+        aria-hidden
+      />
       <span className="min-w-0 flex-1 truncate">{label}</span>
       {badge && badge > 0 ? (
         <span
           className={cn(
-            "grid h-[22px] min-w-[22px] place-items-center rounded-full px-1.5 text-[12px] font-bold text-white",
-            badgeTone === "danger"
-              ? "bg-red-500"
-              : active
-                ? "bg-brand-600"
-                : "bg-red-500",
+            "grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-semibold tnum",
+            badgeTone === "danger" ? "bg-red-600 text-white" : "bg-brand-600 text-white",
           )}
         >
-          {badge}
+          {badge > 99 ? "99+" : badge}
         </span>
       ) : null}
     </Link>

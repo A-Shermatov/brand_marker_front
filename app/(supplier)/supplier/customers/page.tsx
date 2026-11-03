@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useQueries } from "@tanstack/react-query"
-import { ChevronRight, Star, Users } from "lucide-react"
+import { CaretRightIcon as ChevronRight, StarIcon as Star, UsersIcon as Users } from "@phosphor-icons/react/dist/ssr"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { isApiEnabled } from "@/lib/api/config"
 import { useAuthStore } from "@/lib/store/auth-store"
@@ -171,7 +171,7 @@ export default function SupplierCustomersPage() {
                 <div className="mt-1.5 flex items-center gap-1.5 text-xs">
                   {customer.rating != null ? (
                     <>
-                      <Star size={12} className="fill-amber-400 text-amber-400" />
+                      <Star size={12} className="fill-amber-400 text-amber-400" weight="fill" />
                       <span className="font-semibold text-foreground">
                         {customer.rating.toFixed(1)}
                       </span>

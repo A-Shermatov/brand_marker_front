@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { ChevronDown, ChevronRight, Menu } from "lucide-react"
+import { CaretDownIcon as ChevronDown, CaretRightIcon as ChevronRight, ListIcon as Menu } from "@phosphor-icons/react/dist/ssr"
 import { useMarketplaceCategories } from "@/hooks/use-marketplace-categories"
 import { getIcon } from "@/lib/icon-map"
 import { categoriesUrl, categoryUrl } from "@/lib/marketplace-routes"

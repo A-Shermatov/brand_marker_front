@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Send, ArrowRight } from "lucide-react"
+import { PaperPlaneRightIcon as Send, ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { ListPagination } from "@/components/list-pagination"
 import {

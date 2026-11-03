@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Image from "next/image"
-import { ImageIcon, Play } from "lucide-react"
+import { ImageIcon, PlayIcon as Play } from "@phosphor-icons/react/dist/ssr"
 import type { ItemMedia } from "@/types"
 import { resolveFileUrl } from "@/lib/file-url"
 import { cn } from "@/lib/utils"
@@ -105,7 +105,7 @@ export const CatalogItemGallery = ({ media, title }: CatalogItemGalleryProps) =>
                   "relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white lg:h-[72px] lg:w-[72px]",
                   index === safeIndex
                     ? "border-ink"
-                    : "border-line hover:border-[#C9CED6]",
+                    : "border-line hover:border-line-strong",
                 )}
                 aria-label={`Миниатюра ${index + 1}`}
                 aria-pressed={index === safeIndex}

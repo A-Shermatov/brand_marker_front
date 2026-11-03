@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import { ImageUp, Loader2 } from "lucide-react"
+import { UploadSimpleIcon as ImageUp, CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { MessageSquare } from "lucide-react"
+import { ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { loginRedirect } from "@/lib/marketplace-routes"
 
@@ -30,7 +30,7 @@ export const LandingFaq = () => (
   <section className="mx-auto mt-16 max-w-[1200px] px-4 lg:px-8">
     <div className="grid gap-10 lg:grid-cols-[340px_1fr]">
       <div className="grid content-start gap-3">
-        <h2 className="text-[28px] font-extrabold tracking-[-0.02em] text-ink">Частые вопросы</h2>
+        <h2 className="text-[28px] font-semibold tracking-[-0.02em] text-ink">Частые вопросы</h2>
         <p className="text-[15px] text-mute">
           Не нашли ответ? Напишите в поддержку — ответим в течение часа в рабочее время.
         </p>

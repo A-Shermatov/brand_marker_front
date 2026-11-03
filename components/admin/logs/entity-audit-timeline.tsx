@@ -1,7 +1,7 @@
 "use client"
 
 import { useId, useState } from "react"
-import { ChevronLeft, ChevronRight, History, Loader2, RefreshCcw } from "lucide-react"
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ClockCounterClockwiseIcon as History, CircleNotchIcon as Loader2, ArrowsCounterClockwiseIcon as RefreshCcw } from "@phosphor-icons/react/dist/ssr"
 import { formatLogDateTime, LogDetailsSheet } from "@/components/admin/logs/log-details-sheet"
 import { LogChangesSummary } from "@/components/admin/logs/log-event-details"
 import { Button } from "@/components/ui/button"
