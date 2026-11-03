@@ -60,7 +60,8 @@ export const RfqTermsCard = ({
 }: RfqTermsCardProps) => {
   const delivery =
     rfq.type === "product"
-      ? [rfq.delivery_city, rfq.delivery_country].filter(Boolean).join(", ") ||
+      ? rfq.delivery_address ||
+        [rfq.delivery_city, rfq.delivery_country].filter(Boolean).join(", ") ||
         "—"
       : rfq.project_duration || "—"
 

@@ -23,7 +23,7 @@ const ESCROW_QUEUE_STATUSES = ["awaiting_payment", "pending"] as const
 
 export const useBuyerPaymentsStore = create<BuyerPaymentsState>()(
   persist(
-    () => ({
+    (_set, get) => ({
       invoices: API_MODE ? [] : mockBuyerInvoices,
       refunds: API_MODE ? [] : mockBuyerRefunds,
 
@@ -76,8 +76,7 @@ export const useBuyerPaymentsStore = create<BuyerPaymentsState>()(
       },
 
       getBuyerInvoices: (buyerId) =>
-        useBuyerPaymentsStore
-          .getState()
+        get()
           .invoices.filter((inv) => inv.buyer_actor_id === buyerId)
           .sort(
             (a, b) =>
@@ -85,8 +84,7 @@ export const useBuyerPaymentsStore = create<BuyerPaymentsState>()(
           ),
 
       getBuyerRefunds: (buyerId) => {
-        const mockRefunds = useBuyerPaymentsStore
-          .getState()
+        const mockRefunds = get()
           .refunds.filter((r) => r.buyer_actor_id === buyerId)
 
         const milestoneRefunds = useContractsStore

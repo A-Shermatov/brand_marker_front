@@ -42,7 +42,9 @@ export default function SupplierProposalsPage() {
   })
   const { data: apiBoard } = useSupplierRfqBoardQuery(hydrated && useApi)
 
-  const localProposals = hydrated ? getProposalsBySupplier(actorId) : []
+  const localProposals: ProposalWithRelations[] = hydrated
+    ? getProposalsBySupplier(actorId).map((p) => ({ attachment: null, ...p }))
+    : []
   const allProposals: ProposalWithRelations[] = useApi
     ? (apiProposals?.items ?? [])
     : localProposals

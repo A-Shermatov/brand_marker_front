@@ -178,7 +178,10 @@ export default function AdminDashboardPage() {
 
   const queues = buildQueues(metrics)
   const attention = buildAttention(queues)
-  const commission = Math.round(metrics.monthly_revenue * 0.04)
+  const commission = metrics.monthly_commission ?? 0
+  const commissionHint = metrics.commission_percent
+    ? `${metrics.commission_percent}% с поставщиков`
+    : "с поставщиков"
   const today = formatDateRu(new Date())
   const activity = [...data.recent_activity]
     .sort(
@@ -236,7 +239,7 @@ export default function AdminDashboardPage() {
             label="Комиссия за месяц"
             value={formatCurrency(commission)}
             valueTitle={formatCurrencyExact(commission)}
-            hint="4% с поставщиков"
+            hint={commissionHint}
           />
           <MetricTile
             label="Компаний"

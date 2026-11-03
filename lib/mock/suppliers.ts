@@ -1,4 +1,20 @@
-import type { Supplier } from "@/types"
+/** Demo supplier card used only when the app runs without the API. */
+export type Supplier = {
+  id: string
+  name: string
+  initials: string
+  color: string
+  categoryId: string
+  category: string
+  city: string
+  rating: number
+  reviews: number
+  clients: string
+  years: string
+  verified: boolean
+  hasDelivery: boolean
+  specialties: string[]
+}
 
 export const suppliers: Supplier[] = [
   {

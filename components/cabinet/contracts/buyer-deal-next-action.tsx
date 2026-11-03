@@ -20,7 +20,6 @@ import {
   getDealPhase,
   getFundedMilestone,
   getUnpaidMilestone,
-  isPostpaymentDeal,
 } from "@/lib/process/deal-stages"
 import { formatCurrency, formatIsoDate } from "@/lib/format"
 
@@ -185,7 +184,9 @@ export const BuyerDealNextAction = ({
           <>
             Срок сдачи — <b>{formatIsoDate(contract.due_date)}</b>. Когда исполнитель сдаст работу,
             здесь появится кнопка приёмки.
-            {isPostpaymentDeal(contract) ? " Оплата — только после приёмки." : null}
+            {getUnpaidMilestone(contract)
+              ? " Принять работу можно после оплаты: банк удержит деньги до вашей приёмки."
+              : " Оплата удерживается банком и уйдёт исполнителю после вашей приёмки."}
           </>
         }
         actions={
