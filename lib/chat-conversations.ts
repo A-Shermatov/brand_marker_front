@@ -79,7 +79,7 @@ const toContractProject = (
         text: last.text,
         sender_id: last.sender_id,
         sender_name: last.sender_name ?? "",
-        created_at: last.created_at,
+        created_at: last.created_at ?? "",
       }
     : null
   const senderName = !lastMessage
@@ -114,7 +114,7 @@ export const toProposalProject = (
         text: last.text,
         sender_id: last.sender_id,
         sender_name: last.sender_name ?? "",
-        created_at: last.created_at,
+        created_at: last.created_at ?? "",
       }
     : null
   const senderName = !lastMessage

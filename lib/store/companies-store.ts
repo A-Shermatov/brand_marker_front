@@ -108,7 +108,7 @@ const recalculateRating = (reviews: Review[]): number => {
 }
 
 const migrateCompany = (company: CompanyWithRelations): CompanyWithRelations => {
-  const actor_types =
+  const actor_types: CompanyWithRelations["actor_types"] =
     company.actor_types && company.actor_types.length > 0
       ? company.actor_types
       : company.actor_type

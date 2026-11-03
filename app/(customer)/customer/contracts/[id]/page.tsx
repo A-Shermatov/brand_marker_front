@@ -5,7 +5,6 @@ import Link from "next/link"
 import { AlertTriangle, FileCheck, MessageSquare, Paperclip, Clock, Package, Gavel } from "lucide-react"
 import { ConfirmActionDialog, DealStepper } from "@/components/process"
 import { BuyerDealNextAction } from "@/components/cabinet/contracts/buyer-deal-next-action"
-import { isPostpaymentDeal } from "@/lib/process/deal-stages"
 import { PageFrame, PageHeader } from "@/components/layout"
 import { statusPillClass } from "@/components/ui/status-badge"
 import { useAuthStore } from "@/lib/store/auth-store"
@@ -294,11 +293,19 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
     setTab("messages")
   }
 
+  // Escrow: work can be accepted only after it is paid into the bank hold.
+  const unpaidMilestone = contract.payment_plan?.milestones.find(
+    (m) => m.status === "pending" || m.status === "awaiting_payment",
+  )
+
   const handleConfirmPendingAction = () => {
     if (!pendingAction) return
     if (pendingAction.kind === "fund") handleFund(pendingAction.id)
     if (pendingAction.kind === "release") handleApprove(pendingAction.id)
-    if (pendingAction.kind === "accept") handleApproveSubmission(pendingAction.id)
+    if (pendingAction.kind === "accept") {
+      if (unpaidMilestone) handleFund(unpaidMilestone.id)
+      else handleApproveSubmission(pendingAction.id)
+    }
     setPendingAction(null)
   }
 
@@ -309,10 +316,9 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
     pendingMilestone?.amount ?? contract.agreed_amount,
     contract.currency,
   )
-  const postpayment = isPostpaymentDeal(contract)
-  const fundDescription = postpayment
-    ? "Деньги поступят на гарантию площадки. Затем вы подтвердите выплату исполнителю."
-    : "Деньги поступят на гарантию площадки. Исполнитель получит их только после того, как вы примете работу."
+  const fundDescription = contract.status === "completed"
+    ? "Деньги будут удерживаться банком‑партнёром. Затем подтвердите выплату исполнителю."
+    : "Деньги будут удерживаться банком‑партнёром. Исполнитель получит их только после того, как вы примете работу."
   const confirmCopy: Record<
     PendingAction["kind"],
     { title: string; description: React.ReactNode; confirmLabel: string }
@@ -334,13 +340,17 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
       description: `${supplierName} получит ${pendingAmount}. Отменить выплату будет нельзя.`,
       confirmLabel: "Да, перевести",
     },
-    accept: {
-      title: "Принять работу?",
-      description: postpayment
-        ? `Следующим шагом нужно будет оплатить работу — ${pendingAmount}. Отправить работу на доработку после приёмки будет нельзя.`
-        : `${supplierName} получит ${pendingAmount} с гарантии площадки. Отправить работу на доработку после приёмки будет нельзя.`,
-      confirmLabel: "Да, принять",
-    },
+    accept: unpaidMilestone
+      ? {
+          title: "Сначала оплатите работу",
+          description: `Принять работу можно после оплаты — ${formatCurrency(unpaidMilestone.amount, contract.currency)}. Деньги будут удерживаться банком до вашей приёмки: после оплаты вернитесь сюда и примите работу.`,
+          confirmLabel: viaAlif ? ALIF_CONFIRM_LABEL : "Оплатить",
+        }
+      : {
+          title: "Принять работу?",
+          description: `${supplierName} получит ${pendingAmount}, которые удерживает банк. Отправить работу на доработку после приёмки будет нельзя.`,
+          confirmLabel: "Да, принять",
+        },
   }
 
   return (

@@ -152,7 +152,7 @@ export const SupportChatWidget = ({ role }: SupportChatWidgetProps) => {
 
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(!open)}
         className={cn(
           "support-tg support-tg-fab pointer-events-auto relative flex size-14 items-center justify-center rounded-full transition hover:opacity-95",
           open && "ring-2 ring-brand-500/40",

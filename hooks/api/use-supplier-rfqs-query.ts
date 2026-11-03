@@ -4,7 +4,7 @@ import { isApiEnabled } from "@/lib/api/config"
 import { notificationKeys } from "@/hooks/api/use-notifications-query"
 import { navCountsKeys } from "@/hooks/api/use-nav-counts-query"
 import type { PageParams } from "@/lib/pagination"
-import type { ProposalWithRelations } from "@/types"
+import type { Currency, ProposalWithRelations } from "@/types"
 
 type SupplierBoardParams = PageParams & { q?: string; source?: string }
 
@@ -100,7 +100,7 @@ export const useUpdateSupplierProposalMutation = () => {
       id: number
       data: {
         price?: number
-        currency?: string
+        currency?: Currency
         delivery_time?: string
         message?: string
       }

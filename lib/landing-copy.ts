@@ -33,7 +33,7 @@ export const LANDING_HOW_IT_WORKS_STEPS: Record<LandingRole, LandingStep[]> = {
       Icon: ShieldCheck,
       title: "3. Оплатите безопасно",
       description:
-        "Деньги замораживаются на счёте площадки и уходят исполнителю только после приёмки.",
+        "Деньги удерживает банк‑партнёр, исполнитель получит их только после приёмки.",
     },
   ],
   supplier: [

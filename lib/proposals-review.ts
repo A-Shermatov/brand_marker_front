@@ -5,10 +5,11 @@ const STATUS_PRIORITY: Record<ProposalStatus, number> = {
   shortlisted: 0,
   submitted: 1,
   viewed: 2,
-  accepted: 3,
-  rejected: 4,
-  withdrawn: 5,
-  archived: 6,
+  pending_supplier: 3,
+  accepted: 4,
+  rejected: 5,
+  withdrawn: 6,
+  archived: 7,
 }
 
 export const sortProposalsForReview = (

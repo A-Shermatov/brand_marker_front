@@ -11,6 +11,8 @@ export type AdminDashboardMetrics = {
   escrow_balance: number
   open_disputes: number
   monthly_revenue: number
+  monthly_commission?: number
+  commission_percent?: number
   pending_verifications: number
   pending_catalog: number
   open_reports: number

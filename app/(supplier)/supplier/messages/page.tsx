@@ -102,7 +102,7 @@ export default function SupplierMessagesPage() {
           rfq_id: proposal.rfq_id,
           rfq_title: rfq?.title ?? proposal.rfq_id,
           status: proposal.status,
-          counterpart_actor_id: rfq?.actor_id ?? 0,
+          counterpart_actor_id: Number(rfq?.actor_id ?? 0),
           counterpart_name: buyerName,
           message_count: messages.length,
           last_message: last
@@ -144,7 +144,7 @@ export default function SupplierMessagesPage() {
         rfq_id: proposal.rfq_id,
         rfq_title: rfq?.title ?? proposal.rfq_id,
         status: proposal.status,
-        counterpart_actor_id: rfq?.actor_id ?? 0,
+        counterpart_actor_id: Number(rfq?.actor_id ?? 0),
         counterpart_name: rfq ? getRfqBuyerName(rfq, getCompany) : "Заказчик",
         message_count: proposalMessages[proposal.id]?.length ?? 0,
         last_message: null,

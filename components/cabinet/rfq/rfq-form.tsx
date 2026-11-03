@@ -193,7 +193,7 @@ const toFormValues = (values: FormState): RfqFormValues => {
       quantity: String(totalProductQuantity(values.items)),
       delivery_country: "Таджикистан",
       delivery_city: cityFromAddress(address),
-      delivery_address: address || null,
+      delivery_address: address || undefined,
       delivery_date: values.deadline,
     }
   }

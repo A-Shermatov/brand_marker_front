@@ -147,7 +147,7 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
         id: proposalId,
         data: {
           price: values.price,
-          currency: rfq.currency,
+          currency: rfq.currency as Currency,
           delivery_time: values.delivery_time,
           message: values.message,
         },
