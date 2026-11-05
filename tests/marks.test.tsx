@@ -10,26 +10,38 @@ const html = (node: React.ReactElement) => renderToStaticMarkup(node)
 const count = (source: string, needle: string) => source.split(needle).length - 1
 
 describe("TrustMark", () => {
-  it("draws the diamond as a cut crystal with a bevelled rim", () => {
+  it("draws the diamond as a crystal shield with a metal rim, bevels and a B", () => {
     const out = html(<TrustMark tier="diamond" size={64} />)
     expect(out).toContain('data-tier="diamond"')
-    // 8 rim bevels + 4 core facets + light facet + 2 highlights + 2 outlines + core
-    expect(count(out, "<polygon")).toBeGreaterThanOrEqual(16)
+    // 8 rim bevels + 8 inner bevels + 8 face facets + glow, highlights and outlines
+    expect(count(out, "<polygon")).toBeGreaterThanOrEqual(28)
+    expect(out).toContain('data-part="letter"')
     expect(out).toContain('aria-label="Знак надёжности «Алмаз»')
   })
 
-  it("animates the diamond: glow, sweep, a facet catching light and sparkles", () => {
+  it("runs the full idle loop on large diamonds, without particles", () => {
     const out = html(<TrustMark tier="diamond" size={64} />)
-    expect(out).toContain("bm-glow-diamond")
-    expect(out).toContain("bm-mark-sweep")
-    expect(out).toContain("bm-facet")
-    expect(count(out, "bm-tw")).toBe(3)
+    for (const part of ["bm-glow-diamond", "bm-d-idle", "bm-d-pulse", "bm-d-letter-glow", "bm-d-streak"]) {
+      expect(out).toContain(part)
+    }
+    expect(count(out, "bm-d-edge")).toBe(2)
+    expect(out).not.toContain("bm-tw")
   })
 
-  it("keeps the diamond calm next to a name: glow and sweep, no sparkles", () => {
+  it("keeps the diamond calm next to a name: glow and streak, no float, edge lights or letter halo", () => {
     const out = html(<TrustMark tier="diamond" size={18} />)
     expect(out).toContain("bm-glow-diamond")
-    expect(count(out, "bm-tw")).toBe(0)
+    expect(out).toContain("bm-d-streak")
+    expect(out).not.toContain("bm-d-idle")
+    expect(out).not.toContain("bm-d-edge")
+    expect(out).not.toContain("bm-d-letter-glow")
+    expect(out).toContain('data-part="letter"')
+  })
+
+  it("draws a still diamond without any motion", () => {
+    const out = html(<TrustMark tier="diamond" size={88} still />)
+    expect(out).not.toMatch(/bm-d-|bm-glow-/)
+    expect(out).toContain('data-part="letter"')
   })
 
   it("can be still and decorative", () => {
