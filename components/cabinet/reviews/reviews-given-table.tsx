@@ -3,12 +3,14 @@
 import Link from "next/link"
 import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import type { Review } from "@/types"
-import { formatReviewParty } from "@/lib/review-party"
+import { formatReviewAuthor, formatReviewParty } from "@/lib/review-party"
 
 type ReviewsGivenTableProps = {
   reviews: Review[]
   getSupplierName: (supplierActorId: number) => string
   getContractTitle: (contractId: number) => string
+  /** Received reviews: show who wrote it (name, role, company) instead of the target. */
+  showAuthor?: boolean
 }
 
 const RatingStars = ({ rating }: { rating: number }) => (
@@ -31,6 +33,7 @@ export const ReviewsGivenTable = ({
   reviews,
   getSupplierName,
   getContractTitle,
+  showAuthor = false,
 }: ReviewsGivenTableProps) => {
   if (reviews.length === 0) {
     return (
@@ -57,10 +60,10 @@ export const ReviewsGivenTable = ({
               <tr key={review.id} className="hover:bg-secondary/30 transition-colors">
                 <td className="px-4 py-3">
                   {(() => {
-                    const { primary, secondary } = formatReviewParty(
-                      review.target,
-                      getSupplierName(review.target_actor_id),
-                    )
+                    const fallback = getSupplierName(review.target_actor_id)
+                    const { primary, secondary } = showAuthor
+                      ? formatReviewAuthor(review, fallback)
+                      : formatReviewParty(review.target, fallback)
                     return (
                       <Link
                         href={`/customer/suppliers/${review.target_actor_id}`}

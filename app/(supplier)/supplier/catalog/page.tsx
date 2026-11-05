@@ -9,13 +9,18 @@ import { useHydrated } from "@/hooks/use-hydrated"
 import { useUrlTab } from "@/hooks/use-url-tab"
 import { getActorId } from "@/lib/auth-display"
 import { isApiEnabled } from "@/lib/api/config"
-import { useSupplierCatalogQuery } from "@/hooks/api/use-supplier-catalog-query"
+import {
+  useArchiveCatalogItemMutation,
+  useDeleteCatalogItemMutation,
+  useRestoreCatalogItemMutation,
+  useSupplierCatalogQuery,
+} from "@/hooks/api/use-supplier-catalog-query"
 import {
   emptySupplierNavCounts,
   useMarkNavSectionSeen,
   useSupplierNavCounts,
 } from "@/hooks/api/use-nav-counts-query"
-import { CatalogProductRow } from "@/components/supplier/catalog/catalog-product-row"
+import { CatalogProductCard } from "@/components/supplier/catalog/catalog-product-card"
 import { ListPagination } from "@/components/list-pagination"
 import { Button } from "@/components/ui/button"
 import { MetricTile } from "@/components/process"
@@ -58,6 +63,11 @@ function SupplierCatalogContent() {
   const actorId = getActorId(user)
   const getItemsBySupplier = useItemsStore((s) => s.getItemsBySupplier)
   const getItemsByStatus = useItemsStore((s) => s.getItemsByStatus)
+  const archiveLocal = useItemsStore((s) => s.archiveItem)
+  const archiveMutation = useArchiveCatalogItemMutation()
+  const restoreMutation = useRestoreCatalogItemMutation()
+  const deleteMutation = useDeleteCatalogItemMutation()
+  const busy = archiveMutation.isPending || restoreMutation.isPending || deleteMutation.isPending
   const [tab, setTab] = useUrlTab<Tab>("status", TAB_VALUES, "all")
   const useApi = isApiEnabled()
   const navCounts = useSupplierNavCounts(useApi).data ?? emptySupplierNavCounts()
@@ -100,7 +110,7 @@ function SupplierCatalogContent() {
       count: allForStats.length,
       reviewCount,
       avg,
-      views: views || 412,
+      views,
     }
   }, [useApi, items, hydrated, getItemsBySupplier, actorId])
 
@@ -134,9 +144,9 @@ function SupplierCatalogContent() {
           valueClassName={avgLevel.textClass}
         />
         <MetricTile
-          label="Просмотров за месяц"
+          label="Просмотров карточек"
           value={hydrated ? String(stats.views) : "—"}
-          hint="+18% к прошлому месяцу"
+          hint="по карточкам на этой странице"
         />
       </section>
 
@@ -156,9 +166,9 @@ function SupplierCatalogContent() {
       />
 
       {!hydrated || (useApi && isLoading) ? (
-        <div className="grid gap-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-2xl bg-canvas" />
+            <div key={i} className="h-80 animate-pulse rounded-2xl bg-canvas" />
           ))}
         </div>
       ) : items.length === 0 ? (
@@ -178,9 +188,20 @@ function SupplierCatalogContent() {
           </div>
         </PageSurface>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (
-            <CatalogProductRow key={item.id} item={item} />
+            <CatalogProductCard
+              key={item.id}
+              item={item}
+              busy={busy}
+              onArchive={(id) =>
+                useApi ? archiveMutation.mutateAsync(id) : Promise.resolve(archiveLocal(id))
+              }
+              onRestore={(id) => (useApi ? restoreMutation.mutateAsync(id) : Promise.resolve())}
+              onDelete={(id) =>
+                useApi ? deleteMutation.mutateAsync(id) : Promise.resolve(archiveLocal(id))
+              }
+            />
           ))}
         </div>
       )}

@@ -63,8 +63,33 @@ export const useArchiveCatalogItemMutation = () => {
     mutationFn: (id: number) => supplierCatalogApi.archive(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: supplierCatalogKeys.all }),
     meta: {
-      successMessage: "Услуга архивирована",
-      errorMessage: "Не удалось архивировать услугу",
+      successMessage: "Карточка перенесена в архив",
+      errorMessage: "Не удалось перенести карточку в архив",
+    },
+  })
+}
+
+/** Back from the archive: the card goes to moderation again before it is shown. */
+export const useRestoreCatalogItemMutation = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => supplierCatalogApi.publish(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: supplierCatalogKeys.all }),
+    meta: {
+      successMessage: "Карточка отправлена на проверку",
+      errorMessage: "Не удалось вернуть карточку из архива",
+    },
+  })
+}
+
+export const useDeleteCatalogItemMutation = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => supplierCatalogApi.delete(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: supplierCatalogKeys.all }),
+    meta: {
+      successMessage: "Карточка удалена",
+      errorMessage: "Не удалось удалить карточку",
     },
   })
 }

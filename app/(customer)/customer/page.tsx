@@ -47,6 +47,7 @@ import {
   sumEscrowHeld,
 } from "@/lib/dashboard-money"
 import type { ContractWithRelations, Proposal, RfqWithRelations } from "@/types"
+import { TeamAccessCard } from "@/components/cabinet/company/team-access-card"
 
 export default function CustomerDashboard() {
   const hydrated = useHydrated()
@@ -307,6 +308,8 @@ export default function CustomerDashboard() {
           note={useApi ? "По оплаченным этапам сделок" : undefined}
         />
       </div>
+
+      <TeamAccessCard side="buyer" teamHref="/customer/company" />
     </PageFrame>
   )
 }

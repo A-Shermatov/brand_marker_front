@@ -13,6 +13,7 @@ import {
   type ProposalChatSide,
 } from "@/hooks/api/use-proposals-query"
 import type { ProposalMessage, ProposalStatus } from "@/types"
+import { messageAffiliation } from "@/lib/message-author"
 
 const EMPTY_MESSAGES: ProposalMessage[] = []
 const MAX_MESSAGE_LENGTH = 4000
@@ -125,6 +126,9 @@ export const ProposalMessagesPanel = ({
               >
                 <p className="text-[11px] font-semibold text-muted-foreground mb-1 px-1">
                   {displayName}
+                  {!isOwn && messageAffiliation(message) ? (
+                    <span className="font-normal">{` · ${messageAffiliation(message)}`}</span>
+                  ) : null}
                   {timeLabel ? ` · ${timeLabel}` : ""}
                 </p>
                 <div

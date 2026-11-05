@@ -29,6 +29,8 @@ type RfqBoardTableProps = {
   getBuyerName: (rfq: RfqWithRelations) => string
   getBuyerVerified: (rfq: RfqWithRelations) => boolean
   onSubmitProposal: (rfqId: string) => void
+  /** Category name shown under the title, e.g. "Веб-разработка". */
+  getCategoryLabel?: (rfq: RfqWithRelations) => string | undefined
 }
 
 const URGENT_DAYS = 3
@@ -55,6 +57,7 @@ export const RfqBoardTable = ({
   getBuyerName,
   getBuyerVerified,
   onSubmitProposal,
+  getCategoryLabel,
 }: RfqBoardTableProps) => (
   <>
     {/* Desktop */}
@@ -115,7 +118,7 @@ export const RfqBoardTable = ({
                       {rfq.title}
                     </b>
                     <div className="text-[12.5px] text-mute">
-                      {positionsLine(rfq)}
+                      {[getCategoryLabel?.(rfq), positionsLine(rfq)].filter(Boolean).join(", ")}
                     </div>
                   </Link>
                 </td>

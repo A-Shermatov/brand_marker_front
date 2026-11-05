@@ -153,11 +153,7 @@ export const SUPPLIER_HUBS: CabinetNavHub[] = [
     id: "products",
     label: "Витрина",
     href: "/supplier/catalog",
-    match: [
-      "/supplier/catalog",
-      "/supplier/listings",
-      "/supplier/company",
-    ],
+    match: ["/supplier/catalog", "/supplier/listings"],
     badgeKeys: ["catalog"],
   },
   {
@@ -172,6 +168,12 @@ export const SUPPLIER_HUBS: CabinetNavHub[] = [
     label: "Надёжность и тариф",
     href: "/supplier/trust",
     match: ["/supplier/trust", "/supplier/subscription"],
+  },
+  {
+    id: "company",
+    label: "Компания",
+    href: "/supplier/team",
+    match: ["/supplier/team", "/supplier/company", "/supplier/profile"],
   },
 ]
 
@@ -204,12 +206,12 @@ export const SUPPLIER_SUBTABS: Record<string, CabinetSubtab[]> = {
       match: ["/supplier/finance"],
     },
   ],
-  products: [
+  company: [
     {
-      id: "products",
-      label: "Товары",
-      href: "/supplier/catalog",
-      match: ["/supplier/catalog", "/supplier/listings"],
+      id: "team",
+      label: "Сотрудники и роли",
+      href: "/supplier/team",
+      match: ["/supplier/team", "/supplier/profile"],
     },
     {
       id: "profile",
@@ -245,7 +247,11 @@ export const SUPPLIER_SECTION_TITLE: Record<string, SectionMeta> = {
   },
   products: {
     title: "Витрина",
-    description: "Ваши товары и страница компании",
+    description: "Ваши товары и услуги в каталоге",
+  },
+  company: {
+    title: "Компания",
+    description: "Сотрудники, роли и страница компании",
   },
   tariff: {
     title: "Надёжность и тариф",

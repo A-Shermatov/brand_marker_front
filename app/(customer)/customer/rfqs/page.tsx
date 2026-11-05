@@ -3,14 +3,18 @@
 import { useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { FileTextIcon as FileText, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
+import {
+  FileTextIcon as FileText,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  PlusIcon as Plus,
+} from "@phosphor-icons/react/dist/ssr"
 import { useQueries } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { ListPagination } from "@/components/list-pagination"
 import {
   PageEmptyState,
   PageFrame,
-  PageHeader,
   PageSurface,
   SegmentedControl,
 } from "@/components/layout"
@@ -27,14 +31,12 @@ import {
   type BuyerRfqStatusFilter,
 } from "@/lib/buyer-rfq-display"
 import {
-  RFQ_TYPE_FILTER_OPTIONS,
   RFQ_TYPE_FILTER_VALUES,
   filterRfqsByType,
   matchesRfqSearch,
   type RfqTypeFilter,
 } from "@/lib/rfq-list-search"
 import { RfqListTable } from "@/components/cabinet/rfq/rfq-list-table"
-import { RfqListToolbar } from "@/components/cabinet/rfq/rfq-list-toolbar"
 import { isApiEnabled } from "@/lib/api/config"
 import { useRfqsQuery } from "@/hooks/api/use-rfqs-query"
 import { proposalsApi } from "@/lib/api/proposals"
@@ -146,40 +148,50 @@ const MyRfqsContent = () => {
 
   return (
     <PageFrame>
-      <PageHeader
-        title="Заявки"
-        description="Опишите закупку — поставщики пришлют коммерческие предложения"
-        actions={
-          <Button asChild size="lg">
-            <Link href="/customer/rfqs/new">
-              <Plus size={17} /> Новая заявка
-            </Link>
-          </Button>
-        }
-      />
-
-      <RfqListToolbar
-        search={searchInput}
-        onSearchChange={setSearchInput}
-        searchPlaceholder="Поиск по названию или номеру"
-        filterValue={typeFilter}
-        filterOptions={RFQ_TYPE_FILTER_OPTIONS}
-        onFilterChange={setTypeFilter}
-        filterAriaLabel="Тип заявки"
-      />
-
-      <SegmentedControl
-        value={statusFilter}
-        options={BUYER_RFQ_V5_TABS.map((tab) => {
-          const count = tabCounts?.[tab.value]
-          return count == null ? tab : { ...tab, count }
-        })}
-        onChange={(value) => {
-          setStatusFilter(value)
-          setPage(1)
-        }}
-        ariaLabel="Статус заявки"
-      />
+      {/* One row: status first, then type and search. The section title and the
+          "Новая заявка" button already sit in the cabinet header and sidebar. */}
+      <div className="mb-5 flex flex-wrap items-center gap-3">
+        <SegmentedControl
+          value={statusFilter}
+          options={BUYER_RFQ_V5_TABS.map((tab) => {
+            const count = tabCounts?.[tab.value]
+            return count == null ? tab : { ...tab, count }
+          })}
+          onChange={(value) => {
+            setStatusFilter(value)
+            setPage(1)
+          }}
+          ariaLabel="Статус заявки"
+        />
+        <label className="sr-only" htmlFor="rfq-type">
+          Тип заявки
+        </label>
+        <select
+          id="rfq-type"
+          value={typeFilter}
+          onChange={(event) => setTypeFilter(event.target.value as typeof typeFilter)}
+          className="h-10 rounded-lg border border-line bg-white px-3 text-[14px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+        >
+          <option value="all">Товары и услуги</option>
+          <option value="product">Только товары</option>
+          <option value="service">Только услуги</option>
+        </select>
+        <div className="relative min-w-[220px] flex-1">
+          <MagnifyingGlass
+            size={17}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-mute"
+            aria-hidden
+          />
+          <Input
+            type="search"
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+            placeholder="Название или номер заявки"
+            className="h-10 bg-white pl-10"
+            aria-label="Поиск по заявкам"
+          />
+        </div>
+      </div>
 
       {useApi && isLoading ? (
         <PageSurface className="animate-pulse p-12">

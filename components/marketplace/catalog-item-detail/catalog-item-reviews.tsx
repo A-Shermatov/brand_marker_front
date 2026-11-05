@@ -10,6 +10,7 @@ import { reviewsApi, supplierReviewsApi } from "@/lib/api/companies"
 import { getApiErrorMessage } from "@/lib/api/client"
 import { isApiEnabled } from "@/lib/api/config"
 import { cn } from "@/lib/utils"
+import { formatReviewAuthor } from "@/lib/review-party"
 
 type CatalogItemReviewsProps = {
   reviews: Review[]
@@ -148,6 +149,15 @@ export const CatalogItemReviews = ({
               {formatRelativeIso(review.created_at)}
             </span>
           </div>
+          {(() => {
+            const { primary, secondary } = formatReviewAuthor(review, "Покупатель")
+            return (
+              <p className="text-[13.5px] text-mute">
+                <b className="font-semibold text-ink">{primary}</b>
+                {secondary ? `, ${secondary}` : null}
+              </p>
+            )
+          })()}
           {review.comment && (
             <p className="text-[15px] leading-relaxed text-ink">{review.comment}</p>
           )}

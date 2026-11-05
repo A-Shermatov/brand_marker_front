@@ -43,6 +43,9 @@ export type Message = {
   conversation_id: number
   sender_id: number
   sender_name?: string
+  /** Role in the company the sender speaks for (director, admin, moderator, accountant). */
+  sender_role?: string | null
+  sender_company?: string | null
   text: string
   attachment: MessageAttachment | null
   created_at?: string

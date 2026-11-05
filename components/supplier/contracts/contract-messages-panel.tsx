@@ -5,6 +5,7 @@ import { useDocumentVisible } from "@/hooks/use-document-visible"
 import { CheckIcon as Check, ChecksIcon as CheckCheck, ChatTextIcon as MessageSquare, PaperPlaneRightIcon as Send, ShieldWarningIcon as ShieldAlert } from "@phosphor-icons/react/dist/ssr"
 import { formatIsoDate } from "@/lib/format"
 import type { ContractWithRelations, MessageDeliveryStatus } from "@/types"
+import { messageAffiliation } from "@/lib/message-author"
 
 type ContractMessagesPanelProps = {
   contract: ContractWithRelations
@@ -171,6 +172,9 @@ export const ContractMessagesPanel = ({
               >
                 <p className="text-[11px] font-semibold text-muted-foreground mb-1 px-1">
                   {displayName}
+                  {!isOwn && messageAffiliation(message) ? (
+                    <span className="font-normal">{` · ${messageAffiliation(message)}`}</span>
+                  ) : null}
                   {timeLabel ? ` · ${timeLabel}` : ""}
                 </p>
                 <div

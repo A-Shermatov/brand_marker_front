@@ -18,11 +18,13 @@ export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = {
   accountant: "Бухгалтер",
 }
 
+// Same split as the server (app/core/permissions.py): committing the company
+// (accepting an offer, releasing money, the team) is for the director and admins.
 export const COMPANY_ROLE_RIGHTS: Record<CompanyRole, string> = {
-  director: "Всё, включая команду и согласования",
-  admin: "Управление командой и закупками",
-  moderator: "Заявки и рабочие процессы",
-  accountant: "Оплата и документы",
+  director: "Всё, включая команду и выпуск денег",
+  admin: "Всё, кроме смены руководителя",
+  moderator: "Заявки, предложения, каталог, переписка",
+  accountant: "Оплата, вывод денег, подписка",
 }
 
 export const ASSIGNABLE_COMPANY_ROLES = COMPANY_ROLES.filter(
@@ -63,7 +65,7 @@ export const mapCompanyUsersToEmployees = (
     return {
       userId: member.user_id,
       membershipId: member.id,
-      name: nameFromEmail(email),
+      name: member.name?.trim() || nameFromEmail(email),
       email,
       role: isCompanyRole(member.role) ? member.role : "moderator",
       rights: companyRoleRights(member.role),

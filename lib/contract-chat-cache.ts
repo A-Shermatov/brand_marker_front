@@ -32,6 +32,8 @@ const normalizeIncomingMessage = (
   conversation_id: raw.conversation_id ?? contractId,
   sender_id: raw.sender_id,
   sender_name: raw.sender_name,
+  sender_role: raw.sender_role ?? null,
+  sender_company: raw.sender_company ?? null,
   text: raw.text,
   attachment: raw.attachment ?? null,
   created_at: raw.created_at,

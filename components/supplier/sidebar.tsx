@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import {
+  BuildingsIcon,
   ChatsCircleIcon,
   HandshakeIcon,
   HouseIcon,
@@ -40,6 +41,7 @@ const ICONS: Record<string, PhosphorIcon> = {
   products: StorefrontIcon,
   messages: ChatsCircleIcon,
   tariff: SealCheckIcon,
+  company: BuildingsIcon,
 }
 
 export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => void }) {

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import type { Review } from "@/types"
-import { formatReviewParty } from "@/lib/review-party"
+import { formatReviewAuthor } from "@/lib/review-party"
 
 type ReviewsReceivedTableProps = {
   reviews: Review[]
@@ -34,7 +34,7 @@ const PartyCell = ({
   review: Review
   fallback: string
 }) => {
-  const { primary, secondary } = formatReviewParty(review.reviewer, fallback)
+  const { primary, secondary } = formatReviewAuthor(review, fallback)
   return (
     <div className="min-w-0">
       <p className="truncate font-semibold text-foreground">{primary}</p>

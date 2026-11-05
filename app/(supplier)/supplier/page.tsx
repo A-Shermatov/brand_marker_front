@@ -41,6 +41,7 @@ import { CompanyName, PlanMark, TrustMark } from "@/components/bm"
 import { ActivateRoleBanner } from "@/components/company/activate-role-banner"
 import { ActiveContractsPanel } from "@/components/supplier/dashboard/active-contracts-panel"
 import { DashboardPanel } from "@/components/cabinet/dashboard/dashboard-panel"
+import { TeamAccessCard } from "@/components/cabinet/company/team-access-card"
 import { MoneyPanel } from "@/components/cabinet/dashboard/money-panel"
 import {
   OpsList,
@@ -396,6 +397,8 @@ export default function SupplierDashboard() {
         hydrated={!loading}
         getBuyerName={getBuyerName}
       />
+
+      <TeamAccessCard side="supplier" teamHref="/supplier/team" />
     </PageFrame>
   )
 }

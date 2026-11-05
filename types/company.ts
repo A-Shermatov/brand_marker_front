@@ -64,6 +64,8 @@ export type CompanyUser = {
   user_id: number
   role: CompanyRole
   email?: string
+  /** First and last name, when the user filled them in. */
+  name?: string | null
 }
 
 export type ReviewPhoto = {
@@ -98,6 +100,15 @@ export type Review = {
   viewer_voted?: boolean
   reviewer?: ReviewParty | null
   target?: ReviewParty | null
+  /** The employee who wrote it for the reviewing company (newer reviews only). */
+  author?: ReviewAuthor | null
+}
+
+export type ReviewAuthor = {
+  user_id: number
+  name?: string | null
+  role?: string | null
+  company_title?: string | null
 }
 
 export type Company = {

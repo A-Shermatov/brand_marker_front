@@ -1,4 +1,5 @@
 import type { Review, ReviewParty } from "@/types"
+import { companyRoleLabel } from "@/lib/company-team"
 
 export const formatReviewParty = (
   party: ReviewParty | null | undefined,
@@ -32,11 +33,30 @@ export const formatReviewParty = (
   return { primary: display || fallback, secondary: null }
 }
 
+/**
+ * Who wrote the review: the employee's name, then "Руководитель, ООО «…»".
+ * Older reviews have no author and fall back to the reviewing company.
+ */
+export const formatReviewAuthor = (
+  review: Review,
+  fallback: string,
+): { primary: string; secondary: string | null } => {
+  const author = review.author
+  const name = author?.name?.trim()
+  if (author && name) {
+    const company = author.company_title?.trim() || review.reviewer?.company_title?.trim() || null
+    const role = author.role ? companyRoleLabel(author.role) : null
+    const secondary = [role, company].filter(Boolean).join(", ")
+    return { primary: name, secondary: secondary || null }
+  }
+  return formatReviewParty(review.reviewer, fallback)
+}
+
 export const reviewAuthorLabel = (
   review: Review,
   fallback = "Заказчик",
 ): string => {
-  const { primary, secondary } = formatReviewParty(review.reviewer, fallback)
+  const { primary, secondary } = formatReviewAuthor(review, fallback)
   return secondary ? `${primary} · ${secondary}` : primary
 }
 

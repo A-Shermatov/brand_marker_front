@@ -6,12 +6,18 @@ import { navCountsKeys } from "@/hooks/api/use-nav-counts-query"
 import type { PageParams } from "@/lib/pagination"
 import type { Currency, ProposalWithRelations } from "@/types"
 
-type SupplierBoardParams = PageParams & { q?: string; source?: string }
+type SupplierBoardParams = PageParams & {
+  q?: string
+  source?: string
+  /** Comma-separated category ids; a parent also covers its subcategories. */
+  category_ids?: string
+}
 
 export const supplierRfqKeys = {
   all: ["supplier-rfqs"] as const,
-  board: (page = 1, q = "", source = "all") =>
-    [...supplierRfqKeys.all, "board", page, q, source] as const,
+  board: (page = 1, q = "", source = "all", categories = "") =>
+    [...supplierRfqKeys.all, "board", page, q, source, categories] as const,
+  subscriptions: () => [...supplierRfqKeys.all, "subscriptions"] as const,
   detail: (id: string) => [...supplierRfqKeys.all, "detail", id] as const,
   proposals: (page = 1) => ["supplier-proposals", page] as const,
 }
@@ -25,6 +31,7 @@ export const useSupplierRfqBoardQuery = (
       params.page ?? 1,
       params.q ?? "",
       params.source ?? "all",
+      params.category_ids ?? "",
     ),
     queryFn: () => supplierRfqsApi.board(params),
     enabled: enabled && isApiEnabled(),
@@ -121,3 +128,22 @@ export const hasSupplierProposalForRfq = (
   proposals: ProposalWithRelations[] | undefined,
   rfqId: string,
 ): boolean => Boolean(proposals?.some((p) => p.rfq_id === rfqId))
+
+export const useRfqCategorySubscriptionsQuery = (enabled = true) =>
+  useQuery({
+    queryKey: supplierRfqKeys.subscriptions(),
+    queryFn: () => supplierRfqsApi.subscriptions(),
+    enabled: enabled && isApiEnabled(),
+  })
+
+export const useSaveRfqCategorySubscriptionsMutation = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (categoryIds: number[]) => supplierRfqsApi.saveSubscriptions(categoryIds),
+    onSuccess: (data) => qc.setQueryData(supplierRfqKeys.subscriptions(), data),
+    meta: {
+      successMessage: "Уведомления сохранены",
+      errorMessage: "Не удалось сохранить уведомления",
+    },
+  })
+}

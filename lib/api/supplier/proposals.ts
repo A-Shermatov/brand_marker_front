@@ -12,8 +12,20 @@ const RFQ_PREFIX = "/supplier/rfqs"
 const PROPOSAL_PREFIX = "/supplier/proposals"
 
 export const supplierRfqsApi = {
-  board: (params: PageParams & { q?: string; source?: string } = {}) =>
+  board: (
+    params: PageParams & { q?: string; source?: string; category_ids?: string } = {},
+  ) =>
     apiFetch<Page<RfqWithRelations>>(`${RFQ_PREFIX}/board${buildPageQuery(params)}`),
+
+  /** Categories in which this employee is notified about new requests. */
+  subscriptions: () =>
+    apiFetch<{ category_ids: number[] }>(`${RFQ_PREFIX}/subscriptions`),
+
+  saveSubscriptions: (categoryIds: number[]) =>
+    apiFetch<{ category_ids: number[] }>(`${RFQ_PREFIX}/subscriptions`, {
+      method: "PUT",
+      body: JSON.stringify({ category_ids: categoryIds }),
+    }),
 
   get: (id: string) => apiFetch<RfqWithRelations>(`${RFQ_PREFIX}/${id}`),
 

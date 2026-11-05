@@ -10,6 +10,7 @@ import {
 } from "@/hooks/api/use-direct-chats-query"
 import { useDocumentVisible } from "@/hooks/use-document-visible"
 import type { MessageDeliveryStatus } from "@/types"
+import { messageAffiliation } from "@/lib/message-author"
 
 type DirectMessagesPanelProps = {
   chatId: number
@@ -176,6 +177,9 @@ export const DirectMessagesPanel = ({
               >
                 <p className="text-[11px] font-semibold text-muted-foreground mb-1 px-1">
                   {displayName}
+                  {!isOwn && messageAffiliation(message) ? (
+                    <span className="font-normal">{` · ${messageAffiliation(message)}`}</span>
+                  ) : null}
                   {timeLabel ? ` · ${timeLabel}` : ""}
                 </p>
                 <div

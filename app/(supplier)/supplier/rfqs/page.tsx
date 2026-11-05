@@ -1,6 +1,6 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useMemo, useState } from "react"
 import { MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
@@ -24,12 +24,19 @@ import {
   type SupplierRfqResponseFilter,
   type SupplierRfqSourceFilter,
 } from "@/lib/rfq-list-search"
+import { usePublicCategoriesQuery } from "@/hooks/api/use-public-query"
 import { useCategoryOptions } from "@/hooks/use-category-options"
 import {
+  useRfqCategorySubscriptionsQuery,
+  useSaveRfqCategorySubscriptionsMutation,
   useSubmitSupplierProposalMutation,
   useSupplierProposalsQuery,
   useSupplierRfqBoardQuery,
 } from "@/hooks/api/use-supplier-rfqs-query"
+import {
+  RfqCategoryAlerts,
+  RfqCategoryFilter,
+} from "@/components/supplier/rfq/rfq-category-controls"
 import {
   emptySupplierNavCounts,
   useMarkNavSectionSeen,
@@ -64,7 +71,25 @@ const SupplierRfqsContent = () => {
   const submitProposalLocal = useProposalsStore((s) => s.submitProposal)
   const localProposals = useProposalsStore((s) => s.proposals)
   const getCompany = useCompaniesStore((s) => s.getCompany)
-  const { getRfqCategoryLabel, rfqCategories } = useCategoryOptions()
+  const { getRfqCategoryLabel } = useCategoryOptions()
+  const router = useRouter()
+  const pathname = usePathname()
+  // ?cat=1,6 — categories picked in the filter; empty shows every open request.
+  const categoryFilter = useMemo(
+    () =>
+      (searchParams.get("cat") ?? "")
+        .split(",")
+        .map((v) => Number(v))
+        .filter((v) => Number.isInteger(v) && v > 0),
+    [searchParams],
+  )
+  const setCategoryFilter = (ids: number[]) => {
+    const next = new URLSearchParams(searchParams.toString())
+    if (ids.length) next.set("cat", ids.join(","))
+    else next.delete("cat")
+    const qs = next.toString()
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+  }
   const [selectedRfqId, setSelectedRfqId] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [sourceFilter, setSourceFilter] = useUrlTab<SupplierRfqSourceFilter>(
@@ -87,15 +112,21 @@ const SupplierRfqsContent = () => {
     return () => window.clearTimeout(timer)
   }, [searchInput])
 
+  const categoryKey = categoryFilter.join(",")
   useEffect(() => {
     setPage(1)
-  }, [debouncedSearch, sourceFilter, responseFilter])
+  }, [debouncedSearch, sourceFilter, responseFilter, categoryKey])
 
   const { data: apiRfqs, isLoading } = useSupplierRfqBoardQuery(hydrated && useApi, {
     page,
     q: debouncedSearch || undefined,
     source: sourceFilter !== "all" ? sourceFilter : undefined,
+    category_ids: categoryKey || undefined,
   })
+  const { data: categoryTree = [] } = usePublicCategoriesQuery(hydrated && useApi)
+  const { data: subscriptions } = useRfqCategorySubscriptionsQuery(hydrated && useApi)
+  const saveSubscriptions = useSaveRfqCategorySubscriptionsMutation()
+  const subscribedIds = subscriptions?.category_ids ?? []
   const { data: apiProposals } = useSupplierProposalsQuery(hydrated && useApi)
   const submitProposalMutation = useSubmitSupplierProposalMutation()
 
@@ -162,17 +193,6 @@ const SupplierRfqsContent = () => {
     proposalItems,
   ])
 
-  const categoryHint = useMemo(() => {
-    const ids = [...new Set(filtered.map((r) => r.category_id))].slice(0, 3)
-    if (ids.length === 0) {
-      return rfqCategories
-        .slice(0, 2)
-        .map((c) => c.label)
-        .join(", ")
-    }
-    return ids.map((id) => getRfqCategoryLabel(id)).join(", ")
-  }, [filtered, rfqCategories, getRfqCategoryLabel])
-
   const selectedRfq = selectedRfqId
     ? useApi
       ? openRfqs.find((r) => r.id === selectedRfqId)
@@ -214,7 +234,10 @@ const SupplierRfqsContent = () => {
   }
 
   const hasFilters =
-    Boolean(debouncedSearch) || sourceFilter !== "all" || responseFilter !== "all"
+    Boolean(debouncedSearch) ||
+    sourceFilter !== "all" ||
+    responseFilter !== "all" ||
+    categoryFilter.length > 0
   const isLoadingState = !hydrated || isLoading
   const isEmpty = isLoadingState || filtered.length === 0
 
@@ -222,12 +245,28 @@ const SupplierRfqsContent = () => {
     <PageFrame>
       <PageHeader
         title="Заявки покупателей"
-        description={
-          categoryHint
-            ? `Категории: ${categoryHint}`
-            : "Заявки в ваших категориях"
+        description="Все открытые заявки площадки. Выберите категории, чтобы сузить список, и включите уведомления о новых."
+        actions={
+          useApi ? (
+            <RfqCategoryAlerts
+              tree={categoryTree}
+              value={subscribedIds}
+              saving={saveSubscriptions.isPending}
+              onSave={(ids) => saveSubscriptions.mutateAsync(ids)}
+            />
+          ) : null
         }
       />
+
+      {useApi && categoryTree.length ? (
+        <div className="mb-3">
+          <RfqCategoryFilter
+            tree={categoryTree}
+            value={categoryFilter}
+            onChange={setCategoryFilter}
+          />
+        </div>
+      ) : null}
 
       <RfqListToolbar
         search={searchInput}
@@ -264,7 +303,9 @@ const SupplierRfqsContent = () => {
                 ? undefined
                 : hasFilters
                   ? "Измените поиск или фильтры."
-                  : "Пришлём уведомление, когда появится заявка в ваших категориях."
+                  : subscribedIds.length
+                    ? "Пришлём уведомление, когда появится заявка в выбранных категориях."
+                    : "Включите уведомления, чтобы узнать о новой заявке сразу."
             }
           />
         </PageSurface>
@@ -282,6 +323,7 @@ const SupplierRfqsContent = () => {
             )
           }}
           onSubmitProposal={handleOpenProposal}
+          getCategoryLabel={(rfq) => getRfqCategoryLabel(rfq.category_id)}
         />
       )}
 

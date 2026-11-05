@@ -110,6 +110,7 @@ export default function BuyerReviewsPage() {
                 }))}
                 getSupplierName={(id) => resolveName(id)}
                 getContractTitle={getContractTitle}
+                showAuthor
               />
             )}
             <ListPagination
