@@ -10,7 +10,12 @@ import type {
 import { apiFetch } from "./client"
 
 export type TeamMemberPayload = { email: string; role: string }
-export type TeamMemberUpdatePayload = { role: string }
+export type TeamMemberUpdatePayload = {
+  role?: string
+  /** null: the company role applies again on this side. */
+  buyer_role?: string | null
+  supplier_role?: string | null
+}
 export type CertificateCreatePayload = {
   title: string
   issuer: string

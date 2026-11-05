@@ -1,4 +1,4 @@
-import type { CompanyRole, CompanyUser } from "@/types"
+import type { CompanyRole, CompanyUser, SideRole } from "@/types"
 import { COMPANY_ROLES } from "@/types"
 
 export type CompanyTeamEmployee = {
@@ -9,7 +9,31 @@ export type CompanyTeamEmployee = {
   role: CompanyRole
   rights: string
   me?: boolean
+  /** Overrides per side; null means the company role applies. */
+  buyerRole?: SideRole | null
+  supplierRole?: SideRole | null
 }
+
+export type TeamSideKey = "buyer" | "supplier"
+
+export const TEAM_SIDE_LABELS: Record<TeamSideKey, string> = {
+  buyer: "Закупки",
+  supplier: "Продажи",
+}
+
+export const SIDE_ROLE_OPTIONS: { value: SideRole; label: string }[] = [
+  { value: "admin", label: "Администратор" },
+  { value: "moderator", label: "Менеджер" },
+  { value: "accountant", label: "Бухгалтер" },
+  { value: "none", label: "Нет доступа" },
+]
+
+export const sideRoleLabel = (role: SideRole | null | undefined, companyRole: string): string =>
+  !role
+    ? companyRoleLabel(companyRole)
+    : role === "none"
+      ? "Нет доступа"
+      : companyRoleLabel(role)
 
 export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = {
   director: "Руководитель",
@@ -70,6 +94,8 @@ export const mapCompanyUsersToEmployees = (
       role: isCompanyRole(member.role) ? member.role : "moderator",
       rights: companyRoleRights(member.role),
       me: currentUserId != null && member.user_id === currentUserId,
+      buyerRole: member.buyer_role ?? null,
+      supplierRole: member.supplier_role ?? null,
     }
   })
 

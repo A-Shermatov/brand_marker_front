@@ -66,7 +66,12 @@ export type CompanyUser = {
   email?: string
   /** First and last name, when the user filled them in. */
   name?: string | null
+  /** Role on purchases / sales when it differs from the company role; "none" closes the side. */
+  buyer_role?: SideRole | null
+  supplier_role?: SideRole | null
 }
+
+export type SideRole = "admin" | "moderator" | "accountant" | "none"
 
 export type ReviewPhoto = {
   id?: number | null
@@ -139,6 +144,8 @@ export type CompanyWithRelations = Company & {
   certificates: CompanyCertificate[]
   reviews: Review[]
   company_users: CompanyUser[]
+  /** Reputation per role (supplier / buyer). */
+  reputation?: SideReputation[]
   owner?: UserPublic
   team?: UserPublic[]
 }
@@ -167,6 +174,15 @@ export type PublicCompanyDetail = Pick<
   categories: CompanyCategory[]
   stats: CompanyStats | null
   certificates: CompanyCertificate[]
+  /** Reputation per role, for a company that both sells and buys. */
+  reputation?: SideReputation[]
+}
+
+export type SideReputation = {
+  side: "supplier" | "buyer" | string
+  rating: number | null
+  reviews_count: number
+  completed_deals: number
 }
 
 export type CompanyCreate = Omit<

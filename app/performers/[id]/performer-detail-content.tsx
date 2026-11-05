@@ -31,6 +31,7 @@ import { useAuthStore } from "@/lib/store/auth-store"
 import { useOpenDirectChatMutation } from "@/hooks/api/use-direct-chats-query"
 import { cn } from "@/lib/utils"
 import type { MarketplacePerformer } from "@/types/marketplace"
+import { SideReputationList } from "@/components/company/side-reputation"
 
 type PerformerDetailContentProps = {
   performerId: number
@@ -243,6 +244,7 @@ export const PerformerDetailContent = ({
                   {performer.description}
                 </p>
               ) : null}
+              <SideReputationList reputation={apiCompany?.reputation} className="mt-3" />
             </div>
           </div>
 

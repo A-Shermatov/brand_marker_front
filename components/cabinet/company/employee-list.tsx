@@ -13,11 +13,15 @@ import {
 import {
   ASSIGNABLE_COMPANY_ROLES,
   COMPANY_ROLE_LABELS,
+  SIDE_ROLE_OPTIONS,
+  TEAM_SIDE_LABELS,
   companyRoleLabel,
   initialsFromName,
+  sideRoleLabel,
   type CompanyTeamEmployee,
+  type TeamSideKey,
 } from "@/lib/company-team"
-import type { CompanyRole } from "@/types"
+import type { CompanyRole, SideRole } from "@/types"
 
 type EmployeeListProps = {
   employees: CompanyTeamEmployee[]
@@ -26,6 +30,9 @@ type EmployeeListProps = {
   onInviteClick?: () => void
   onChangeRole: (userId: number, role: CompanyRole) => void
   onRemove: (userId: number) => void
+  /** The company buys and sells: show access to each side. */
+  sides?: TeamSideKey[]
+  onChangeSideRole?: (userId: number, side: TeamSideKey, role: SideRole | null) => void
 }
 
 export const EmployeeList = ({
@@ -35,7 +42,10 @@ export const EmployeeList = ({
   onInviteClick,
   onChangeRole,
   onRemove,
+  sides = [],
+  onChangeSideRole,
 }: EmployeeListProps) => {
+  const twoSided = sides.length > 1
   const [removeTarget, setRemoveTarget] = useState<CompanyTeamEmployee | null>(
     null,
   )
@@ -153,6 +163,15 @@ export const EmployeeList = ({
                     </Button>
                   ) : null}
                 </div>
+                {twoSided ? (
+                  <SideAccess
+                    employee={employee}
+                    sides={sides}
+                    editable={canEdit && Boolean(onChangeSideRole)}
+                    busy={busy}
+                    onChange={(side, role) => onChangeSideRole?.(employee.userId, side, role)}
+                  />
+                ) : null}
               </div>
             </li>
           )
@@ -192,5 +211,68 @@ export const EmployeeList = ({
         </DialogContent>
       </Dialog>
     </>
+  )
+}
+
+/** Access to purchases and sales for one person, when the company does both. */
+const SideAccess = ({
+  employee,
+  sides,
+  editable,
+  busy,
+  onChange,
+}: {
+  employee: CompanyTeamEmployee
+  sides: TeamSideKey[]
+  editable: boolean
+  busy: boolean
+  onChange: (side: TeamSideKey, role: SideRole | null) => void
+}) => {
+  if (employee.role === "director") {
+    return (
+      <p className="text-[12.5px] text-mute sm:text-right">Закупки и продажи: полный доступ</p>
+    )
+  }
+  const current = (side: TeamSideKey) =>
+    side === "buyer" ? employee.buyerRole ?? null : employee.supplierRole ?? null
+  if (!editable) {
+    const overridden = sides.filter((side) => current(side))
+    if (overridden.length === 0) return null
+    return (
+      <p className="text-[12.5px] text-mute sm:text-right">
+        {overridden
+          .map((side) => `${TEAM_SIDE_LABELS[side]}: ${sideRoleLabel(current(side), employee.role).toLowerCase()}`)
+          .join("; ")}
+      </p>
+    )
+  }
+  return (
+    <div className="grid w-full gap-1.5 border-t border-line pt-2 sm:w-[200px]">
+      {sides.map((side) => {
+        const id = `side-${side}-${employee.userId}`
+        const value = current(side) ?? ""
+        return (
+          <label key={side} htmlFor={id} className="flex items-center justify-between gap-2 text-[12.5px] text-mute">
+            {TEAM_SIDE_LABELS[side]}
+            <select
+              id={id}
+              value={value}
+              disabled={busy}
+              onChange={(e) => onChange(side, (e.target.value || null) as SideRole | null)}
+              className={`h-8 min-w-0 flex-1 rounded-md border border-line bg-white px-2 text-[13px] outline-none focus:border-brand-600 disabled:opacity-60 ${
+                value === "none" ? "text-red-700" : "text-ink"
+              }`}
+            >
+              <option value="">{`Как ${companyRoleLabel(employee.role).toLowerCase()}`}</option>
+              {SIDE_ROLE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )
+      })}
+    </div>
   )
 }

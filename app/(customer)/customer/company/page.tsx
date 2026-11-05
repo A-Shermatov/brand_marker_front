@@ -35,6 +35,7 @@ import {
   myCompanyRole,
   nameFromEmail,
   type CompanyTeamEmployee,
+  type TeamSideKey,
 } from "@/lib/company-team"
 import {
   MOCK_BUYER_COMPANY_LOG,
@@ -46,6 +47,7 @@ import {
   type PurchaseRules,
 } from "@/lib/mock/buyer-employees"
 import type { CompanyRole, CompanyWithRelations } from "@/types"
+import { SideReputationList } from "@/components/company/side-reputation"
 
 const nowLogStamp = () => {
   const d = new Date()
@@ -146,6 +148,11 @@ export default function CustomerCompanyPage() {
     }
     return localEmployees
   }, [useApi, company, user?.userId, localEmployees])
+
+  // Purchases and sales are set apart only when the company does both.
+  const companySides = (["buyer", "supplier"] as const).filter((side) =>
+    (company?.actor_types ?? []).includes(side),
+  ) as TeamSideKey[]
 
   const myRole = useApi
     ? myCompanyRole(company?.company_users ?? [], user?.userId)
@@ -368,6 +375,8 @@ export default function CustomerCompanyPage() {
         }
       />
 
+      <SideReputationList reputation={company?.reputation} className="mb-5" />
+
       <div className="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="grid min-w-0 gap-5">
           <EmployeeList
@@ -377,6 +386,17 @@ export default function CustomerCompanyPage() {
             onInviteClick={() => setInviteOpen(true)}
             onChangeRole={(userId, role) => void handleRoleChange(userId, role)}
             onRemove={(userId) => void handleRemove(userId)}
+            sides={companySides}
+            onChangeSideRole={(userId, side, role) => {
+              if (!useApi || !company) return
+              void updateMember
+                .mutateAsync({
+                  companyId: company.id,
+                  targetUserId: userId,
+                  data: side === "buyer" ? { buyer_role: role } : { supplier_role: role },
+                })
+                .catch(() => {})
+            }}
           />
 
           {!useApi ? (

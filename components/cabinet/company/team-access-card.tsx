@@ -62,6 +62,10 @@ export const TeamAccessCard = ({ side, teamHref, limit = 4, className }: TeamAcc
         onInviteClick={() => setInviteOpen(true)}
         onChangeRole={(userId, role) => void team.changeRole(userId, role).catch(() => {})}
         onRemove={(userId) => void team.removeMember(userId).catch(() => {})}
+        sides={team.sides}
+        onChangeSideRole={(userId, side, role) =>
+          void team.changeSideRole(userId, side, role).catch(() => {})
+        }
       />
       {team.canManage ? (
         <InviteEmployeeDialog

@@ -20,8 +20,9 @@ import {
   canManageTeam,
   mapCompanyUsersToEmployees,
   myCompanyRole,
+  type TeamSideKey,
 } from "@/lib/company-team"
-import type { CompanyRole, CompanyWithRelations } from "@/types"
+import type { CompanyRole, CompanyWithRelations, SideRole } from "@/types"
 
 export type TeamSide = "buyer" | "supplier"
 
@@ -61,6 +62,10 @@ export const useCompanyTeam = (side: TeamSide) => {
     [members, user?.userId],
   )
   const myRole = myCompanyRole(members, user?.userId)
+  // Both sides only matter when the company buys and sells.
+  const sides = (["buyer", "supplier"] as const).filter((side) =>
+    (company?.actor_types ?? []).includes(side),
+  ) as TeamSideKey[]
 
   return {
     useApi,
@@ -70,6 +75,15 @@ export const useCompanyTeam = (side: TeamSide) => {
     myRole,
     canManage: canManageTeam(myRole),
     busy: add.isPending || update.isPending || remove.isPending,
+    sides,
+    changeSideRole: (targetUserId: number, side: TeamSideKey, role: SideRole | null) =>
+      company
+        ? update.mutateAsync({
+            companyId: company.id,
+            targetUserId,
+            data: side === "buyer" ? { buyer_role: role } : { supplier_role: role },
+          })
+        : Promise.resolve(undefined),
     changeRole: (targetUserId: number, role: CompanyRole) =>
       company
         ? update.mutateAsync({ companyId: company.id, targetUserId, data: { role } })

@@ -8,6 +8,7 @@ import { PageFrame, PageHeader } from "@/components/layout"
 import { EmployeeList } from "@/components/cabinet/company/employee-list"
 import { InviteEmployeeDialog } from "@/components/cabinet/company/invite-employee-dialog"
 import { useCompanyTeam } from "@/hooks/use-company-team"
+import { SideReputationList } from "@/components/company/side-reputation"
 import { COMPANY_ROLE_LABELS, COMPANY_ROLE_RIGHTS } from "@/lib/company-team"
 import { COMPANY_ROLES } from "@/types"
 
@@ -60,6 +61,8 @@ export default function SupplierTeamPage() {
         }
       />
 
+      <SideReputationList reputation={team.company.reputation} className="mb-5" />
+
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
         <EmployeeList
           employees={team.employees}
@@ -68,6 +71,10 @@ export default function SupplierTeamPage() {
           onInviteClick={() => setInviteOpen(true)}
           onChangeRole={(userId, role) => void team.changeRole(userId, role).catch(() => {})}
           onRemove={(userId) => void team.removeMember(userId).catch(() => {})}
+          sides={team.sides}
+          onChangeSideRole={(userId, side, role) =>
+            void team.changeSideRole(userId, side, role).catch(() => {})
+          }
         />
 
         <section className="rounded-2xl border border-line bg-white p-5">
