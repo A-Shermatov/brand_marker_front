@@ -94,6 +94,8 @@ export default function AdminContractDetailPage({ params }: PageProps) {
     className: "bg-muted text-muted-foreground",
   }
   const isClosed = ["completed", "cancelled"].includes(contract.status)
+  // Frozen by an admin: milestones moved to "disputed" while money is held.
+  const isFrozen = (contract.milestones ?? []).some((m) => m.status === "disputed")
   const buyerName =
     contract.buyer?.company_title ||
     contract.buyer?.name ||
@@ -138,7 +140,7 @@ export default function AdminContractDetailPage({ params }: PageProps) {
           </div>
 
           <div className="flex flex-wrap gap-2 xl:max-w-xl xl:justify-end">
-            {canUpdate && (
+            {canUpdate && !isFrozen && (
               <Button
                 type="button"
                 size="sm"
@@ -147,6 +149,17 @@ export default function AdminContractDetailPage({ params }: PageProps) {
               >
                 <Snowflake aria-hidden="true" />
                 Заморозить
+              </Button>
+            )}
+            {canUpdate && isFrozen && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setSelectedAction("unfreeze")}
+              >
+                <Snowflake aria-hidden="true" />
+                Снять заморозку
               </Button>
             )}
             {canUpdate && !isClosed && (

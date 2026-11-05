@@ -316,6 +316,13 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
     pendingMilestone?.amount ?? contract.agreed_amount,
     contract.currency,
   )
+  // What the supplier actually receives: the platform commission is withheld.
+  const supplierGets = formatCurrency(
+    pendingMilestone
+      ? pendingMilestone.amount - (pendingMilestone.commission_amount ?? 0)
+      : contract.agreed_amount - (contract.commission_amount ?? 0),
+    contract.currency,
+  )
   const fundDescription = contract.status === "completed"
     ? "Деньги будут удерживаться банком‑партнёром. Затем подтвердите выплату исполнителю."
     : "Деньги будут удерживаться банком‑партнёром. Исполнитель получит их только после того, как вы примете работу."
@@ -337,7 +344,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
     },
     release: {
       title: "Перевести деньги исполнителю?",
-      description: `${supplierName} получит ${pendingAmount}. Отменить выплату будет нельзя.`,
+      description: `${supplierName} получит ${supplierGets} (за вычетом комиссии площадки). Отменить выплату будет нельзя.`,
       confirmLabel: "Да, перевести",
     },
     accept: unpaidMilestone
@@ -348,7 +355,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
         }
       : {
           title: "Принять работу?",
-          description: `${supplierName} получит ${pendingAmount}, которые удерживает банк. Отправить работу на доработку после приёмки будет нельзя.`,
+          description: `${supplierName} получит ${supplierGets} из удерживаемых банком ${pendingAmount} (за вычетом комиссии площадки). Отправить работу на доработку после приёмки будет нельзя.`,
           confirmLabel: "Да, принять",
         },
   }

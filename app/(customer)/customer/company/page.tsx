@@ -402,7 +402,10 @@ export default function CustomerCompanyPage() {
             </section>
           ) : null}
 
-          <PurchaseRulesCard rules={rules} onChange={handleRuleChange} />
+          {/* Purchase rules are not enforced by the server yet: demo mode only. */}
+          {!useApi ? (
+            <PurchaseRulesCard rules={rules} onChange={handleRuleChange} />
+          ) : null}
         </div>
 
         <CompanyRequisitesCard

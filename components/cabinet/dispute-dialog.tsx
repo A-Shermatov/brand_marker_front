@@ -67,6 +67,7 @@ export default function DisputeDialog({ open, onOpenChange, onConfirm }: Dispute
           onChange={(e) => setReason(e.target.value)}
           rows={4}
           placeholder="Опишите, что пошло не так"
+          aria-label="Причина спора"
           className="w-full px-4 py-3 rounded-xl border border-input bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
         />
         {error && <p className="text-xs text-destructive -mt-2">{error}</p>}

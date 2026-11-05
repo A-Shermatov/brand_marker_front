@@ -251,6 +251,7 @@ export default function ReviewDialog({
                   />
                   <button
                     type="button"
+                    aria-label="Удалить фото"
                     className="absolute right-0.5 top-0.5 rounded-full bg-black/60 p-0.5 text-white"
                     onClick={() =>
                       setPhotos((prev) => prev.filter((p) => p.file_url !== photo.file_url))

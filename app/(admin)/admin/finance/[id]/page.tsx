@@ -3,7 +3,7 @@
 import { use, useState } from "react"
 import { formatCurrency } from "@/lib/format"
 import Link from "next/link"
-import { CheckCircleIcon as CheckCircle2, CurrencyCircleDollarIcon as CircleDollarSign, DownloadSimpleIcon as Download, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowCounterClockwiseIcon as RotateCcw, ArrowUUpLeftIcon as Undo2 } from "@phosphor-icons/react/dist/ssr"
+import { CheckCircleIcon as CheckCircle2, CurrencyCircleDollarIcon as CircleDollarSign, DownloadSimpleIcon as Download, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowUUpLeftIcon as Undo2 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { FinanceActionDialog } from "@/components/admin/finance/finance-action-dialog"
 import { AdminFinanceDetailSections } from "@/components/admin/finance/finance-detail-sections"
@@ -106,8 +106,13 @@ export default function AdminFinanceDetailPage({ params }: PageProps) {
     className: "bg-muted text-muted-foreground",
   }
   const canMarkPaid = canManage && ["pending", "processing"].includes(payment.status)
-  const canRetry = canManage && payment.status === "failed"
-  const canRefund = canManage && payment.status === "paid" && payment.type !== "refund"
+  // Refund only records a refund made outside the platform; payouts to suppliers
+  // are reconciled with the bank instead.
+  const canRefund =
+    canManage &&
+    payment.status === "paid" &&
+    payment.type !== "refund" &&
+    payment.type !== "payout"
 
   const handleExport = async () => {
     setExporting(true)
@@ -174,17 +179,6 @@ export default function AdminFinanceDetailPage({ params }: PageProps) {
                 Отметить оплаченным
               </Button>
             )}
-            {canRetry && (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => setSelectedAction("retry")}
-              >
-                <RotateCcw aria-hidden="true" />
-                Повторить
-              </Button>
-            )}
             {canRefund && (
               <Button
                 type="button"
@@ -193,7 +187,7 @@ export default function AdminFinanceDetailPage({ params }: PageProps) {
                 onClick={() => setSelectedAction("refund")}
               >
                 <Undo2 aria-hidden="true" />
-                Возврат
+                Отметить возврат
               </Button>
             )}
           </div>

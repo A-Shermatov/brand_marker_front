@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { CheckIcon as Check, StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
+import { CheckIcon as Check } from "@phosphor-icons/react/dist/ssr"
 import { SurfaceCard } from "@/components/bm"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,7 +14,6 @@ import { helpUrl } from "@/lib/marketplace-routes"
 /** Buyer tariff hub — read-only UI (API for paid plans not wired yet). */
 export default function CustomerPlanPage() {
   const onPlus = false
-  const bonus = 0
 
   return (
     <div className="grid gap-5">
@@ -44,18 +43,6 @@ export default function CustomerPlanPage() {
               ),
             )}
           </ul>
-          <div className="flex items-center gap-3 rounded-xl bg-canvas p-4">
-            <span className="grid size-10 place-items-center rounded-xl bg-amber-100 text-amber-700">
-              <Star className="size-5" aria-hidden />
-            </span>
-            <span className="flex-1 text-[14px]">
-              <b className="block tnum text-[16px]">{bonus} бонусов</b>
-              <span className="text-mute">
-                1 бонус = 1 TJS на оплату услуг площадки. Начисляем 0,5% с оплат
-                через гарантию.
-              </span>
-            </span>
-          </div>
         </SurfaceCard>
 
         <section className="grid gap-4 rounded-2xl bg-ink p-6 text-white">
@@ -101,9 +88,9 @@ export default function CustomerPlanPage() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {BUYER_SERVICES.map((svc) => (
             <SurfaceCard key={svc.id} className="grid gap-2 p-5">
-              <div className="flex items-start justify-between gap-2">
-                <b className="text-[16px] text-ink">{svc.name}</b>
-                <span className="shrink-0 text-[13px] font-semibold text-brand-700">
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-2 gap-y-1">
+                <b className="min-w-0 text-[16px] text-ink">{svc.name}</b>
+                <span className="text-[13px] font-semibold text-brand-700">
                   {svc.price}
                 </span>
               </div>

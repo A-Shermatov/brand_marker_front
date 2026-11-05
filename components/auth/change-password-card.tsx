@@ -118,6 +118,7 @@ export function ChangePasswordCard({ className }: Props) {
                 type="password"
                 autoComplete="current-password"
                 placeholder="Текущий пароль"
+                aria-label="Текущий пароль"
                 value={current}
                 onChange={(e) => setCurrent(e.target.value)}
               />
@@ -125,6 +126,7 @@ export function ChangePasswordCard({ className }: Props) {
                 type="password"
                 autoComplete="new-password"
                 placeholder="Новый пароль"
+                aria-label="Новый пароль"
                 value={next}
                 onChange={(e) => setNext(e.target.value)}
               />
@@ -132,6 +134,7 @@ export function ChangePasswordCard({ className }: Props) {
                 type="password"
                 autoComplete="new-password"
                 placeholder="Повторите новый пароль"
+                aria-label="Повторите новый пароль"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
               />

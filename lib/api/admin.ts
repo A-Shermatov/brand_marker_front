@@ -793,6 +793,7 @@ export type AdminContractView =
 
 export type AdminContractAction =
   | "freeze"
+  | "unfreeze"
   | "cancel"
   | "force_complete"
   | "open_investigation"
@@ -2041,7 +2042,7 @@ export type AdminFinanceView =
   | "refunds"
   | "payouts"
 
-export type AdminFinanceAction = "refund" | "retry" | "mark_paid"
+export type AdminFinanceAction = "refund" | "mark_paid"
 
 export type AdminFinancePayment = {
   id: number
