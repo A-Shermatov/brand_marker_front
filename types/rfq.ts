@@ -68,6 +68,9 @@ type RfqBase = {
   invited_supplier_ids?: number[]
   catalog_item_id?: number | null
   is_catalog_offer?: boolean
+  /** Set when a moderator hid or closed the RFQ */
+  moderation_reason?: string | null
+  moderated_at?: string | null
   created_at: string
   updated_at: string
 }

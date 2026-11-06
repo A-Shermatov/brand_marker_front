@@ -999,7 +999,51 @@ export type AdminDisputeActionResponse = {
   partial_buyer_amount?: number | null
 }
 
+export type AdminPlanCode = "start" | "pro" | "business" | "none"
+export type AdminTierChoice = "auto" | "none" | "silver" | "gold" | "diamond"
+
+export type AdminSubscriptionState = {
+  plan: string
+  active_until: string | null
+  is_active: boolean
+}
+
+export type AdminSupplierMark = {
+  actor_id: number
+  display_name: string
+  tier_auto: string
+  tier_override: string | null
+  tier: string
+  override_reason: string | null
+  override_at: string | null
+}
+
+export type AdminMarks = {
+  user_id: number
+  subscription: AdminSubscriptionState
+  suppliers: AdminSupplierMark[]
+}
+
 export const adminApi = {
+  userMarks: (userId: number) => apiFetch<AdminMarks>(`/admin/users/${userId}/marks`),
+  companyMarks: (companyId: number) => apiFetch<AdminMarks>(`/admin/companies/${companyId}/marks`),
+  setUserSubscription: (
+    userId: number,
+    payload: { plan: AdminPlanCode; months?: number; reason?: string | null },
+  ) =>
+    apiFetch<AdminSubscriptionState>(`/admin/users/${userId}/subscription`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+  setSupplierReputation: (
+    actorId: number,
+    payload: { tier: AdminTierChoice; reason?: string | null },
+  ) =>
+    apiFetch<AdminSupplierMark>(`/admin/suppliers/${actorId}/reputation`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+
   getDashboard: () => apiFetch<AdminDashboardResponse>("/admin/dashboard"),
   getUsers: ({ page, pageSize, status, roleSide, query }: AdminUsersParams) => {
     const searchParams = new URLSearchParams({

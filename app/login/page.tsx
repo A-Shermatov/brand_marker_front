@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { SessionEndedNotice } from "@/components/auth/session-ended"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -205,6 +206,7 @@ function LoginContent() {
             ))}
           </div>
 
+          <SessionEndedNotice />
           <h1 className="mb-1 text-[24px] font-semibold tracking-[-0.02em] text-ink">
             Вход в Brend Market
           </h1>

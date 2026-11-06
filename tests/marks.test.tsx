@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 import { CompanyName } from "@/components/bm/company-name"
-import { PlanMark } from "@/components/bm/plan-mark"
+import { FreePlanMark, PlanMark } from "@/components/bm/plan-mark"
 import { TrustMark } from "@/components/bm/trust-mark"
 import { ReputationBadge } from "@/components/bm/reputation-badge"
 import { normalizePlan, planMarkHint } from "@/lib/subscription"
@@ -67,31 +67,36 @@ describe("TrustMark", () => {
 
 describe("PlanMark", () => {
   it.each([
-    ["start", 1],
-    ["pro", 2],
-    ["business", 3],
-  ] as const)("%s has %i chevrons", (plan, chevrons) => {
+    ["start", "bolt"],
+    ["pro", "crown"],
+    ["business", "gem"],
+  ] as const)("%s shows its own glyph (%s)", (plan, glyph) => {
     const out = html(<PlanMark plan={plan} />)
     expect(out).toContain(`data-plan="${plan}"`)
-    expect(count(out, 'd="M7 ')).toBe(chevrons)
+    expect(out).toContain(`data-glyph="${glyph}"`)
   })
 
-  it("climbs the chevrons one after another", () => {
-    const out = html(<PlanMark plan="business" />)
-    const delays = [...out.matchAll(/class="bm-chev" style="animation-delay:([\d.]+)s"/g)].map((m) =>
-      Number(m[1]),
-    )
-    expect(delays).toHaveLength(3)
-    expect(delays[1]! - delays[0]!).toBeCloseTo(0.16)
-    expect(delays[2]! - delays[1]!).toBeCloseTo(0.16)
-    expect(out).toContain("bm-plan-sweep")
+  it("animates each plan in its own way", () => {
+    expect(html(<PlanMark plan="start" />)).toContain("bm-plan-flash")
+    expect(html(<PlanMark plan="start" />)).not.toContain("bm-plan-sweep")
+    expect(html(<PlanMark plan="pro" />)).toContain("bm-plan-sweep")
+    const business = html(<PlanMark plan="business" />)
+    expect(business).toContain("bm-plan-sweep")
+    expect(business).toContain("bm-tw")
   })
 
-  it("only the top plan gets the gold shine, and still marks do not move", () => {
-    expect(html(<PlanMark plan="pro" />)).not.toContain("bm-plan-sweep")
-    const still = html(<PlanMark plan="business" still />)
-    expect(still).not.toContain("bm-chev")
-    expect(still).not.toContain("bm-plan-sweep")
+  it("still marks do not move", () => {
+    for (const plan of ["start", "pro", "business"]) {
+      const out = html(<PlanMark plan={plan} still />)
+      expect(out).not.toMatch(/bm-plan-flash|bm-plan-sweep|bm-tw/)
+    }
+  })
+
+  it("draws the free tier only on demand and never animates it", () => {
+    const out = html(<FreePlanMark />)
+    expect(out).toContain('data-glyph="check"')
+    expect(out).toContain('aria-hidden="true"')
+    expect(out).not.toMatch(/bm-plan-flash|bm-plan-sweep/)
   })
 
   it("renders nothing without a paid plan", () => {

@@ -2,8 +2,15 @@
 
 import { useMemo } from "react"
 import Link from "next/link"
-import { SealCheckIcon as BadgeCheck, PlusIcon as Plus, ShoppingCartIcon as ShoppingCart, WalletIcon as Wallet } from "@phosphor-icons/react/dist/ssr"
-import { useQueries } from "@tanstack/react-query"
+import {
+  HandshakeIcon,
+  LockKeyIcon,
+  PlusIcon as Plus,
+  ReceiptIcon,
+  ShoppingCartIcon as ShoppingCart,
+  WalletIcon,
+} from "@phosphor-icons/react/dist/ssr"
+import { useQueries, useQuery } from "@tanstack/react-query"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useRfqsStore } from "@/lib/store/rfqs-store"
 import { useProposalsStore } from "@/lib/store/proposals-store"
@@ -11,7 +18,7 @@ import { useContractsStore } from "@/lib/store/contracts-store"
 import { useCompaniesStore } from "@/lib/store/companies-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { getActorId } from "@/lib/auth-display"
-import { formatCurrency, formatIsoDateTime, formatPrice } from "@/lib/format"
+import { formatCount, formatCurrency, formatIsoDateTime, formatPrice } from "@/lib/format"
 import { isApiEnabled } from "@/lib/api/config"
 import { useRfqsQuery } from "@/hooks/api/use-rfqs-query"
 import { useContractsQuery } from "@/hooks/api/use-contracts-query"
@@ -23,18 +30,19 @@ import { OPEN_RFQ_STATUSES } from "@/lib/rfq-display"
 import { isDealOpen } from "@/lib/process/deal-stages"
 import { buildBuyerTodo, type BuyerRfqProposalsSummary } from "@/lib/process/todo"
 import { MOCK_BUYER_APPROVALS } from "@/lib/mock/buyer-approvals"
-import { MOCK_BUYER_SPEND } from "@/lib/mock/buyer-spend"
-import { buildSpendSeriesFromHistory } from "@/lib/buyer-spend"
+import { monthlySeries } from "@/lib/dashboard-series"
+import { rfqsApi } from "@/lib/api/rfqs"
 import { mapApiPaymentHistoryEvent } from "@/lib/buyer-payments-display"
 import { useApprovalsQuery } from "@/hooks/api/use-approvals-query"
 import { usePaymentHistoryQuery } from "@/hooks/api/use-payments-query"
 import { Button } from "@/components/ui/button"
 import { PageFrame } from "@/components/layout"
 import { CompanyName } from "@/components/bm"
-import { SpendChart } from "@/components/cabinet/dashboard/spend-chart"
+import { MonthlyChart } from "@/components/cabinet/dashboard/monthly-chart"
+import { KpiTile } from "@/components/cabinet/dashboard/kpi-tile"
+import { BreakdownCard } from "@/components/cabinet/dashboard/breakdown-card"
 import { HomeDealsPanel } from "@/components/cabinet/dashboard/home-deals-panel"
 import { DashboardPanel } from "@/components/cabinet/dashboard/dashboard-panel"
-import { MoneyPanel } from "@/components/cabinet/dashboard/money-panel"
 import {
   OpsList,
   type OpsItem,
@@ -134,8 +142,20 @@ export default function CustomerDashboard() {
   )
   const { data: paymentHistoryPage } = usePaymentHistoryQuery(
     hydrated && useApi,
-    { page: 1, pageSize: 8 },
+    { page: 1, pageSize: 100 },
   )
+  const { data: rfqCounts } = useQuery({
+    queryKey: ["buyer-rfq-counts", actorId],
+    queryFn: async () => {
+      const tabs = ["quotes", "deal", "draft", "closed"] as const
+      const pages = await Promise.all(tabs.map((tab) => rfqsApi.list(tab, { page: 1, pageSize: 1 })))
+      return Object.fromEntries(tabs.map((tab, i) => [tab, pages[i]!.total])) as Record<
+        (typeof tabs)[number],
+        number
+      >
+    },
+    enabled: hydrated && useApi,
+  })
 
   const pendingApprovals = (
     useApi
@@ -171,11 +191,16 @@ export default function CustomerDashboard() {
   const toPayAmount = sumAwaitingPayment(contracts)
   const loading = !hydrated || (useApi && (rfqsLoading || contractsLoading))
 
-  const spendSeries = useMemo(() => {
-    if (!useApi) return MOCK_BUYER_SPEND
-    return buildSpendSeriesFromHistory(paymentHistoryPage?.items ?? [])
-  }, [useApi, paymentHistoryPage?.items])
-  const lastSpend = spendSeries[spendSeries.length - 1]?.[1] ?? 0
+  // Money paid into deals by month: still held by the bank vs already passed on.
+  const spendPoints = useMemo(
+    () =>
+      monthlySeries(paymentHistoryPage?.items ?? [], (item) =>
+        item.status === "funded" ? "held" : item.status === "released" ? "released" : null,
+      ),
+    [paymentHistoryPage?.items],
+  )
+  const monthSpend =
+    (spendPoints.at(-1)?.values.held ?? 0) + (spendPoints.at(-1)?.values.released ?? 0)
 
   const ops: OpsItem[] = useMemo(() => {
     const events = useApi
@@ -238,41 +263,90 @@ export default function CustomerDashboard() {
         </div>
       </div>
 
-      <MoneyPanel
-        label="На гарантии в банке‑партнёре"
-        amount={loading ? "—" : formatPrice(heldAmount)}
-        hint="Поставщики получат деньги только после вашей приёмки"
-        stats={[
-          {
-            label: "Ждёт оплаты",
-            value: loading ? "—" : formatPrice(toPayAmount),
-          },
-          {
-            label: "Расходы за месяц",
-            value: loading ? "—" : formatPrice(lastSpend),
-          },
-          {
-            label: "Активных сделок",
-            value: loading ? "—" : openDeals.length,
-          },
-        ]}
-        actions={
-          <>
-            <Button asChild>
-              <Link href="/customer/payments">
-                <Wallet className="size-4" />
-                Оплатить
-              </Link>
-            </Button>
-            <Button asChild variant="ghost">
-              <Link href="/customer/approvals">
-                <BadgeCheck className="size-4" />
-                Согласования
-              </Link>
-            </Button>
-          </>
-        }
-      />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiTile
+          label="На гарантии в банке"
+          value={loading ? "—" : formatPrice(heldAmount)}
+          hint="Поставщик получит после вашей приёмки"
+          icon={LockKeyIcon}
+          tone="brand"
+          href="/customer/payments"
+        />
+        <KpiTile
+          label="Ждёт оплаты"
+          value={loading ? "—" : formatPrice(toPayAmount)}
+          hint={toPayAmount > 0 ? "Оплатите, чтобы поставщик начал работу" : "Неоплаченных этапов нет"}
+          icon={WalletIcon}
+          tone={toPayAmount > 0 ? "attention" : "default"}
+          href="/customer/payments"
+        />
+        <KpiTile
+          label="Оплачено в этом месяце"
+          value={loading ? "—" : formatPrice(monthSpend)}
+          hint="Все оплаты по сделкам"
+          icon={ReceiptIcon}
+          href="/customer/payments"
+        />
+        <KpiTile
+          label="Сделки в работе"
+          value={loading ? "—" : openDeals.length}
+          hint={
+            unreadMessages > 0
+              ? formatCount(unreadMessages, "новое сообщение", "новых сообщения", "новых сообщений")
+              : "Все сделки"
+          }
+          icon={HandshakeIcon}
+          tone={unreadMessages > 0 ? "attention" : "default"}
+          href="/customer/contracts?tab=active"
+        />
+      </div>
+
+      <div className="grid items-stretch gap-5 xl:grid-cols-[1.6fr_1fr]">
+        <MonthlyChart
+          title="Оплаты по месяцам"
+          points={spendPoints}
+          series={[
+            { key: "released", label: "Передано поставщикам", color: "var(--brand-600)" },
+            { key: "held", label: "На гарантии", color: "var(--brand-200)" },
+          ]}
+          emptyText="Здесь появятся ваши оплаты по сделкам. Деньги хранит банк, пока вы не примете работу."
+          loading={loading}
+        />
+        <BreakdownCard
+          title="Мои заявки"
+          rows={[
+            {
+              label: "Приём предложений",
+              value: rfqCounts?.quotes ?? 0,
+              href: "/customer/rfqs?status=quotes",
+              color: "var(--brand-600)",
+            },
+            {
+              label: "Сделка заключена",
+              value: rfqCounts?.deal ?? 0,
+              href: "/customer/rfqs?status=deal",
+              color: "var(--verify-600)",
+            },
+            {
+              label: "Черновики",
+              value: rfqCounts?.draft ?? 0,
+              href: "/customer/rfqs?status=draft",
+              color: "var(--faint)",
+            },
+            {
+              label: "Архив",
+              value: rfqCounts?.closed ?? 0,
+              href: "/customer/rfqs?status=closed",
+              color: "var(--line-strong)",
+            },
+          ]}
+          footer={
+            <Link href="/customer/rfqs/new" className="text-[13.5px] font-medium text-brand-700 hover:underline">
+              Разместить новую заявку
+            </Link>
+          }
+        />
+      </div>
 
       <div className="grid items-start gap-5 xl:grid-cols-[1.15fr_1fr]">
         <DashboardPanel
@@ -297,17 +371,11 @@ export default function CustomerDashboard() {
         </DashboardPanel>
       </div>
 
-      <div className="grid items-start gap-5 xl:grid-cols-[1.15fr_1fr]">
-        <HomeDealsPanel
-          contracts={openDeals}
-          getSupplierName={getSupplierName}
-          loading={loading}
-        />
-        <SpendChart
-          series={spendSeries}
-          note={useApi ? "По оплаченным этапам сделок" : undefined}
-        />
-      </div>
+      <HomeDealsPanel
+        contracts={openDeals}
+        getSupplierName={getSupplierName}
+        loading={loading}
+      />
 
       <TeamAccessCard side="buyer" teamHref="/customer/company" />
     </PageFrame>

@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
+import { SessionEndedNotice } from "@/components/auth/session-ended"
 import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react/dist/ssr"
@@ -137,7 +138,8 @@ const AdminLoginContent = () => {
             />
           ) : (
             <>
-          <h1 className="mb-1 text-[26px] font-bold tracking-[-0.02em] text-ink">
+          <SessionEndedNotice />
+          <h1 className="mb-1 text-[24px] font-semibold tracking-[-0.02em] text-ink">
             Вход администратора
           </h1>
           <p className="mb-6 text-[15px] text-mute">

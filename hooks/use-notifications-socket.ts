@@ -11,6 +11,7 @@ import { supplierContractsApi } from "@/lib/api/supplier/contracts"
 import { supportApi } from "@/lib/api/support"
 import { isApiEnabled } from "@/lib/api/config"
 import { ensureAccessToken } from "@/lib/api/client"
+import { notifySessionEnded, type SessionEnded } from "@/lib/api/session-events"
 import { getNotificationsWsUrl } from "@/lib/notifications-ws"
 import {
   prependNotificationToCache,
@@ -54,7 +55,7 @@ type SupportMessagePayload = {
 
 type WsPayload = {
   event: string
-  data?: ApiNotification | ContractMessagePayload | SupportMessagePayload
+  data?: ApiNotification | ContractMessagePayload | SupportMessagePayload | Partial<SessionEnded>
 }
 
 const ackInFlight = new Set<string>()
@@ -131,6 +132,16 @@ export const useNotificationsSocket = (
           const payload = JSON.parse(event.data) as WsPayload
           if (payload.event === "ping") {
             socket.send("pong")
+            return
+          }
+          if (payload.event === "session_ended") {
+            // The admin ended the session or blocked the account: leave at once.
+            cancelled = true
+            const data = (payload.data ?? {}) as Partial<SessionEnded>
+            notifySessionEnded({
+              reason: data.reason ?? "revoked",
+              message: data.message ?? "Сеанс завершён. Войдите снова.",
+            })
             return
           }
           if (payload.event === "notification.created" && payload.data) {

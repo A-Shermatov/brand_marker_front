@@ -1,7 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRightIcon as ArrowRight, TrayIcon as Inbox, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
+import {
+  ArrowDownLeftIcon,
+  HandshakeIcon,
+  LockKeyIcon,
+  PlusIcon as Plus,
+  TrayIcon,
+  TrayIcon as Inbox,
+} from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
 import { useRfqsStore } from "@/lib/store/rfqs-store"
@@ -42,7 +49,10 @@ import { ActivateRoleBanner } from "@/components/company/activate-role-banner"
 import { ActiveContractsPanel } from "@/components/supplier/dashboard/active-contracts-panel"
 import { DashboardPanel } from "@/components/cabinet/dashboard/dashboard-panel"
 import { TeamAccessCard } from "@/components/cabinet/company/team-access-card"
-import { MoneyPanel } from "@/components/cabinet/dashboard/money-panel"
+import { KpiTile } from "@/components/cabinet/dashboard/kpi-tile"
+import { MonthlyChart } from "@/components/cabinet/dashboard/monthly-chart"
+import { BreakdownCard } from "@/components/cabinet/dashboard/breakdown-card"
+import { monthlySeries } from "@/lib/dashboard-series"
 import {
   OpsList,
   type OpsItem,
@@ -102,7 +112,7 @@ export default function SupplierDashboard() {
   const { data: apiSub } = useSupplierSubscriptionQuery(apiEnabled)
   const { data: paymentHistoryPage } = useSupplierPaymentHistoryQuery(
     apiEnabled,
-    { page: 1, pageSize: 8 },
+    { page: 1, pageSize: 100 },
   )
 
   const getBuyerName = (buyerId: number) =>
@@ -245,6 +255,19 @@ export default function SupplierDashboard() {
     })
   }, [paymentHistoryPage?.items])
 
+  const incomePoints = useMemo(
+    () =>
+      monthlySeries(paymentHistoryPage?.items ?? [], (item) =>
+        item.status === "released" ? "released" : item.status === "funded" ? "held" : null,
+      ),
+    [paymentHistoryPage?.items],
+  )
+  const monthReleased = incomePoints.at(-1)?.values.released ?? 0
+  const waitingProposals = proposalItems.filter((p) =>
+    ["submitted", "viewed", "shortlisted", "pending_supplier"].includes(p.status),
+  ).length
+  const completedDeals = contracts.filter((c) => c.status === "completed").length
+
   // Same profile as the marks next to it (the active seller, not the first company).
   const companyTitle =
     marks.title ?? myCompany?.title ?? (hydrated && user?.company ? user.company : "Поставщик")
@@ -277,61 +300,118 @@ export default function SupplierDashboard() {
             className="mt-0.5"
           />
         </div>
-        <Button asChild variant="outline">
-          <Link href="/supplier/rfqs?response=open">
-            <Inbox className="size-4" />
-            Новые заявки
-            {newRfqs.length > 0 ? (
-              <span className="rounded-full bg-brand-600 px-1.5 text-[11.5px] font-semibold text-white tnum">
-                {newRfqs.length}
-              </span>
-            ) : null}
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link href="/supplier/rfqs?response=open">
+              <Inbox className="size-4" />
+              Заявки покупателей
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/supplier/catalog/new">
+              <Plus weight="bold" className="size-4" />
+              Добавить товар
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <MoneyPanel
-        label="Поступит после приёмки покупателем"
-        amount={loading ? "—" : formatPrice(expectedAmount)}
-        hint={
-          expectedDeals.length > 0
-            ? `По ${formatCount(expectedDeals.length, "сделке", "сделкам", "сделкам")} в работе. Деньги уже у банка‑партнёра.`
-            : "Сделок с деньгами на гарантии пока нет"
-        }
-        stats={[
-          {
-            label: "Зачислено на счёт",
-            value: loading || !balance ? "—" : formatPrice(balance.available),
-          },
-          {
-            label: "Счёт для выплат",
-            value: payoutAccount ? (
-              payoutLabel
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiTile
+          label="Поступит после приёмки"
+          value={loading ? "—" : formatPrice(expectedAmount)}
+          hint={
+            expectedDeals.length > 0
+              ? `Деньги уже у банка · ${formatCount(expectedDeals.length, "сделка", "сделки", "сделок")}`
+              : "Сделок с деньгами на гарантии нет"
+          }
+          icon={LockKeyIcon}
+          tone="brand"
+          href="/supplier/contracts?tab=active"
+        />
+        <KpiTile
+          label="Зачислено в этом месяце"
+          value={loading ? "—" : formatPrice(monthReleased)}
+          hint={
+            balance ? `На счёте ${formatPrice(balance.available)}` : "История выплат"
+          }
+          icon={ArrowDownLeftIcon}
+          href="/supplier/finance"
+        />
+        <KpiTile
+          label="Сделки в работе"
+          value={loading ? "—" : openDeals.length}
+          hint={
+            unreadCount > 0
+              ? formatCount(unreadCount, "новое сообщение", "новых сообщения", "новых сообщений")
+              : "Отгрузки и сдача работ"
+          }
+          icon={HandshakeIcon}
+          tone={unreadCount > 0 ? "attention" : "default"}
+          href="/supplier/contracts?tab=active"
+        />
+        <KpiTile
+          label="Новые заявки"
+          value={loading ? "—" : newRfqs.length}
+          hint={newRfqs.length > 0 ? "Без вашего предложения" : "Новых заявок нет"}
+          icon={TrayIcon}
+          tone={newRfqs.length > 0 ? "attention" : "default"}
+          href="/supplier/rfqs?response=open"
+        />
+      </div>
+
+      <div className="grid items-stretch gap-5 xl:grid-cols-[1.6fr_1fr]">
+        <MonthlyChart
+          title="Поступления по месяцам"
+          points={incomePoints}
+          series={[
+            { key: "released", label: "Зачислено", color: "var(--brand-600)" },
+            { key: "held", label: "Ждёт приёмки", color: "var(--brand-200)" },
+          ]}
+          emptyText="Здесь появятся оплаты по вашим сделкам: сначала на гарантии банка, после приёмки — на вашем счёте."
+          loading={loading}
+        />
+        <BreakdownCard
+          title="Воронка продаж"
+          rows={[
+            {
+              label: "Новые заявки",
+              value: newRfqs.length,
+              href: "/supplier/rfqs?response=open",
+              color: "var(--verify-600)",
+            },
+            {
+              label: "КП ждут ответа",
+              value: waitingProposals,
+              href: "/supplier/proposals",
+              color: "var(--brand-300)",
+            },
+            {
+              label: "Сделки в работе",
+              value: openDeals.length,
+              href: "/supplier/contracts?tab=active",
+              color: "var(--brand-600)",
+            },
+            {
+              label: "Завершено",
+              value: completedDeals,
+              href: "/supplier/contracts?tab=completed",
+              color: "var(--brand-900)",
+            },
+          ]}
+          footer={
+            payoutAccount ? (
+              <p className="text-[13px] text-mute">
+                Выплаты на: <span className="font-medium text-ink">{payoutLabel}</span>
+              </p>
             ) : (
-              <Link href="/supplier/finance#payout" className="text-brand-700 hover:underline">
-                Добавить
+              <Link href="/supplier/finance#payout" className="text-[13.5px] font-medium text-brand-700 hover:underline">
+                Добавить счёт для выплат
               </Link>
-            ),
-          },
-          {
-            label: "Активных сделок",
-            value: loading ? "—" : openDeals.length,
-          },
-        ]}
-        actions={
-          <>
-            <Button asChild>
-              <Link href="/supplier/contracts?tab=active">Сделки и деньги</Link>
-            </Button>
-            <Button asChild variant="ghost">
-              <Link href="/supplier/finance">
-                История выплат
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-          </>
-        }
-      />
+            )
+          }
+        />
+      </div>
 
       {incompleteChecklist.length > 0 ? (
         <ProfileChecklist items={checklist} />
