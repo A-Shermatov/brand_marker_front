@@ -1,0 +1,511 @@
+From 22e036e2e108af43c024c8c7d7abb58c5b21e96b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 5 Nov 2026 10:24:26 +0000
+Subject: [PATCH] =?UTF-8?q?=D0=94=D0=BE=D1=81=D1=82=D1=83=D0=BF=20=D0=BA?=
+ =?UTF-8?q?=20=D0=B7=D0=B0=D0=BA=D1=83=D0=BF=D0=BA=D0=B0=D0=BC=20=D0=B8=20?=
+ =?UTF-8?q?=D0=BF=D1=80=D0=BE=D0=B4=D0=B0=D0=B6=D0=B0=D0=BC=20=D0=B4=D0=BB?=
+ =?UTF-8?q?=D1=8F=20=D0=BA=D0=B0=D0=B6=D0=B4=D0=BE=D0=B3=D0=BE=20=D1=81?=
+ =?UTF-8?q?=D0=BE=D1=82=D1=80=D1=83=D0=B4=D0=BD=D0=B8=D0=BA=D0=B0,=20?=
+ =?UTF-8?q?=D0=B4=D0=B2=D0=B5=20=D1=80=D0=B5=D0=BF=D1=83=D1=82=D0=B0=D1=86?=
+ =?UTF-8?q?=D0=B8=D0=B8=20=D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D0=B8?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- В списке сотрудников компании, которая и покупает, и продаёт, у
+  каждого две настройки: «Закупки» и «Продажи» (как основная роль,
+  администратор, менеджер, бухгалтер или «нет доступа»). Работает на
+  странице компании покупателя, у поставщика и в блоке на главной.
+- Репутация по ролям: «Как поставщик» и «Как покупатель» с оценкой,
+  отзывами и сделками на публичной странице компании и в кабинетах.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01AvqoxvLCQnvbgpqFdJzDog
+---
+ app/(customer)/customer/company/page.tsx      | 20 +++++
+ app/(supplier)/supplier/team/page.tsx         |  7 ++
+ .../[id]/performer-detail-content.tsx         |  2 +
+ components/cabinet/company/employee-list.tsx  | 84 ++++++++++++++++++-
+ .../cabinet/company/team-access-card.tsx      |  4 +
+ components/company/side-reputation.tsx        | 59 +++++++++++++
+ hooks/use-company-team.ts                     | 16 +++-
+ lib/api/companies.ts                          |  7 +-
+ lib/company-team.ts                           | 28 ++++++-
+ types/company.ts                              | 16 ++++
+ 10 files changed, 239 insertions(+), 4 deletions(-)
+ create mode 100644 components/company/side-reputation.tsx
+
+diff --git a/app/(customer)/customer/company/page.tsx b/app/(customer)/customer/company/page.tsx
+index e1612a4..17dfa00 100644
+--- a/app/(customer)/customer/company/page.tsx
++++ b/app/(customer)/customer/company/page.tsx
+@@ -35,6 +35,7 @@ import {
+   myCompanyRole,
+   nameFromEmail,
+   type CompanyTeamEmployee,
++  type TeamSideKey,
+ } from "@/lib/company-team"
+ import {
+   MOCK_BUYER_COMPANY_LOG,
+@@ -46,6 +47,7 @@ import {
+   type PurchaseRules,
+ } from "@/lib/mock/buyer-employees"
+ import type { CompanyRole, CompanyWithRelations } from "@/types"
++import { SideReputationList } from "@/components/company/side-reputation"
+ 
+ const nowLogStamp = () => {
+   const d = new Date()
+@@ -147,6 +149,11 @@ export default function CustomerCompanyPage() {
+     return localEmployees
+   }, [useApi, company, user?.userId, localEmployees])
+ 
++  // Purchases and sales are set apart only when the company does both.
++  const companySides = (["buyer", "supplier"] as const).filter((side) =>
++    (company?.actor_types ?? []).includes(side),
++  ) as TeamSideKey[]
++
+   const myRole = useApi
+     ? myCompanyRole(company?.company_users ?? [], user?.userId)
+     : employees.find((e) => e.me)?.role ?? null
+@@ -368,6 +375,8 @@ export default function CustomerCompanyPage() {
+         }
+       />
+ 
++      <SideReputationList reputation={company?.reputation} className="mb-5" />
++
+       <div className="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_340px]">
+         <div className="grid min-w-0 gap-5">
+           <EmployeeList
+@@ -377,6 +386,17 @@ export default function CustomerCompanyPage() {
+             onInviteClick={() => setInviteOpen(true)}
+             onChangeRole={(userId, role) => void handleRoleChange(userId, role)}
+             onRemove={(userId) => void handleRemove(userId)}
++            sides={companySides}
++            onChangeSideRole={(userId, side, role) => {
++              if (!useApi || !company) return
++              void updateMember
++                .mutateAsync({
++                  companyId: company.id,
++                  targetUserId: userId,
++                  data: side === "buyer" ? { buyer_role: role } : { supplier_role: role },
++                })
++                .catch(() => {})
++            }}
+           />
+ 
+           {!useApi ? (
+diff --git a/app/(supplier)/supplier/team/page.tsx b/app/(supplier)/supplier/team/page.tsx
+index 97f3013..5c49dd3 100644
+--- a/app/(supplier)/supplier/team/page.tsx
++++ b/app/(supplier)/supplier/team/page.tsx
+@@ -8,6 +8,7 @@ import { PageFrame, PageHeader } from "@/components/layout"
+ import { EmployeeList } from "@/components/cabinet/company/employee-list"
+ import { InviteEmployeeDialog } from "@/components/cabinet/company/invite-employee-dialog"
+ import { useCompanyTeam } from "@/hooks/use-company-team"
++import { SideReputationList } from "@/components/company/side-reputation"
+ import { COMPANY_ROLE_LABELS, COMPANY_ROLE_RIGHTS } from "@/lib/company-team"
+ import { COMPANY_ROLES } from "@/types"
+ 
+@@ -60,6 +61,8 @@ export default function SupplierTeamPage() {
+         }
+       />
+ 
++      <SideReputationList reputation={team.company.reputation} className="mb-5" />
++
+       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+         <EmployeeList
+           employees={team.employees}
+@@ -68,6 +71,10 @@ export default function SupplierTeamPage() {
+           onInviteClick={() => setInviteOpen(true)}
+           onChangeRole={(userId, role) => void team.changeRole(userId, role).catch(() => {})}
+           onRemove={(userId) => void team.removeMember(userId).catch(() => {})}
++          sides={team.sides}
++          onChangeSideRole={(userId, side, role) =>
++            void team.changeSideRole(userId, side, role).catch(() => {})
++          }
+         />
+ 
+         <section className="rounded-2xl border border-line bg-white p-5">
+diff --git a/app/performers/[id]/performer-detail-content.tsx b/app/performers/[id]/performer-detail-content.tsx
+index c3fc373..4530fb5 100644
+--- a/app/performers/[id]/performer-detail-content.tsx
++++ b/app/performers/[id]/performer-detail-content.tsx
+@@ -31,6 +31,7 @@ import { useAuthStore } from "@/lib/store/auth-store"
+ import { useOpenDirectChatMutation } from "@/hooks/api/use-direct-chats-query"
+ import { cn } from "@/lib/utils"
+ import type { MarketplacePerformer } from "@/types/marketplace"
++import { SideReputationList } from "@/components/company/side-reputation"
+ 
+ type PerformerDetailContentProps = {
+   performerId: number
+@@ -243,6 +244,7 @@ export const PerformerDetailContent = ({
+                   {performer.description}
+                 </p>
+               ) : null}
++              <SideReputationList reputation={apiCompany?.reputation} className="mt-3" />
+             </div>
+           </div>
+ 
+diff --git a/components/cabinet/company/employee-list.tsx b/components/cabinet/company/employee-list.tsx
+index c30de9d..c9fb02e 100644
+--- a/components/cabinet/company/employee-list.tsx
++++ b/components/cabinet/company/employee-list.tsx
+@@ -13,11 +13,15 @@ import {
+ import {
+   ASSIGNABLE_COMPANY_ROLES,
+   COMPANY_ROLE_LABELS,
++  SIDE_ROLE_OPTIONS,
++  TEAM_SIDE_LABELS,
+   companyRoleLabel,
+   initialsFromName,
++  sideRoleLabel,
+   type CompanyTeamEmployee,
++  type TeamSideKey,
+ } from "@/lib/company-team"
+-import type { CompanyRole } from "@/types"
++import type { CompanyRole, SideRole } from "@/types"
+ 
+ type EmployeeListProps = {
+   employees: CompanyTeamEmployee[]
+@@ -26,6 +30,9 @@ type EmployeeListProps = {
+   onInviteClick?: () => void
+   onChangeRole: (userId: number, role: CompanyRole) => void
+   onRemove: (userId: number) => void
++  /** The company buys and sells: show access to each side. */
++  sides?: TeamSideKey[]
++  onChangeSideRole?: (userId: number, side: TeamSideKey, role: SideRole | null) => void
+ }
+ 
+ export const EmployeeList = ({
+@@ -35,7 +42,10 @@ export const EmployeeList = ({
+   onInviteClick,
+   onChangeRole,
+   onRemove,
++  sides = [],
++  onChangeSideRole,
+ }: EmployeeListProps) => {
++  const twoSided = sides.length > 1
+   const [removeTarget, setRemoveTarget] = useState<CompanyTeamEmployee | null>(
+     null,
+   )
+@@ -153,6 +163,15 @@ export const EmployeeList = ({
+                     </Button>
+                   ) : null}
+                 </div>
++                {twoSided ? (
++                  <SideAccess
++                    employee={employee}
++                    sides={sides}
++                    editable={canEdit && Boolean(onChangeSideRole)}
++                    busy={busy}
++                    onChange={(side, role) => onChangeSideRole?.(employee.userId, side, role)}
++                  />
++                ) : null}
+               </div>
+             </li>
+           )
+@@ -194,3 +213,66 @@ export const EmployeeList = ({
+     </>
+   )
+ }
++
++/** Access to purchases and sales for one person, when the company does both. */
++const SideAccess = ({
++  employee,
++  sides,
++  editable,
++  busy,
++  onChange,
++}: {
++  employee: CompanyTeamEmployee
++  sides: TeamSideKey[]
++  editable: boolean
++  busy: boolean
++  onChange: (side: TeamSideKey, role: SideRole | null) => void
++}) => {
++  if (employee.role === "director") {
++    return (
++      <p className="text-[12.5px] text-mute sm:text-right">Закупки и продажи: полный доступ</p>
++    )
++  }
++  const current = (side: TeamSideKey) =>
++    side === "buyer" ? employee.buyerRole ?? null : employee.supplierRole ?? null
++  if (!editable) {
++    const overridden = sides.filter((side) => current(side))
++    if (overridden.length === 0) return null
++    return (
++      <p className="text-[12.5px] text-mute sm:text-right">
++        {overridden
++          .map((side) => `${TEAM_SIDE_LABELS[side]}: ${sideRoleLabel(current(side), employee.role).toLowerCase()}`)
++          .join("; ")}
++      </p>
++    )
++  }
++  return (
++    <div className="grid w-full gap-1.5 border-t border-line pt-2 sm:w-[200px]">
++      {sides.map((side) => {
++        const id = `side-${side}-${employee.userId}`
++        const value = current(side) ?? ""
++        return (
++          <label key={side} htmlFor={id} className="flex items-center justify-between gap-2 text-[12.5px] text-mute">
++            {TEAM_SIDE_LABELS[side]}
++            <select
++              id={id}
++              value={value}
++              disabled={busy}
++              onChange={(e) => onChange(side, (e.target.value || null) as SideRole | null)}
++              className={`h-8 min-w-0 flex-1 rounded-md border border-line bg-white px-2 text-[13px] outline-none focus:border-brand-600 disabled:opacity-60 ${
++                value === "none" ? "text-red-700" : "text-ink"
++              }`}
++            >
++              <option value="">{`Как ${companyRoleLabel(employee.role).toLowerCase()}`}</option>
++              {SIDE_ROLE_OPTIONS.map((option) => (
++                <option key={option.value} value={option.value}>
++                  {option.label}
++                </option>
++              ))}
++            </select>
++          </label>
++        )
++      })}
++    </div>
++  )
++}
+diff --git a/components/cabinet/company/team-access-card.tsx b/components/cabinet/company/team-access-card.tsx
+index 0482347..3df4eba 100644
+--- a/components/cabinet/company/team-access-card.tsx
++++ b/components/cabinet/company/team-access-card.tsx
+@@ -62,6 +62,10 @@ export const TeamAccessCard = ({ side, teamHref, limit = 4, className }: TeamAcc
+         onInviteClick={() => setInviteOpen(true)}
+         onChangeRole={(userId, role) => void team.changeRole(userId, role).catch(() => {})}
+         onRemove={(userId) => void team.removeMember(userId).catch(() => {})}
++        sides={team.sides}
++        onChangeSideRole={(userId, side, role) =>
++          void team.changeSideRole(userId, side, role).catch(() => {})
++        }
+       />
+       {team.canManage ? (
+         <InviteEmployeeDialog
+diff --git a/components/company/side-reputation.tsx b/components/company/side-reputation.tsx
+new file mode 100644
+index 0000000..c578b19
+--- /dev/null
++++ b/components/company/side-reputation.tsx
+@@ -0,0 +1,59 @@
++import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
++import type { SideReputation } from "@/types"
++import { pluralRu } from "@/lib/format"
++import { cn } from "@/lib/utils"
++
++const SIDE_TITLES: Record<string, string> = {
++  supplier: "Как поставщик",
++  buyer: "Как покупатель",
++}
++
++const deals = (count: number) =>
++  `${count} ${pluralRu(count, "сделка", "сделки", "сделок")}`
++
++const SIDE_HINTS: Record<string, string> = {
++  supplier: "качество и сроки",
++  buyer: "оплата и приёмка",
++}
++
++/**
++ * Two reputations for a company that both sells and buys. They are not averaged:
++ * a supplier is judged on quality and deadlines, a buyer on paying and accepting.
++ */
++export const SideReputationList = ({
++  reputation,
++  className,
++}: {
++  reputation: SideReputation[] | null | undefined
++  className?: string
++}) => {
++  const items = (reputation ?? []).filter((r) => SIDE_TITLES[r.side])
++  if (items.length < 2) return null
++  return (
++    <ul className={cn("flex flex-wrap gap-2", className)} aria-label="Репутация по ролям">
++      {items.map((item) => (
++        <li
++          key={item.side}
++          className="grid gap-0.5 rounded-xl border border-line bg-white px-3.5 py-2.5"
++        >
++          <span className="text-[12.5px] text-mute">
++            {SIDE_TITLES[item.side]}, {SIDE_HINTS[item.side]}
++          </span>
++          <span className="flex items-center gap-1.5 text-[14px]">
++            {item.rating != null && item.reviews_count > 0 ? (
++              <>
++                <Star className="size-4 text-amber-400" weight="fill" aria-hidden />
++                <b className="tnum">{item.rating.toFixed(1).replace(".", ",")}</b>
++                <span className="text-mute">
++                  {`${item.reviews_count} ${pluralRu(item.reviews_count, "отзыв", "отзыва", "отзывов")}, ${deals(item.completed_deals)}`}
++                </span>
++              </>
++            ) : (
++              <span className="text-mute">{`Пока без отзывов, ${deals(item.completed_deals)}`}</span>
++            )}
++          </span>
++        </li>
++      ))}
++    </ul>
++  )
++}
+diff --git a/hooks/use-company-team.ts b/hooks/use-company-team.ts
+index 6ab2632..53340b9 100644
+--- a/hooks/use-company-team.ts
++++ b/hooks/use-company-team.ts
+@@ -20,8 +20,9 @@ import {
+   canManageTeam,
+   mapCompanyUsersToEmployees,
+   myCompanyRole,
++  type TeamSideKey,
+ } from "@/lib/company-team"
+-import type { CompanyRole, CompanyWithRelations } from "@/types"
++import type { CompanyRole, CompanyWithRelations, SideRole } from "@/types"
+ 
+ export type TeamSide = "buyer" | "supplier"
+ 
+@@ -61,6 +62,10 @@ export const useCompanyTeam = (side: TeamSide) => {
+     [members, user?.userId],
+   )
+   const myRole = myCompanyRole(members, user?.userId)
++  // Both sides only matter when the company buys and sells.
++  const sides = (["buyer", "supplier"] as const).filter((side) =>
++    (company?.actor_types ?? []).includes(side),
++  ) as TeamSideKey[]
+ 
+   return {
+     useApi,
+@@ -70,6 +75,15 @@ export const useCompanyTeam = (side: TeamSide) => {
+     myRole,
+     canManage: canManageTeam(myRole),
+     busy: add.isPending || update.isPending || remove.isPending,
++    sides,
++    changeSideRole: (targetUserId: number, side: TeamSideKey, role: SideRole | null) =>
++      company
++        ? update.mutateAsync({
++            companyId: company.id,
++            targetUserId,
++            data: side === "buyer" ? { buyer_role: role } : { supplier_role: role },
++          })
++        : Promise.resolve(undefined),
+     changeRole: (targetUserId: number, role: CompanyRole) =>
+       company
+         ? update.mutateAsync({ companyId: company.id, targetUserId, data: { role } })
+diff --git a/lib/api/companies.ts b/lib/api/companies.ts
+index 3aa1018..e2e130a 100644
+--- a/lib/api/companies.ts
++++ b/lib/api/companies.ts
+@@ -10,7 +10,12 @@ import type {
+ import { apiFetch } from "./client"
+ 
+ export type TeamMemberPayload = { email: string; role: string }
+-export type TeamMemberUpdatePayload = { role: string }
++export type TeamMemberUpdatePayload = {
++  role?: string
++  /** null: the company role applies again on this side. */
++  buyer_role?: string | null
++  supplier_role?: string | null
++}
+ export type CertificateCreatePayload = {
+   title: string
+   issuer: string
+diff --git a/lib/company-team.ts b/lib/company-team.ts
+index c8d69b3..5b1f534 100644
+--- a/lib/company-team.ts
++++ b/lib/company-team.ts
+@@ -1,4 +1,4 @@
+-import type { CompanyRole, CompanyUser } from "@/types"
++import type { CompanyRole, CompanyUser, SideRole } from "@/types"
+ import { COMPANY_ROLES } from "@/types"
+ 
+ export type CompanyTeamEmployee = {
+@@ -9,8 +9,32 @@ export type CompanyTeamEmployee = {
+   role: CompanyRole
+   rights: string
+   me?: boolean
++  /** Overrides per side; null means the company role applies. */
++  buyerRole?: SideRole | null
++  supplierRole?: SideRole | null
+ }
+ 
++export type TeamSideKey = "buyer" | "supplier"
++
++export const TEAM_SIDE_LABELS: Record<TeamSideKey, string> = {
++  buyer: "Закупки",
++  supplier: "Продажи",
++}
++
++export const SIDE_ROLE_OPTIONS: { value: SideRole; label: string }[] = [
++  { value: "admin", label: "Администратор" },
++  { value: "moderator", label: "Менеджер" },
++  { value: "accountant", label: "Бухгалтер" },
++  { value: "none", label: "Нет доступа" },
++]
++
++export const sideRoleLabel = (role: SideRole | null | undefined, companyRole: string): string =>
++  !role
++    ? companyRoleLabel(companyRole)
++    : role === "none"
++      ? "Нет доступа"
++      : companyRoleLabel(role)
++
+ export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = {
+   director: "Руководитель",
+   admin: "Администратор",
+@@ -70,6 +94,8 @@ export const mapCompanyUsersToEmployees = (
+       role: isCompanyRole(member.role) ? member.role : "moderator",
+       rights: companyRoleRights(member.role),
+       me: currentUserId != null && member.user_id === currentUserId,
++      buyerRole: member.buyer_role ?? null,
++      supplierRole: member.supplier_role ?? null,
+     }
+   })
+ 
+diff --git a/types/company.ts b/types/company.ts
+index 2ee32e4..bd0c203 100644
+--- a/types/company.ts
++++ b/types/company.ts
+@@ -66,8 +66,13 @@ export type CompanyUser = {
+   email?: string
+   /** First and last name, when the user filled them in. */
+   name?: string | null
++  /** Role on purchases / sales when it differs from the company role; "none" closes the side. */
++  buyer_role?: SideRole | null
++  supplier_role?: SideRole | null
+ }
+ 
++export type SideRole = "admin" | "moderator" | "accountant" | "none"
++
+ export type ReviewPhoto = {
+   id?: number | null
+   file_name: string
+@@ -139,6 +144,8 @@ export type CompanyWithRelations = Company & {
+   certificates: CompanyCertificate[]
+   reviews: Review[]
+   company_users: CompanyUser[]
++  /** Reputation per role (supplier / buyer). */
++  reputation?: SideReputation[]
+   owner?: UserPublic
+   team?: UserPublic[]
+ }
+@@ -167,6 +174,15 @@ export type PublicCompanyDetail = Pick<
+   categories: CompanyCategory[]
+   stats: CompanyStats | null
+   certificates: CompanyCertificate[]
++  /** Reputation per role, for a company that both sells and buys. */
++  reputation?: SideReputation[]
++}
++
++export type SideReputation = {
++  side: "supplier" | "buyer" | string
++  rating: number | null
++  reviews_count: number
++  completed_deals: number
+ }
+ 
+ export type CompanyCreate = Omit<
+-- 
+2.43.0
+
