@@ -58,8 +58,8 @@ export function SidebarAccount({
         {initials}
       </span>
       <span className="grid min-w-0 flex-1">
-        <CompanyName name={name} verified={verified} tier={tier} plan={plan} size="sm" />
-        <span className="truncate text-[12px] text-mute">{role}</span>
+        <CompanyName name={name} verified={verified} tier={tier} plan={plan} size="sm" nameClassName="text-[14px]" />
+        <span className="truncate text-[12.5px] text-mute">{role}</span>
       </span>
     </Link>
   )
@@ -77,7 +77,7 @@ export function SidebarSection({
   return (
     <div className={cn("grid gap-0.5", className)}>
       {label ? (
-        <p className="mb-1 px-2.5 text-[11.5px] font-medium text-faint">{label}</p>
+        <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-mute">{label}</p>
       ) : null}
       {children}
     </div>
@@ -93,8 +93,8 @@ export function SidebarSupport({ onClick }: { onClick: () => void }) {
     >
       <HeadsetIcon className="size-5 shrink-0 text-brand-600" aria-hidden />
       <span className="grid min-w-0">
-        <span className="text-[13.5px] font-semibold text-ink">Поддержка</span>
-        <span className="truncate text-[12px] text-mute">Ответим в чате в течение часа</span>
+        <span className="text-[14px] font-semibold text-ink">Поддержка</span>
+        <span className="truncate text-[12.5px] text-mute">Ответим в чате в течение часа</span>
       </span>
     </button>
   )

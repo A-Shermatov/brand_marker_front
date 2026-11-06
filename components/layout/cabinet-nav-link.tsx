@@ -31,19 +31,19 @@ export function CabinetNavLink({
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group flex w-full items-center gap-3 rounded-lg px-2.5 text-left transition-colors",
-        quiet ? "h-9 text-[13.5px]" : "h-10 text-[14.5px]",
+        "group relative flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors",
+        quiet ? "h-9 text-[14px]" : "h-10 text-[15px]",
         active
-          ? "bg-surface-muted font-semibold text-ink"
-          : "font-medium text-ink-soft hover:bg-surface-muted/70 hover:text-ink",
+          ? "bg-brand-50 font-semibold text-ink before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-r-full before:bg-brand-600"
+          : "font-medium text-ink hover:bg-surface-muted",
       )}
     >
       <Icon
         weight={active ? "fill" : "regular"}
         className={cn(
           "shrink-0",
-          quiet ? "size-[17px]" : "size-[19px]",
-          active ? "text-brand-600" : "text-mute group-hover:text-ink-soft",
+          quiet ? "size-[18px]" : "size-5",
+          active ? "text-brand-700" : "text-ink-soft group-hover:text-ink",
         )}
         aria-hidden
       />

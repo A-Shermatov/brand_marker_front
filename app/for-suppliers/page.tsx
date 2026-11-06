@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { CheckIcon, LockIcon as Lock, LockSimpleIcon, CertificateIcon as FileCheck, TrayIcon as Inbox } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
-import { PlanMark, TrustLevelsGrid } from "@/components/bm"
+import { FreePlanMark, PlanMark, TrustLevelsGrid } from "@/components/bm"
 import { Button } from "@/components/ui/button"
 import { formatPrice } from "@/lib/format"
 import { plans } from "@/lib/subscription"
@@ -99,9 +99,7 @@ export default function ForSuppliersPage() {
 
           <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-4">
             <article className="grid content-start gap-4 rounded-2xl border border-dashed border-line-strong bg-white/60 p-5">
-              <span className="grid size-10 place-items-center rounded-xl border border-dashed border-line-strong text-[13px] font-medium text-mute">
-                0
-              </span>
+              <FreePlanMark size={40} />
               <div>
                 <b className="text-[18px] font-semibold text-ink">Без подписки</b>
                 <p className="mt-1 text-[14px] text-mute">Чтобы попробовать площадку</p>
@@ -172,7 +170,12 @@ export default function ForSuppliersPage() {
               <thead>
                 <tr className="border-b border-line bg-canvas/60">
                   <th className="px-4 py-3 font-medium text-mute">Что входит</th>
-                  <th className="px-4 py-3 font-semibold text-ink">Без подписки</th>
+                  <th className="px-4 py-3">
+                    <span className="inline-flex items-center gap-2 font-semibold text-ink">
+                      <FreePlanMark size={18} />
+                      Без подписки
+                    </span>
+                  </th>
                   {plans.map((plan) => (
                     <th key={plan.id} className="px-4 py-3">
                       <span className="inline-flex items-center gap-2 font-semibold text-ink">

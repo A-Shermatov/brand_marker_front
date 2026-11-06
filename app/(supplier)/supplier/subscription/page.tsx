@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { CheckIcon, CircleNotchIcon, LockKeyIcon, PlusIcon } from "@phosphor-icons/react/dist/ssr"
+import { CheckIcon, CircleNotchIcon, LockKeyIcon } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
-import { CompanyName, PlanMark } from "@/components/bm"
+import { CompanyName, FreePlanMark, PlanMark } from "@/components/bm"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useSubscriptionStore } from "@/lib/store/subscription-store"
@@ -117,9 +117,7 @@ export default function SubscriptionPage() {
           {active ? (
             <PlanMark plan={plan} size={48} />
           ) : (
-            <span className="grid size-12 place-items-center rounded-xl border border-dashed border-line-strong text-faint">
-              <PlusIcon className="size-5" aria-hidden />
-            </span>
+            <FreePlanMark size={48} />
           )}
           <div className="min-w-0">
             <p className="text-[15.5px] font-semibold text-ink">

@@ -3,6 +3,7 @@
 import { use, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { AdminMarksCard } from "@/components/admin/marks/admin-marks-card"
 import { ProhibitIcon as Ban, BuildingsIcon as Building2, CheckCircleIcon as CheckCircle2, CaretDownIcon as ChevronDown, CrownIcon as Crown, FileDashedIcon as FileQuestion, PauseCircleIcon as PauseCircle, PencilSimpleIcon as Pencil, ArrowsCounterClockwiseIcon as RefreshCcw, ArrowCounterClockwiseIcon as RotateCcw, ShieldCheckIcon as ShieldCheck, StarIcon as Star, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { CompanyActionDialog } from "@/components/admin/companies/company-action-dialog"
@@ -332,6 +333,8 @@ export default function AdminCompanyDetailPage({ params }: PageProps) {
           ))}
         </div>
       </PageSurface>
+
+      {canVerify ? <AdminMarksCard companyId={company.id} /> : null}
 
       <nav
         className="sticky top-17 z-20 flex gap-1 overflow-x-auto rounded-xl border border-border bg-card/95 p-2 backdrop-blur"

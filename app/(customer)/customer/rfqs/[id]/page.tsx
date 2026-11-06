@@ -2,6 +2,7 @@
 
 import { use, useState } from "react"
 import Link from "next/link"
+import { ProhibitIcon } from "@phosphor-icons/react/dist/ssr"
 import { useRouter } from "next/navigation"
 import { ArrowRightIcon as ArrowRight, PencilSimpleIcon as Pencil, PlusIcon as Plus, PaperPlaneRightIcon as Send } from "@phosphor-icons/react/dist/ssr"
 import { PageFrame, PageHeader } from "@/components/layout"
@@ -29,6 +30,7 @@ import { useCategoryOptions } from "@/hooks/use-category-options"
 import {
   buyerRfqBadgeLabel,
   buyerRfqBadgeStatus,
+  isModeratedRfq,
 } from "@/lib/buyer-rfq-display"
 import { formatCurrency, formatIsoDate, formatRfqNo } from "@/lib/format"
 import { DEAL_NEXT_STEP, getDealPhase } from "@/lib/process/deal-stages"
@@ -181,6 +183,19 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
       />
 
       <div className="grid gap-6">
+        {isModeratedRfq(rfq) ? (
+          <div role="status" className="flex gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-[14px] text-red-900">
+            <ProhibitIcon className="mt-0.5 size-5 shrink-0 text-red-600" aria-hidden />
+            <div>
+              <b className="font-semibold">Заявку снял модератор, она перенесена в архив</b>
+              {rfq.moderation_reason ? <p className="mt-0.5">Причина: {rfq.moderation_reason}</p> : null}
+              <p className="mt-0.5 text-red-800/80">
+                Если не согласны, напишите в поддержку. Можно создать новую заявку с исправлениями.
+              </p>
+            </div>
+          </div>
+        ) : null}
+
         {rfq.status === "draft" ? (
           <div className="flex flex-wrap items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4">
             <span className="flex-1 text-[14px] text-brand-900">

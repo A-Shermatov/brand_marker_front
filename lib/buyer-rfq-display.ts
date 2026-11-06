@@ -35,7 +35,7 @@ export const BUYER_RFQ_V5_TABS: {
   { value: "quotes", label: "Приём КП" },
   { value: "deal", label: "Сделка" },
   { value: "draft", label: "Черновики" },
-  { value: "closed", label: "Закрытые" },
+  { value: "closed", label: "Архив" },
 ]
 
 export const BUYER_RFQ_STATUS_FILTER_OPTIONS = BUYER_RFQ_V5_TABS
@@ -84,8 +84,13 @@ export const buyerRfqBadgeLabel = (status: RfqStatus): string => {
     return "Сделка"
   }
   if (status === "cancelled" || status === "completed") return "Закрыта"
+  if (status === "archived") return "В архиве"
   return rfqStatusMeta[status].label
 }
+
+/** A moderator took the RFQ off the board (hidden, closed or removed). */
+export const isModeratedRfq = (rfq: { moderated_at?: string | null }): boolean =>
+  Boolean(rfq.moderated_at)
 
 export const isClosedRfqStatus = (status: RfqStatus): boolean =>
   CLOSED_STATUSES.includes(status)

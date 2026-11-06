@@ -107,9 +107,11 @@ export const PhotoGalleryFields = ({
   }
 
   const onInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
+    // Copy first: FileList is live and resetting the input below empties it,
+    // which silently dropped every chosen photo.
+    const files = Array.from(event.target.files ?? [])
     event.target.value = ""
-    if (files) await handleFiles(files)
+    await handleFiles(files)
   }
 
   const onDrop = async (event: DragEvent<HTMLLabelElement>) => {

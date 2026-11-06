@@ -1,5 +1,6 @@
 import { API_URL } from "./config"
 import { translateApiMessage } from "./error-messages"
+import { notifySessionEnded, sessionEndFromMessage } from "./session-events"
 
 export type ApiError = {
   status: number
@@ -116,6 +117,13 @@ const refreshAccessToken = (): Promise<string | null> => {
       })
       if (res.status === 401 || res.status === 403) {
         tokenStorage.clear()
+        let detail = ""
+        try {
+          detail = readErrorMessage(await res.json(), "")
+        } catch {
+          // no body
+        }
+        notifySessionEnded(sessionEndFromMessage(detail))
         return null
       }
       if (!res.ok) return null

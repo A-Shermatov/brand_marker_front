@@ -2,6 +2,7 @@
 
 import { use, useMemo, useState } from "react"
 import Link from "next/link"
+import { AdminMarksCard } from "@/components/admin/marks/admin-marks-card"
 import { useSearchParams } from "next/navigation"
 import { WarningIcon as AlertTriangle, ProhibitIcon as Ban, FileTextIcon as FileText, EnvelopeIcon as Mail, ArrowsCounterClockwiseIcon as RefreshCcw, StarIcon as Star, UserCheckIcon as UserCheck } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
@@ -291,7 +292,7 @@ export default function AdminUserDetailPage({ params }: PageProps) {
       })
       toast.success(
         nextStatus === "blocked"
-          ? "Пользователь заблокирован"
+          ? "Пользователь заблокирован и вышел на всех устройствах"
           : "Пользователь разблокирован",
       )
       setBlockOpen(false)
@@ -306,7 +307,7 @@ export default function AdminUserDetailPage({ params }: PageProps) {
   const revokeSessions = async () => {
     try {
       await revokeSessionsMutation.mutateAsync(user.id)
-      toast.success("Все сеансы пользователя завершены")
+      toast.success("Сеансы завершены: пользователь вышел на всех устройствах")
     } catch {
       // error toast via MutationCache
     }
@@ -403,16 +404,19 @@ export default function AdminUserDetailPage({ params }: PageProps) {
             <Button
               type="button"
               size="sm"
-              variant="outline"
-              className="text-destructive hover:text-destructive"
+              variant="destructive-outline"
               onClick={() => setBlockOpen(true)}
             >
               <Ban aria-hidden="true" />
-              Заблокировать…
+              Завершить сеансы и заблокировать…
             </Button>
           )}
         </div>
       </PageSurface>
+
+      {canManage && (user.role === "supplier" || user.role === "both" || user.role === "buyer") ? (
+        <AdminMarksCard userId={user.id} />
+      ) : null}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         {kpis.map((kpi) => (
@@ -478,8 +482,8 @@ export default function AdminUserDetailPage({ params }: PageProps) {
           <DialogHeader>
             <DialogTitle>Заблокировать пользователя?</DialogTitle>
             <DialogDescription>
-              {user.email} потеряет доступ к системе. Каталог и КП скрываются;
-              активные сделки через эскроу продолжаются.
+              {user.email} сразу выйдет из аккаунта на всех устройствах и не сможет войти
+              снова. Каталог и КП скрываются; активные сделки через эскроу продолжаются.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">

@@ -96,7 +96,7 @@ export default function AdminSidebar({ onNavigate }: { onNavigate?: () => void }
       </ul>
 
       <div className="mt-auto border-t border-line pt-4">
-        <p className="mb-1 px-2.5 text-[11.5px] font-medium text-faint">Ещё</p>
+        <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-mute">Ещё</p>
         <div className="grid gap-1 text-[13.5px]">
           {[
             { href: "/admin/catalog", label: "Каталог" },
@@ -108,7 +108,7 @@ export default function AdminSidebar({ onNavigate }: { onNavigate?: () => void }
                 key={item.href}
                 href={item.href}
                 onClick={onNavigate}
-                className="rounded-lg px-2.5 py-2 font-medium text-ink-soft hover:bg-surface-muted hover:text-ink"
+                className="rounded-lg px-3 py-2 text-[14px] font-medium text-ink hover:bg-surface-muted"
               >
                 {item.label}
               </Link>

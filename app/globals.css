@@ -29,10 +29,12 @@
   --safe-500: #0F7D58;
   --safe-700: #0B6346;
 
-  --ink: #1C1C1A;
-  --ink-soft: #3F3F3B;
-  --mute: #6A6A64;
-  --faint: #9B9A93;
+  /* Text: secondary grey kept dark enough to read on the warm canvas
+     (mute ≈ 6.4:1 on white, faint only for hints and placeholders). */
+  --ink: #1A1A18;
+  --ink-soft: #33332F;
+  --mute: #5C5C56;
+  --faint: #86857E;
   --line: #E5E4DF;
   --line-strong: #D2D0C9;
   --canvas: #F5F4F1;
@@ -207,6 +209,9 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+    /* Onest is variable: a touch above 400 keeps body text from looking thin
+       on Windows screens without making it bold. */
+    font-weight: 430;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -227,6 +232,13 @@
   }
   table {
     font-variant-numeric: tabular-nums;
+  }
+  /* Column headers: small capitals, so the eye separates them from the data. */
+  thead th {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11.5px;
+    font-weight: 600;
   }
   :focus-visible {
     outline: 2px solid var(--brand-600);
@@ -457,6 +469,30 @@
     opacity: 1;
   }
 }
+/* Start plan: the lightning bolt flashes now and then. */
+.bm-plan-flash {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bmPlanFlash 5s ease-in-out infinite;
+}
+@keyframes bmPlanFlash {
+  0%,
+  14%,
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  5% {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+  9% {
+    opacity: 1;
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 1.6px #ffffff);
+  }
+}
 .bm-plan-sweep {
   animation: bmPlanSweep 5s cubic-bezier(0.45, 0, 0.25, 1) infinite;
   transform: translateX(0) skewX(-18deg);
@@ -533,6 +569,7 @@
 @media (prefers-reduced-motion: reduce) {
   .bm-mark-sweep,
   .bm-plan-sweep,
+  .bm-plan-flash,
   .bm-chev,
   .bm-d-idle,
   .bm-d-pulse,

@@ -7,6 +7,7 @@ import { useCategoryOptions } from "@/hooks/use-category-options"
 import {
   buyerRfqBadgeLabel,
   buyerRfqBadgeStatus,
+  isModeratedRfq,
 } from "@/lib/buyer-rfq-display"
 import { formatIsoDate, formatRfqBudget, pluralRu } from "@/lib/format"
 
@@ -79,6 +80,12 @@ export const RfqListTable = ({ rfqs, getProposalCount }: RfqListTableProps) => {
                       <div className="text-[12.5px] text-mute">
                         {getRfqCategoryLabel(rfq.category_id)}
                       </div>
+                      {isModeratedRfq(rfq) ? (
+                        <div className="mt-1 text-[12.5px] text-red-700">
+                          Снята модератором
+                          {rfq.moderation_reason ? `: ${rfq.moderation_reason}` : ""}
+                        </div>
+                      ) : null}
                     </Link>
                   </td>
                   <td className="px-5 py-3.5 text-ink">
