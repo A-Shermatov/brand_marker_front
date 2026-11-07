@@ -36,7 +36,7 @@ import {
   matchesRfqSearch,
   type RfqTypeFilter,
 } from "@/lib/rfq-list-search"
-import { RfqListTable } from "@/components/cabinet/rfq/rfq-list-table"
+import { RfqList } from "@/components/cabinet/rfq/rfq-list"
 import { isApiEnabled } from "@/lib/api/config"
 import { useRfqsQuery } from "@/hooks/api/use-rfqs-query"
 import { proposalsApi } from "@/lib/api/proposals"
@@ -219,7 +219,7 @@ const MyRfqsContent = () => {
           ) : null}
         </PageSurface>
       ) : (
-        <RfqListTable rfqs={rfqs} getProposalCount={getProposalCount} />
+        <RfqList rfqs={rfqs} getProposalCount={getProposalCount} />
       )}
 
       <ListPagination page={page} totalPages={totalPages} onPageChange={setPage} />

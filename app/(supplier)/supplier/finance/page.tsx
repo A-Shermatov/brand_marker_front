@@ -6,7 +6,15 @@ import { Button } from "@/components/ui/button"
 import { AddPayoutDestinationDialog } from "@/components/supplier/finance/add-payout-destination-dialog"
 import { PayoutAccountCard } from "@/components/supplier/finance/payout-account-card"
 import { formatCurrency, formatIsoDateTime } from "@/lib/format"
-import { PageFrame, PageHeader } from "@/components/layout"
+import {
+  CardFact,
+  CardList,
+  CardMeta,
+  ListCard,
+  ListCardBody,
+  PageFrame,
+  PageHeader,
+} from "@/components/layout"
 import { ListPagination } from "@/components/list-pagination"
 import { MetricTile } from "@/components/process"
 import { StatusBadge } from "@/components/bm"
@@ -292,55 +300,34 @@ export default function SupplierFinancePage() {
       <div className="grid items-start gap-5 lg:grid-cols-[1fr_360px]">
         <div className="min-w-0">
           <span className="text-[13px] font-semibold text-mute">История</span>
-          <div className="mt-2 overflow-x-auto rounded-2xl border border-line bg-white">
-            {historyRows.length === 0 ? (
-              <p className="p-6 text-[14px] text-mute">Операций пока нет.</p>
-            ) : (
-              <table className="w-full min-w-[560px] text-[14.5px]">
-                <thead>
-                  <tr className="border-b border-line text-left">
-                    {["Дата и время", "Операция", "Сумма", "Статус"].map((h) => (
-                      <th
-                        key={h}
-                        className="px-5 py-3.5 text-[13px] font-semibold whitespace-nowrap text-mute"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-line">
-                  {historyRows.map((row) => (
-                    <tr key={row.key}>
-                      <td className="whitespace-nowrap px-5 py-4 text-mute tnum">
-                        {formatIsoDateTime(row.date)}
-                      </td>
-                      <td className="px-5 py-4">{row.what}</td>
-                      <td className="mono whitespace-nowrap px-5 py-4 font-semibold">
-                        <span
-                          className={
-                            row.amount > 0 ? "text-safe-700" : undefined
-                          }
-                        >
-                          {row.amount > 0 ? "+" : "−"}
-                          {formatCurrency(
-                            Math.abs(row.amount),
-                            row.currency,
-                          )}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <StatusBadge
-                          status={row.status}
-                          label={row.statusLabel}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+          {historyRows.length === 0 ? (
+            <p className="mt-2 rounded-2xl border border-line bg-white p-6 text-[14px] text-mute">
+              Операций пока нет.
+            </p>
+          ) : (
+            <CardList label="История операций" className="mt-2 gap-2">
+              {historyRows.map((row) => (
+                <ListCard key={row.key} tone={row.amount > 0 ? "safe" : "muted"}>
+                  <ListCardBody
+                    aside={
+                      <>
+                        <CardFact label="Сумма" className="min-w-[120px] md:text-right">
+                          <span className={row.amount > 0 ? "text-safe-700" : undefined}>
+                            {row.amount > 0 ? "+" : "−"}
+                            {formatCurrency(Math.abs(row.amount), row.currency)}
+                          </span>
+                        </CardFact>
+                        <StatusBadge status={row.status} label={row.statusLabel} />
+                      </>
+                    }
+                  >
+                    <CardMeta>{formatIsoDateTime(row.date)}</CardMeta>
+                    <span className="text-[15px] font-semibold text-ink">{row.what}</span>
+                  </ListCardBody>
+                </ListCard>
+              ))}
+            </CardList>
+          )}
           <ListPagination
             page={historyPage}
             totalPages={historyTotalPages}

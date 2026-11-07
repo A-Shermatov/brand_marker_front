@@ -151,7 +151,13 @@ test("a deal goes from a published request to a paid, reviewed contract", async 
     await supplier.goto(`/supplier/contracts/${contractId}`)
     await expect(supplier.getByRole("heading", { name: "Деньги зачислены" })).toBeVisible()
     await supplier.goto("/supplier/finance")
-    await expect(supplier.getByRole("row", { name: new RegExp(`Сделка #${contractId}\\b.*14\\s500\\sTJS.*Оплачен`) })).toBeVisible()
+    // The invoice of this deal: its card links to the deal.
+    const invoice = supplier
+      .getByRole("list", { name: "Счета" })
+      .getByRole("listitem")
+      .filter({ has: supplier.locator(`a[href="/supplier/contracts/${contractId}"]`) })
+    await expect(invoice).toContainText(/14\s500\sTJS/)
+    await expect(invoice).toContainText("Оплачен")
     // The fee shown is the one the deal was charged: 725 of 14 500 is 5%.
     await expect(supplier.getByRole("region", { name: "Баланс" })).toContainText(/Комиссия площадки\s*5%/)
   })

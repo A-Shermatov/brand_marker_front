@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { ListPagination } from "@/components/list-pagination"
 import { ReviewsReceivedTable } from "@/components/supplier/finance/reviews-received-table"
+import { ReviewCardList } from "@/components/reviews/review-card-list"
 import { useHydrated } from "@/hooks/use-hydrated"
 import {
   useSupplierReceivedReviewsQuery,
@@ -16,32 +16,6 @@ import { isApiEnabled } from "@/lib/api/config"
 import { formatReviewParty } from "@/lib/review-party"
 import { useCompaniesStore } from "@/lib/store/companies-store"
 import type { ContractWithRelations, Review } from "@/types"
-
-const RatingStars = ({ rating }: { rating: number }) => (
-  <div className="flex items-center gap-0.5" aria-label={`Оценка ${rating} из 5`}>
-    {[1, 2, 3, 4, 5].map((n) => (
-      <Star
-        key={n}
-        size={14}
-        className={
-          n <= rating
-            ? "text-amber-500 fill-amber-500"
-            : "text-muted-foreground/30"
-        }
-      />
-    ))}
-  </div>
-)
-
-const PartyCell = ({ review, fallback }: { review: Review; fallback: string }) => {
-  const { primary, secondary } = formatReviewParty(review.target, fallback)
-  return (
-    <div className="min-w-0">
-      <p className="font-semibold text-foreground truncate">{primary}</p>
-      {secondary && <p className="text-xs text-muted-foreground truncate">{secondary}</p>}
-    </div>
-  )
-}
 
 const GivenReviewsTable = ({
   reviews,
@@ -59,54 +33,20 @@ const GivenReviewsTable = ({
       </p>
     )
   }
-
   return (
-    <div className="overflow-hidden rounded-xl border border-border">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border bg-secondary/40">
-            <th className="px-4 py-3 text-left text-xs font-bold text-muted-foreground">
-              Заказчик
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-bold text-muted-foreground">
-              Оценка
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-bold text-muted-foreground">
-              Комментарий
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-bold text-muted-foreground">
-              Сделка
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {reviews.map((review) => (
-            <tr key={review.id} className="hover:bg-secondary/30">
-              <td className="px-4 py-3">
-                <PartyCell
-                  review={review}
-                  fallback={getBuyerName(review.target_actor_id)}
-                />
-              </td>
-              <td className="px-4 py-3">
-                <RatingStars rating={review.rating} />
-              </td>
-              <td className="max-w-xs px-4 py-3 text-muted-foreground">
-                <p className="line-clamp-2">{review.comment ?? "—"}</p>
-              </td>
-              <td className="px-4 py-3">
-                <a
-                  href={`/supplier/contracts/${review.contract_id}`}
-                  className="font-medium text-primary hover:underline"
-                >
-                  {getContractTitle(review.contract_id)}
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ReviewCardList
+      label="Ваши отзывы о заказчиках"
+      items={reviews.map((review) => {
+        const { primary, secondary } = formatReviewParty(review.target, getBuyerName(review.target_actor_id))
+        return {
+          id: review.id,
+          rating: review.rating,
+          comment: review.comment,
+          party: { primary, secondary, href: `/supplier/customers/${review.target_actor_id}` },
+          deal: { title: getContractTitle(review.contract_id), href: `/supplier/contracts/${review.contract_id}` },
+        }
+      })}
+    />
   )
 }
 

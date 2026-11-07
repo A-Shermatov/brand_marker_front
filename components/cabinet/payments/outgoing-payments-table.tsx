@@ -1,7 +1,17 @@
 "use client"
 
-import { statusPillClass } from "@/components/ui/status-badge"
-import Link from "next/link"
+import { BuildingsIcon } from "@phosphor-icons/react/dist/ssr"
+import {
+  CardFact,
+  CardLine,
+  CardList,
+  CardMeta,
+  CardTitle,
+  ListCard,
+  ListCardBody,
+  StatusPill,
+  type CardTone,
+} from "@/components/layout/card-list"
 import type { OutgoingPaymentRow } from "@/lib/buyer-payments-display"
 import { paymentHistoryTypeLabel } from "@/lib/buyer-payments-display"
 import { formatCurrency, formatIsoDateTime } from "@/lib/format"
@@ -11,96 +21,41 @@ type OutgoingPaymentsTableProps = {
   getSupplierName: (supplierActorId: number) => string
 }
 
-const typeClassName: Record<OutgoingPaymentRow["type"], string> = {
-  funding: "bg-info/10 text-info",
-  release: "bg-primary/10 text-primary",
-  refund: "bg-warning/10 text-warning",
+/** Money into escrow is blue, money released to the supplier green, refunds amber. */
+const TYPE_TONE: Record<OutgoingPaymentRow["type"], CardTone> = {
+  funding: "brand",
+  release: "safe",
+  refund: "warn",
 }
 
-export const OutgoingPaymentsTable = ({
-  payments,
-  getSupplierName,
-}: OutgoingPaymentsTableProps) => {
+/** The buyer's payment history as cards: when, for which deal and stage, what kind, how much. */
+export const OutgoingPaymentsTable = ({ payments, getSupplierName }: OutgoingPaymentsTableProps) => {
   if (payments.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground text-center py-6">
-        Исходящих платежей пока нет
-      </p>
-    )
+    return <p className="py-6 text-center text-sm text-muted-foreground">Исходящих платежей пока нет</p>
   }
-
   return (
-    <>
-      <div className="hidden md:block overflow-hidden rounded-xl border border-border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-secondary/40">
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Дата и время</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Сделка</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Исполнитель</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Этап</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Тип</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Сумма</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {payments.map((payment) => (
-              <tr key={payment.id} className="hover:bg-secondary/30 transition-colors">
-                <td className="px-4 py-3 text-muted-foreground whitespace-nowrap tnum">
-                  {formatIsoDateTime(payment.at)}
-                </td>
-                <td className="px-4 py-3">
-                  <Link
-                    href={`/customer/contracts/${payment.contractId}`}
-                    className="font-semibold text-foreground hover:text-primary line-clamp-2"
-                  >
-                    {payment.contractTitle}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">
-                  {getSupplierName(payment.supplierActorId)}
-                </td>
-                <td className="px-4 py-3 text-foreground">{payment.title}</td>
-                <td className="px-4 py-3">
-                  <span className={`inline-block text-xs text-center font-semibold px-3 py-1.5 rounded-full ${typeClassName[payment.type]}`}>
-                    {paymentHistoryTypeLabel[payment.type]}
-                  </span>
-                </td>
-                <td className="px-4 py-3 font-medium text-primary whitespace-nowrap">
+    <CardList label="Платежи">
+      {payments.map((payment) => (
+        <ListCard key={payment.id} tone={TYPE_TONE[payment.type]}>
+          <ListCardBody
+            aside={
+              <>
+                <StatusPill tone={TYPE_TONE[payment.type]}>{paymentHistoryTypeLabel[payment.type]}</StatusPill>
+                <CardFact label="Сумма" className="min-w-[130px] md:text-right">
                   {formatCurrency(payment.amount, payment.currency)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="md:hidden space-y-3">
-        {payments.map((payment) => (
-          <Link
-            key={payment.id}
-            href={`/customer/contracts/${payment.contractId}`}
-            className="block bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
+                </CardFact>
+              </>
+            }
           >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-bold text-foreground">{payment.contractTitle}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {getSupplierName(payment.supplierActorId)} ·{" "}
-                  {formatIsoDateTime(payment.at)}
-                </p>
-              </div>
-              <p className="text-sm font-bold text-primary flex-shrink-0">
-                {formatCurrency(payment.amount, payment.currency)}
-              </p>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">{payment.title}</p>
-            <span className={`${statusPillClass} mt-2 ${typeClassName[payment.type]}`}>
-              {paymentHistoryTypeLabel[payment.type]}
-            </span>
-          </Link>
-        ))}
-      </div>
-    </>
+            <CardMeta>{formatIsoDateTime(payment.at)}</CardMeta>
+            <CardTitle href={`/customer/contracts/${payment.contractId}`}>{payment.contractTitle}</CardTitle>
+            <CardLine icon={BuildingsIcon}>
+              {getSupplierName(payment.supplierActorId)}
+              <span className="text-mute">· этап «{payment.title}»</span>
+            </CardLine>
+          </ListCardBody>
+        </ListCard>
+      ))}
+    </CardList>
   )
 }
