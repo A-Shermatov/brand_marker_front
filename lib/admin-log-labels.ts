@@ -49,7 +49,7 @@ export const LOG_STATUS_META: Record<
   success: {
     label: "Успешно",
     hint: "Запрос выполнен без ошибок",
-    className: "border-primary/20 bg-primary/10 text-primary",
+    className: "border-success/20 bg-success/10 text-success",
   },
   invalid: {
     label: "Ошибка в данных",

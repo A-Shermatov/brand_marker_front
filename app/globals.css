@@ -6,43 +6,60 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Brend Market v8. Green is the brand and the "money is safe" signal;
-     neutrals are slightly warm so the UI reads like paper, not a template. */
-  --brand-50: #EDF6F1;
-  --brand-100: #D3EADD;
-  --brand-200: #A6D3BC;
-  --brand-300: #6FB696;
-  --brand-500: #17936A;
-  --brand-600: #0F7D58;
-  --brand-700: #0B6346;
-  --brand-900: #073D2B;
+  /* Brend Market v9. Bright "bank" blue with white, the way money brands in
+     the region look: the blue frame people steer by (cabinet menu, hero),
+     the same blue for actions, a sun-yellow spark for what needs attention
+     on blue. Green stays only as the "money is safe / paid" signal. */
+  --brand-50: #EEF4FF;
+  --brand-100: #DBE7FF;
+  --brand-200: #B3CDFF;
+  --brand-300: #7FA9F7;
+  --brand-500: #1F6BEB;
+  --brand-600: #0050C8;
+  --brand-700: #0041A3;
+  --brand-900: #00296B;
 
-  --navy-700: #3B3C38;
-  --navy-800: #262623;
-  --navy-900: #1A1A18;
+  --navy-700: #2A3350;
+  --navy-800: #141C33;
+  --navy-900: #0B1124;
 
-  --verify-50: #EEF2FC;
-  --verify-600: #2F55B8;
+  /* Rail: the cabinet menu. White, easy on the eyes over a long day; the
+     open section is a light-blue plate with a blue bar and blue icon. */
+  --rail-from: #FFFFFF;
+  --rail-to: #FFFFFF;
+  --rail-ink: var(--ink);
+  --rail-mute: var(--ink-soft);
+  --rail-line: var(--line);
+  --rail-hover: var(--surface-muted);
+  --rail-active: var(--brand-50);
+  --rail-accent: var(--brand-600);
 
-  --safe-50: #EDF6F1;
-  --safe-100: #D3EADD;
-  --safe-500: #0F7D58;
-  --safe-700: #0B6346;
+  /* Sun: counters and the one key action on a blue field. */
+  --sun: #FFD02F;
+  --sun-ink: #2B2200;
 
-  /* Text: secondary grey kept dark enough to read on the warm canvas
-     (mute ≈ 6.4:1 on white, faint only for hints and placeholders). */
-  --ink: #1A1A18;
-  --ink-soft: #33332F;
-  --mute: #5C5C56;
-  --faint: #86857E;
-  --line: #E5E4DF;
-  --line-strong: #D2D0C9;
-  --canvas: #F5F4F1;
-  --surface-muted: #EDECE8;
+  --verify-50: var(--brand-50);
+  --verify-600: var(--brand-600);
+
+  --safe-50: #EAF6F1;
+  --safe-100: #CFEADF;
+  --safe-500: #0E8A6A;
+  --safe-700: #0A6B52;
+
+  /* Text: cool ink; secondary grey kept dark enough to read on the canvas
+     (mute ≈ 6.3:1 on white, faint only for hints and placeholders). */
+  --ink: #0E1630;
+  --ink-soft: #28304A;
+  --mute: #535E77;
+  --faint: #8590A8;
+  --line: #E2E7F0;
+  --line-strong: #CDD5E3;
+  --canvas: #F3F6FB;
+  --surface-muted: #E9EEF6;
 
   /* Cabinet balance panel */
-  --bank-hero-from: #0D4F39;
-  --bank-hero-to: #0A3A2B;
+  --bank-hero-from: #0A5AD8;
+  --bank-hero-to: #0041A3;
 
   --radius-control: 8px;
   --content-max: 1280px;
@@ -67,14 +84,14 @@
   --border: var(--line);
   --input: var(--line);
   --ring: var(--brand-600);
-  --success: var(--brand-600);
+  --success: var(--safe-500);
   --success-foreground: #ffffff;
   --warning: #D97706;
   --warning-foreground: #ffffff;
   --info: var(--verify-600);
   --info-foreground: #ffffff;
   --chart-1: var(--brand-600);
-  --chart-2: var(--verify-600);
+  --chart-2: var(--safe-500);
   --chart-3: var(--navy-700);
   --chart-4: #F59E0B;
   --chart-5: #EF4444;
@@ -91,37 +108,37 @@
 
 .dark {
   --background: var(--navy-900);
-  --foreground: #f5f6f8;
+  --foreground: #f3f5fc;
   --card: var(--navy-800);
-  --card-foreground: #f5f6f8;
+  --card-foreground: #f3f5fc;
   --popover: var(--navy-800);
-  --popover-foreground: #f5f6f8;
+  --popover-foreground: #f3f5fc;
   --primary: var(--brand-500);
   --primary-foreground: #ffffff;
-  --secondary: #1e3a2f;
+  --secondary: #17245a;
   --secondary-foreground: var(--brand-200);
   --muted: var(--navy-800);
-  --muted-foreground: #9aa1ad;
-  --accent: #1e3a2f;
+  --muted-foreground: #9aa4bf;
+  --accent: #17245a;
   --accent-foreground: var(--brand-200);
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #2e323a;
-  --input: #2e323a;
+  --border: #263152;
+  --input: #263152;
   --ring: var(--brand-500);
-  --success: var(--brand-500);
+  --success: var(--safe-500);
   --success-foreground: #ffffff;
   --warning: #fbbf24;
   --warning-foreground: var(--navy-900);
   --info: #6b8cff;
   --info-foreground: #ffffff;
   --sidebar: var(--navy-800);
-  --sidebar-foreground: #f5f6f8;
+  --sidebar-foreground: #f3f5fc;
   --sidebar-primary: var(--brand-500);
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: var(--navy-700);
-  --sidebar-accent-foreground: #f5f6f8;
-  --sidebar-border: #2e323a;
+  --sidebar-accent-foreground: #f3f5fc;
+  --sidebar-border: #263152;
   --sidebar-ring: var(--brand-500);
 }
 
@@ -145,6 +162,16 @@
   --color-safe-100: var(--safe-100);
   --color-safe-500: var(--safe-500);
   --color-safe-700: var(--safe-700);
+  --color-rail-from: var(--rail-from);
+  --color-rail-to: var(--rail-to);
+  --color-rail-ink: var(--rail-ink);
+  --color-rail-mute: var(--rail-mute);
+  --color-rail-line: var(--rail-line);
+  --color-rail-hover: var(--rail-hover);
+  --color-rail-active: var(--rail-active);
+  --color-rail-accent: var(--rail-accent);
+  --color-sun: var(--sun);
+  --color-sun-ink: var(--sun-ink);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-mute: var(--mute);
@@ -330,6 +357,25 @@
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 3px;
+  }
+}
+
+/* Blue field behind the landing hero and the sign-in pages. */
+@utility bg-brand-field {
+  background-color: #0050c8;
+  background-image: radial-gradient(120% 95% at 88% 0%, #4c95ff 0%, #1667e6 34%, #0050c8 62%, #0044ad 100%);
+}
+
+/* Scrollbar for the menu rail. */
+@utility scroll-rail {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  &::-webkit-scrollbar {
+    width: 6px;
   }
   &::-webkit-scrollbar-thumb {
     background: var(--line-strong);
@@ -566,7 +612,42 @@
   animation: shake 0.25s ease-in-out 2;
 }
 
+/* Landing ribbon: lanes drift sideways forever (each lane holds its items
+   twice, so -50% lands on the same picture); edges fade into the page. */
+.bm-ribbon {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.bm-ribbon-lane {
+  animation: bmRibbon 60s linear infinite;
+}
+.bm-ribbon-lane[data-reverse] {
+  animation-direction: reverse;
+  animation-duration: 70s;
+}
+.bm-ribbon:hover .bm-ribbon-lane,
+.bm-ribbon:focus-within .bm-ribbon-lane {
+  animation-play-state: paused;
+}
+@keyframes bmRibbon {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 6px));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  /* No drift: one lane, scrolled by hand. */
+  .bm-ribbon {
+    overflow-x: auto;
+    mask-image: none;
+    padding-inline: 16px;
+  }
+  .bm-ribbon-lane [aria-hidden='true'] {
+    display: none;
+  }
   .bm-mark-sweep,
   .bm-plan-sweep,
   .bm-plan-flash,

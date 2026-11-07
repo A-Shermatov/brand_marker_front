@@ -63,7 +63,7 @@ export const proposalStatusMeta: Record<
   },
   accepted: {
     label: "Принято",
-    className: "bg-primary/10 text-primary",
+    className: "bg-success/10 text-success",
   },
   rejected: {
     label: "Отклонено",

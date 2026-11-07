@@ -35,7 +35,7 @@ function PathCard({
   return (
     <div className="grid content-start gap-6 rounded-2xl border border-line bg-white p-6 md:p-8">
       <div className="flex items-center gap-3">
-        <span className="grid size-11 place-items-center rounded-xl bg-ink text-white">{icon}</span>
+        <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white">{icon}</span>
         <h2 className="text-[22px] font-semibold tracking-[-0.02em]">{title}</h2>
       </div>
       <ol className="grid gap-4">

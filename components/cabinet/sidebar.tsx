@@ -1,23 +1,20 @@
 "use client"
 
+import { LayoutGroup } from "motion/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import {
-  BuildingsIcon,
-  ChatsCircleIcon,
-  ClipboardTextIcon,
-  HandshakeIcon,
   HouseIcon,
   LockKeyIcon,
   PlusIcon,
   ShoppingCartIcon,
   StarIcon,
-  UsersThreeIcon,
 } from "@phosphor-icons/react/dist/ssr"
+import { HUB_ICONS } from "@/lib/cabinet-icons"
 import { CabinetNavLink } from "@/components/layout/cabinet-nav-link"
 import {
   initialsOf,
+  RAIL_ACTION,
   SidebarAccount,
   SidebarSection,
   SidebarSupport,
@@ -34,14 +31,7 @@ import { useHydrated } from "@/hooks/use-hydrated"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { BUYER_HUBS, matchHub } from "@/lib/cabinet-nav"
 
-const ICONS: Record<string, PhosphorIcon> = {
-  home: HouseIcon,
-  rfqs: ClipboardTextIcon,
-  deals: HandshakeIcon,
-  suppliers: BuildingsIcon,
-  messages: ChatsCircleIcon,
-  company: UsersThreeIcon,
-}
+const ICONS = HUB_ICONS.buyer
 
 export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
@@ -69,6 +59,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
     marks.title ?? (hydrated && user?.company ? user.company : "Покупатель")
 
   return (
+    <LayoutGroup id={onNavigate ? "sheet" : "rail"}>
     <nav className="flex h-full flex-col gap-1 p-3" aria-label="Меню кабинета">
       <SidebarTop onClose={onNavigate} />
 
@@ -83,7 +74,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
         onClick={onNavigate}
       />
 
-      <Button asChild className="mb-3 w-full">
+      <Button asChild className={RAIL_ACTION}>
         <Link href="/customer/rfqs/new" onClick={onNavigate}>
           <PlusIcon weight="bold" className="size-4" />
           Новая заявка
@@ -124,7 +115,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
 
       <div className="mt-auto grid gap-2 pt-6">
         <p className="flex gap-2 px-1 text-[12.5px] leading-snug text-mute">
-          <LockKeyIcon className="mt-px size-4 shrink-0 text-brand-600" aria-hidden />
+          <LockKeyIcon className="mt-px size-4 shrink-0 text-safe-500" aria-hidden />
           Деньги держит банк‑партнёр. Поставщик получит их после вашей приёмки.
         </p>
         <SidebarSupport
@@ -135,5 +126,6 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
         />
       </div>
     </nav>
+    </LayoutGroup>
   )
 }

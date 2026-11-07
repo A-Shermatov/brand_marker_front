@@ -152,19 +152,19 @@ function LoginContent() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-canvas">
+    <div className="flex min-h-dvh flex-col bg-brand-field">
       <div className="mx-auto flex h-[68px] w-full max-w-[1200px] items-center justify-between px-4 lg:px-8">
-        <BrandLogo />
+        <BrandLogo dark />
         <Link
           href="/"
-          className="text-[14px] font-semibold text-mute hover:text-ink"
+          className="text-[14px] font-semibold text-white/85 hover:text-white"
         >
           На главную
         </Link>
       </div>
 
       <div className="grid flex-1 place-items-center px-4 py-10">
-        <div className="w-full max-w-[420px] rounded-2xl border border-line bg-white p-7 shadow-[0_1px_2px_rgba(28,28,26,.05),0_20px_40px_-28px_rgba(28,28,26,.35)] sm:p-8">
+        <div className="w-full max-w-[420px] rounded-2xl border border-line bg-white p-7 shadow-[0_2px_4px_rgb(0_30_90/0.15),0_40px_80px_-30px_rgb(0_25_80/0.6)] sm:p-8">
           {challengeToken ? (
             <TwoFactorChallenge
               busy={otpBusy}

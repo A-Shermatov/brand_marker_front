@@ -16,6 +16,8 @@ import CustomerSidebar from "@/components/cabinet/sidebar"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { getUserDisplayName, getUserInitials } from "@/lib/auth-display"
+import { cn } from "@/lib/utils"
+import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
 
 export default function CustomerTopbar({
   moreOpen,
@@ -112,7 +114,7 @@ export default function CustomerTopbar({
       </header>
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-80 max-w-[88vw] p-0">
+        <SheetContent side="left" className={cn("w-80 max-w-[88vw] border-0 p-0", RAIL_SURFACE)}>
           <SheetTitle className="sr-only">Навигация</SheetTitle>
           <CustomerSidebar onNavigate={() => setMobileOpen(false)} />
         </SheetContent>

@@ -45,7 +45,7 @@ export const withdrawalStatusMeta: Record<
   },
   completed: {
     label: "Выполнен",
-    className: "bg-primary/10 text-primary",
+    className: "bg-success/10 text-success",
   },
   failed: {
     label: "Ошибка",
@@ -71,7 +71,7 @@ export const invoiceStatusMeta: Record<
   },
   paid: {
     label: "Оплачен",
-    className: "bg-primary/10 text-primary",
+    className: "bg-success/10 text-success",
   },
   overdue: {
     label: "Просрочен",

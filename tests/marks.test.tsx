@@ -10,12 +10,12 @@ const html = (node: React.ReactElement) => renderToStaticMarkup(node)
 const count = (source: string, needle: string) => source.split(needle).length - 1
 
 describe("TrustMark", () => {
-  it("draws the diamond as a crystal shield with a metal rim, bevels and a B", () => {
+  it("draws the diamond as a crystal shield with a metal rim, bevels and our B", () => {
     const out = html(<TrustMark tier="diamond" size={64} />)
     expect(out).toContain('data-tier="diamond"')
     // 8 rim bevels + 8 inner bevels + 8 face facets + glow, highlights and outlines
     expect(count(out, "<polygon")).toBeGreaterThanOrEqual(28)
-    expect(out).toContain('data-part="letter"')
+    expect(out).toContain('data-part="logo"')
     expect(out).toContain('aria-label="Знак надёжности «Алмаз»')
   })
 
@@ -28,14 +28,14 @@ describe("TrustMark", () => {
     expect(out).not.toContain("bm-tw")
   })
 
-  it("keeps the diamond calm in the middle sizes: glow and streak, no float, edge lights or letter halo", () => {
+  it("keeps the diamond calm in the middle sizes: glow and streak, no float, edge lights or halo round the B", () => {
     const out = html(<TrustMark tier="diamond" size={26} />)
     expect(out).toContain("bm-glow-diamond")
     expect(out).toContain("bm-d-streak")
     expect(out).not.toContain("bm-d-idle")
     expect(out).not.toContain("bm-d-edge")
     expect(out).not.toContain("bm-d-letter-glow")
-    expect(out).toContain('data-part="letter"')
+    expect(out).toContain('data-part="logo"')
   })
 
   it.each(["none", "silver", "gold", "diamond"] as const)(
@@ -53,9 +53,9 @@ describe("TrustMark", () => {
     },
   )
 
-  it("keeps the B on a small diamond and moves only its light streak", () => {
+  it("keeps our B on a small diamond and moves only its light streak", () => {
     const out = html(<TrustMark tier="diamond" size={18} />)
-    expect(out).toContain('data-part="letter"')
+    expect(out).toContain('data-part="logo"')
     expect(out).toContain("bm-d-streak")
     expect(html(<TrustMark tier="diamond" size={18} still />)).not.toContain("bm-d-streak")
   })
@@ -63,7 +63,17 @@ describe("TrustMark", () => {
   it("draws a still diamond without any motion", () => {
     const out = html(<TrustMark tier="diamond" size={88} still />)
     expect(out).not.toMatch(/bm-d-|bm-glow-/)
-    expect(out).toContain('data-part="letter"')
+    expect(out).toContain('data-part="logo"')
+  })
+
+  it.each(["silver", "gold", "diamond"] as const)("puts our B with its cut triangle in the middle of %s", (tier) => {
+    for (const size of [18, 48]) {
+      const out = html(<TrustMark tier={tier} size={size} />)
+      expect(out).toContain('data-part="logo"')
+      expect(out).toMatch(/<mask id="[^"]+-cut"/)
+    }
+    // The empty mark has no B: it is not earned yet.
+    expect(html(<TrustMark tier="none" size={48} />)).not.toContain('data-part="logo"')
   })
 
   it("can be still and decorative", () => {
@@ -89,13 +99,17 @@ describe("TrustMark", () => {
 
 describe("PlanMark", () => {
   it.each([
-    ["start", "bolt"],
-    ["pro", "crown"],
-    ["business", "gem"],
-  ] as const)("%s shows its own glyph (%s)", (plan, glyph) => {
-    const out = html(<PlanMark plan={plan} />)
-    expect(out).toContain(`data-plan="${plan}"`)
-    expect(out).toContain(`data-glyph="${glyph}"`)
+    ["start", 1],
+    ["pro", 2],
+    ["business", 3],
+  ] as const)("%s shows its level as %i rank chevrons, small and large", (plan, ranks) => {
+    for (const size of [16, 40]) {
+      const out = html(<PlanMark plan={plan} size={size} />)
+      expect(out).toContain(`data-plan="${plan}"`)
+      expect(out).toContain(`data-glyph="rank-${ranks}"`)
+      const glyph = out.slice(out.indexOf(`data-glyph="rank-${ranks}"`))
+      expect(count(glyph.slice(0, glyph.indexOf("</g>")), "<path")).toBe(ranks)
+    }
   })
 
   it("animates each plan in its own way", () => {
