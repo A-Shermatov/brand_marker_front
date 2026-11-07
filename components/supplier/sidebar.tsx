@@ -1,23 +1,19 @@
 "use client"
 
+import { LayoutGroup } from "motion/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import {
-  BuildingsIcon,
-  ChatsCircleIcon,
-  HandshakeIcon,
   HouseIcon,
   PlusIcon,
-  SealCheckIcon,
   StarIcon,
-  StorefrontIcon,
-  TrayIcon,
   UsersThreeIcon,
 } from "@phosphor-icons/react/dist/ssr"
+import { HUB_ICONS } from "@/lib/cabinet-icons"
 import { CabinetNavLink } from "@/components/layout/cabinet-nav-link"
 import {
   initialsOf,
+  RAIL_ACTION,
   SidebarAccount,
   SidebarSection,
   SidebarSupport,
@@ -34,15 +30,7 @@ import { useSupplierMarks } from "@/hooks/use-supplier-marks"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { matchHub, SUPPLIER_HUBS } from "@/lib/cabinet-nav"
 
-const ICONS: Record<string, PhosphorIcon> = {
-  home: HouseIcon,
-  leads: TrayIcon,
-  deals: HandshakeIcon,
-  products: StorefrontIcon,
-  messages: ChatsCircleIcon,
-  tariff: SealCheckIcon,
-  company: BuildingsIcon,
-}
+const ICONS = HUB_ICONS.supplier
 
 export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
@@ -70,6 +58,7 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
     marks.title ?? (hydrated && user?.company ? user.company : "Поставщик")
 
   return (
+    <LayoutGroup id={onNavigate ? "sheet" : "rail"}>
     <nav className="flex h-full flex-col gap-1 p-3" aria-label="Меню кабинета">
       <SidebarTop onClose={onNavigate} />
 
@@ -84,7 +73,7 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
         onClick={onNavigate}
       />
 
-      <Button asChild className="mb-3 w-full">
+      <Button asChild className={RAIL_ACTION}>
         <Link href="/supplier/catalog/new" onClick={onNavigate}>
           <PlusIcon weight="bold" className="size-4" />
           Добавить товар
@@ -133,5 +122,6 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
         />
       </div>
     </nav>
+    </LayoutGroup>
   )
 }

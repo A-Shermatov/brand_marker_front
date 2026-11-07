@@ -9,7 +9,7 @@ export const paymentSchemeMeta: Record<PaymentScheme, { label: string; desc: str
 export const escrowMeta: Record<EscrowStatus, { label: string; className: string }> = {
   none: { label: "Без оплаты", className: "bg-muted text-muted-foreground" },
   held: { label: "Под защитой", className: "bg-warning/10 text-warning" },
-  released: { label: "Выплачено", className: "bg-primary/10 text-primary" },
+  released: { label: "Выплачено", className: "bg-success/10 text-success" },
   disputed: { label: "Заморожено (спор)", className: "bg-destructive/10 text-destructive" },
   refunded: { label: "Возвращено", className: "bg-info/10 text-info" },
 }

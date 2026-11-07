@@ -49,7 +49,6 @@ import { ProposalDialog } from "@/components/supplier/proposal-dialog"
 import {
   PageEmptyState,
   PageFrame,
-  PageHeader,
   PageSurface,
 } from "@/components/layout"
 import type { Currency, ProposalStatus, RfqWithRelations } from "@/types"
@@ -243,32 +242,27 @@ const SupplierRfqsContent = () => {
 
   return (
     <PageFrame>
-      <PageHeader
-        title="Заявки покупателей"
-        description="Все открытые заявки площадки. Выберите категории, чтобы сузить список, и включите уведомления о новых."
-        actions={
+      {/* One row: search, category filter and alerts; the section header above names the page. */}
+      <RfqListToolbar
+        trailing={
           useApi ? (
-            <RfqCategoryAlerts
-              tree={categoryTree}
-              value={subscribedIds}
-              saving={saveSubscriptions.isPending}
-              onSave={(ids) => saveSubscriptions.mutateAsync(ids)}
-            />
+            <>
+              {categoryTree.length ? (
+                <RfqCategoryFilter
+                  tree={categoryTree}
+                  value={categoryFilter}
+                  onChange={setCategoryFilter}
+                />
+              ) : null}
+              <RfqCategoryAlerts
+                tree={categoryTree}
+                value={subscribedIds}
+                saving={saveSubscriptions.isPending}
+                onSave={(ids) => saveSubscriptions.mutateAsync(ids)}
+              />
+            </>
           ) : null
         }
-      />
-
-      {useApi && categoryTree.length ? (
-        <div className="mb-3">
-          <RfqCategoryFilter
-            tree={categoryTree}
-            value={categoryFilter}
-            onChange={setCategoryFilter}
-          />
-        </div>
-      ) : null}
-
-      <RfqListToolbar
         search={searchInput}
         onSearchChange={setSearchInput}
         searchPlaceholder="Поиск по заявке, номеру или покупателю"

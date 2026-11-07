@@ -81,7 +81,7 @@ export const adminDisputeStatusMeta: Record<
   },
   resolved: {
     label: "Решён",
-    className: "bg-primary/10 text-primary",
+    className: "bg-success/10 text-success",
   },
   appealed: { label: "Апелляция", className: "bg-destructive/10 text-destructive" },
 }
@@ -107,7 +107,7 @@ export const adminFinanceStatusMeta: Record<
 > = {
   pending: { label: "Ожидает", className: "bg-warning/10 text-warning" },
   processing: { label: "В обработке", className: "bg-info/10 text-info" },
-  paid: { label: "Оплачен", className: "bg-primary/10 text-primary" },
+  paid: { label: "Оплачен", className: "bg-success/10 text-success" },
   failed: { label: "Ошибка", className: "bg-destructive/10 text-destructive" },
   refunded: { label: "Возвращён", className: "bg-info/10 text-info" },
   cancelled: {

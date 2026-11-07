@@ -1,5 +1,9 @@
+"use client"
+
+import { useId } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { LogoGlyph } from "@/components/bm/logo-glyph"
 
 type BrandLogoProps = {
   href?: string
@@ -9,25 +13,23 @@ type BrandLogoProps = {
   showWordmark?: boolean
 }
 
-function LogoMark({ dark = false, small = false }: { dark?: boolean; small?: boolean }) {
-  const fill = dark ? "#FFFFFF" : "#16181D"
-  const stroke = dark ? "#16181D" : "#FFFFFF"
+/**
+ * The B mark on a rounded tile: white B on brand blue, or, with `dark`, blue
+ * B on a white tile for blue surfaces.
+ */
+export function LogoMark({ dark = false, className }: { dark?: boolean; className?: string }) {
+  // Ids unique per mark: a copy inside a hidden menu must not own the gradient.
+  const id = `bm-logo${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`
   return (
-    <svg
-      className={cn(small ? "h-8 w-8" : "h-9 w-9", "shrink-0")}
-      viewBox="0 0 36 36"
-      aria-hidden="true"
-    >
-      <rect width="36" height="36" rx="10" fill={fill} />
-      <path
-        d="M12 9.5h7.6a4.6 4.6 0 0 1 1.9 8.8 4.9 4.9 0 0 1-1.6 9.7H12z"
-        fill="none"
-        stroke={stroke}
-        strokeWidth="2.6"
-        strokeLinejoin="round"
-      />
-      <path d="M12 18.4h9" stroke={stroke} strokeWidth="2.6" />
-      <circle cx="27" cy="27" r="3.2" fill="#12A06E" />
+    <svg className={cn("shrink-0", className)} viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id={`${id}-g`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#2F80FF" />
+          <stop offset="1" stopColor="#0047B8" />
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" rx="26" fill={dark ? "#FFFFFF" : `url(#${id}-g)`} />
+      <LogoGlyph uid={id} x={51} y={50} height={50.4} cut={3.6} layers={[{ fill: dark ? "#0050C8" : "#FFFFFF" }]} />
     </svg>
   )
 }
@@ -46,11 +48,11 @@ export function BrandLogo({
         className,
       )}
     >
-      <LogoMark dark={dark} small={small} />
+      <LogoMark dark={dark} className={small ? "size-8" : "size-9"} />
       {showWordmark ? (
         <span
           className={cn(
-            "whitespace-nowrap leading-none font-bold tracking-[-0.02em]",
+            "whitespace-nowrap leading-none font-bold tracking-[-0.025em]",
             small ? "text-[17px]" : "text-[20px]",
             dark ? "text-white" : "text-ink",
           )}

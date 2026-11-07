@@ -17,6 +17,8 @@ type CompanyNameProps = {
   size?: CompanyNameSize
   className?: string
   nameClassName?: string
+  /** Colour of the document-check seal, for dark surfaces. */
+  sealClassName?: string
   /** Element for the name itself (h1 on profile pages). */
   as?: "span" | "h1" | "h2" | "h3" | "p"
 }
@@ -41,6 +43,7 @@ export function CompanyName({
   size = "md",
   className,
   nameClassName,
+  sealClassName,
   as: Name = "span",
 }: CompanyNameProps) {
   const s = SIZES[size]
@@ -58,7 +61,7 @@ export function CompanyName({
             <span title="Компания проверена по документам" className="inline-flex">
               <SealCheckIcon
                 weight="fill"
-                className={cn("text-brand-600", s.seal)}
+                className={cn("text-brand-600", s.seal, sealClassName)}
                 aria-label="Компания проверена по документам"
                 role="img"
               />

@@ -1,17 +1,12 @@
 "use client"
 
+import { LayoutGroup } from "motion/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import {
-  BankIcon,
-  ClockCounterClockwiseIcon,
-  GearSixIcon,
-  ScalesIcon,
-  SealCheckIcon,
   SquaresFourIcon,
-  UsersIcon,
 } from "@phosphor-icons/react/dist/ssr"
+import { HUB_ICONS } from "@/lib/cabinet-icons"
 import { BrandLogo } from "@/components/bm"
 import { CabinetNavLink } from "@/components/layout/cabinet-nav-link"
 import {
@@ -27,15 +22,7 @@ import {
 import { ADMIN_HUBS, matchHub } from "@/lib/cabinet-nav"
 import { useAuthStore } from "@/lib/store/auth-store"
 
-const ICONS: Record<string, PhosphorIcon> = {
-  home: SquaresFourIcon,
-  verif: SealCheckIcon,
-  disputes: ScalesIcon,
-  payouts: BankIcon,
-  users: UsersIcon,
-  audit: ClockCounterClockwiseIcon,
-  cats: GearSixIcon,
-}
+const ICONS = HUB_ICONS.admin
 
 const canSeeHref = (
   user: Parameters<typeof hasPermission>[0],
@@ -71,10 +58,11 @@ export default function AdminSidebar({ onNavigate }: { onNavigate?: () => void }
   const hubs = ADMIN_HUBS.filter((hub) => canSeeHref(user, hub.href))
 
   return (
+    <LayoutGroup id={onNavigate ? "sheet" : "rail"}>
     <nav className="flex h-full flex-col gap-1 p-3" aria-label="Админ-навигация">
       <div className="mb-3 flex h-12 items-center justify-between px-1">
         <BrandLogo small />
-        <span className="rounded-md bg-ink px-1.5 py-0.5 text-[11px] font-semibold text-white">
+        <span className="rounded-md bg-brand-600 px-1.5 py-0.5 text-[11px] font-semibold text-white">
           Админ
         </span>
       </div>
@@ -96,7 +84,7 @@ export default function AdminSidebar({ onNavigate }: { onNavigate?: () => void }
       </ul>
 
       <div className="mt-auto border-t border-line pt-4">
-        <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-mute">Ещё</p>
+        <p className="mb-1 px-3 text-[12.5px] font-medium text-mute">Ещё</p>
         <div className="grid gap-1 text-[13.5px]">
           {[
             { href: "/admin/catalog", label: "Каталог" },
@@ -108,7 +96,7 @@ export default function AdminSidebar({ onNavigate }: { onNavigate?: () => void }
                 key={item.href}
                 href={item.href}
                 onClick={onNavigate}
-                className="rounded-lg px-3 py-2 text-[14px] font-medium text-ink hover:bg-surface-muted"
+                className="rounded-lg px-3 py-2 text-[14px] font-medium text-ink-soft hover:bg-rail-hover hover:text-ink"
               >
                 {item.label}
               </Link>
@@ -116,5 +104,6 @@ export default function AdminSidebar({ onNavigate }: { onNavigate?: () => void }
         </div>
       </div>
     </nav>
+    </LayoutGroup>
   )
 }

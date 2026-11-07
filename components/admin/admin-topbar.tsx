@@ -24,6 +24,8 @@ import {
 import { useHydrated } from "@/hooks/use-hydrated"
 import { getStaffRoleLabel } from "@/lib/admin-permissions"
 import { useAuthStore } from "@/lib/store/auth-store"
+import { cn } from "@/lib/utils"
+import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
 
 export default function AdminTopbar() {
   const router = useRouter()
@@ -55,7 +57,7 @@ export default function AdminTopbar() {
             <Menu size={22} />
           </button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-80 max-w-[88vw] p-0">
+        <SheetContent side="left" className={cn("w-80 max-w-[88vw] border-0 p-0", RAIL_SURFACE)}>
           <SheetTitle className="sr-only">Навигация администратора</SheetTitle>
           <AdminSidebar onNavigate={() => setMobileOpen(false)} />
         </SheetContent>

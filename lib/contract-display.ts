@@ -82,7 +82,7 @@ export const getEscrowSummary = (
 
 export const escrowSummaryMeta = {
   held: { label: "На гарантии площадки", className: "bg-info/10 text-info" },
-  released: { label: "Выплачено", className: "bg-primary/10 text-primary" },
+  released: { label: "Выплачено", className: "bg-success/10 text-success" },
   disputed: { label: "Спор — деньги на гарантии", className: "bg-destructive/10 text-destructive" },
 } as const
 
@@ -142,11 +142,11 @@ export const milestoneStatusMeta: Record<
   },
   approved: {
     label: "Одобрен",
-    className: "bg-primary/10 text-primary",
+    className: "bg-success/10 text-success",
   },
   released: {
     label: "Выплачен",
-    className: "bg-primary/10 text-primary",
+    className: "bg-success/10 text-success",
   },
   refunded: {
     label: "Возвращён",
@@ -176,7 +176,7 @@ export const workSubmissionStatusMeta: Record<
   },
   accepted: {
     label: "Принято",
-    className: "bg-primary/10 text-primary",
+    className: "bg-success/10 text-success",
   },
   rejected: {
     label: "Отклонено",

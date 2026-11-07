@@ -16,7 +16,7 @@ import { FreePlanMark, PlanMark } from "@/components/bm/plan-mark"
 import { TrustMark } from "@/components/bm/trust-mark"
 
 const OUT = join(process.cwd(), "public", "icons", "marks")
-const BRAND_600 = "#0F7D58"
+const BRAND_600 = "#1E4BD2"
 
 /** Longest prefix shared by all ids: the per-render React id. */
 const sharedPrefix = (ids: string[]) =>

@@ -14,8 +14,8 @@ type KpiTileProps = {
 }
 
 const TONES = {
-  default: "bg-surface-muted text-ink-soft",
-  brand: "bg-brand-50 text-brand-700",
+  default: "bg-brand-50 text-brand-600",
+  brand: "bg-gradient-to-br from-brand-500 to-brand-700 text-white",
   attention: "bg-amber-100 text-amber-800",
 }
 
@@ -39,9 +39,12 @@ export function KpiTile({ label, value, hint, icon: Icon, href, tone = "default"
     </>
   )
   const className =
-    "block rounded-2xl border border-line bg-white p-4 shadow-[0_1px_2px_rgba(28,28,26,.04)] transition-colors"
+    "block rounded-2xl border border-line bg-white p-4 shadow-[0_1px_2px_rgb(14_22_48/0.04)] transition-[border-color,box-shadow]"
   return href ? (
-    <Link href={href} className={cn(className, "hover:border-line-strong")}>
+    <Link
+      href={href}
+      className={cn(className, "hover:border-brand-200 hover:shadow-[0_10px_24px_-16px_rgb(30_75_210/0.45)]")}
+    >
       {body}
     </Link>
   ) : (

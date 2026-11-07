@@ -8,6 +8,7 @@ import {
   type ReputationTier,
 } from "@/lib/trust-levels"
 import { SMALL_MARK_MAX, SmallTrustGlyph } from "@/components/bm/small-marks"
+import { LogoGlyph } from "@/components/bm/logo-glyph"
 
 type TrustMarkProps = {
   tier: ReputationTier | string | null | undefined
@@ -27,13 +28,13 @@ const SHIELD =
 const SHIELD_INNER =
   "M24 7.6 37.6 12.2V22c0 8.5-5.5 14.8-13.6 18.5C15.9 36.8 10.4 30.5 10.4 22v-9.8Z"
 const GLOSS = "M7 9h34v11c-9.5-4.2-23.5-3.4-34 3.2Z"
-const STAR =
-  "M24 14.6l2.2 5.6 6 .3-4.7 3.8 1.6 5.8L24 26.8l-5.1 3.3 1.6-5.8-4.7-3.8 6-.3Z"
+// Where our B sits on the shields: centre of the inner face, and its size.
+const SHIELD_LOGO = { x: 24, y: 23.2, height: 16, cut: 1.7 }
 
-// Diamond: a cut crystal shield with a "B" for Brend Market. The outline is the
+// Diamond: a cut crystal shield with the Brend Market B. The outline is the
 // same eight-sided shape as before. Back to front: a thick polished pink-violet
 // metal rim, a magenta inner bevel, a violet face cut into eight facets, an inner
-// glow, gloss, the letter, then the moving lights. Sides are numbered clockwise
+// glow, gloss, our B, then the moving lights. Sides are numbered clockwise
 // from the top-left edge; the light comes from the top left.
 const CRYSTAL_OUTER: Point[] = [
   [6.8, 8.6],
@@ -92,11 +93,8 @@ const FACE_SHADES: [string, string][] = [
   ["#B845D6", "#6A1BB2"],
 ]
 
-// Bold uppercase B, optically centred in the face.
-const LETTER_B =
-  "M18.2 14.8H24.6C27.1 14.8 28.6 16.2 28.6 18.3C28.6 19.9 27.7 21.1 26.3 21.7C28.4 22.2 29.8 23.7 29.8 26C29.8 28.8 27.8 30.6 24.8 30.6H18.2Z" +
-  "M21.6 17.6V20.6H24.2C25.2 20.6 25.7 20 25.7 19.1C25.7 18.2 25.2 17.6 24.2 17.6Z" +
-  "M21.6 23.6V27.9H24.7C25.9 27.9 26.6 27.1 26.6 25.75C26.6 24.4 25.9 23.6 24.7 23.6Z"
+// Our B, optically centred in the crystal face.
+const CRYSTAL_LOGO = { x: 24, y: 23.6, height: 15.8, cut: 1.6 }
 
 const pts = (...p: Point[]) => p.map(([x, y]) => `${x},${y}`).join(" ")
 const loop = (p: Point[]) => `M${p.map(([x, y]) => `${x} ${y}`).join("L")}Z`
@@ -104,7 +102,7 @@ const mid = (a: Point, b: Point): Point => [round2((a[0] + b[0]) / 2), round2((a
 
 /**
  * full: float, breathing, glow and moving lights.
- * calm: inner glow and the light streak only; no letter halo, so a small B stays crisp.
+ * calm: inner glow and the light streak only; no halo round the B, so a small one stays crisp.
  * none: still.
  */
 type CrystalMotion = "full" | "calm" | "none"
@@ -191,15 +189,16 @@ function Crystal({ uid, motion }: { uid: string; motion: CrystalMotion }) {
           <stop offset="0.6" stopColor="#fff" stopOpacity={0.35} />
           <stop offset="1" stopColor="#fff" stopOpacity={0} />
         </linearGradient>
-        <linearGradient id={`${uid}letter`} gradientUnits="userSpaceOnUse" x1={0} y1={14.8} x2={0} y2={30.6}>
+        <linearGradient id={`${uid}letter`} x1={0} y1={0} x2={0} y2={1}>
           <stop offset="0" stopColor="#F6E8FF" />
           <stop offset="0.36" stopColor="#CFA2FF" />
           <stop offset="0.5" stopColor="#8A40E8" />
           <stop offset="0.66" stopColor="#A468F6" />
           <stop offset="1" stopColor="#D9B8FF" />
         </linearGradient>
+        {/* Blur for the halo round the B, in the B's own (scaled) units. */}
         <filter id={`${uid}soft`} x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation={0.9} />
+          <feGaussianBlur stdDeviation={4.8} />
         </filter>
         <filter id={`${uid}spark`} x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation={0.35} />
@@ -265,32 +264,35 @@ function Crystal({ uid, motion }: { uid: string; motion: CrystalMotion }) {
         strokeLinejoin="round"
       />
 
-      {/* The letter: shadow, glow, metal, crisp edge. It never moves on its own. */}
-      <g data-part="letter">
-        <path d={LETTER_B} fillRule="evenodd" fill="#12022E" opacity={0.7} transform="translate(0 0.9)" />
-        {motion === "calm" ? null : (
-          <path
-            className={moving ? "bm-d-letter-glow" : undefined}
-            d={LETTER_B}
-            fillRule="evenodd"
-            fill="none"
-            stroke="#FF9CF5"
-            strokeWidth={1.4}
-            strokeLinejoin="round"
-            filter={`url(#${uid}soft)`}
-            opacity={0.5}
-          />
-        )}
-        <path
-          d={LETTER_B}
-          fillRule="evenodd"
-          fill={`url(#${uid}letter)`}
-          stroke="#FFE6FF"
-          strokeOpacity={0.9}
-          strokeWidth={0.5}
-          strokeLinejoin="round"
-        />
-      </g>
+      {/* Our B: shadow, halo, metal, crisp edge. It never moves on its own. */}
+      <LogoGlyph
+        data-part="logo"
+        uid={`${uid}d`}
+        {...CRYSTAL_LOGO}
+        layers={[
+          { fill: "#12022E", opacity: 0.7, dy: 0.9 },
+          ...(motion === "calm"
+            ? []
+            : [
+                {
+                  className: moving ? "bm-d-letter-glow" : undefined,
+                  fill: "none",
+                  stroke: "#FF9CF5",
+                  strokeWidth: 1.4,
+                  strokeLinejoin: "round" as const,
+                  filter: `url(#${uid}soft)`,
+                  opacity: 0.5,
+                },
+              ]),
+          {
+            fill: `url(#${uid}letter)`,
+            stroke: "#FFE6FF",
+            strokeOpacity: 0.9,
+            strokeWidth: 0.5,
+            strokeLinejoin: "round" as const,
+          },
+        ]}
+      />
 
       {/* An outline that holds up at 16 px. */}
       <polygon
@@ -338,8 +340,9 @@ function Crystal({ uid, motion }: { uid: string; motion: CrystalMotion }) {
 }
 
 /**
- * Reliability mark. Silver and gold are engraved shields; diamond is a cut
- * violet crystal shield with a metal rim and a "B", so it stands out in any list.
+ * Reliability mark. Silver and gold are shields with our B engraved in the
+ * middle; diamond is a cut violet crystal shield with a metal rim and a glowing
+ * B, so it stands out in any list.
  */
 export function TrustMark({
   tier,
@@ -439,13 +442,14 @@ export function TrustMark({
           <path d={SHIELD} fill={`url(#${uid}silver-rim)`} />
           <path d={SHIELD_INNER} fill={`url(#${uid}silver-face)`} />
           <path d={GLOSS} fill="#fff" opacity={0.35} clipPath={`url(#${uid}clip-shield)`} />
-          <path
-            d="M17 24.6l4.9 4.8 9.4-9.6"
-            fill="none"
-            stroke="#4B535E"
-            strokeWidth={3.4}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <LogoGlyph
+            data-part="logo"
+            uid={`${uid}s`}
+            {...SHIELD_LOGO}
+            layers={[
+              { fill: "#FFFFFF", opacity: 0.85, dy: 0.7 },
+              { fill: "#3D4757" },
+            ]}
           />
         </>
       ) : null}
@@ -455,13 +459,14 @@ export function TrustMark({
           <path d={SHIELD} fill={`url(#${uid}gold-rim)`} />
           <path d={SHIELD_INNER} fill={`url(#${uid}gold-face)`} />
           <path d={GLOSS} fill="#fff" opacity={0.3} clipPath={`url(#${uid}clip-shield)`} />
-          <path
-            d={STAR}
-            fill="#8A5600"
-            stroke="#8A5600"
-            strokeWidth={1.1}
-            strokeLinejoin="round"
-            transform="translate(0 1.2)"
+          <LogoGlyph
+            data-part="logo"
+            uid={`${uid}g`}
+            {...SHIELD_LOGO}
+            layers={[
+              { fill: "#FFF4CF", opacity: 0.8, dy: 0.7 },
+              { fill: "#7A4A00" },
+            ]}
           />
           {animate ? (
             <g clipPath={`url(#${uid}clip-shield)`}>

@@ -1,4 +1,4 @@
-export { BrandLogo } from "./logo"
+export { BrandLogo, LogoMark } from "./logo"
 export { VerifiedChip } from "./verified-chip"
 export { StatusBadge } from "./status-badge"
 export { SurfaceCard } from "./surface-card"
