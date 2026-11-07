@@ -18,13 +18,12 @@ import { useCompaniesStore } from "@/lib/store/companies-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { getActorId } from "@/lib/auth-display"
 import { getRfqBuyerName } from "@/lib/buyer-display"
-import { formatIsoDate } from "@/lib/format"
 import { isApiEnabled } from "@/lib/api/config"
 import {
   useSupplierProposalsQuery,
   useSupplierRfqBoardQuery,
 } from "@/hooks/api/use-supplier-rfqs-query"
-import { MyProposalsTable } from "@/components/supplier/proposals/my-proposals-table"
+import { MyProposalsList } from "@/components/supplier/proposals/my-proposals-list"
 import type { ProposalWithRelations, RfqWithRelations } from "@/types"
 
 export default function SupplierProposalsPage() {
@@ -68,16 +67,13 @@ export default function SupplierProposalsPage() {
     return rfq ? getRfqBuyerName(rfq, getCompany) : "Заказчик"
   }
 
-  const getValidUntil = (rfqId: string) => {
-    const deadline = resolveRfq(rfqId)?.deadline
-    return deadline ? formatIsoDate(deadline) : "—"
-  }
+  const getDeadline = (rfqId: string) => resolveRfq(rfqId)?.deadline
 
   return (
     <PageFrame>
       <PageHeader
         title="Мои КП"
-        description="Отправленные коммерческие предложения"
+        description="Отправленные КП и что с ними: покупатель ещё выбирает, выбрал вас или другого поставщика"
       />
 
       {!hydrated || (useApi && isLoading) ? (
@@ -100,11 +96,11 @@ export default function SupplierProposalsPage() {
           </div>
         </PageSurface>
       ) : (
-        <MyProposalsTable
+        <MyProposalsList
           proposals={allProposals}
           getRfqTitle={getRfqTitle}
           getBuyerName={getBuyerName}
-          getValidUntil={getValidUntil}
+          getDeadline={getDeadline}
         />
       )}
 
