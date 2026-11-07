@@ -4,7 +4,19 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
-import { ArrowLeftIcon as ArrowLeft, CheckIcon as Check, EyeIcon as Eye, ChatTextIcon as MessageSquare, StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
+import {
+  ArrowLeftIcon as ArrowLeft,
+  CalendarCheckIcon as CalendarCheck,
+  ChatCircleTextIcon as ChatCircle,
+  CheckIcon as Check,
+  ClockIcon as Clock,
+  EyeIcon as Eye,
+  HandshakeIcon as Handshake,
+  MapPinIcon as MapPin,
+  ChatTextIcon as MessageSquare,
+  SealCheckIcon as SealCheck,
+  StarIcon as Star,
+} from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
 import { ReputationBadge } from "@/components/bm/reputation-badge"
 import { CompanyName } from "@/components/bm"
@@ -32,6 +44,8 @@ import { useOpenDirectChatMutation } from "@/hooks/api/use-direct-chats-query"
 import { cn } from "@/lib/utils"
 import type { MarketplacePerformer } from "@/types/marketplace"
 import { SideReputationList } from "@/components/company/side-reputation"
+import { CardChip, CardList, ListCard, StatusPill } from "@/components/layout/card-list"
+import { RatingStars } from "@/components/reviews/review-card-list"
 
 type PerformerDetailContentProps = {
   performerId: number
@@ -148,6 +162,36 @@ export const PerformerDetailContent = ({
     ["Бренды", profile?.brands ?? ""],
   ].filter(([, v]) => Boolean(v))
 
+  const handleWrite = () => {
+    const messagesHref = `/customer/messages?supplier=${performer.id}`
+    if (guestPreview) {
+      toast.message("Это предпросмотр витрины — чат отсюда не создаётся")
+      return
+    }
+    if (!isAuthenticated) {
+      router.push(`/login?redirect=${encodeURIComponent(messagesHref)}`)
+      return
+    }
+    if (user?.role !== "customer" && !user?.capabilities.buyer) {
+      toast.error("Написать исполнителю можно из кабинета покупателя")
+      return
+    }
+    if (useApi) {
+      openDirectChat.mutate(performer.id, {
+        onSuccess: () => router.push(messagesHref),
+        onError: (error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Не удалось открыть чат",
+          )
+        },
+      })
+      return
+    }
+    router.push(messagesHref)
+  }
+
   const tabs: { id: StoreTab; label: string; count?: number }[] = [
     { id: "goods", label: "Товары и услуги", count: services.length },
     { id: "about", label: "Проверка компании" },
@@ -184,17 +228,51 @@ export const PerformerDetailContent = ({
           </Link>
         )}
 
-        <section className="grid gap-6 rounded-2xl border border-line bg-white p-6 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-8 lg:grid-cols-[1fr_auto]">
-          <div className="flex flex-col gap-5 sm:flex-row">
-            <div
-              className={cn(
-                "grid size-20 shrink-0 place-items-center rounded-2xl text-[24px] font-bold text-white",
-                performer.color,
+        <section className="overflow-hidden rounded-3xl border border-line bg-white shadow-[0_18px_40px_-28px_rgb(0_50_140/0.45)]">
+          {/* Cover: the brand field, so every company page opens the same way. */}
+          <div className="relative h-28 bg-brand-field md:h-36" aria-hidden>
+            <span className="absolute inset-0 bg-[radial-gradient(60%_120%_at_10%_100%,rgb(255_255_255/0.14),transparent_60%)]" />
+          </div>
+          <div className="px-5 pb-6 md:px-8">
+            <div className="relative z-10 -mt-12 flex flex-wrap items-end justify-between gap-4 md:-mt-14">
+              {apiSupplier?.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={resolveFileUrl(apiSupplier.logo) || apiSupplier.logo}
+                  alt=""
+                  className="size-24 rounded-2xl border-4 border-white bg-white object-cover shadow-[0_8px_20px_-10px_rgb(0_30_90/0.5)] md:size-28"
+                />
+              ) : (
+                <div
+                  className={cn(
+                    "grid size-24 place-items-center rounded-2xl border-4 border-white text-[28px] font-bold text-white shadow-[0_8px_20px_-10px_rgb(0_30_90/0.5)] md:size-28",
+                    performer.color,
+                  )}
+                >
+                  {performer.initials}
+                </div>
               )}
-            >
-              {performer.initials}
+              <div className="flex w-full gap-2 sm:w-auto">
+                <Button asChild size="lg" className="flex-1 sm:flex-none">
+                  <Link href={createRfqHref({ supplierId: performer.id, performer: performer.id })}>
+                    Запросить цену
+                  </Link>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="flex-1 sm:flex-none"
+                  disabled={openDirectChat.isPending}
+                  onClick={handleWrite}
+                >
+                  <MessageSquare className="size-4" aria-hidden />
+                  Написать
+                </Button>
+              </div>
             </div>
-            <div className="grid content-start gap-2">
+
+            <div className="mt-4 grid gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <CompanyName
                   as="h1"
@@ -206,132 +284,84 @@ export const PerformerDetailContent = ({
                 />
                 <ReputationBadge tier={profileTier} size={22} />
               </div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
                 {performer.verified ? (
-                  <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand-700">
-                    <Check className="size-4" aria-hidden />
-                    {apiSupplier?.kind === "individual"
-                      ? "Личность подтверждена"
-                      : "Проверенная компания"}
-                  </span>
-                ) : performer.verificationStatus === "unverified" ? (
-                  <span className="text-[13px] font-medium text-mute">Не проверен</span>
+                  <StatusPill tone="safe" icon={SealCheck}>
+                    {apiSupplier?.kind === "individual" ? "Личность подтверждена" : "Проверенная компания"}
+                  </StatusPill>
                 ) : performer.verificationStatus === "rejected" ? (
-                  <span className="text-[13px] font-semibold text-destructive">
-                    Проверка отклонена
-                  </span>
+                  <StatusPill tone="danger">Проверка отклонена</StatusPill>
+                ) : performer.verificationStatus === "unverified" ? (
+                  <StatusPill tone="muted">Не проверен</StatusPill>
                 ) : performer.verificationStatus === "needs_documents" ? (
-                  <span className="text-[13px] font-semibold text-amber-700">
-                    Нужны документы
-                  </span>
+                  <StatusPill tone="warn">Нужны документы</StatusPill>
                 ) : (
-                  <span className="text-[13px] font-semibold text-amber-700">
-                    На проверке
-                  </span>
+                  <StatusPill tone="warn">На проверке</StatusPill>
                 )}
-                <span className="inline-flex items-center gap-1 text-[14px]">
-                  <Star className="size-4 fill-amber-400 text-amber-400" weight="fill" />
-                  <b>{performer.rating.toFixed(1)}</b>
-                  <span className="text-mute">({performer.reviews})</span>
-                </span>
-                <span className="text-[14px] text-mute">
-                  {performer.city}
-                  {apiSupplier?.country ? `, ${apiSupplier.country}` : ", Таджикистан"}
-                </span>
+                <StatusPill tone="muted" className="text-ink">
+                  <Star className="size-4 text-amber-500" weight="fill" aria-hidden />
+                  <b className="tnum">{performer.rating.toFixed(1)}</b>
+                  <span className="text-mute">· отзывов: {performer.reviews}</span>
+                </StatusPill>
+                <StatusPill tone="muted" icon={MapPin}>
+                  {[performer.city !== "—" ? performer.city : null, apiSupplier?.country ?? "Таджикистан"]
+                    .filter(Boolean)
+                    .join(", ")}
+                </StatusPill>
               </div>
               {performer.description ? (
-                <p className="mt-1 max-w-2xl text-[15.5px] text-ink/80">
-                  {performer.description}
-                </p>
+                <p className="max-w-3xl text-[15.5px] leading-relaxed text-ink-soft">{performer.description}</p>
               ) : null}
-              <SideReputationList reputation={apiCompany?.reputation} className="mt-3" />
+              {apiSupplier?.industries?.length ? (
+                <div className="flex flex-wrap gap-2" aria-label="Направления">
+                  {apiSupplier.industries.map((industry) => (
+                    <CardChip key={industry}>{industry}</CardChip>
+                  ))}
+                </div>
+              ) : null}
+              <SideReputationList reputation={apiCompany?.reputation} />
             </div>
-          </div>
 
-          <div className="flex gap-2 lg:w-56 lg:flex-col">
-            <Button asChild size="lg" className="flex-1 lg:w-full">
-              <Link
-                href={createRfqHref({
-                  supplierId: performer.id,
-                  performer: performer.id,
-                })}
-              >
-                Запросить цену
-              </Link>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              className="flex-1 lg:w-full"
-              disabled={openDirectChat.isPending}
-              onClick={() => {
-                const messagesHref = `/customer/messages?supplier=${performer.id}`
-                if (guestPreview) {
-                  toast.message("Это предпросмотр витрины — чат отсюда не создаётся")
-                  return
-                }
-                if (!isAuthenticated) {
-                  router.push(`/login?redirect=${encodeURIComponent(messagesHref)}`)
-                  return
-                }
-                if (user?.role !== "customer" && !user?.capabilities.buyer) {
-                  toast.error("Написать исполнителю можно из кабинета покупателя")
-                  return
-                }
-                if (useApi) {
-                  openDirectChat.mutate(performer.id, {
-                    onSuccess: () => router.push(messagesHref),
-                    onError: (error) => {
-                      toast.error(
-                        error instanceof Error
-                          ? error.message
-                          : "Не удалось открыть чат",
-                      )
-                    },
-                  })
-                  return
-                }
-                router.push(messagesHref)
-              }}
-            >
-              <MessageSquare className="size-4" aria-hidden />
-              Написать
-            </Button>
+            <dl className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+              {(
+                [
+                  [Handshake, "Сделок на площадке", String(deals)],
+                  [Clock, "Обычно отвечает за", "—"],
+                  [ChatCircle, "Отвечает на заявки", successRate],
+                  [CalendarCheck, "На рынке", yearsLabel],
+                ] as const
+              ).map(([Icon, label, value]) => (
+                <div key={label} className="flex items-center gap-3 rounded-2xl border border-line bg-canvas/60 p-4">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
+                    <Icon className="size-5" weight="duotone" aria-hidden />
+                  </span>
+                  <span className="grid min-w-0">
+                    <dt className="truncate text-[12.5px] text-mute">{label}</dt>
+                    <dd className="text-[19px] font-bold text-ink tnum">{value}</dd>
+                  </span>
+                </div>
+              ))}
+            </dl>
           </div>
-
-          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:col-span-2">
-            {[
-              ["Сделок на площадке", String(deals)],
-              ["Обычно отвечает за", "—"],
-              ["Отвечает на заявки", successRate],
-              ["На рынке", yearsLabel],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-xl bg-canvas p-4">
-                <dt className="text-[13px] text-mute">{label}</dt>
-                <dd className="mt-0.5 text-[20px] font-bold">{value}</dd>
-              </div>
-            ))}
-          </dl>
         </section>
 
         <div className="mt-8">
-          <div className="mb-5 flex flex-wrap gap-1 rounded-xl bg-surface-muted p-1">
+          <div className="mb-5 inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-line bg-white p-1">
             {tabs.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setTab(item.id)}
                 className={cn(
-                  "h-10 rounded-lg px-4 text-[14px] font-semibold transition-colors",
+                  "h-9 rounded-lg px-4 text-[14px] font-semibold transition-colors",
                   tab === item.id
-                    ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
-                    : "text-mute hover:text-ink",
+                    ? "bg-brand-600 text-white"
+                    : "text-mute hover:bg-brand-50 hover:text-brand-700",
                 )}
               >
                 {item.label}
                 {item.count != null ? (
-                  <span className="ml-1.5 text-mute">{item.count}</span>
+                  <span className={cn("ml-1.5", tab === item.id ? "text-white/80" : "text-faint")}>{item.count}</span>
                 ) : null}
               </button>
             ))}
@@ -424,37 +454,29 @@ export const PerformerDetailContent = ({
           ) : null}
 
           {tab === "reviews" ? (
-            <div className="max-w-3xl rounded-2xl border border-line bg-white p-6">
-              {apiReviews.length > 0 ? (
-                <ul className="divide-y divide-line">
-                  {apiReviews.map((review) => (
-                    <li key={review.id} className="grid gap-1 py-3">
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={cn(
-                              "size-3.5",
-                              i < review.rating
-                                ? "fill-amber-400 text-amber-400"
-                                : "text-line-strong",
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-[14.5px]">
+            apiReviews.length > 0 ? (
+              <CardList label="Отзывы о компании" className="max-w-3xl">
+                {apiReviews.map((review) => (
+                  <ListCard key={review.id} tone={review.rating >= 4 ? "safe" : review.rating <= 2 ? "danger" : "warn"}>
+                    <div className="grid gap-2 p-4 pl-5">
+                      <span className="flex items-center justify-between gap-3">
+                        <RatingStars rating={review.rating} />
+                        <span className="text-[12.5px] text-mute">
+                          {new Date(review.created_at).toLocaleDateString("ru-RU")}
+                        </span>
+                      </span>
+                      <p className={cn("text-[15px] leading-relaxed", review.comment ? "text-ink-soft" : "text-mute")}>
                         {review.comment || "Без комментария"}
                       </p>
-                      <span className="text-[12.5px] text-mute">
-                        {new Date(review.created_at).toLocaleDateString("ru-RU")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-[14px] text-mute">Отзывов пока нет.</p>
-              )}
-            </div>
+                    </div>
+                  </ListCard>
+                ))}
+              </CardList>
+            ) : (
+              <p className="max-w-3xl rounded-2xl border border-dashed border-line-strong bg-white px-6 py-10 text-center text-[14px] text-mute">
+                Отзывов пока нет.
+              </p>
+            )
           ) : null}
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { Suspense, useMemo, useState } from "react"
 import Link from "next/link"
-import { StackIcon as Boxes, PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
+import { PlusIcon as Plus } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useItemsStore } from "@/lib/store/items-store"
 import { useHydrated } from "@/hooks/use-hydrated"
@@ -21,16 +21,11 @@ import {
   useSupplierNavCounts,
 } from "@/hooks/api/use-nav-counts-query"
 import { CatalogProductCard } from "@/components/supplier/catalog/catalog-product-card"
+import { ShowcaseEmpty } from "@/components/supplier/catalog/showcase-empty"
 import { ListPagination } from "@/components/list-pagination"
 import { Button } from "@/components/ui/button"
 import { MetricTile } from "@/components/process"
-import {
-  PageEmptyState,
-  PageFrame,
-  PageHeader,
-  PageSurface,
-  SegmentedControl,
-} from "@/components/layout"
+import { PageFrame, PageHeader, SegmentedControl } from "@/components/layout"
 import { scoreCatalogItem, scoreLevel } from "@/lib/catalog-quality-score"
 import type { ItemStatus } from "@/types"
 
@@ -172,21 +167,7 @@ function SupplierCatalogContent() {
           ))}
         </div>
       ) : items.length === 0 ? (
-        <PageSurface>
-          <PageEmptyState
-            icon={<Boxes size={32} />}
-            title="Каталог пуст"
-            description="Добавьте товары или услуги для отображения в профиле"
-          />
-          <div className="flex justify-center pb-10">
-            <Button asChild size="lg">
-              <Link href="/supplier/catalog/new">
-                <Plus size={15} />
-                Добавить товар
-              </Link>
-            </Button>
-          </div>
-        </PageSurface>
+        <ShowcaseEmpty filtered={tab !== "all"} />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (

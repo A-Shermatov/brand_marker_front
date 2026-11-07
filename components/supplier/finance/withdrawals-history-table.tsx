@@ -1,6 +1,15 @@
 "use client"
 
+import { BankIcon } from "@phosphor-icons/react/dist/ssr"
 import { statusPillClass } from "@/components/ui/status-badge"
+import {
+  CardFact,
+  CardLine,
+  CardList,
+  CardMeta,
+  ListCard,
+  ListCardBody,
+} from "@/components/layout/card-list"
 import type { Withdrawal, WithdrawalDestination } from "@/types"
 import { withdrawalStatusMeta } from "@/lib/finance-display"
 import { formatCurrency, formatIsoDateTime } from "@/lib/format"
@@ -10,97 +19,35 @@ type WithdrawalsHistoryTableProps = {
   getDestination: (id: number) => WithdrawalDestination | undefined
 }
 
-export const WithdrawalsHistoryTable = ({
-  withdrawals,
-  getDestination,
-}: WithdrawalsHistoryTableProps) => {
+/** Payouts to the supplier's bank account: where, how much, how it went. */
+export const WithdrawalsHistoryTable = ({ withdrawals, getDestination }: WithdrawalsHistoryTableProps) => {
   if (withdrawals.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground text-center py-6">
-        История выводов пуста
-      </p>
-    )
+    return <p className="py-6 text-center text-sm text-muted-foreground">История выводов пуста</p>
   }
-
   return (
-    <>
-      <div className="hidden md:block overflow-hidden rounded-xl border border-border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-secondary/40">
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Счёт / кошелёк</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Сумма</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Статус</th>
-              <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground">Дата и время</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {withdrawals.map((withdrawal) => {
-              const destination = getDestination(withdrawal.destination_id)
-              const meta = withdrawalStatusMeta[withdrawal.status]
-              return (
-                <tr key={withdrawal.id} className="hover:bg-secondary/30 transition-colors">
-                  <td className="px-4 py-3">
-                    <p className="font-semibold text-foreground">
-                      {destination?.label ?? "—"}
-                    </p>
-                    {destination && (
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-[200px]">
-                        {destination.details}
-                      </p>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 font-medium text-primary whitespace-nowrap">
+    <CardList label="Выводы денег">
+      {withdrawals.map((withdrawal) => {
+        const destination = getDestination(withdrawal.destination_id)
+        const meta = withdrawalStatusMeta[withdrawal.status]
+        return (
+          <ListCard key={withdrawal.id}>
+            <ListCardBody
+              aside={
+                <>
+                  <CardFact label="Сумма" className="min-w-[130px]">
                     {formatCurrency(withdrawal.amount, withdrawal.currency)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`${statusPillClass} ${meta.className}`}>
-                      {meta.label}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap tnum">
-                    {formatIsoDateTime(
-                      withdrawal.completed_at || withdrawal.created_at,
-                    )}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="md:hidden space-y-3">
-        {withdrawals.map((withdrawal) => {
-          const destination = getDestination(withdrawal.destination_id)
-          const meta = withdrawalStatusMeta[withdrawal.status]
-          return (
-            <div
-              key={withdrawal.id}
-              className="rounded-xl border border-border p-4"
+                  </CardFact>
+                  <span className={`${statusPillClass} ${meta.className}`}>{meta.label}</span>
+                </>
+              }
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-foreground">
-                    {destination?.label ?? "—"}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground tnum">
-                    {formatIsoDateTime(
-                      withdrawal.completed_at || withdrawal.created_at,
-                    )}
-                  </p>
-                </div>
-                <span className={`${statusPillClass} flex-shrink-0 ${meta.className}`}>
-                  {meta.label}
-                </span>
-              </div>
-              <p className="text-sm font-bold text-primary mt-2">
-                {formatCurrency(withdrawal.amount, withdrawal.currency)}
-              </p>
-            </div>
-          )
-        })}
-      </div>
-    </>
+              <CardMeta>{formatIsoDateTime(withdrawal.completed_at || withdrawal.created_at)}</CardMeta>
+              <span className="text-[15px] font-semibold text-ink">{destination?.label ?? "Счёт удалён"}</span>
+              {destination?.details ? <CardLine icon={BankIcon}>{destination.details}</CardLine> : null}
+            </ListCardBody>
+          </ListCard>
+        )
+      })}
+    </CardList>
   )
 }
