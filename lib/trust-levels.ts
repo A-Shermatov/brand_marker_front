@@ -166,11 +166,12 @@ export const resolveReputationTier = (stats: ReputationStats): ReputationTier =>
   return "none"
 }
 
-/** Prefer the tier computed by the API; fall back to local stats. */
+/**
+ * The API's tier when it sent one (it counts both roles and the admin's mark);
+ * local stats only for demo data without an API.
+ */
 export const pickReputationTier = (
   apiTier: string | null | undefined,
   stats: ReputationStats,
-): ReputationTier => {
-  const fromApi = normalizeReputationTier(apiTier)
-  return fromApi !== "none" ? fromApi : resolveReputationTier(stats)
-}
+): ReputationTier =>
+  apiTier == null ? resolveReputationTier(stats) : normalizeReputationTier(apiTier)

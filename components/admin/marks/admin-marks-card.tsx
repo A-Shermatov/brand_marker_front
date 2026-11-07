@@ -38,6 +38,19 @@ const TIER_CHOICES: { value: AdminTierChoice; label: string }[] = [
 const formatDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" }) : ""
 
+/** Where the mark shows: one mark per owner, on all their profiles. */
+const sidesLabel = (mark: AdminSupplierMark) => {
+  const sides = mark.sides ?? []
+  const both = sides.includes("supplier") && sides.includes("buyer")
+  const where = both
+    ? "в профилях покупателя и поставщика"
+    : sides.includes("buyer")
+      ? "в профиле покупателя"
+      : "в профиле поставщика"
+  const names = [...new Set((mark.profiles ?? []).map((p) => p.display_name))]
+  return names.length > 1 ? `Виден ${where}: ${names.join(", ")}` : `Виден ${where}`
+}
+
 /** Admin: give or remove a paid plan and pin or remove the reliability mark. */
 export function AdminMarksCard(props: AdminMarksCardProps) {
   const queryClient = useQueryClient()
@@ -61,7 +74,7 @@ export function AdminMarksCard(props: AdminMarksCardProps) {
       <div className="grid content-start gap-3 border-line lg:border-l lg:pl-5">
         <h2 className="text-[15.5px] font-semibold text-ink">{TRUST_MARK_NAME}</h2>
         {data.suppliers.length === 0 ? (
-          <p className="text-[13.5px] text-mute">У пользователя нет профиля поставщика.</p>
+          <p className="text-[13.5px] text-mute">У пользователя нет профилей покупателя или поставщика.</p>
         ) : (
           data.suppliers.map((supplier) => (
             <ReputationRow
@@ -217,6 +230,7 @@ function ReputationRow({
         <TrustMark tier={supplier.tier} size={32} still />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[14px] font-semibold text-ink">{supplier.display_name}</p>
+          <p className="text-[12.5px] text-mute">{sidesLabel(supplier)}</p>
           <p className="text-[12.5px] text-mute">
             {reputationTierLabel(supplier.tier)}
             {pinned

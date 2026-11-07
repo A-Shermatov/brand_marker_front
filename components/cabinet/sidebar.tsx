@@ -29,6 +29,7 @@ import {
   emptyBuyerNavCounts,
   useBuyerNavCounts,
 } from "@/hooks/api/use-nav-counts-query"
+import { useBuyerMarks } from "@/hooks/use-buyer-marks"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { BUYER_HUBS, matchHub } from "@/lib/cabinet-nav"
@@ -49,6 +50,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
   const countsQuery = useBuyerNavCounts()
   const counts = countsQuery.data ?? emptyBuyerNavCounts()
   const { openSupport } = useSupportChat()
+  const marks = useBuyerMarks()
   const activeHub = matchHub(BUYER_HUBS, pathname, "/customer")
 
   const badgeFor = (keys?: string[]) => {
@@ -64,7 +66,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
   }
 
   const companyName =
-    hydrated && user?.company ? user.company : "Покупатель"
+    marks.title ?? (hydrated && user?.company ? user.company : "Покупатель")
 
   return (
     <nav className="flex h-full flex-col gap-1 p-3" aria-label="Меню кабинета">
@@ -75,6 +77,9 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
         name={companyName}
         role="Кабинет покупателя"
         initials={initialsOf(companyName, "ПК")}
+        verified={marks.verified}
+        tier={marks.tier}
+        plan={marks.plan}
         onClick={onNavigate}
       />
 

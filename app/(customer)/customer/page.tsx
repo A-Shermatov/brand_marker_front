@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr"
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { useAuthStore } from "@/lib/store/auth-store"
+import { useBuyerMarks } from "@/hooks/use-buyer-marks"
 import { useRfqsStore } from "@/lib/store/rfqs-store"
 import { useProposalsStore } from "@/lib/store/proposals-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
@@ -62,6 +63,7 @@ export default function CustomerDashboard() {
   const user = useAuthStore((s) => s.user)
   const actorId = getActorId(user)
   const userId = user?.userId ?? 0
+  const marks = useBuyerMarks()
   const useApi = isApiEnabled()
 
   const getRfqsByBuyer = useRfqsStore((s) => s.getRfqsByBuyer)
@@ -228,7 +230,7 @@ export default function CustomerDashboard() {
     })
   }, [useApi, paymentHistoryPage?.items])
 
-  const companyTitle = hydrated && user?.company ? user.company : "Покупатель"
+  const companyTitle = marks.title ?? (hydrated && user?.company ? user.company : "Покупатель")
   const name = firstName(user?.name)
 
   return (
@@ -245,7 +247,15 @@ export default function CustomerDashboard() {
             {greet()}
             {name ? `, ${name}` : ""}
           </p>
-          <CompanyName as="h1" name={companyTitle} size="xl" className="mt-0.5" />
+          <CompanyName
+            as="h1"
+            name={companyTitle}
+            verified={marks.verified}
+            tier={marks.tier}
+            plan={marks.plan}
+            size="xl"
+            className="mt-0.5"
+          />
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">

@@ -51,16 +51,12 @@ describe("tier helpers", () => {
     expect(normalizeReputationTier("DIAMOND")).toBe("diamond")
   })
 
-  it("prefers the tier computed by the API", () => {
+  it("trusts the tier from the API, counting only demo data locally", () => {
+    const strong = { verification_status: "verified", completed_contracts: 12, rating: 4.6, success_rate: 95 }
     expect(pickReputationTier("gold", { verification_status: "pending" })).toBe("gold")
-    expect(
-      pickReputationTier("none", {
-        verification_status: "verified",
-        completed_contracts: 12,
-        rating: 4.6,
-        success_rate: 95,
-      }),
-    ).toBe("silver")
+    // The API may say "none" on purpose (admin removed the mark, lost disputes as a buyer).
+    expect(pickReputationTier("none", strong)).toBe("none")
+    expect(pickReputationTier(undefined, strong)).toBe("silver")
   })
 
   it("names the marks and says they cannot be bought", () => {

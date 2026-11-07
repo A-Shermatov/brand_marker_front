@@ -1011,6 +1011,10 @@ export type AdminSubscriptionState = {
 export type AdminSupplierMark = {
   actor_id: number
   display_name: string
+  /** Roles the mark shows on: "supplier", "buyer" */
+  sides?: string[]
+  /** Every profile of the owner (own and company ones) that shows the mark */
+  profiles?: { actor_id: number; side: string; display_name: string }[]
   tier_auto: string
   tier_override: string | null
   tier: string

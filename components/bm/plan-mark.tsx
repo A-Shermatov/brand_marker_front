@@ -3,6 +3,7 @@
 import { useId } from "react"
 import { cn } from "@/lib/utils"
 import { normalizePlan, planMarkHint, type PaidPlan } from "@/lib/subscription"
+import { SMALL_MARK_MAX, SmallPlanGlyph } from "@/components/bm/small-marks"
 
 type PlanMarkProps = {
   plan: string | null | undefined
@@ -105,13 +106,30 @@ function Tile({ tier, size, className, decorative, still, label }: {
   still: boolean
   label: string
 }) {
-  const uid = useId().replace(/:/g, "")
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "")
   const style = STYLES[tier]
   const animate = !still && tier !== "free"
   const delay = `${offsetFor(uid)}s`
   const a11y = decorative
     ? { "aria-hidden": true as const }
     : { role: "img" as const, "aria-label": label }
+
+  if (size <= SMALL_MARK_MAX) {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 20 20"
+        data-plan={tier}
+        data-size="small"
+        className={cn("shrink-0", className)}
+        {...a11y}
+      >
+        {decorative ? null : <title>{label}</title>}
+        <SmallPlanGlyph tier={tier} uid={uid} moving={animate} delay={delay} />
+      </svg>
+    )
+  }
 
   return (
     <svg
