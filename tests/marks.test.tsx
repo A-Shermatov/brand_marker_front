@@ -28,14 +28,36 @@ describe("TrustMark", () => {
     expect(out).not.toContain("bm-tw")
   })
 
-  it("keeps the diamond calm next to a name: glow and streak, no float, edge lights or letter halo", () => {
-    const out = html(<TrustMark tier="diamond" size={18} />)
+  it("keeps the diamond calm in the middle sizes: glow and streak, no float, edge lights or letter halo", () => {
+    const out = html(<TrustMark tier="diamond" size={26} />)
     expect(out).toContain("bm-glow-diamond")
     expect(out).toContain("bm-d-streak")
     expect(out).not.toContain("bm-d-idle")
     expect(out).not.toContain("bm-d-edge")
     expect(out).not.toContain("bm-d-letter-glow")
     expect(out).toContain('data-part="letter"')
+  })
+
+  it.each(["none", "silver", "gold", "diamond"] as const)(
+    "draws a sharp small %s next to a name: no blur, glow or hairlines",
+    (tier) => {
+      for (const size of [16, 18, 20, 24]) {
+        const out = html(<TrustMark tier={tier} size={size} />)
+        expect(out).toContain('data-size="small"')
+        expect(out).toContain('viewBox="0 0 20 20"')
+        expect(out).not.toMatch(/<filter|feGaussianBlur|bm-glow-|bm-d-idle|bm-d-edge|bm-mark-sweep/)
+        // Every stroke at least 0.9 of the 20-unit grid: about a pixel at 16 px.
+        const widths = [...out.matchAll(/stroke-width="([\d.]+)"/g)].map((m) => Number(m[1]))
+        expect(widths.every((w) => w >= 0.9)).toBe(true)
+      }
+    },
+  )
+
+  it("keeps the B on a small diamond and moves only its light streak", () => {
+    const out = html(<TrustMark tier="diamond" size={18} />)
+    expect(out).toContain('data-part="letter"')
+    expect(out).toContain("bm-d-streak")
+    expect(html(<TrustMark tier="diamond" size={18} still />)).not.toContain("bm-d-streak")
   })
 
   it("draws a still diamond without any motion", () => {
@@ -80,9 +102,24 @@ describe("PlanMark", () => {
     expect(html(<PlanMark plan="start" />)).toContain("bm-plan-flash")
     expect(html(<PlanMark plan="start" />)).not.toContain("bm-plan-sweep")
     expect(html(<PlanMark plan="pro" />)).toContain("bm-plan-sweep")
-    const business = html(<PlanMark plan="business" />)
+    const business = html(<PlanMark plan="business" size={40} />)
     expect(business).toContain("bm-plan-sweep")
     expect(business).toContain("bm-tw")
+    // Small tiles keep the sweep but drop the sparkle, which is noise at 16 px.
+    expect(html(<PlanMark plan="business" size={16} />)).toContain("bm-plan-sweep")
+    expect(html(<PlanMark plan="business" size={16} />)).not.toContain("bm-tw")
+  })
+
+  it.each(["start", "pro", "business"] as const)("draws a sharp small %s tile", (plan) => {
+    for (const size of [15, 16, 18, 20]) {
+      const out = html(<PlanMark plan={plan} size={size} />)
+      expect(out).toContain('data-size="small"')
+      expect(out).toContain(`data-plan="${plan}"`)
+      expect(out).not.toMatch(/<filter|feGaussianBlur/)
+      const widths = [...out.matchAll(/stroke-width="([\d.]+)"/g)].map((m) => Number(m[1]))
+      expect(widths.every((w) => w >= 0.9)).toBe(true)
+    }
+    expect(html(<PlanMark plan={plan} size={40} />)).not.toContain('data-size="small"')
   })
 
   it("still marks do not move", () => {
@@ -106,7 +143,8 @@ describe("PlanMark", () => {
   })
 
   it("tells buyers the plan is paid promotion", () => {
-    expect(planMarkHint("pro")).toContain("платное продвижение")
+    expect(planMarkHint("pro")).toContain("платная подписка")
+    expect(planMarkHint("pro")).toContain("не знак надёжности")
     expect(normalizePlan("Business")).toBe("business")
   })
 })

@@ -2,7 +2,9 @@ import Link from "next/link"
 import { BuildingsIcon as Building2, MapPinIcon as MapPin, ShieldCheckIcon as ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import type { PublicBuyer } from "@/types"
 import { BuyerRating } from "@/components/supplier/rfq/buyer-rating"
+import { CompanyName } from "@/components/bm"
 import { formatCount } from "@/lib/format"
+import { profileMarks } from "@/lib/supplier-marks"
 
 type ContractBuyerCardProps = {
   buyer: PublicBuyer | null | undefined
@@ -45,11 +47,13 @@ export const ContractBuyerCard = ({ buyer, loading }: ContractBuyerCardProps) =>
           <Building2 size={22} className="text-primary" />
         </div>
         <div className="min-w-0">
-          <Link
-            href={`/supplier/customers/${buyer.actor_id}`}
-            className="text-sm font-bold text-foreground hover:text-primary hover:underline"
-          >
-            {buyer.display_name}
+          <Link href={`/supplier/customers/${buyer.actor_id}`} className="group inline-flex max-w-full">
+            <CompanyName
+              name={buyer.display_name}
+              {...profileMarks(buyer)}
+              size="sm"
+              nameClassName="font-bold group-hover:text-primary group-hover:underline"
+            />
           </Link>
           {buyer.legal_name && (
             <p className="mt-0.5 truncate text-xs text-muted-foreground">

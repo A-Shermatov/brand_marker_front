@@ -11,7 +11,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "icons:export": "vite-node --config vitest.config.mts scripts/export-marks.tsx"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

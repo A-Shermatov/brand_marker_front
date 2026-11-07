@@ -2,7 +2,9 @@ import Link from "next/link"
 import { BuildingsIcon as Building2, MapPinIcon as MapPin, ShieldCheckIcon as ShieldCheck, UserIcon as User } from "@phosphor-icons/react/dist/ssr"
 import type { RfqBuyerSummary } from "@/types/rfq"
 import { BuyerRating } from "@/components/supplier/rfq/buyer-rating"
+import { CompanyName } from "@/components/bm"
 import { formatCount } from "@/lib/format"
+import { profileMarks } from "@/lib/supplier-marks"
 
 type RfqBuyerProfileCardProps = {
   buyer: RfqBuyerSummary | undefined
@@ -38,7 +40,7 @@ export const RfqBuyerProfileCard = ({ buyer }: RfqBuyerProfileCardProps) => {
           <BuyerIcon size={22} className="text-primary" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-bold text-foreground">{buyer.display_name}</p>
+          <CompanyName as="p" name={buyer.display_name} {...profileMarks(buyer)} size="sm" nameClassName="font-bold" />
           {buyer.legal_name && (
             <p className="text-xs text-muted-foreground mt-0.5 truncate">{buyer.legal_name}</p>
           )}

@@ -14,7 +14,9 @@ import { publicKeys } from "@/hooks/api/use-public-query"
 import { publicApi } from "@/lib/api/public"
 import { getActorId } from "@/lib/auth-display"
 import { formatCount, formatPrice } from "@/lib/format"
+import { CompanyName } from "@/components/bm"
 import { ListPagination } from "@/components/list-pagination"
+import { profileMarks, type CompanyMarks } from "@/lib/supplier-marks"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import type { ContractWithRelations, Review } from "@/types"
 
@@ -28,6 +30,7 @@ interface CustomerGroup {
   latestContractId: number
   rating: number | null
   reviewsCount: number
+  marks: CompanyMarks | null
 }
 
 const avgRating = (reviews: Review[]) => {
@@ -38,10 +41,10 @@ const avgRating = (reviews: Review[]) => {
 
 const groupCustomers = (
   contracts: ContractWithRelations[],
-): Omit<CustomerGroup, "name" | "rating" | "reviewsCount">[] => {
+): Omit<CustomerGroup, "name" | "rating" | "reviewsCount" | "marks">[] => {
   const groups = new Map<
     number,
-    Omit<CustomerGroup, "name" | "rating" | "reviewsCount">
+    Omit<CustomerGroup, "name" | "rating" | "reviewsCount" | "marks">
   >()
 
   for (const contract of contracts) {
@@ -122,6 +125,7 @@ export default function SupplierCustomersPage() {
       name: fromApi?.display_name ?? `Заказчик #${group.id}`,
       rating,
       reviewsCount: fromApi?.reviews_count ?? myReviews.length,
+      marks: fromApi ? profileMarks(fromApi) : null,
     }
   })
 
@@ -161,9 +165,14 @@ export default function SupplierCustomersPage() {
                 <Users size={18} className="text-primary" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-foreground">
-                  {customer.name}
-                </p>
+                <CompanyName
+                  as="p"
+                  name={customer.name}
+                  {...customer.marks}
+                  size="sm"
+                  nameClassName="font-bold"
+                  className="flex"
+                />
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {formatCount(customer.contractCount, "сделка", "сделки", "сделок")} ·{" "}
                   {formatPrice(customer.totalAmount)}

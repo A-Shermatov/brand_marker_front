@@ -32,7 +32,17 @@ const supplier = (patch: Partial<PublicSupplier> = {}): PublicSupplier =>
 
 describe("supplierMarks", () => {
   it("reads the check, tier and plan from the public profile", () => {
-    expect(supplierMarks(supplier())).toEqual({ verified: true, tier: "diamond", plan: "business" })
+    expect(supplierMarks(supplier({ reputation_tier: "diamond" }))).toEqual({
+      verified: true,
+      tier: "diamond",
+      plan: "business",
+    })
+  })
+
+  it("keeps the API's answer, counting from stats only when the API sent none", () => {
+    // "none" from the API is deliberate (an admin removed it, disputes as a buyer).
+    expect(supplierMarks(supplier()).tier).toBe("none")
+    expect(supplierMarks(supplier({ reputation_tier: undefined })).tier).toBe("diamond")
   })
 
   it("falls back to no plan and no mark", () => {

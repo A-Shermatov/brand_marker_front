@@ -308,4 +308,6 @@ export type PublicBuyer = {
   active_contracts?: number
   disputed_contracts?: number
   success_rate?: number | null
+  /** Active paid plan of the owner */
+  subscription_plan?: string | null
 }

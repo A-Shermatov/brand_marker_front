@@ -63,7 +63,7 @@ export const planMarkHint = (plan: string | null | undefined): string => {
   const id = normalizePlan(plan)
   if (!id) return "Без подписки"
   const meta = plans.find((p) => p.id === id)!
-  return `Тариф «${meta.name}»: платное продвижение поставщика в каталоге`
+  return `Тариф «${meta.name}»: платная подписка и продвижение на площадке, не знак надёжности`
 }
 
 export const planName = (plan: SubscriptionPlan): string =>

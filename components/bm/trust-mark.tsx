@@ -7,6 +7,7 @@ import {
   reputationTierHint,
   type ReputationTier,
 } from "@/lib/trust-levels"
+import { SMALL_MARK_MAX, SmallTrustGlyph } from "@/components/bm/small-marks"
 
 type TrustMarkProps = {
   tier: ReputationTier | string | null | undefined
@@ -347,13 +348,32 @@ export function TrustMark({
   still = false,
   decorative = false,
 }: TrustMarkProps) {
-  const uid = useId().replace(/:/g, "")
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "")
   const id = normalizeReputationTier(tier)
-  const compact = size < 28
-  const animate = !still && (id === "diamond" || (id === "gold" && !compact))
   const a11y = decorative
     ? { "aria-hidden": true as const }
     : { role: "img" as const, "aria-label": reputationTierHint(id) }
+
+  if (size <= SMALL_MARK_MAX) {
+    // Next to a name: the sharp small drawing, no glow; only the diamond's light streak moves.
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 20 20"
+        data-tier={id}
+        data-size="small"
+        className={cn("shrink-0", className)}
+        {...a11y}
+      >
+        {decorative ? null : <title>{reputationTierHint(id)}</title>}
+        <SmallTrustGlyph tier={id} uid={uid} moving={!still && id === "diamond"} />
+      </svg>
+    )
+  }
+
+  const compact = size < 28
+  const animate = !still && (id === "diamond" || (id === "gold" && !compact))
 
   return (
     <svg

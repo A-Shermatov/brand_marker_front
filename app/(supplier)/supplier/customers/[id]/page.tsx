@@ -3,7 +3,9 @@
 import { use, useState } from "react"
 import Link from "next/link"
 import { BuildingsIcon as Building2, MapPinIcon as MapPin, ShieldCheckIcon as ShieldCheck, StarIcon as Star, UsersIcon as Users } from "@phosphor-icons/react/dist/ssr"
+import { CompanyName } from "@/components/bm"
 import { ListPagination } from "@/components/list-pagination"
+import { profileMarks } from "@/lib/supplier-marks"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { BuyerRating } from "@/components/supplier/rfq/buyer-rating"
 import { useHydrated } from "@/hooks/use-hydrated"
@@ -108,7 +110,7 @@ export default function SupplierCustomerDetailPage({ params }: PageProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-lg font-bold">{buyer.display_name}</h2>
+                  <CompanyName as="h2" name={buyer.display_name} {...profileMarks(buyer)} size="lg" nameClassName="font-bold" />
                   <BuyerRating rating={buyer.rating} />
                   {buyer.reviews_count > 0 && (
                     <span className="text-xs text-muted-foreground">

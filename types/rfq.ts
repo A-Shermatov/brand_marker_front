@@ -49,6 +49,10 @@ export type RfqBuyerSummary = {
   description?: string | null
   website?: string | null
   completed_contracts?: number
+  /** Reliability mark of the buyer's company or person (both roles count) */
+  reputation_tier?: string
+  /** Active paid plan of the buyer's owner */
+  subscription_plan?: string | null
 }
 
 type RfqBase = {

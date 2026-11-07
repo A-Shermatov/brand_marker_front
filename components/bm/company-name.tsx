@@ -22,8 +22,9 @@ type CompanyNameProps = {
 }
 
 const SIZES: Record<CompanyNameSize, { text: string; mark: number; plan: number; seal: string; gap: string }> = {
-  sm: { text: "text-[13.5px]", mark: 16, plan: 15, seal: "size-[15px]", gap: "gap-1" },
-  md: { text: "text-[15px]", mark: 19, plan: 17, seal: "size-[17px]", gap: "gap-1.5" },
+  // Whole-pixel sizes; up to 24 px the marks switch to their sharp small drawing.
+  sm: { text: "text-[13.5px]", mark: 18, plan: 16, seal: "size-4", gap: "gap-1" },
+  md: { text: "text-[15px]", mark: 20, plan: 18, seal: "size-[18px]", gap: "gap-1.5" },
   lg: { text: "text-[18px]", mark: 24, plan: 20, seal: "size-5", gap: "gap-1.5" },
   xl: { text: "text-[26px] leading-tight tracking-[-0.02em]", mark: 34, plan: 26, seal: "size-6", gap: "gap-2" },
 }
