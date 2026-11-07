@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button"
 import { DateInputRu } from "@/components/ui/date-input-ru"
 import { InlineHint } from "@/components/process"
 import type { RfqCreate, RfqWithRelations } from "@/types"
-import { budgetTypeMeta } from "@/lib/rfq-display"
 import type { RfqFormPrefill } from "@/lib/rfq-from-listing"
 import { useCategoryOptions } from "@/hooks/use-category-options"
 import {
@@ -101,7 +100,7 @@ const defaultValues = (
       note: "",
       items: [emptyProductItem()],
       payment: "guarantee",
-      budget_type: "fixed",
+      budget_type: "open",
       budget_from: "",
       budget_to: "",
       currency: "TJS",
@@ -171,6 +170,13 @@ const defaultValues = (
     experience_required:
       initial.type === "service" ? (initial.experience_required ?? "") : "",
   }
+}
+
+/** Budget choices as the buyer reads them; "open" means no budget at all. */
+const BUDGET_CHOICE: Record<FormState["budget_type"], string> = {
+  open: "Без бюджета",
+  fixed: "Точная сумма",
+  range: "Диапазон",
 }
 
 const toFormValues = (values: FormState): RfqFormValues => {
@@ -389,7 +395,7 @@ export const RfqForm = ({
   const inputClass = (field: string) =>
     cn(
       values.type === "product"
-        ? "w-full h-10 px-3.5 rounded-lg border bg-white text-[15px] outline-none transition-colors"
+        ? "w-full h-10 px-3.5 rounded-lg border bg-card text-[15px] outline-none transition-colors"
         : "w-full h-11 px-4 rounded-xl border bg-card text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20",
       errors[field]
         ? "border-destructive"
@@ -681,7 +687,7 @@ export const RfqForm = ({
         <div>
           <span className={labelClass}>Бюджет</span>
           <div className="grid grid-cols-3 gap-2" role="group" aria-label="Тип бюджета">
-            {(["fixed", "range", "open"] as const).map((bt) => (
+            {(["open", "fixed", "range"] as const).map((bt) => (
               <button
                 key={bt}
                 type="button"
@@ -694,13 +700,14 @@ export const RfqForm = ({
                     : "border-border text-muted-foreground hover:border-primary/40",
                 )}
               >
-                {budgetTypeMeta[bt]}
+                {BUDGET_CHOICE[bt]}
               </button>
             ))}
           </div>
           {values.budget_type === "open" && (
             <p className="text-xs text-muted-foreground mt-2">
-              Исполнители сами предложат цену, а вы сравните предложения на странице заявки.
+              Бюджет можно не указывать: исполнители сами предложат цену, а вы сравните предложения
+              на странице заявки.
             </p>
           )}
         </div>
@@ -1065,11 +1072,7 @@ export const RfqForm = ({
             </button>
             <span className="flex-1" />
             {step < 3 ? (
-              <Button
-                type="button"
-                className="bg-foreground text-background hover:bg-foreground/90"
-                onClick={handleNext}
-              >
+              <Button type="button" onClick={handleNext}>
                 Далее: {wizardSteps[step].label} <ArrowRight />
               </Button>
             ) : (

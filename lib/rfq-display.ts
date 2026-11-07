@@ -29,7 +29,7 @@ export const rfqStatusMeta: Record<
 export const budgetTypeMeta: Record<BudgetType, string> = {
   fixed: "Фиксированный",
   range: "Диапазон",
-  open: "Открытый",
+  open: "Не указан",
 }
 
 export const OPEN_RFQ_STATUSES: RfqStatus[] = ["published", "receiving_proposals"]
