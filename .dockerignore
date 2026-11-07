@@ -24,3 +24,9 @@ eslint.config.*
 .prettierrc*
 .tsbuildinfo
 next-env.d.ts
+
+# E2E tests are run from a checkout, not in the image
+e2e/
+playwright.config.ts
+playwright-report/
+test-results/

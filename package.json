@@ -12,6 +12,9 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report",
     "icons:export": "vite-node --config vitest.config.mts scripts/export-marks.tsx"
   },
   "dependencies": {
@@ -70,6 +73,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^22",
     "@types/react": "^19",

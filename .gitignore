@@ -20,3 +20,9 @@ temp_auto_push.bat
 temp_interactive_push.bat
 
 BrendMarket-v5*.html
+
+# Playwright E2E
+/e2e/.auth/
+/test-results/
+/playwright-report/
+/blob-report/
