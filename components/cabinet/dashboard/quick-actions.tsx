@@ -18,7 +18,7 @@ export function QuickActions({ actions }: QuickActionsProps) {
         <Link
           key={href + label}
           href={href}
-          className="flex items-center gap-2.5 rounded-2xl border border-line bg-white px-3.5 py-3 text-[14px] font-semibold text-ink transition hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]"
+          className="flex items-center gap-2.5 rounded-2xl border border-line bg-card px-3.5 py-3 text-[14px] font-semibold text-ink transition hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]"
         >
           <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-canvas text-ink">
             <Icon className="size-4" aria-hidden />

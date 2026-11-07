@@ -234,7 +234,7 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
         ) : null}
 
         {contract ? (
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-white p-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-card p-4">
             <span className="flex-1 text-[14px] text-ink">
               По заявке идёт сделка с{" "}
               <b>{getSupplierName(contract.supplier_actor_id)}</b>

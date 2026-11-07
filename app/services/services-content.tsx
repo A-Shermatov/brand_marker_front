@@ -134,7 +134,7 @@ export const ServicesPageContent = () => {
       : "Каталог"
 
   const selectClass =
-    "h-10 appearance-none rounded-lg border border-line bg-white pl-3.5 pr-9 text-[14px] font-semibold text-ink outline-none hover:border-line-strong"
+    "h-10 appearance-none rounded-lg border border-line bg-card pl-3.5 pr-9 text-[14px] font-semibold text-ink outline-none hover:border-line-strong"
 
   return (
     <PageShell>
@@ -172,7 +172,7 @@ export const ServicesPageContent = () => {
                   onClick={() => go({ view: key })}
                   className={`h-9 rounded-lg px-4 text-[14px] font-semibold transition ${
                     view === key
-                      ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
+                      ? "bg-card text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                       : "text-mute hover:text-ink"
                   }`}
                 >
@@ -262,7 +262,7 @@ export const ServicesPageContent = () => {
             <ListPagination page={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-white p-6">
+          <div className="mt-10 flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-card p-6">
             <span className="grid size-11 place-items-center rounded-xl bg-canvas text-ink">
               <FileText className="size-5" aria-hidden />
             </span>
@@ -274,7 +274,7 @@ export const ServicesPageContent = () => {
             </div>
             <Link
               href={newRfqRedirect()}
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-brand-600 px-5 text-[15px] font-semibold text-white hover:bg-brand-700"
+              className="inline-flex h-11 items-center justify-center rounded-lg bg-brand-600 px-5 text-[15px] font-semibold text-white hover:bg-brand-700 dark:hover:bg-brand-500"
             >
               Разместить заявку
             </Link>
@@ -300,8 +300,8 @@ const FilterChip = ({
     onClick={onClick}
     className={`inline-flex h-10 items-center gap-2 rounded-lg border px-3.5 text-[14px] font-semibold transition ${
       pressed
-        ? "border-ink bg-ink text-white"
-        : "border-line bg-white text-ink hover:border-line-strong"
+        ? "border-ink bg-contrast text-white"
+        : "border-line bg-card text-ink hover:border-line-strong"
     }`}
   >
     {pressed ? <Check className="size-4" aria-hidden /> : null}
@@ -310,7 +310,7 @@ const FilterChip = ({
 )
 
 const EmptyState = ({ kind }: { kind: "items" | "suppliers" }) => (
-  <div className="grid justify-items-center gap-2 rounded-2xl border border-dashed border-line-strong bg-white px-6 py-14 text-center">
+  <div className="grid justify-items-center gap-2 rounded-2xl border border-dashed border-line-strong bg-card px-6 py-14 text-center">
     <Search size={28} className="text-mute" />
     <b className="text-[17px] text-ink">
       {kind === "items" ? "Ничего не нашли" : "Поставщиков не нашли"}
@@ -323,7 +323,7 @@ const EmptyState = ({ kind }: { kind: "items" | "suppliers" }) => (
     {kind === "items" ? (
       <Link
         href={newRfqRedirect()}
-        className="mt-2 inline-flex h-10 items-center justify-center rounded-lg border border-line bg-white px-4 text-[14px] font-semibold text-ink hover:border-line-strong"
+        className="mt-2 inline-flex h-10 items-center justify-center rounded-lg border border-line bg-card px-4 text-[14px] font-semibold text-ink hover:border-line-strong"
       >
         Разместить заявку
       </Link>

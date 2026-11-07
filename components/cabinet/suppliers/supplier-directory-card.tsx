@@ -87,7 +87,7 @@ export const SupplierDirectoryCard = ({
     supplier.verification_status === "needs_documents"
 
   return (
-    <article className="grid content-start gap-4 rounded-2xl border border-line bg-white p-5">
+    <article className="grid content-start gap-4 rounded-2xl border border-line bg-card p-5">
       <div className="flex items-start gap-3">
         <span
           className="grid size-12 shrink-0 place-items-center rounded-xl bg-surface-muted text-[15px] font-bold text-ink"

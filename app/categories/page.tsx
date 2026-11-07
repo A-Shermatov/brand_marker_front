@@ -12,7 +12,7 @@ export default function CategoriesPage() {
 
   return (
     <PageShell>
-      <section className="bg-white border-b border-border py-9">
+      <section className="bg-card border-b border-border py-9">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center justify-between mb-6">
             <div>

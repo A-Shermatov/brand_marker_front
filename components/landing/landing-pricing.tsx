@@ -12,7 +12,7 @@ const STEPS = [
 
 /** How the deal guarantee works: four steps in order, joined by a line. */
 export const LandingPricing = () => (
-  <section id="pricing" className="mt-16 border-y border-line bg-white">
+  <section id="pricing" className="mt-16 border-y border-line bg-card">
     <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-14 lg:grid-cols-[320px_1fr] lg:px-8">
       <div className="grid content-start gap-4">
         <h2 className="text-[30px] font-semibold leading-tight tracking-[-0.02em] text-ink">
@@ -31,7 +31,7 @@ export const LandingPricing = () => (
         {STEPS.map(({ Icon, title, text }, n) => (
           <li key={title} className="relative grid content-start gap-3">
             <span className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-full bg-brand-600 text-[15px] font-semibold text-white ring-4 ring-white tnum">
+              <span className="grid size-10 place-items-center rounded-full bg-brand-600 text-[15px] font-semibold text-white ring-4 ring-card tnum">
                 {n + 1}
               </span>
               <Icon className="size-6 text-brand-600" aria-hidden />

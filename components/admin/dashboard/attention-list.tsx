@@ -21,7 +21,7 @@ export const AttentionList = ({ items }: AttentionListProps) => {
         <span className="text-[13px] font-semibold text-mute">
           Требует внимания
         </span>
-        <div className="mt-2 rounded-xl border border-line bg-white p-6 text-[14px] text-mute">
+        <div className="mt-2 rounded-xl border border-line bg-card p-6 text-[14px] text-mute">
           Сейчас всё в порядке — очереди пусты.
         </div>
       </section>
@@ -33,7 +33,7 @@ export const AttentionList = ({ items }: AttentionListProps) => {
       <span className="text-[13px] font-semibold text-mute">
         Требует внимания
       </span>
-      <div className="mt-2 divide-y divide-line rounded-xl border border-line bg-white">
+      <div className="mt-2 divide-y divide-line rounded-xl border border-line bg-card">
         {items.map((item) => (
           <Link
             key={item.id}

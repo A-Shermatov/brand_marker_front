@@ -129,7 +129,7 @@ const AdminChatsContent = () => {
         description="Переписка покупателей и поставщиков по сделкам и КП"
       />
 
-      <div className="grid min-h-[min(72vh,740px)] overflow-hidden rounded-2xl border border-line bg-white md:grid-cols-[360px_1fr]">
+      <div className="grid min-h-[min(72vh,740px)] overflow-hidden rounded-2xl border border-line bg-card md:grid-cols-[360px_1fr]">
         <aside className="flex max-h-[min(72vh,740px)] flex-col border-r border-line">
           <div className="border-b border-line p-3">
             <input
@@ -139,7 +139,7 @@ const AdminChatsContent = () => {
                 if (e.key === "Enter") setParams({ q: draftQ.trim() || null, chat: null, page: null })
               }}
               placeholder="Компания, сделка или слово"
-              className="h-10 mb-2 rounded-lg border border-line bg-white px-3.5 text-[14px] outline-none focus:border-brand-600"
+              className="h-10 mb-2 rounded-lg border border-line bg-card px-3.5 text-[14px] outline-none focus:border-brand-600"
             />
             <SegmentedControl
               value={filter}
@@ -268,11 +268,11 @@ const AdminChatsContent = () => {
                       key={msg.id}
                       className={cn(
                         "group relative max-w-[85%] rounded-xl px-3.5 py-2.5 text-[14px]",
-                        isAdmin && "justify-self-center bg-ink text-white",
-                        !isAdmin && isBuyer && "justify-self-start border border-line bg-white",
+                        isAdmin && "justify-self-center bg-contrast text-white",
+                        !isAdmin && isBuyer && "justify-self-start border border-line bg-card",
                         !isAdmin &&
                           !isBuyer &&
-                          "justify-self-end border border-[#CFE7DA] bg-[#E6F2EC]",
+                          "justify-self-end border border-safe-100 bg-safe-50",
                         msg.flagged && !deleted && "!border-2 !border-red-400",
                         deleted && "opacity-60 italic",
                       )}
@@ -340,13 +340,13 @@ const AdminChatsContent = () => {
                           }
                         }}
                         placeholder="Сообщение от модератора — увидят обе стороны"
-                        className="h-11 flex-1 rounded-lg border border-line bg-white px-3.5 text-[14px] outline-none focus:border-brand-600"
+                        className="h-11 flex-1 rounded-lg border border-line bg-card px-3.5 text-[14px] outline-none focus:border-brand-600"
                       />
                       <button
                         type="button"
                         disabled={!text.trim() || sendMessage.isPending}
                         onClick={() => void handleSend(text)}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-ink text-white disabled:opacity-40"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-contrast text-white disabled:opacity-40"
                         aria-label="Отправить"
                       >
                         <Send className="size-4" />

@@ -145,7 +145,7 @@ export default function CustomerApprovalsPage() {
           {list.map((a) => (
             <article
               key={a.id}
-              className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
+              className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
             >
               <div className="flex flex-wrap items-start gap-4">
                 <div className="grid min-w-[240px] flex-1 gap-1">

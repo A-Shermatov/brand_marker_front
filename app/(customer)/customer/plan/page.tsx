@@ -45,7 +45,7 @@ export default function CustomerPlanPage() {
           </ul>
         </SurfaceCard>
 
-        <section className="grid gap-4 rounded-2xl bg-ink p-6 text-white">
+        <section className="grid gap-4 rounded-2xl bg-contrast p-6 text-white">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <b className="text-[22px] font-bold">{BUYER_PLUS_PLAN.name}</b>
             <span className="text-[15px]">
@@ -69,7 +69,7 @@ export default function CustomerPlanPage() {
           <div className="mt-2 flex flex-wrap gap-2">
             <Button
               asChild
-              className="border-white bg-white text-ink hover:bg-canvas"
+              className="border-white bg-white text-[#0A1122] hover:bg-white/90"
             >
               <Link href={helpUrl()}>Подключить через поддержку</Link>
             </Button>

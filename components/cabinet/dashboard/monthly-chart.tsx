@@ -47,7 +47,7 @@ export function MonthlyChart({
   const empty = !loading && total <= 0
 
   return (
-    <section className="flex h-full flex-col rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
+    <section className="flex h-full flex-col rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-[15.5px] font-semibold text-ink">{title}</h2>

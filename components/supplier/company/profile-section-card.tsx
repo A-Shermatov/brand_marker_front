@@ -11,7 +11,7 @@ export const ProfileSectionCard = ({
   hint,
   children,
 }: ProfileSectionCardProps) => (
-  <section className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
+  <section className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
     <div className="mb-4 flex items-start gap-3">
       <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-canvas text-[13px] font-bold text-ink">
         {step}

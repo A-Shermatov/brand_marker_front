@@ -18,10 +18,10 @@ export const PerformerCard = ({ performer }: PerformerCardProps) => {
   return (
     <Link
       href={performerUrl(performer.id)}
-      className="group grid content-start gap-4 rounded-2xl border border-line bg-white p-5 transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]"
+      className="group grid content-start gap-4 rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]"
     >
       <div className="flex items-start gap-3.5">
-        <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-brand-700 text-[14px] font-semibold text-white">
+        <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-brand-tile text-[14px] font-semibold text-white">
           {performer.imageUrl ? (
             <Image
               src={resolveFileUrl(performer.imageUrl)}

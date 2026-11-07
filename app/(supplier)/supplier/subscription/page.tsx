@@ -112,7 +112,7 @@ export default function SubscriptionPage() {
 
   return (
     <div className="grid gap-5">
-      <section className="flex flex-col gap-4 rounded-2xl border border-line bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-4 rounded-2xl border border-line bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           {active ? (
             <PlanMark plan={plan} size={48} />
@@ -156,7 +156,7 @@ export default function SubscriptionPage() {
               className={cn(
                 "h-8 rounded-md px-3 text-[13.5px] font-medium transition-colors",
                 method === m.id
-                  ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
+                  ? "bg-card text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                   : "text-mute hover:text-ink",
               )}
             >
@@ -176,7 +176,7 @@ export default function SubscriptionPage() {
             <article
               key={p.id}
               className={cn(
-                "relative flex flex-col rounded-2xl border bg-white p-5",
+                "relative flex flex-col rounded-2xl border bg-card p-5",
                 p.highlighted ? "border-brand-600 shadow-[0_0_0_1px_var(--brand-600)]" : "border-line",
               )}
             >

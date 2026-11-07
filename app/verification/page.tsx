@@ -24,7 +24,7 @@ export default function VerificationPage() {
             </div>
           </div>
 
-          <div className="mb-6 space-y-6 rounded-2xl border border-border bg-white p-8">
+          <div className="mb-6 space-y-6 rounded-2xl border border-border bg-card p-8">
             <div>
               <div className="mb-3 flex items-center gap-2">
                 <Building2 size={18} className="text-primary" />

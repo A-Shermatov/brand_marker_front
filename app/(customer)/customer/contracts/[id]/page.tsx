@@ -374,7 +374,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
         }
       />
 
-      <div className="grid gap-4 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
+      <div className="grid gap-4 rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
         <DealStepper contract={contract} />
         <div className="flex flex-wrap items-center gap-3">
           <DeadlineCountdown

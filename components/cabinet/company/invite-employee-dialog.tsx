@@ -95,7 +95,7 @@ export const InviteEmployeeDialog = ({
               onChange={(e) =>
                 setRole(e.target.value as Exclude<CompanyRole, "director">)
               }
-              className="h-11 w-full rounded-lg border border-line bg-white px-3.5 text-[15px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 disabled:opacity-60"
+              className="h-11 w-full rounded-lg border border-line bg-card px-3.5 text-[15px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 disabled:opacity-60"
             >
               {ASSIGNABLE_COMPANY_ROLES.map((r) => (
                 <option key={r} value={r}>

@@ -259,7 +259,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
 
   const inputClass = (field: string) =>
     cn(
-      "h-11 w-full rounded-lg border bg-white px-4 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
+      "h-11 w-full rounded-lg border bg-card px-4 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
       errors[field] ? "border-red-400" : "border-line",
     )
 
@@ -270,14 +270,14 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
       <button
         type="button"
         onClick={() => handleSubmit("draft")}
-        className="inline-flex h-11 items-center justify-center rounded-xl border border-line bg-white px-4 text-[14px] font-semibold hover:bg-canvas"
+        className="inline-flex h-11 items-center justify-center rounded-xl border border-line bg-card px-4 text-[14px] font-semibold hover:bg-canvas"
       >
         Сохранить черновик
       </button>
       <button
         type="button"
         onClick={handlePreview}
-        className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-line bg-white px-4 text-[14px] font-semibold hover:bg-canvas"
+        className="inline-flex h-11 items-center justify-center gap-1.5 rounded-xl border border-line bg-card px-4 text-[14px] font-semibold hover:bg-canvas"
       >
         <Eye className="size-4" aria-hidden />
         Предпросмотр
@@ -285,7 +285,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
       <button
         type="button"
         onClick={() => handleSubmit("pending_review")}
-        className="inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-5 text-[14px] font-semibold text-white hover:bg-brand-700"
+        className="inline-flex h-11 items-center justify-center rounded-xl bg-brand-600 px-5 text-[14px] font-semibold text-white hover:bg-brand-700 dark:hover:bg-brand-500"
       >
         Отправить на проверку
       </button>
@@ -336,7 +336,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
       ) : null}
 
       <div id="ppreview" className="mb-4 grid gap-4 scroll-mt-24 xl:hidden">
-        <div className="flex items-center justify-between rounded-2xl border border-line bg-white p-4">
+        <div className="flex items-center justify-between rounded-2xl border border-line bg-card p-4">
           <span className="text-[14.5px] font-semibold">Качество карточки</span>
           <b className="tnum text-[18px]">{score.total}/100</b>
         </div>
@@ -356,14 +356,14 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
                   <button
                     type="button"
                     onClick={() => jumpTo(sec.id)}
-                    className="flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-[14px] font-semibold text-ink/75 hover:bg-white hover:text-ink"
+                    className="flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-[14px] font-semibold text-ink/75 hover:bg-card hover:text-ink"
                   >
                     <span
                       className={cn(
                         "grid size-6 shrink-0 place-items-center rounded-full text-[11px]",
                         ok
                           ? "bg-brand-600 text-white"
-                          : "border border-line bg-white",
+                          : "border border-line bg-card",
                       )}
                     >
                       {ok ? <Check className="size-3" aria-hidden /> : sec.index}
@@ -394,7 +394,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
                     className={cn(
                       "h-10 rounded-lg text-[15px] font-semibold transition-colors",
                       type === value
-                        ? "bg-white shadow-[0_1px_2px_rgba(28,28,26,.1)]"
+                        ? "bg-card shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                         : "text-mute",
                     )}
                   >
@@ -519,7 +519,7 @@ export const CatalogItemForm = ({ initial, onSubmit }: CatalogItemFormProps) => 
               rows={8}
               placeholder="Из чего сделано, чем лучше аналогов, что в комплекте, как упаковано, какая гарантия…"
               className={cn(
-                "w-full resize-y rounded-lg border bg-white px-4 py-3 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
+                "w-full resize-y rounded-lg border bg-card px-4 py-3 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
                 errors.description ? "border-red-400" : "border-line",
               )}
             />

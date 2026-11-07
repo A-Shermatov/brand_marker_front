@@ -28,7 +28,7 @@ export const WizardField = ({
 )
 
 export const wizardInputClass =
-  "w-full h-11 px-4 rounded-xl border border-input bg-white text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+  "w-full h-11 px-4 rounded-xl border border-input bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
 
 export const wizardTextareaClass =
-  "w-full min-h-[100px] px-4 py-3 rounded-xl border border-input bg-white text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-y"
+  "w-full min-h-[100px] px-4 py-3 rounded-xl border border-input bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-y"

@@ -26,6 +26,7 @@ import {
   registerUrl,
 } from "@/lib/marketplace-routes"
 import { cn } from "@/lib/utils"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const getCabinetBase = (role: SessionRole): string => {
   if (role === "supplier") return "/supplier"
@@ -86,7 +87,7 @@ export default function Header() {
   const closeMobileMenu = () => setMobileMenuOpen(false)
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-line bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 w-full border-b border-line bg-card/90 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-2 px-4 sm:gap-3 lg:h-16 lg:gap-6 lg:px-8">
         <span className="shrink-0 sm:hidden">
           <BrandLogo small showWordmark={false} />
@@ -120,13 +121,15 @@ export default function Header() {
 
         <span className="min-w-2 flex-1" aria-hidden="true" />
 
-        <div className="relative hidden w-[280px] shrink-0 xl:block">
+        <div className="relative hidden w-[240px] shrink-0 xl:block">
           <MarketplaceSearch
             variant="compact"
             className="w-full"
             onNavigate={closeMobileMenu}
           />
         </div>
+
+        <ThemeToggle />
 
         {authedUser ? (
           <DropdownMenu>
@@ -206,7 +209,7 @@ export default function Header() {
       </div>
 
       {mobileMenuOpen ? (
-        <div className="border-t border-line bg-white lg:hidden">
+        <div className="border-t border-line bg-card lg:hidden">
           <div className="mx-auto grid max-w-[1200px] gap-1 px-4 py-3">
             {!authedUser ? (
               <>

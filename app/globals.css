@@ -34,6 +34,9 @@
   --rail-active: var(--brand-50);
   --rail-accent: var(--brand-600);
 
+  /* Dark panels that stay dark in both themes. */
+  --contrast: var(--ink);
+
   /* Sun: counters and the one key action on a blue field. */
   --sun: #FFD02F;
   --sun-ink: #2B2200;
@@ -106,40 +109,103 @@
   --sidebar-ring: var(--brand-600);
 }
 
+/* Night theme. Deep navy rather than black: the brand stays, the eyes rest.
+   Text is soft white, never pure; every tinted surface (light blue, green,
+   amber, red badges) turns into a dim tint with a light text, so nothing on
+   the page glows. Same token names as the day theme. */
 .dark {
-  --background: var(--navy-900);
-  --foreground: #f3f5fc;
+  color-scheme: dark;
+
+  --brand-50: #14244F;
+  --brand-100: #1B3168;
+  --brand-200: #284690;
+  --brand-300: #5B82E6;
+  --brand-500: #4C8BFF;
+  --brand-600: #2F6FF0;
+  --brand-700: #A5C2FF;
+  --brand-900: #D4E2FF;
+
+  --navy-700: #2A3556;
+  --navy-800: #131C33;
+  --navy-900: #0A1122;
+
+  --rail-from: #0F172C;
+  --rail-to: #0F172C;
+  --rail-active: #17295A;
+  --rail-accent: #6FA0FF;
+
+  --safe-50: #0E2A22;
+  --safe-100: #15402F;
+  --safe-500: #34C08F;
+  --safe-700: #74DDB4;
+
+  --ink: #E6EAF5;
+  --ink-soft: #C3CADC;
+  --mute: #98A3BF;
+  --faint: #6E7A98;
+  --line: #222E4C;
+  --line-strong: #32406A;
+  --canvas: #0A1122;
+  --surface-muted: #18223D;
+
+  --bank-hero-from: #17388F;
+  --bank-hero-to: #0E2463;
+
+  --contrast: #1C2A52;
+
+  --background: var(--canvas);
+  --foreground: var(--ink);
   --card: var(--navy-800);
-  --card-foreground: #f3f5fc;
-  --popover: var(--navy-800);
-  --popover-foreground: #f3f5fc;
-  --primary: var(--brand-500);
+  --card-foreground: var(--ink);
+  --popover: #162039;
+  --popover-foreground: var(--ink);
+  --primary: var(--brand-600);
   --primary-foreground: #ffffff;
-  --secondary: #17245a;
-  --secondary-foreground: var(--brand-200);
-  --muted: var(--navy-800);
-  --muted-foreground: #9aa4bf;
-  --accent: #17245a;
-  --accent-foreground: var(--brand-200);
-  --destructive: #ef4444;
+  --secondary: var(--brand-50);
+  --secondary-foreground: var(--brand-700);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--mute);
+  --accent: var(--surface-muted);
+  --accent-foreground: var(--ink);
+  --destructive: #F05252;
   --destructive-foreground: #ffffff;
-  --border: #263152;
-  --input: #263152;
+  --border: var(--line);
+  --input: var(--line-strong);
   --ring: var(--brand-500);
   --success: var(--safe-500);
   --success-foreground: #ffffff;
-  --warning: #fbbf24;
+  --warning: #F5B53D;
   --warning-foreground: var(--navy-900);
-  --info: #6b8cff;
+  --info: var(--brand-500);
   --info-foreground: #ffffff;
-  --sidebar: var(--navy-800);
-  --sidebar-foreground: #f3f5fc;
-  --sidebar-primary: var(--brand-500);
+  --chart-1: var(--brand-500);
+  --chart-2: var(--safe-500);
+  --chart-3: #8A97B8;
+  --sidebar: var(--rail-from);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--brand-600);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--navy-700);
-  --sidebar-accent-foreground: #f3f5fc;
-  --sidebar-border: #263152;
+  --sidebar-accent: var(--surface-muted);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--line);
   --sidebar-ring: var(--brand-500);
+
+  /* Status colours of the stock palette, dimmed the same way: tinted
+     backgrounds go dark, the text and icons on them go light. */
+  --color-amber-50: #2A2111;
+  --color-amber-100: #3A2C12;
+  --color-amber-200: #5A4318;
+  --color-amber-700: #F4C065;
+  --color-amber-800: #F6CF8C;
+  --color-red-50: #2C1519;
+  --color-red-100: #3C1A20;
+  --color-red-200: #5E242C;
+  --color-red-700: #F69696;
+  --color-red-800: #F8B2B2;
+  --color-emerald-50: #0E2A22;
+  --color-emerald-200: #1E4D3D;
+  --color-emerald-700: #6BD9B1;
+  --color-emerald-800: #8DE5C4;
 }
 
 @theme inline {
@@ -171,6 +237,7 @@
   --color-rail-active: var(--rail-active);
   --color-rail-accent: var(--rail-accent);
   --color-sun: var(--sun);
+  --color-contrast: var(--contrast);
   --color-sun-ink: var(--sun-ink);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
@@ -311,7 +378,7 @@
   height: 2.625rem;
   border-radius: var(--radius-control);
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--card);
   padding-inline: 0.875rem;
   font-size: 15px;
   outline: none;
@@ -362,10 +429,22 @@
   }
 }
 
+/* Icon tiles and avatars: the logo's blue, the same in both themes. */
+@utility bg-brand-tile {
+  background-color: #1f6beb;
+  background-image: linear-gradient(135deg, #2f80ff 0%, #0047b8 100%);
+}
+
 /* Blue field behind the landing hero and the sign-in pages. */
 @utility bg-brand-field {
   background-color: #0050c8;
   background-image: radial-gradient(120% 95% at 88% 0%, #4c95ff 0%, #1667e6 34%, #0050c8 62%, #0044ad 100%);
+}
+
+/* At night the blue field is deeper, so the page does not flash bright. */
+.dark .bg-brand-field {
+  background-color: #0c2463;
+  background-image: radial-gradient(120% 95% at 88% 0%, #2a5fd0 0%, #163c9e 36%, #0f2c78 64%, #0a1f57 100%);
 }
 
 /* Scrollbar for the menu rail. */

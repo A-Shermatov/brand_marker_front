@@ -62,14 +62,14 @@ export function AdminMarksCard(props: AdminMarksCardProps) {
   })
 
   if (isLoading || !data) {
-    return <section className="h-40 animate-pulse rounded-2xl border border-line bg-white" aria-busy />
+    return <section className="h-40 animate-pulse rounded-2xl border border-line bg-card" aria-busy />
   }
 
   const refresh = (next: Partial<AdminMarks>) =>
     queryClient.setQueryData<AdminMarks>(key, (old) => (old ? { ...old, ...next } : old))
 
   return (
-    <section className="grid gap-4 rounded-2xl border border-line bg-white p-5 lg:grid-cols-2">
+    <section className="grid gap-4 rounded-2xl border border-line bg-card p-5 lg:grid-cols-2">
       <SubscriptionBlock data={data} onChange={(subscription) => refresh({ subscription })} />
       <div className="grid content-start gap-3 border-line lg:border-l lg:pl-5">
         <h2 className="text-[15.5px] font-semibold text-ink">{TRUST_MARK_NAME}</h2>

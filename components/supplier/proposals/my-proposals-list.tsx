@@ -55,7 +55,7 @@ export function MyProposalsList({ proposals, getRfqTitle, getBuyerName, getDeadl
           <li
             key={proposal.id}
             data-outcome={view.tone}
-            className="relative overflow-hidden rounded-2xl border border-line bg-white"
+            className="relative overflow-hidden rounded-2xl border border-line bg-card"
           >
             <span aria-hidden className={cn("absolute inset-y-0 left-0 w-1", tone.bar)} />
             <div className="grid gap-4 p-4 pl-5 md:grid-cols-[minmax(0,1fr)_300px] md:items-center md:gap-6">

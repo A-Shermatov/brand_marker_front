@@ -9,7 +9,7 @@ const STEPS = [
 
 export const EscrowExplainer = ({ className }: { className?: string }) => (
   <section
-    className={cn("grid gap-4 rounded-2xl bg-ink p-5 text-white md:p-6", className)}
+    className={cn("grid gap-4 rounded-2xl bg-contrast p-5 text-white md:p-6", className)}
     aria-labelledby="escrow-explainer-title"
   >
     <div>

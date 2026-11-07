@@ -15,8 +15,8 @@ type ReputationBadgeProps = {
 }
 
 const TONES: Record<Exclude<ReputationTier, "none">, string> = {
-  silver: "bg-[#F1F2F4] text-[#48505B] ring-[#D6DADF]",
-  gold: "bg-[#FBF3DC] text-[#744E00] ring-[#EACB7C]",
+  silver: "bg-[#F1F2F4] text-[#48505B] ring-[#D6DADF] dark:bg-[#222A3A] dark:text-[#CBD2DE] dark:ring-[#3B4659]",
+  gold: "bg-[#FBF3DC] text-[#744E00] ring-[#EACB7C] dark:bg-[#2D2410] dark:text-[#F2C866] dark:ring-[#6B5320]",
   diamond:
     "bg-[linear-gradient(100deg,#3A0C7A,#7A22C8_55%,#C2389F)] text-white ring-[#FF7BD5]/60 shadow-[0_1px_6px_rgba(170,40,170,.35)]",
 }

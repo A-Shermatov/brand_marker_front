@@ -13,7 +13,7 @@ export function SurfaceCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgba(28,28,26,.04)]",
+        "rounded-2xl border border-line bg-card shadow-[0_1px_2px_rgba(28,28,26,.04)]",
         padded && "p-5",
         className,
       )}

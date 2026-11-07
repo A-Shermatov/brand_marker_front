@@ -125,7 +125,7 @@ const AdminLoginContent = () => {
       </div>
 
       <div className="grid flex-1 place-items-center px-4 py-10">
-        <div className="w-full max-w-[440px] rounded-2xl border border-line bg-white p-7 shadow-[0_2px_4px_rgb(0_30_90/0.15),0_40px_80px_-30px_rgb(0_25_80/0.6)] sm:p-9">
+        <div className="w-full max-w-[440px] rounded-2xl border border-line bg-card p-7 shadow-[0_2px_4px_rgb(0_30_90/0.15),0_40px_80px_-30px_rgb(0_25_80/0.6)] sm:p-9">
           {challengeToken ? (
             <TwoFactorChallenge
               busy={otpBusy}

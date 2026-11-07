@@ -124,7 +124,7 @@ export const NotificationsPageContent = ({ role }: NotificationsPageContentProps
                 <div
                   className={cn(
                     "flex items-start gap-3 rounded-2xl border p-4 transition-colors",
-                    n.read ? "border-border bg-white" : "border-primary/20 bg-secondary/50",
+                    n.read ? "border-border bg-card" : "border-primary/20 bg-secondary/50",
                   )}
                 >
                   <div

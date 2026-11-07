@@ -16,7 +16,7 @@ export const CatalogItemScorePanel = ({
   className,
 }: CatalogItemScorePanelProps) => {
   return (
-    <div className={cn("rounded-2xl border border-line bg-white p-5", className)}>
+    <div className={cn("rounded-2xl border border-line bg-card p-5", className)}>
       <div className="flex items-end justify-between gap-3">
         <span className="text-[14px] font-semibold text-ink">Качество карточки</span>
         <b className={cn("text-[28px] font-bold leading-none tabular-nums", score.levelClass)}>

@@ -170,7 +170,7 @@ const MyRfqsContent = () => {
           id="rfq-type"
           value={typeFilter}
           onChange={(event) => setTypeFilter(event.target.value as typeof typeFilter)}
-          className="h-10 rounded-lg border border-line bg-white px-3 text-[14px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+          className="h-10 rounded-lg border border-line bg-card px-3 text-[14px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
         >
           <option value="all">Товары и услуги</option>
           <option value="product">Только товары</option>
@@ -187,7 +187,7 @@ const MyRfqsContent = () => {
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
             placeholder="Название или номер заявки"
-            className="h-10 bg-white pl-10"
+            className="h-10 bg-card pl-10"
             aria-label="Поиск по заявкам"
           />
         </div>

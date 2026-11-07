@@ -56,7 +56,7 @@ export const CatalogItemPreviewCard = ({
           : ""
 
   return (
-    <div className="overflow-hidden rounded-xl border border-line bg-white">
+    <div className="overflow-hidden rounded-xl border border-line bg-card">
       <div className="relative aspect-[4/3] grid place-items-center overflow-hidden bg-canvas">
         {coverUrl && !broken ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -70,7 +70,7 @@ export const CatalogItemPreviewCard = ({
           <ImageIcon className="size-10 text-mute" aria-hidden />
         )}
         {type === "service" ? (
-          <span className="absolute left-2.5 top-2.5 rounded-md bg-white px-2 py-0.5 text-[12px] font-semibold text-ink">
+          <span className="absolute left-2.5 top-2.5 rounded-md bg-card px-2 py-0.5 text-[12px] font-semibold text-ink">
             Услуга
           </span>
         ) : null}

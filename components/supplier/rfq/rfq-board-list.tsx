@@ -87,7 +87,7 @@ export const RfqBoardList = ({
         <li
           key={rfq.id}
           className={cn(
-            "rounded-2xl border border-line bg-white transition-[border-color,box-shadow] hover:border-brand-200 hover:shadow-[0_10px_24px_-16px_rgb(0_80_200/0.45)]",
+            "rounded-2xl border border-line bg-card transition-[border-color,box-shadow] hover:border-brand-200 hover:shadow-[0_10px_24px_-16px_rgb(0_80_200/0.45)]",
             closed && "opacity-70",
           )}
         >

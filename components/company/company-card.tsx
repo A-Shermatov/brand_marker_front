@@ -26,7 +26,7 @@ export const CompanyCard = ({
 }: CompanyCardProps) => (
   <div
     className={cn(
-      "rounded-2xl border bg-white p-5 transition-all",
+      "rounded-2xl border bg-card p-5 transition-all",
       isActive ? "border-primary ring-2 ring-primary/20" : "border-border",
     )}
   >

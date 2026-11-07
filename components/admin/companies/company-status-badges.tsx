@@ -41,7 +41,7 @@ const operationalMetadata: Record<
   },
   deactivated: {
     label: "Деактивирована",
-    className: "border-slate-200 bg-slate-100 text-slate-600",
+    className: "border-line bg-surface-muted text-mute",
   },
 }
 

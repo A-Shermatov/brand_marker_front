@@ -5,7 +5,7 @@ import { forSuppliersUrl, registerUrl, tariffsUrl } from "@/lib/marketplace-rout
 /** Compact CTA — full seller story lives on `/for-suppliers`. */
 export const LandingCta = () => (
   <section className="mx-auto mt-16 mb-8 max-w-[1200px] px-4 lg:px-8">
-    <div className="grid gap-6 rounded-2xl border border-line bg-white p-6 md:grid-cols-[1.2fr_auto] md:items-center md:p-8">
+    <div className="grid gap-6 rounded-2xl border border-line bg-card p-6 md:grid-cols-[1.2fr_auto] md:items-center md:p-8">
       <div className="grid gap-2">
         <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-ink">
           Продавцам: комиссия 4% только с оплаченных сделок

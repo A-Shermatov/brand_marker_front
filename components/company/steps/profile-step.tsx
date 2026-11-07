@@ -122,7 +122,7 @@ export const ProfileStep = ({ data, errors, onChange }: ProfileStepProps) => {
                 "h-9 px-3 rounded-lg text-sm font-medium border transition-colors",
                 data.languages.includes(lang.value)
                   ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-white border-input hover:border-primary/50",
+                  : "bg-card border-input hover:border-primary/50",
               )}
             >
               {lang.label}
@@ -153,7 +153,7 @@ export const ProfileStep = ({ data, errors, onChange }: ProfileStepProps) => {
                 "h-9 px-3 rounded-lg text-sm font-medium border transition-colors",
                 data.category_ids.includes(cat.id)
                   ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-white border-input hover:border-primary/50",
+                  : "bg-card border-input hover:border-primary/50",
               )}
             >
               {cat.name}

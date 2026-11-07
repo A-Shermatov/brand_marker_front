@@ -34,7 +34,7 @@ export const SideReputationList = ({
       {items.map((item) => (
         <li
           key={item.side}
-          className="grid gap-0.5 rounded-xl border border-line bg-white px-3.5 py-2.5"
+          className="grid gap-0.5 rounded-xl border border-line bg-card px-3.5 py-2.5"
         >
           <span className="text-[12.5px] text-mute">
             {SIDE_TITLES[item.side]}, {SIDE_HINTS[item.side]}

@@ -34,7 +34,7 @@ export const NextActionCard = ({
           ? "border-destructive/30 bg-destructive/5"
           : hot
             ? "border-brand-300 bg-brand-50/60"
-            : "border-line bg-white",
+            : "border-line bg-card",
         className,
       )}
     >

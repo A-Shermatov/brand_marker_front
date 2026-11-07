@@ -60,7 +60,7 @@ export const SupplierLeadAside = ({
 
   if (contractId) {
     return (
-      <section className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-20">
+      <section className="rounded-xl border border-line bg-card p-5 lg:sticky lg:top-20">
         <div className="mb-2 flex items-center gap-2">
           <CheckCircle2 size={18} className="text-brand-700" />
           <h2 className="text-[12.5px] font-medium text-mute">
@@ -114,7 +114,7 @@ export const SupplierLeadAside = ({
     }
 
     return (
-      <section className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-20">
+      <section className="rounded-xl border border-line bg-card p-5 lg:sticky lg:top-20">
         <h2 className="text-[12.5px] font-medium text-mute">
           Запрос от заказчика
         </h2>
@@ -154,7 +154,7 @@ export const SupplierLeadAside = ({
       myProposal.status,
     )
     return (
-      <section className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-20">
+      <section className="rounded-xl border border-line bg-card p-5 lg:sticky lg:top-20">
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-[12.5px] font-medium text-mute">
             Ваше КП
@@ -212,7 +212,7 @@ export const SupplierLeadAside = ({
 
   if (!isRfqOpen) {
     return (
-      <section className="rounded-xl border border-line bg-white p-5 lg:sticky lg:top-20">
+      <section className="rounded-xl border border-line bg-card p-5 lg:sticky lg:top-20">
         <b className="text-[15px] text-ink">Приём КП закрыт</b>
         <p className="mt-1 text-[14px] text-mute">
           Срок истёк {deadlineLabel}.

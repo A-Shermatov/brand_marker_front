@@ -114,7 +114,7 @@ export const ProposalForm = ({
 
   const inputClass = (field: string) =>
     cn(
-      "h-11 w-full rounded-lg border bg-white px-3.5 text-[15px] outline-none transition-[color,border-color] mono",
+      "h-11 w-full rounded-lg border bg-card px-3.5 text-[15px] outline-none transition-[color,border-color] mono",
       errors[field]
         ? "border-red-500"
         : "border-line focus:border-brand-600",
@@ -206,7 +206,7 @@ export const ProposalForm = ({
           rows={3}
           placeholder="Модели, что входит в цену, условия доставки"
           className={cn(
-            "w-full resize-none rounded-lg border bg-white px-3.5 py-3 text-[15px] outline-none",
+            "w-full resize-none rounded-lg border bg-card px-3.5 py-3 text-[15px] outline-none",
             errors.message
               ? "border-red-500"
               : "border-line focus:border-brand-600",
@@ -250,7 +250,7 @@ export const ProposalForm = ({
     return (
       <div
         className={cn(
-          "overflow-hidden rounded-xl border border-brand-500 bg-white",
+          "overflow-hidden rounded-xl border border-brand-500 bg-card",
           className,
         )}
       >

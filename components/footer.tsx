@@ -13,7 +13,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-line bg-white">
+    <footer className="mt-20 border-t border-line bg-card">
       <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8">
         <div className="grid content-start gap-4">
           <BrandLogo />

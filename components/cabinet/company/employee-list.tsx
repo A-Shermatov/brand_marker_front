@@ -131,7 +131,7 @@ export const EmployeeList = ({
                           e.target.value as CompanyRole,
                         )
                       }
-                      className="h-9 w-full rounded-lg border border-line bg-white px-3 text-[14px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 disabled:opacity-60 sm:w-[200px]"
+                      className="h-9 w-full rounded-lg border border-line bg-card px-3 text-[14px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 disabled:opacity-60 sm:w-[200px]"
                     >
                       {ASSIGNABLE_COMPANY_ROLES.map((role) => (
                         <option key={role} value={role}>
@@ -259,7 +259,7 @@ const SideAccess = ({
               value={value}
               disabled={busy}
               onChange={(e) => onChange(side, (e.target.value || null) as SideRole | null)}
-              className={`h-8 min-w-0 flex-1 rounded-md border border-line bg-white px-2 text-[13px] outline-none focus:border-brand-600 disabled:opacity-60 ${
+              className={`h-8 min-w-0 flex-1 rounded-md border border-line bg-card px-2 text-[13px] outline-none focus:border-brand-600 disabled:opacity-60 ${
                 value === "none" ? "text-red-700" : "text-ink"
               }`}
             >

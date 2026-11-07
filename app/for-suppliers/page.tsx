@@ -75,7 +75,7 @@ export default function ForSuppliersPage() {
             {BENEFITS.map(({ Icon, title, text }) => (
               <div
                 key={title}
-                className="rounded-2xl border border-line bg-white p-5"
+                className="rounded-2xl border border-line bg-card p-5"
               >
                 <Icon weight="duotone" className="mb-4 size-7 text-brand-700" aria-hidden />
                 <b className="text-[16px] font-semibold text-ink">{title}</b>
@@ -98,7 +98,7 @@ export default function ForSuppliersPage() {
           </div>
 
           <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <article className="grid content-start gap-4 rounded-2xl border border-dashed border-line-strong bg-white/60 p-5">
+            <article className="grid content-start gap-4 rounded-2xl border border-dashed border-line-strong bg-card/60 p-5">
               <FreePlanMark size={40} />
               <div>
                 <b className="text-[18px] font-semibold text-ink">Без подписки</b>
@@ -128,7 +128,7 @@ export default function ForSuppliersPage() {
               <article
                 key={plan.id}
                 className={cn(
-                  "relative grid content-start gap-4 rounded-2xl border bg-white p-5",
+                  "relative grid content-start gap-4 rounded-2xl border bg-card p-5",
                   plan.highlighted
                     ? "border-brand-600 shadow-[0_0_0_1px_var(--brand-600)]"
                     : "border-line",
@@ -165,7 +165,7 @@ export default function ForSuppliersPage() {
             ))}
           </div>
 
-          <div className="mt-8 overflow-x-auto rounded-2xl border border-line bg-white">
+          <div className="mt-8 overflow-x-auto rounded-2xl border border-line bg-card">
             <table className="w-full min-w-[640px] text-left text-[14px]">
               <thead>
                 <tr className="border-b border-line bg-canvas/60">
@@ -202,7 +202,7 @@ export default function ForSuppliersPage() {
           </div>
         </section>
 
-        <section className="mt-14 grid gap-6 rounded-2xl border border-line bg-white p-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:p-8">
+        <section className="mt-14 grid gap-6 rounded-2xl border border-line bg-card p-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:p-8">
           <div className="grid gap-3">
             <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-mute">
               <LockSimpleIcon className="size-4" aria-hidden />
@@ -224,7 +224,7 @@ export default function ForSuppliersPage() {
           {HOW_TO.map(([n, title, text]) => (
             <div
               key={n}
-              className="rounded-2xl border border-line bg-white p-5"
+              className="rounded-2xl border border-line bg-card p-5"
             >
               <span className="text-[13px] font-medium text-mute tnum">Шаг {n}</span>
               <b className="mt-1 block text-[16px] font-semibold text-ink">{title}</b>

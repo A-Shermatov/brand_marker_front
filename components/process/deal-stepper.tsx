@@ -33,7 +33,7 @@ export const DealStepper = ({ contract, className }: { contract: DealContract; c
                   done
                     ? "bg-brand-600 text-white"
                     : now
-                      ? "border-2 border-brand-600 bg-white text-brand-700"
+                      ? "border-2 border-brand-600 bg-card text-brand-700"
                       : "bg-surface-muted text-mute",
                 )}
               >

@@ -96,7 +96,7 @@ export const NotificationsPopover = ({ role }: NotificationsPopoverProps) => {
         >
           <Bell className="size-5" />
           {hydrated && unreadCount > 0 ? (
-            <span className="absolute top-2 right-2.5 size-2 rounded-full bg-red-500 ring-2 ring-white" />
+            <span className="absolute top-2 right-2.5 size-2 rounded-full bg-red-500 ring-2 ring-card" />
           ) : null}
         </button>
       </DropdownMenuTrigger>

@@ -59,7 +59,7 @@ const MODE_CARDS: Array<{
 export const PricingFields = ({ values, onChange, errors }: PricingFieldsProps) => {
   const inputClass = (field: string) =>
     cn(
-      "h-11 w-full rounded-lg border bg-white px-3 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
+      "h-11 w-full rounded-lg border bg-card px-3 text-[14.5px] outline-none transition-all focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15",
       errors?.[field] ? "border-red-400" : "border-line",
     )
 

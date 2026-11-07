@@ -6,7 +6,7 @@ type RfqAttachmentsSectionProps = {
 }
 
 export const RfqAttachmentsSection = ({ attachments }: RfqAttachmentsSectionProps) => (
-  <section className="bg-white border border-border rounded-2xl p-6">
+  <section className="bg-card border border-border rounded-2xl p-6">
     <h2 className="text-base font-bold text-foreground mb-4">Вложения</h2>
     {attachments.length === 0 ? (
       <p className="text-sm text-muted-foreground">Вложений нет</p>

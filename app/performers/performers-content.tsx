@@ -62,7 +62,7 @@ export const PerformersPageContent = () => {
 
   return (
     <PageShell>
-      <section className="bg-white border-b border-border py-9">
+      <section className="bg-card border-b border-border py-9">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">

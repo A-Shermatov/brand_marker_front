@@ -199,7 +199,7 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
 
       <div className="grid items-start gap-5 lg:grid-cols-[1fr_400px]">
         <div className="grid gap-5">
-          <section className="rounded-xl border border-line bg-white p-5">
+          <section className="rounded-xl border border-line bg-card p-5">
             <h2 className="text-[12.5px] font-medium text-mute">
               Покупатель
             </h2>

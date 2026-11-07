@@ -33,16 +33,16 @@ const TIPS = [
 export function ShowcaseEmpty({ filtered }: { filtered: boolean }) {
   if (filtered) {
     return (
-      <p className="rounded-2xl border border-dashed border-line-strong bg-white px-6 py-12 text-center text-[14.5px] text-mute">
+      <p className="rounded-2xl border border-dashed border-line-strong bg-card px-6 py-12 text-center text-[14.5px] text-mute">
         В этом разделе пока нет карточек.
       </p>
     )
   }
   return (
-    <section className="overflow-hidden rounded-3xl border border-line bg-white" aria-label="Первый товар">
+    <section className="overflow-hidden rounded-3xl border border-line bg-card" aria-label="Первый товар">
       <div className="grid gap-6 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-8">
         <div className="flex items-start gap-4">
-          <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white">
+          <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-brand-tile text-white">
             <StorefrontIcon weight="fill" className="size-7" aria-hidden />
           </span>
           <div className="grid gap-1">
