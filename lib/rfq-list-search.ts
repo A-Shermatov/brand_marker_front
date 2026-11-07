@@ -4,11 +4,8 @@ import {
   isPendingCatalogOffer,
   type SupplierRfqSourceFilter,
 } from "@/lib/rfq-board"
-import { OPEN_RFQ_STATUSES } from "@/lib/rfq-display"
 
 export type RfqTypeFilter = "all" | "product" | "service"
-
-export type SupplierRfqResponseFilter = "all" | "open" | "sent" | "closed"
 
 export const RFQ_TYPE_FILTER_VALUES = ["all", "product", "service"] as const
 
@@ -31,23 +28,6 @@ export const SUPPLIER_SOURCE_FILTER_OPTIONS: {
   { value: "all", label: "Все" },
   { value: "marketplace", label: "С площадки" },
   { value: "catalog", label: "Из каталога" },
-]
-
-export const SUPPLIER_RESPONSE_FILTER_VALUES = [
-  "all",
-  "open",
-  "sent",
-  "closed",
-] as const
-
-export const SUPPLIER_RESPONSE_FILTER_OPTIONS: {
-  value: SupplierRfqResponseFilter
-  label: string
-}[] = [
-  { value: "all", label: "Все" },
-  { value: "open", label: "Ждут ответа" },
-  { value: "sent", label: "Ответил" },
-  { value: "closed", label: "Приём закрыт" },
 ]
 
 const formatRfqNoDigits = (rfqId: string): string => {
@@ -75,23 +55,6 @@ export const filterRfqsByType = (
 ): RfqWithRelations[] => {
   if (type === "all") return rfqs
   return rfqs.filter((rfq) => rfq.type === type)
-}
-
-export const isSupplierRfqClosed = (rfq: RfqWithRelations): boolean =>
-  rfq.status === "expired" || !OPEN_RFQ_STATUSES.includes(rfq.status)
-
-export const filterSupplierRfqsByResponse = (
-  rfqs: RfqWithRelations[],
-  filter: SupplierRfqResponseFilter,
-  hasResponse: (rfqId: string) => boolean,
-): RfqWithRelations[] => {
-  if (filter === "all") return rfqs
-  return rfqs.filter((rfq) => {
-    const closed = isSupplierRfqClosed(rfq)
-    if (filter === "closed") return closed
-    if (filter === "sent") return !closed && hasResponse(rfq.id)
-    return !closed && !hasResponse(rfq.id)
-  })
 }
 
 export { isCatalogOfferRfq, isPendingCatalogOffer }

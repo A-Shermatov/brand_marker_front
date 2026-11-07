@@ -15,13 +15,8 @@ import { isApiEnabled } from "@/lib/api/config"
 import { isRfqInvitedFor, OPEN_RFQ_STATUSES } from "@/lib/rfq-display"
 import { filterRfqsBySource, sortSupplierBoardRfqs } from "@/lib/rfq-board"
 import {
-  SUPPLIER_RESPONSE_FILTER_OPTIONS,
-  SUPPLIER_RESPONSE_FILTER_VALUES,
   SUPPLIER_SOURCE_FILTER_VALUES,
-  filterSupplierRfqsByResponse,
-  isPendingCatalogOffer,
   matchesRfqSearch,
-  type SupplierRfqResponseFilter,
   type SupplierRfqSourceFilter,
 } from "@/lib/rfq-list-search"
 import { usePublicCategoriesQuery } from "@/hooks/api/use-public-query"
@@ -37,12 +32,8 @@ import {
   RfqCategoryAlerts,
   RfqCategoryFilter,
 } from "@/components/supplier/rfq/rfq-category-controls"
-import {
-  emptySupplierNavCounts,
-  useMarkNavSectionSeen,
-  useSupplierNavCounts,
-} from "@/hooks/api/use-nav-counts-query"
-import { RfqBoardTable } from "@/components/supplier/rfq/rfq-board-table"
+import { useMarkNavSectionSeen } from "@/hooks/api/use-nav-counts-query"
+import { RfqBoardList } from "@/components/supplier/rfq/rfq-board-list"
 import { RfqListToolbar } from "@/components/cabinet/rfq/rfq-list-toolbar"
 import { ListPagination } from "@/components/list-pagination"
 import { ProposalDialog } from "@/components/supplier/proposal-dialog"
@@ -96,14 +87,8 @@ const SupplierRfqsContent = () => {
     SUPPLIER_SOURCE_FILTER_VALUES,
     "all",
   )
-  const [responseFilter, setResponseFilter] = useUrlTab<SupplierRfqResponseFilter>(
-    "response",
-    SUPPLIER_RESPONSE_FILTER_VALUES,
-    "all",
-  )
 
   const useApi = isApiEnabled()
-  const navCounts = useSupplierNavCounts(useApi).data ?? emptySupplierNavCounts()
   useMarkNavSectionSeen("supplier", "rfqs")
 
   useEffect(() => {
@@ -114,7 +99,7 @@ const SupplierRfqsContent = () => {
   const categoryKey = categoryFilter.join(",")
   useEffect(() => {
     setPage(1)
-  }, [debouncedSearch, sourceFilter, responseFilter, categoryKey])
+  }, [debouncedSearch, sourceFilter, categoryKey])
 
   const { data: apiRfqs, isLoading } = useSupplierRfqBoardQuery(hydrated && useApi, {
     page,
@@ -154,10 +139,6 @@ const SupplierRfqsContent = () => {
   }
 
   const filtered = useMemo(() => {
-    const responded = (rfqId: string) => {
-      const mine = getMyProposal(rfqId)
-      return Boolean(mine) && !isPendingCatalogOffer(mine?.status)
-    }
     const bySearch = (rfq: RfqWithRelations) =>
       matchesRfqSearch(
         rfq,
@@ -169,10 +150,8 @@ const SupplierRfqsContent = () => {
       ? openRfqs
       : filterRfqsBySource(openRfqs.filter(bySearch), sourceFilter)
 
-    const withResponse = filterSupplierRfqsByResponse(base, responseFilter, responded)
-
     return sortSupplierBoardRfqs(
-      [...withResponse].sort((a, b) => {
+      [...base].sort((a, b) => {
         const ae = a.status === "expired" || !OPEN_RFQ_STATUSES.includes(a.status)
         const be = b.status === "expired" || !OPEN_RFQ_STATUSES.includes(b.status)
         return Number(ae) - Number(be)
@@ -185,7 +164,6 @@ const SupplierRfqsContent = () => {
     openRfqs,
     debouncedSearch,
     sourceFilter,
-    responseFilter,
     actorId,
     getCompany,
     localProposals,
@@ -235,7 +213,6 @@ const SupplierRfqsContent = () => {
   const hasFilters =
     Boolean(debouncedSearch) ||
     sourceFilter !== "all" ||
-    responseFilter !== "all" ||
     categoryFilter.length > 0
   const isLoadingState = !hydrated || isLoading
   const isEmpty = isLoadingState || filtered.length === 0
@@ -269,16 +246,6 @@ const SupplierRfqsContent = () => {
         searchAriaLabel="Поиск по заявкам покупателей"
         onFilterChange={setSourceFilter}
         filterAriaLabel="Источник заявки"
-        secondaryFilterValue={responseFilter}
-        secondaryFilterOptions={SUPPLIER_RESPONSE_FILTER_OPTIONS.map((option) =>
-          option.value === "open" && navCounts.rfqs > 0
-            ? { ...option, count: navCounts.rfqs }
-            : option,
-        )}
-        onSecondaryFilterChange={(value) =>
-          setResponseFilter(value as SupplierRfqResponseFilter)
-        }
-        secondaryFilterAriaLabel="Ответ по заявке"
       />
 
       {isEmpty ? (
@@ -304,7 +271,7 @@ const SupplierRfqsContent = () => {
           />
         </PageSurface>
       ) : (
-        <RfqBoardTable
+        <RfqBoardList
           rfqs={filtered}
           actorId={actorId}
           getMyProposal={getMyProposal}
