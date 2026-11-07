@@ -14,6 +14,7 @@ import { useAuthStore } from "@/lib/store/auth-store"
 import { useFinanceStore } from "@/lib/store/finance-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
 import { useHydrated } from "@/hooks/use-hydrated"
+import { usePlatformSettingsQuery } from "@/hooks/api/use-public-query"
 import { getActorId } from "@/lib/auth-display"
 import { isApiEnabled } from "@/lib/api/config"
 import { getApiErrorMessage } from "@/lib/api/client"
@@ -44,6 +45,8 @@ const WITHDRAWAL_LABEL: Record<string, string> = {
 
 export default function SupplierFinancePage() {
   const hydrated = useHydrated()
+  // The fee comes from the platform settings, the same number deals are charged with.
+  const { data: platformSettings } = usePlatformSettingsQuery(isApiEnabled())
   const user = useAuthStore((s) => s.user)
   const actorId = getActorId(user)
   const useApi = isApiEnabled()
@@ -277,7 +280,11 @@ export default function SupplierFinancePage() {
         />
         <MetricTile
           label="Комиссия площадки"
-          value="3%"
+          value={
+            platformSettings
+              ? `${platformSettings.commission_percent.toLocaleString("ru-RU")}%`
+              : "—"
+          }
           hint="только с завершённых сделок"
         />
       </section>
