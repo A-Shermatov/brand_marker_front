@@ -35,8 +35,40 @@ export type Proposal = {
   created_at: string
 }
 
+/**
+ * Where a supplier's proposal stands (My proposals):
+ * waiting – the buyer has not chosen yet; your_move – a catalog offer waits
+ * for the supplier; won – this proposal was chosen; lost – another supplier
+ * was chosen; rejected – declined, no one chosen yet; withdrawn; closed –
+ * the request closed without a choice.
+ */
+export type ProposalOutcome =
+  | { kind: "waiting" | "your_move" | "rejected" | "withdrawn" | "closed" }
+  | { kind: "won"; contract_id: number | null }
+  | { kind: "lost"; winner_name: string }
+
+/** The request a proposal answers, as My proposals shows it. */
+export type ProposalRfqSummary = {
+  id: string
+  title: string
+  status: string
+  deadline: string | null
+}
+
+/** The other party of a proposal: the buyer in My proposals. */
+export type ProposalCounterpart = {
+  id: number
+  name: string
+  rating: number
+  photo: string | null
+}
+
 export type ProposalWithRelations = Proposal & {
   attachment: ProposalAttachment | null
+  /** My proposals only. */
+  actor?: ProposalCounterpart
+  rfq_summary?: ProposalRfqSummary | null
+  outcome?: ProposalOutcome
 }
 
 export type ProposalCreate = Omit<
