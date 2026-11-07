@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { IBM_Plex_Mono, Onest } from 'next/font/google'
 import { QueryProvider } from '@/components/providers/query-provider'
+import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
@@ -63,12 +64,20 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" className={`bg-canvas ${onest.variable} ${plexMono.variable}`}>
+    // The theme class is set on <html> before paint, so it differs from the server markup.
+    <html
+      lang="ru"
+      suppressHydrationWarning
+      className={`bg-canvas ${onest.variable} ${plexMono.variable}`}
+    >
       <body className="bg-canvas font-sans text-[15px] text-ink antialiased">
-        <QueryProvider>
-          {children}
-          <Toaster richColors position="bottom-right" />
-        </QueryProvider>
+        {/* Light, dark, or the device's own setting (the default); remembered per browser. */}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <QueryProvider>
+            {children}
+            <Toaster richColors position="bottom-right" />
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

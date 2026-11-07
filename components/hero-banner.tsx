@@ -201,7 +201,7 @@ export default function HeroBanner() {
         </div>
 
         {/* Stats bar */}
-        <div className="mt-4 bg-white border border-border rounded-2xl py-4 px-8 flex items-center justify-around flex-wrap gap-4 shadow-sm">
+        <div className="mt-4 bg-card border border-border rounded-2xl py-4 px-8 flex items-center justify-around flex-wrap gap-4 shadow-sm">
           {stats.map(({ value, label, Icon }, i) => (
             <div key={i} className="flex items-center gap-3">
               <div className="text-center flex items-center gap-3">
@@ -235,7 +235,7 @@ function PromoCard({
       className={`${bg} rounded-2xl p-4 flex flex-col gap-2.5 border ${border} hover:shadow-md transition-all flex-1 group`}
       aria-label={title}
     >
-      <div className={`w-9 h-9 rounded-xl bg-white/70 flex items-center justify-center border ${border}`}>
+      <div className={`w-9 h-9 rounded-xl bg-card/70 flex items-center justify-center border ${border}`}>
         <Icon size={17} className={iconClass} />
       </div>
       <div>

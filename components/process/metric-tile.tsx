@@ -47,7 +47,7 @@ export const MetricTile = ({
     </>
   )
   const className =
-    "grid min-w-0 content-start gap-1.5 overflow-hidden rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]"
+    "grid min-w-0 content-start gap-1.5 overflow-hidden rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]"
 
   if (!href) return <div className={className}>{content}</div>
   return (

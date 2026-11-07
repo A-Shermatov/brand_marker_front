@@ -32,7 +32,7 @@ export const QueueTiles = ({ tiles }: QueueTilesProps) => (
               "grid gap-1 rounded-2xl border p-4 text-left transition hover:border-ink",
               hot
                 ? "border-amber-300 bg-amber-50/50"
-                : "border-line bg-white",
+                : "border-line bg-card",
             )}
           >
             <span className="flex items-center justify-between">

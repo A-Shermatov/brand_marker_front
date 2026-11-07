@@ -45,7 +45,7 @@ const TodoRow = ({
               "rounded-2xl border p-4",
               item.hot
                 ? "border-brand-200 bg-brand-50/50"
-                : "border-line bg-white",
+                : "border-line bg-card",
             ),
       )}
     >
@@ -73,8 +73,8 @@ const TodoRow = ({
           "inline-flex shrink-0 items-center justify-center rounded-md px-3 text-[13.5px] font-semibold transition-colors",
           compact ? "h-8" : "h-10 px-4 text-[14.5px]",
           item.hot
-            ? "bg-brand-600 text-white hover:bg-brand-700"
-            : "border border-line-strong bg-white text-ink hover:bg-canvas",
+            ? "bg-brand-600 text-white hover:bg-brand-700 dark:hover:bg-brand-500"
+            : "border border-line-strong bg-card text-ink hover:bg-canvas",
         )}
       >
         {item.cta}
@@ -95,13 +95,13 @@ export const TodoList = ({
       <span className="text-[13px] font-semibold text-mute">{title}</span>
     ) : null}
     {loading ? (
-      <div className="mt-0 h-20 animate-pulse rounded-xl border border-line bg-white" />
+      <div className="mt-0 h-20 animate-pulse rounded-xl border border-line bg-card" />
     ) : items.length === 0 ? (
       <div className="rounded-xl border border-dashed border-line-strong p-5 text-[14px] text-mute">
         {emptyText}
       </div>
     ) : compact ? (
-      <div className="overflow-hidden rounded-xl border border-line bg-white">
+      <div className="overflow-hidden rounded-xl border border-line bg-card">
         {items.map((item) => (
           <TodoRow key={item.id} item={item} compact />
         ))}

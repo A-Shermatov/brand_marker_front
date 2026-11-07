@@ -39,7 +39,7 @@ export function HubTabs({ items, ariaLabel, className }: HubTabsProps) {
           className={cn(
             "inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-md px-3.5 text-[13.5px] font-medium transition-colors",
             item.active
-              ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
+              ? "bg-card text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
               : "text-mute hover:text-ink",
           )}
         >

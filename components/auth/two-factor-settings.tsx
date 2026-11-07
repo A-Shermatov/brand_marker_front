@@ -289,7 +289,7 @@ export function TwoFactorSettings({ className, compact }: Props) {
           {step === "scan" && setup && (
             <div className="space-y-3">
               <div className="flex justify-center">
-                <div className="rounded-xl border border-line bg-white p-3">
+                <div className="rounded-xl border border-line bg-card p-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={setup.qr_data_url}

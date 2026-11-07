@@ -23,7 +23,7 @@ function RibbonCard({ service, hidden }: { service: MarketplaceService; hidden?:
       href={serviceUrl(service.id)}
       aria-hidden={hidden || undefined}
       tabIndex={hidden ? -1 : undefined}
-      className="group flex w-[300px] shrink-0 items-center gap-3 rounded-2xl border border-line bg-white p-2.5 pr-4 transition-[border-color,box-shadow] hover:border-brand-200 hover:shadow-[0_10px_24px_-14px_rgb(0_80_200/0.45)]"
+      className="group flex w-[300px] shrink-0 items-center gap-3 rounded-2xl border border-line bg-card p-2.5 pr-4 transition-[border-color,box-shadow] hover:border-brand-200 hover:shadow-[0_10px_24px_-14px_rgb(0_80_200/0.45)]"
     >
       <span className="relative size-[68px] shrink-0 overflow-hidden rounded-xl bg-canvas">
         {picture ? (
@@ -87,7 +87,7 @@ export function LandingRibbon() {
   const lanes = [items.slice(0, half), items.slice(half)].filter((lane) => lane.length >= 2)
 
   return (
-    <section aria-label="Товары и услуги на площадке" className="border-b border-line bg-white py-8">
+    <section aria-label="Товары и услуги на площадке" className="border-b border-line bg-card py-8">
       <div className="mx-auto mb-5 flex max-w-[1200px] items-end justify-between gap-4 px-4 lg:px-8">
         <div>
           <h2 className="text-[22px] font-semibold tracking-[-0.02em] text-ink">Сейчас на площадке</h2>

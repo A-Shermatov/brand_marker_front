@@ -150,7 +150,7 @@ export default function AdminDashboardPage() {
   if (isError || !data) {
     return (
       <div className="mx-auto flex min-h-[60dvh] max-w-xl items-center justify-center">
-        <div className="w-full rounded-2xl border border-line bg-white p-8 text-center">
+        <div className="w-full rounded-2xl border border-line bg-card p-8 text-center">
           <div className="mx-auto grid size-12 place-items-center rounded-xl bg-red-50 text-red-700">
             <AlertTriangle size={22} aria-hidden />
           </div>
@@ -249,7 +249,7 @@ export default function AdminDashboardPage() {
         </section>
 
         <section className="grid gap-5 lg:grid-cols-2">
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
+          <div className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
             <span className="text-[13px] font-semibold text-mute">
               Безопасность за сутки
             </span>
@@ -273,7 +273,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
+          <div className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
             <div className="flex items-center justify-between gap-3">
               <span className="text-[13px] font-semibold text-mute">
                 Последние действия

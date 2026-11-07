@@ -124,11 +124,11 @@ export const CatalogItemSections = ({
           Основные характеристики
         </h2>
         {sortedAttrs.length === 0 ? (
-          <p className="rounded-2xl border border-line bg-white p-5 text-[15px] text-mute">
+          <p className="rounded-2xl border border-line bg-card p-5 text-[15px] text-mute">
             Характеристики не указаны.
           </p>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-line bg-white">
+          <div className="overflow-hidden rounded-2xl border border-line bg-card">
             <dl className="grid md:grid-cols-2">
               {sortedAttrs.map((attr, i) => (
                 <div
@@ -156,13 +156,13 @@ export const CatalogItemSections = ({
           Упаковка и сроки отгрузки
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="grid content-start gap-3 rounded-2xl border border-line bg-white p-5">
+          <div className="grid content-start gap-3 rounded-2xl border border-line bg-card p-5">
             <b className="text-[16px]">Упаковка</b>
             <p className="text-[15px] text-ink">
               {packDesc ?? "Продавец не указал — уточните в чате"}
             </p>
           </div>
-          <div className="grid content-start gap-3 rounded-2xl border border-line bg-white p-5">
+          <div className="grid content-start gap-3 rounded-2xl border border-line bg-card p-5">
             <b className="text-[16px]">Сроки отгрузки</b>
             <p className="text-[15px] text-ink">{lead ?? "—"}</p>
             <b className="mt-2 text-[16px]">Доставка</b>
@@ -181,7 +181,7 @@ export const CatalogItemSections = ({
         <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
           Рейтинги и отзывы
         </h2>
-        <div className="grid gap-5 rounded-2xl border border-line bg-white p-5 md:p-6">
+        <div className="grid gap-5 rounded-2xl border border-line bg-card p-5 md:p-6">
           {supplier.reviews_count > 0 ? (
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               <b className="text-[52px] font-bold leading-none tnum">
@@ -227,7 +227,7 @@ export const CatalogItemSections = ({
         </h2>
         <div className="grid gap-5 rounded-2xl bg-surface-muted p-5 md:p-6">
           <div className="flex flex-wrap items-start gap-4">
-            <span className="grid size-16 place-items-center rounded-xl border border-line bg-white text-[20px] font-bold text-ink">
+            <span className="grid size-16 place-items-center rounded-xl border border-line bg-card text-[20px] font-bold text-ink">
               {supplier.display_name
                 .split(/\s+/)
                 .slice(0, 2)
@@ -267,7 +267,7 @@ export const CatalogItemSections = ({
             </div>
           </div>
           {supplier.description ? (
-            <div className="grid gap-4 rounded-2xl bg-white p-5">
+            <div className="grid gap-4 rounded-2xl bg-card p-5">
               <b className="text-[16px]">Обзор компании</b>
               <p className="text-[14.5px] text-ink/80">{supplier.description}</p>
             </div>
@@ -308,7 +308,7 @@ export const CatalogItemSections = ({
               </Link>
             ))}
         </div>
-        <div className="grid gap-5 rounded-2xl border border-line bg-white p-5 md:p-7">
+        <div className="grid gap-5 rounded-2xl border border-line bg-card p-5 md:p-7">
           {description ? (
             <p className="text-[15.5px] leading-relaxed text-ink whitespace-pre-wrap">
               {description}

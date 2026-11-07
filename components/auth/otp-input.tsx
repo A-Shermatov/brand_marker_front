@@ -44,7 +44,7 @@ export function OtpInput({
             key={index}
             index={index}
             className={cn(
-              "size-11 sm:size-12 rounded-xl border border-line bg-white text-[18px] font-semibold text-ink shadow-none",
+              "size-11 sm:size-12 rounded-xl border border-line bg-card text-[18px] font-semibold text-ink shadow-none",
               "first:rounded-xl first:border-l last:rounded-xl",
               "data-[active=true]:border-ink data-[active=true]:ring-2 data-[active=true]:ring-ink/15",
               "aria-invalid:border-destructive",

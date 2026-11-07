@@ -37,7 +37,7 @@ export function CategoryGrid() {
   const { categories, isLoading } = useMarketplaceCategories()
 
   return (
-    <section className="bg-white border-b border-border py-9">
+    <section className="bg-card border-b border-border py-9">
       <div className="max-w-[1440px] mx-auto px-6">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -130,7 +130,7 @@ export function ProviderShowcase() {
   }, [useApi, apiSuppliers])
 
   return (
-    <section className="bg-white border-t border-b border-border py-9">
+    <section className="bg-card border-t border-b border-border py-9">
       <div className="max-w-[1440px] mx-auto px-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ export function TrustBanners() {
             <Link
               key={title}
               href={href}
-              className="bg-white rounded-2xl p-5 border border-border flex gap-3 items-start hover:shadow-md transition-shadow"
+              className="bg-card rounded-2xl p-5 border border-border flex gap-3 items-start hover:shadow-md transition-shadow"
             >
               <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
                 <Icon size={18} className="text-primary" />
@@ -254,7 +254,7 @@ export function RecentRequests() {
   }, [useApi, apiRfqs])
 
   return (
-    <section className="bg-white border-t border-b border-border py-9">
+    <section className="bg-card border-t border-b border-border py-9">
       <div className="max-w-[1440px] mx-auto px-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -276,7 +276,7 @@ export function RecentRequests() {
             return (
               <div
                 key={req.id}
-                className="border border-border rounded-2xl p-5 hover:border-primary/30 hover:shadow-lg transition-all duration-200 group bg-white"
+                className="border border-border rounded-2xl p-5 hover:border-primary/30 hover:shadow-lg transition-all duration-200 group bg-card"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">

@@ -18,6 +18,7 @@ import { getUserDisplayName, getUserInitials } from "@/lib/auth-display"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { cn } from "@/lib/utils"
 import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function SupplierTopbar({
   moreOpen,
@@ -44,11 +45,12 @@ export default function SupplierTopbar({
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-[60px] border-b border-line bg-white/90 backdrop-blur-md">
+      <header className="sticky top-0 z-30 h-[60px] border-b border-line bg-card/90 backdrop-blur-md">
         <div className="flex h-full items-center gap-3 px-4 lg:gap-4 lg:px-8">
           <BrandLogo small showWordmark className="shrink-0 lg:hidden" />
           <CabinetSearch target="/supplier/rfqs" placeholder="Поиск по заявкам покупателей" />
           <span className="flex-1" />
+          <ThemeToggle />
           <NotificationsPopover role="supplier" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

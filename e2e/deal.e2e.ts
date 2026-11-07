@@ -42,7 +42,7 @@ test("a deal goes from a published request to a paid, reviewed contract", async 
     await buyer.locator("#rfq-description").fill("Покраска стен и замена напольного покрытия в офисе 120 м².")
     await buyer.getByRole("button", { name: /Далее/ }).click()
 
-    await buyer.getByRole("button", { name: "Фиксированный" }).click()
+    await buyer.getByRole("button", { name: "Точная сумма" }).click()
     await buyer.locator("#budget-from").fill("15000")
     await buyer.locator("#deadline").fill(ruDate(30))
     await buyer.locator("#start-date").fill(ruDate(35))

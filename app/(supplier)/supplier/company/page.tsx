@@ -524,7 +524,7 @@ export default function SupplierCompanyPage() {
       />
 
       {!company ? (
-        <div className="rounded-2xl border border-dashed border-line-strong bg-white px-6 py-14 text-center">
+        <div className="rounded-2xl border border-dashed border-line-strong bg-card px-6 py-14 text-center">
           <b className="text-[17px]">Компания ещё не создана</b>
           <p className="mx-auto mt-2 max-w-md text-[15px] text-mute">
             Создайте профиль компании, чтобы заполнить страницу и работать с
@@ -552,7 +552,7 @@ export default function SupplierCompanyPage() {
                   rows={5}
                   value={about}
                   onChange={(e) => setAbout(e.target.value)}
-                  className="min-h-[120px] w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-[15px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                  className="min-h-[120px] w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-[15px] outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
                   placeholder="3–5 предложений: что продаёте, сколько лет на рынке, какие гарантии и сроки"
                 />
               </div>
@@ -622,7 +622,7 @@ export default function SupplierCompanyPage() {
                     />
                     <button
                       type="button"
-                      className="absolute top-1.5 right-1.5 grid size-7 place-items-center rounded-md bg-white/95 text-red-600 shadow"
+                      className="absolute top-1.5 right-1.5 grid size-7 place-items-center rounded-md bg-card/95 text-red-600 shadow"
                       aria-label="Удалить"
                       onClick={() =>
                         setExtra((prev) => ({
@@ -744,7 +744,7 @@ export default function SupplierCompanyPage() {
 
             <div
               id="reviews"
-              className="scroll-mt-24 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
+              className="scroll-mt-24 rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
             >
               <div className="mb-4 flex items-center gap-2">
                 <Star className="size-4 text-mute" aria-hidden />
@@ -774,7 +774,7 @@ export default function SupplierCompanyPage() {
           </div>
 
           <aside className="grid gap-4 lg:sticky lg:top-[92px]">
-            <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
+            <div className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
               <span className="text-[14px] font-semibold">Проверка компании</span>
               <div className="mt-2">
                 {verified ? (
@@ -803,7 +803,7 @@ export default function SupplierCompanyPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
+            <div className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
               <span className="text-[14px] font-semibold">
                 Заполненность страницы
               </span>

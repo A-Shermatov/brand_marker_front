@@ -27,7 +27,7 @@ export const ServiceCard = ({ service }: ServiceCardProps) => {
   const requestPrice = isRequestPrice(service.price)
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]">
       <Link
         href={detailHref}
         className="relative aspect-square w-full overflow-hidden bg-canvas"

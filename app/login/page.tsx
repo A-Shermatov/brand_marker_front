@@ -164,7 +164,7 @@ function LoginContent() {
       </div>
 
       <div className="grid flex-1 place-items-center px-4 py-10">
-        <div className="w-full max-w-[420px] rounded-2xl border border-line bg-white p-7 shadow-[0_2px_4px_rgb(0_30_90/0.15),0_40px_80px_-30px_rgb(0_25_80/0.6)] sm:p-8">
+        <div className="w-full max-w-[420px] rounded-2xl border border-line bg-card p-7 shadow-[0_2px_4px_rgb(0_30_90/0.15),0_40px_80px_-30px_rgb(0_25_80/0.6)] sm:p-8">
           {challengeToken ? (
             <TwoFactorChallenge
               busy={otpBusy}
@@ -197,7 +197,7 @@ function LoginContent() {
                 className={cn(
                   "h-10 rounded-lg text-[15px] font-semibold transition",
                   tab === key
-                    ? "bg-white text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
+                    ? "bg-card text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
                     : "text-mute hover:text-ink",
                 )}
               >

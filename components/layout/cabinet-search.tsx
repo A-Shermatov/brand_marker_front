@@ -34,7 +34,7 @@ export function CabinetSearch({ target, placeholder }: CabinetSearchProps) {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder={placeholder}
-          className="h-9 w-full rounded-lg border border-transparent bg-surface-muted pl-9 pr-3 text-[14px] outline-none transition-colors placeholder:text-faint hover:bg-line/70 focus:border-brand-600 focus:bg-white focus:ring-[3px] focus:ring-brand-600/15"
+          className="h-9 w-full rounded-lg border border-transparent bg-surface-muted pl-9 pr-3 text-[14px] outline-none transition-colors placeholder:text-faint hover:bg-line/70 focus:border-brand-600 focus:bg-card focus:ring-[3px] focus:ring-brand-600/15"
         />
       </label>
     </form>

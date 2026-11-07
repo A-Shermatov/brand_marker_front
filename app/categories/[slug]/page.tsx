@@ -69,7 +69,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <PageShell>
-      <section className="bg-white border-b border-border py-9">
+      <section className="bg-card border-b border-border py-9">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
             <Link href="/" className="hover:text-primary transition-colors">Главная</Link>
@@ -95,7 +95,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                 !activeSub
                   ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-white text-muted-foreground border-border hover:border-primary/30"
+                  : "bg-card text-muted-foreground border-border hover:border-primary/30"
               }`}
             >
               Все
@@ -107,7 +107,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                   activeSub?.slug === item.slug
                     ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-white text-muted-foreground border-border hover:border-primary/30"
+                    : "bg-card text-muted-foreground border-border hover:border-primary/30"
                 }`}
               >
                 {item.label}

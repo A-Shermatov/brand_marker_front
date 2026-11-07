@@ -27,7 +27,7 @@ export const LandingAbout = () => {
           {Array.from({ length: 10 }).map((_, i) => (
             <div
               key={i}
-              className="h-[128px] animate-pulse rounded-2xl border border-line bg-white"
+              className="h-[128px] animate-pulse rounded-2xl border border-line bg-card"
             />
           ))}
         </div>
@@ -39,7 +39,7 @@ export const LandingAbout = () => {
               <Link
                 key={cat.id}
                 href={categoryUrl(cat.slug)}
-                className="grid gap-4 rounded-2xl border border-line bg-white p-4 text-left transition-colors hover:border-line-strong"
+                className="grid gap-4 rounded-2xl border border-line bg-card p-4 text-left transition-colors hover:border-line-strong"
               >
                 <span className="grid size-10 place-items-center rounded-lg bg-brand-50">
                   <Icon weight="duotone" className="size-6 text-brand-700" aria-hidden />

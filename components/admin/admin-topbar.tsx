@@ -26,6 +26,7 @@ import { getStaffRoleLabel } from "@/lib/admin-permissions"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { cn } from "@/lib/utils"
 import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function AdminTopbar() {
   const router = useRouter()
@@ -45,7 +46,7 @@ export default function AdminTopbar() {
   const roleLabel = getStaffRoleLabel(user?.staffRoleName ?? user?.platformRole ?? "admin")
 
   return (
-    <header className="sticky top-0 z-30 h-[60px] border-b border-line bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 h-[60px] border-b border-line bg-card/90 backdrop-blur-md">
       <div className="flex h-full items-center gap-4 px-4 lg:px-8">
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
@@ -81,11 +82,12 @@ export default function AdminTopbar() {
         ) : null}
       </nav>
 
+      <ThemeToggle className="ml-auto" />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="ml-auto flex h-10 items-center gap-2.5 rounded-lg py-1.5 pl-1 pr-2 transition-colors hover:bg-canvas"
+            className="flex h-10 items-center gap-2.5 rounded-lg py-1.5 pl-1 pr-2 transition-colors hover:bg-canvas"
             aria-label="Открыть меню профиля"
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-muted text-xs font-semibold text-ink ring-1 ring-line">

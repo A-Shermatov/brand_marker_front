@@ -51,7 +51,7 @@ export const RfqListToolbar = <T extends string>({
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder={searchPlaceholder}
-          className="h-10 bg-white pl-11"
+          className="h-10 bg-card pl-11"
           aria-label={searchAriaLabel}
         />
       </div>

@@ -104,7 +104,7 @@ export function SectionHub({ role, badges }: SectionHubProps) {
       {meta ? (
         <div className="flex min-w-0 items-center gap-2.5">
           {Icon ? (
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white">
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-tile text-white">
               <Icon weight="fill" className="size-5" aria-hidden />
             </span>
           ) : null}
@@ -119,7 +119,7 @@ export function SectionHub({ role, badges }: SectionHubProps) {
       <div
         role="tablist"
         aria-label={meta?.title ?? hub.label}
-        className="flex max-w-full gap-1 overflow-x-auto rounded-xl border border-line bg-white p-1 no-scrollbar"
+        className="flex max-w-full gap-1 overflow-x-auto rounded-xl border border-line bg-card p-1 no-scrollbar"
       >
         {tabs.map((tab: CabinetSubtab) => {
           const on = active?.id === tab.id
@@ -142,7 +142,7 @@ export function SectionHub({ role, badges }: SectionHubProps) {
                 <span
                   className={cn(
                     "grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11px] font-semibold tnum",
-                    on ? "bg-white text-brand-700" : "bg-brand-600 text-white",
+                    on ? "bg-card text-brand-700" : "bg-brand-600 text-white",
                   )}
                 >
                   {badge}

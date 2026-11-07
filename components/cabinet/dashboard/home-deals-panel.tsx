@@ -17,7 +17,7 @@ export const HomeDealsPanel = ({
   const list = contracts.slice(0, 6)
 
   return (
-    <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
+    <div className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
       <div className="mb-3 flex items-center justify-between">
         <span className="text-[13px] font-semibold text-mute">Сделки в работе</span>
         <Link

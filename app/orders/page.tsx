@@ -26,7 +26,7 @@ export default function OrdersPage() {
 
   return (
     <PageShell>
-      <section className="bg-white border-b border-border py-9">
+      <section className="bg-card border-b border-border py-9">
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
@@ -52,7 +52,7 @@ export default function OrdersPage() {
               return (
                 <div
                   key={order.id}
-                  className="border border-border rounded-2xl p-5 bg-white hover:border-primary/30 hover:shadow-lg transition-all"
+                  className="border border-border rounded-2xl p-5 bg-card hover:border-primary/30 hover:shadow-lg transition-all"
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">

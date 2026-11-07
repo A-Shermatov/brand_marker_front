@@ -440,7 +440,7 @@ export default function SupplierDashboard() {
         </DashboardPanel>
       </div>
 
-      <section className="grid gap-4 rounded-2xl border border-line bg-white p-5 md:grid-cols-[1fr_1fr_auto] md:items-center">
+      <section className="grid gap-4 rounded-2xl border border-line bg-card p-5 md:grid-cols-[1fr_1fr_auto] md:items-center">
         <div className="flex items-center gap-3.5">
           <TrustMark tier={marks.tier} size={44} />
           <div className="min-w-0">

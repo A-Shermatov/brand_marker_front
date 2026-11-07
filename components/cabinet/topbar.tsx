@@ -18,6 +18,7 @@ import { useHydrated } from "@/hooks/use-hydrated"
 import { getUserDisplayName, getUserInitials } from "@/lib/auth-display"
 import { cn } from "@/lib/utils"
 import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function CustomerTopbar({
   moreOpen,
@@ -44,7 +45,7 @@ export default function CustomerTopbar({
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-[60px] border-b border-line bg-white/90 backdrop-blur-md">
+      <header className="sticky top-0 z-30 h-[60px] border-b border-line bg-card/90 backdrop-blur-md">
         <div className="flex h-full items-center gap-3 px-4 lg:gap-4 lg:px-8">
           <BrandLogo small showWordmark className="shrink-0 lg:hidden" />
           <CabinetSearch target="/customer/rfqs" placeholder="Поиск по вашим заявкам" />
@@ -56,6 +57,7 @@ export default function CustomerTopbar({
             <ShoppingCart className="size-[18px]" />
             Каталог
           </Link>
+          <ThemeToggle />
           <NotificationsPopover role="buyer" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

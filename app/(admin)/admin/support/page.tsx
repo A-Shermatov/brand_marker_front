@@ -146,10 +146,10 @@ const AdminSupportContent = () => {
       />
 
       <div
-        className="support-tg grid min-h-[min(72vh,740px)] overflow-hidden rounded-[14px] border border-black/[0.08] bg-white lg:grid-cols-[340px_1fr]"
+        className="support-tg grid min-h-[min(72vh,740px)] overflow-hidden rounded-[14px] border border-black/[0.08] bg-card lg:grid-cols-[340px_1fr]"
         style={{ boxShadow: "var(--tg-panel-shadow)" }}
       >
-        <aside className="flex max-h-[min(72vh,740px)] flex-col border-r border-black/[0.08] bg-white">
+        <aside className="flex max-h-[min(72vh,740px)] flex-col border-r border-black/[0.08] bg-card">
           <div className="border-b border-black/[0.06] px-3 py-2.5">
             <SegmentedControl
               value={status}
@@ -187,15 +187,15 @@ const AdminSupportContent = () => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline gap-2">
-                        <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-black/90">
+                        <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-ink">
                           {name}
                         </span>
-                        <span className="shrink-0 text-[12px] text-black/40">
+                        <span className="shrink-0 text-[12px] text-faint">
                           {formatListTime(item.last_message_at ?? item.created_at)}
                         </span>
                       </div>
                       <div className="mt-0.5 flex items-center gap-2">
-                        <p className="min-w-0 flex-1 truncate text-[13px] text-black/45">
+                        <p className="min-w-0 flex-1 truncate text-[13px] text-mute">
                           {item.last_message_preview || "Нет сообщений"}
                         </p>
                         {item.unread_count > 0 ? (
@@ -204,7 +204,7 @@ const AdminSupportContent = () => {
                           </span>
                         ) : null}
                       </div>
-                      <p className="mt-0.5 text-[11px] text-black/35">
+                      <p className="mt-0.5 text-[11px] text-faint">
                         {item.side}
                         {item.status === "closed" ? " · закрыт" : ""}
                       </p>
@@ -246,7 +246,7 @@ const AdminSupportContent = () => {
           ) : null}
         </aside>
 
-        <section className="flex max-h-[min(72vh,740px)] min-h-0 flex-col bg-white">
+        <section className="flex max-h-[min(72vh,740px)] min-h-0 flex-col bg-card">
           {!selectedId ? (
             <div className="support-tg-wallpaper flex flex-1 items-center justify-center">
               <PageEmptyState

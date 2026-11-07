@@ -5,7 +5,7 @@ type RfqRequirementsSectionProps = {
 }
 
 export const RfqRequirementsSection = ({ requirements }: RfqRequirementsSectionProps) => (
-  <section className="bg-white border border-border rounded-2xl p-6">
+  <section className="bg-card border border-border rounded-2xl p-6">
     <h2 className="text-base font-bold text-foreground mb-4">Требования</h2>
     <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {requirements.map((req) => (

@@ -105,7 +105,7 @@ export const CategoryMegaMenu = ({
 
       {isOpen && (
         <div
-          className={`absolute top-full bg-white border border-border shadow-2xl z-[60] rounded-2xl overflow-hidden ${
+          className={`absolute top-full bg-card border border-border shadow-2xl z-[60] rounded-2xl overflow-hidden ${
             variant === "search" ? "left-0 mt-2 w-[min(720px,calc(100vw-3rem))]" : "left-0 mt-0 w-[min(720px,calc(100vw-3rem))]"
           }`}
           role="menu"
@@ -131,7 +131,7 @@ export const CategoryMegaMenu = ({
                       onFocus={() => setActiveCategory(category)}
                       onClick={() => handleCategoryClick(category)}
                       className={`w-full flex items-center gap-2.5 px-4 py-3 text-left text-sm transition-colors ${
-                        isActive ? "bg-white text-primary font-semibold" : "text-foreground hover:bg-white/70"
+                        isActive ? "bg-card text-primary font-semibold" : "text-foreground hover:bg-card/70"
                       }`}
                     >
                       <Icon size={15} className={isActive ? "text-primary" : "text-muted-foreground"} />

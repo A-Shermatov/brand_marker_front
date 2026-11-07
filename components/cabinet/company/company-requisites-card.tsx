@@ -97,7 +97,7 @@ export const CompanyRequisitesCard = ({
   }
 
   return (
-    <aside className="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
+    <aside className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
       <div className="flex items-center gap-3">
         <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-surface-muted text-[13px] font-bold text-ink">
           {initialsFromName(company.name)}

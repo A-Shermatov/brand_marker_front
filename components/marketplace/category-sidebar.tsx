@@ -17,7 +17,7 @@ export const CategorySidebar = () => {
   if (isLoading) {
     return (
       <aside className="hidden lg:block w-[210px] flex-shrink-0" aria-label="Категории услуг">
-        <nav className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm h-full">
+        <nav className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm h-full">
           {Array.from({ length: SKELETON_ROWS }).map((_, index) => (
             <div
               key={index}
@@ -35,7 +35,7 @@ export const CategorySidebar = () => {
   if (categories.length === 0) {
     return (
       <aside className="hidden lg:block w-[210px] flex-shrink-0" aria-label="Категории услуг">
-        <nav className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm p-4">
+        <nav className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm p-4">
           <p className="text-xs text-muted-foreground text-center">Категории пока недоступны</p>
         </nav>
       </aside>
@@ -51,7 +51,7 @@ export const CategorySidebar = () => {
       aria-label="Категории услуг"
       onMouseLeave={() => setActiveCategory(null)}
     >
-      <nav className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm h-full">
+      <nav className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm h-full">
         {categories.map((category) => {
           const Icon = getIcon(category.icon)
           const isActive = flyoutCategory.id === category.id
@@ -87,7 +87,7 @@ export const CategorySidebar = () => {
 
       {activeCategory && activeCategory.subcategories.length > 0 && (
         <div
-          className="absolute left-full top-0 ml-2 w-[220px] bg-white border border-border rounded-2xl shadow-xl z-30 p-4"
+          className="absolute left-full top-0 ml-2 w-[220px] bg-card border border-border rounded-2xl shadow-xl z-30 p-4"
           role="region"
           aria-label={`Подкатегории: ${activeCategory.label}`}
         >

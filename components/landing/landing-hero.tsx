@@ -63,7 +63,7 @@ export const LandingHero = () => {
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && submit()}
                 placeholder="Что нужно купить? Например: цемент М500"
-                className="h-12 w-full rounded-lg border border-transparent bg-white pl-12 pr-3.5 text-[15.5px] text-ink shadow-[0_10px_30px_-12px_rgb(0_30_90/0.55)] outline-none transition placeholder:text-faint focus:ring-[3px] focus:ring-sun/70"
+                className="h-12 w-full rounded-lg border border-transparent bg-card pl-12 pr-3.5 text-[15.5px] text-ink shadow-[0_10px_30px_-12px_rgb(0_30_90/0.55)] outline-none transition placeholder:text-faint focus:ring-[3px] focus:ring-sun/70"
               />
             </label>
             <Button type="button" size="lg" className="h-12 bg-sun px-7 text-sun-ink shadow-[0_10px_30px_-12px_rgb(0_30_90/0.55)] hover:bg-[#FFDA57]" onClick={() => submit()}>
@@ -86,7 +86,7 @@ export const LandingHero = () => {
         </div>
 
         <div className="relative">
-          <div className="relative overflow-hidden rounded-2xl bg-white text-ink shadow-[0_2px_4px_rgb(0_30_90/0.15),0_40px_80px_-30px_rgb(0_25_80/0.6)] ring-1 ring-white/30">
+          <div className="relative overflow-hidden rounded-2xl bg-card text-ink shadow-[0_2px_4px_rgb(0_30_90/0.15),0_40px_80px_-30px_rgb(0_25_80/0.6)] ring-1 ring-white/30">
             <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
               <div className="min-w-0">
                 <span className="text-[12.5px] text-mute tnum">Сделка БМ‑2041</span>
@@ -113,8 +113,8 @@ export const LandingHero = () => {
                       item.state === 1
                         ? "bg-brand-600 text-white"
                         : item.state === 2
-                          ? "border-2 border-brand-600 bg-white text-brand-700"
-                          : "border border-dashed border-line-strong bg-white text-mute"
+                          ? "border-2 border-brand-600 bg-card text-brand-700"
+                          : "border border-dashed border-line-strong bg-card text-mute"
                     }`}
                   >
                     {item.state === 1 ? (

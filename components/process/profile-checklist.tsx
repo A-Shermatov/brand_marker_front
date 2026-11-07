@@ -27,7 +27,7 @@ export const ProfileChecklist = ({
   const percent = Math.round((done / total) * 100)
 
   return (
-    <section className="grid gap-4 rounded-2xl border border-line bg-white p-5" aria-label={title}>
+    <section className="grid gap-4 rounded-2xl border border-line bg-card p-5" aria-label={title}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-[15.5px] font-semibold text-ink">{title}</h2>

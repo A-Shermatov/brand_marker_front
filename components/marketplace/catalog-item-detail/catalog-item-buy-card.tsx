@@ -82,7 +82,7 @@ export const CatalogItemBuyCard = ({
 
   return (
     <aside className="grid content-start gap-4 self-start lg:sticky lg:top-[88px] lg:col-start-2 lg:row-span-2 lg:row-start-1">
-      <div className="grid gap-5 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
+      <div className="grid gap-5 rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)]">
         <div id="pbuy" className="grid scroll-mt-32 gap-4">
           {!req && (
             <>
@@ -90,7 +90,7 @@ export const CatalogItemBuyCard = ({
                 <span className="text-[14px] font-semibold">
                   Количество, {unit}
                 </span>
-                <div className="flex h-11 rounded-lg border border-line bg-white">
+                <div className="flex h-11 rounded-lg border border-line bg-card">
                   <button
                     type="button"
                     className="grid w-11 place-items-center rounded-l-[10px] hover:bg-canvas disabled:opacity-40"

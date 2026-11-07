@@ -15,7 +15,7 @@ import {
 export default function Home() {
   return (
     <main className="min-h-screen bg-canvas">
-      <Suspense fallback={<div className="h-16 border-b border-line bg-white" />}>
+      <Suspense fallback={<div className="h-16 border-b border-line bg-card" />}>
         <Header />
       </Suspense>
       <LandingHero />

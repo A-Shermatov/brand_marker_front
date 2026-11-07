@@ -142,7 +142,7 @@ export const CompanyWizard = ({
         ))}
       </div>
 
-      <div className="rounded-2xl border border-border bg-white p-6 mb-6">
+      <div className="rounded-2xl border border-border bg-card p-6 mb-6">
         {currentStep === "basic" && (
           <BasicInfoStep
             data={data}

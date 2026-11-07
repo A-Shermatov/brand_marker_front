@@ -48,7 +48,7 @@ export const CatalogItemGallery = ({ media, title }: CatalogItemGalleryProps) =>
 
   if (visualItems.length === 0) {
     return (
-      <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-line bg-white">
+      <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-line bg-card">
         <ImageIcon size={40} className="text-mute" aria-hidden="true" />
       </div>
     )
@@ -68,7 +68,7 @@ export const CatalogItemGallery = ({ media, title }: CatalogItemGalleryProps) =>
               className={cn(
                 "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
                 mode === "photos"
-                  ? "bg-ink text-white"
+                  ? "bg-contrast text-white"
                   : "bg-canvas text-mute hover:text-ink",
               )}
             >
@@ -84,7 +84,7 @@ export const CatalogItemGallery = ({ media, title }: CatalogItemGalleryProps) =>
             className={cn(
               "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
               mode === "video"
-                ? "bg-ink text-white"
+                ? "bg-contrast text-white"
                 : "bg-canvas text-mute hover:text-ink",
             )}
           >
@@ -102,7 +102,7 @@ export const CatalogItemGallery = ({ media, title }: CatalogItemGalleryProps) =>
                 type="button"
                 onClick={() => setActiveIndex(index)}
                 className={cn(
-                  "relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white lg:h-[72px] lg:w-[72px]",
+                  "relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-card lg:h-[72px] lg:w-[72px]",
                   index === safeIndex
                     ? "border-ink"
                     : "border-line hover:border-line-strong",
@@ -120,7 +120,7 @@ export const CatalogItemGallery = ({ media, title }: CatalogItemGalleryProps) =>
                     sizes="72px"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-ink text-white">
+                  <div className="grid h-full w-full place-items-center bg-contrast text-white">
                     <Play size={20} aria-hidden="true" />
                   </div>
                 )}
@@ -129,7 +129,7 @@ export const CatalogItemGallery = ({ media, title }: CatalogItemGalleryProps) =>
           </div>
         )}
 
-        <div className="relative aspect-square min-w-0 flex-1 overflow-hidden rounded-2xl border border-line bg-white">
+        <div className="relative aspect-square min-w-0 flex-1 overflow-hidden rounded-2xl border border-line bg-card">
           {active?.kind === "image" ? (
             <Image
               src={active.url}

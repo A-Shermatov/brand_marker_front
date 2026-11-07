@@ -4,7 +4,7 @@ import { BrandLogo, CompanyName } from "@/components/bm"
 import { cn } from "@/lib/utils"
 
 /** Classes for the surface the cabinet menu sits on (desktop rail and mobile sheet). */
-export const RAIL_SURFACE = "bg-white text-rail-ink"
+export const RAIL_SURFACE = "bg-card text-rail-ink"
 
 /** The main action of a cabinet (new request, add product). */
 export const RAIL_ACTION = "mb-3 w-full shadow-[0_8px_18px_-10px_rgb(0_80_200/0.7)]"
@@ -60,7 +60,7 @@ export function SidebarAccount({
       onClick={onClick}
       className="my-2 flex items-center gap-2.5 rounded-xl border border-line bg-canvas p-2.5 transition-colors hover:border-brand-200 hover:bg-brand-50/60"
     >
-      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-[12.5px] font-semibold tracking-wide text-white">
+      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-tile text-[12.5px] font-semibold tracking-wide text-white">
         {initials}
       </span>
       <span className="grid min-w-0 flex-1">
@@ -102,7 +102,7 @@ export function SidebarSupport({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-lg border border-line bg-white px-3 py-2.5 text-left transition-colors hover:border-brand-200 hover:bg-brand-50/60"
+      className="flex w-full items-center gap-3 rounded-lg border border-line bg-card px-3 py-2.5 text-left transition-colors hover:border-brand-200 hover:bg-brand-50/60"
     >
       <HeadsetIcon className="size-5 shrink-0 text-brand-600" aria-hidden />
       <span className="grid min-w-0">

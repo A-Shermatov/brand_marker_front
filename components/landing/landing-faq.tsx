@@ -45,7 +45,7 @@ export const LandingFaq = () => (
         {FAQ.map((item) => (
           <details
             key={item.q}
-            className="group rounded-2xl border border-line bg-white open:pb-5"
+            className="group rounded-2xl border border-line bg-card open:pb-5"
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-[16px] font-semibold text-ink marker:content-none">
               {item.q}

@@ -202,7 +202,7 @@ export const PerformerDetailContent = ({
     <PageShell>
       <div className="mx-auto max-w-[1120px] px-6 pt-6 pb-16">
         {guestPreview ? (
-          <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl bg-ink p-4 text-white">
+          <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl bg-contrast p-4 text-white">
             <span className="grid size-9 place-items-center rounded-lg bg-white/10">
               <Eye className="size-5" aria-hidden />
             </span>
@@ -214,7 +214,7 @@ export const PerformerDetailContent = ({
                 Публичная витрина на площадке
               </span>
             </span>
-            <Button asChild variant="secondary" className="!bg-white !text-ink">
+            <Button asChild variant="secondary" className="!bg-card !text-ink">
               <Link href="/supplier/company">Вернуться к редактированию</Link>
             </Button>
           </div>
@@ -228,7 +228,7 @@ export const PerformerDetailContent = ({
           </Link>
         )}
 
-        <section className="overflow-hidden rounded-3xl border border-line bg-white shadow-[0_18px_40px_-28px_rgb(0_50_140/0.45)]">
+        <section className="overflow-hidden rounded-3xl border border-line bg-card shadow-[0_18px_40px_-28px_rgb(0_50_140/0.45)]">
           {/* Cover: the brand field, so every company page opens the same way. */}
           <div className="relative h-28 bg-brand-field md:h-36" aria-hidden>
             <span className="absolute inset-0 bg-[radial-gradient(60%_120%_at_10%_100%,rgb(255_255_255/0.14),transparent_60%)]" />
@@ -240,12 +240,12 @@ export const PerformerDetailContent = ({
                 <img
                   src={resolveFileUrl(apiSupplier.logo) || apiSupplier.logo}
                   alt=""
-                  className="size-24 rounded-2xl border-4 border-white bg-white object-cover shadow-[0_8px_20px_-10px_rgb(0_30_90/0.5)] md:size-28"
+                  className="size-24 rounded-2xl border-4 border-card bg-card object-cover shadow-[0_8px_20px_-10px_rgb(0_30_90/0.5)] md:size-28"
                 />
               ) : (
                 <div
                   className={cn(
-                    "grid size-24 place-items-center rounded-2xl border-4 border-white text-[28px] font-bold text-white shadow-[0_8px_20px_-10px_rgb(0_30_90/0.5)] md:size-28",
+                    "grid size-24 place-items-center rounded-2xl border-4 border-card text-[28px] font-bold text-white shadow-[0_8px_20px_-10px_rgb(0_30_90/0.5)] md:size-28",
                     performer.color,
                   )}
                 >
@@ -346,7 +346,7 @@ export const PerformerDetailContent = ({
         </section>
 
         <div className="mt-8">
-          <div className="mb-5 inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-line bg-white p-1">
+          <div className="mb-5 inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-line bg-card p-1">
             {tabs.map((item) => (
               <button
                 key={item.id}
@@ -375,7 +375,7 @@ export const PerformerDetailContent = ({
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-line-strong bg-white px-6 py-14 text-center">
+              <div className="rounded-2xl border border-dashed border-line-strong bg-card px-6 py-14 text-center">
                 <b className="text-[16px]">Пока нет товаров</b>
                 <p className="mt-1 text-[14px] text-mute">
                   Компания ещё не добавила предложения.
@@ -386,7 +386,7 @@ export const PerformerDetailContent = ({
 
           {tab === "about" ? (
             <div className="grid max-w-5xl gap-4">
-              <div className="grid max-w-3xl gap-4 rounded-2xl border border-line bg-white p-6">
+              <div className="grid max-w-3xl gap-4 rounded-2xl border border-line bg-card p-6">
                 {performer.verified ? (
                   <>
                     <p className="text-[15px]">
@@ -435,7 +435,7 @@ export const PerformerDetailContent = ({
                   {facts.map(([label, value]) => (
                     <div
                       key={label}
-                      className="rounded-xl border border-line bg-white p-4"
+                      className="rounded-xl border border-line bg-card p-4"
                     >
                       <dt className="text-[13px] text-mute">{label}</dt>
                       <dd className="mt-0.5 text-[15px] font-bold">{value}</dd>
@@ -473,7 +473,7 @@ export const PerformerDetailContent = ({
                 ))}
               </CardList>
             ) : (
-              <p className="max-w-3xl rounded-2xl border border-dashed border-line-strong bg-white px-6 py-10 text-center text-[14px] text-mute">
+              <p className="max-w-3xl rounded-2xl border border-dashed border-line-strong bg-card px-6 py-10 text-center text-[14px] text-mute">
                 Отзывов пока нет.
               </p>
             )

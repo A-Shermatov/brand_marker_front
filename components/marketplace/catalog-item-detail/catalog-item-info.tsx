@@ -99,10 +99,10 @@ export const CatalogItemInfo = ({
           <img
             src={resolveFileUrl(supplier.logo) || supplier.logo}
             alt=""
-            className="size-11 shrink-0 rounded-xl border border-line bg-white object-cover"
+            className="size-11 shrink-0 rounded-xl border border-line bg-card object-cover"
           />
         ) : (
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-[14px] font-semibold text-white">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-tile text-[14px] font-semibold text-white">
             {sellerInitials(supplier.display_name)}
           </span>
         )}

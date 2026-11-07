@@ -68,7 +68,7 @@ export const ProposalsCompareTable = ({
 
   return (
     <div className="grid gap-2">
-      <div className="overflow-x-auto rounded-xl border border-line bg-white scroll-thin">
+      <div className="overflow-x-auto rounded-xl border border-line bg-card scroll-thin">
         <table
           className="w-full table-fixed text-[13.5px]"
           style={{ minWidth }}

@@ -44,12 +44,12 @@ export function LandingPopular() {
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className="aspect-[3/4] animate-pulse rounded-2xl border border-line bg-white"
+              className="aspect-[3/4] animate-pulse rounded-2xl border border-line bg-card"
             />
           ))}
         </div>
       ) : items.length === 0 ? (
-        <p className="rounded-2xl border border-line bg-white p-8 text-center text-[15px] text-mute">
+        <p className="rounded-2xl border border-line bg-card p-8 text-center text-[15px] text-mute">
           Пока нет предложений в каталоге.
         </p>
       ) : (

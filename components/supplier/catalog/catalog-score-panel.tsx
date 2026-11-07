@@ -22,7 +22,7 @@ export const CatalogScorePanel = ({
   const level = scoreLevel(score.total)
 
   return (
-    <div className={cn("rounded-2xl border border-line bg-white p-5", className)}>
+    <div className={cn("rounded-2xl border border-line bg-card p-5", className)}>
       <div className="flex items-end justify-between">
         <span className="text-[14px] font-semibold">Качество карточки</span>
         <b className={cn("tnum text-[28px] font-bold leading-none", level.textClass)}>

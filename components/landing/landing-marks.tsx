@@ -8,7 +8,7 @@ import { forSuppliersUrl } from "@/lib/marketplace-routes"
 /** Explains the marks buyers see next to supplier names. */
 export const LandingMarks = () => (
   <section id="marks" className="mx-auto mt-16 max-w-[1200px] px-4 lg:px-8">
-    <div className="grid gap-8 rounded-2xl border border-line bg-white p-6 md:p-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+    <div className="grid gap-8 rounded-2xl border border-line bg-card p-6 md:p-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
       <div className="grid content-start gap-4">
         <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink">
           Что значат значки рядом с названием

@@ -3,14 +3,14 @@
   --tg-header: var(--brand-600);
   --tg-accent: var(--brand-500);
   --tg-bg: var(--canvas);
-  --tg-incoming: #ffffff;
+  --tg-incoming: var(--card);
   --tg-outgoing: var(--brand-50);
   --tg-text: var(--ink);
   --tg-meta: var(--mute);
   --tg-name: var(--brand-700);
   --tg-tick: var(--brand-500);
   --tg-tick-read: var(--brand-600);
-  --tg-composer: #ffffff;
+  --tg-composer: var(--card);
   --tg-composer-input: var(--surface-muted);
   --tg-date-pill: rgba(22, 24, 29, 0.22);
   --tg-shadow: 0 1px 2px rgba(22, 24, 29, 0.1);
@@ -26,6 +26,15 @@
     radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.35) 0 1px, transparent 1.5px),
     linear-gradient(180deg, #eef1f4 0%, var(--canvas) 45%, #e8ecef 100%);
   background-size: 48px 48px, 64px 64px, 40px 40px, auto;
+}
+
+/* At night the wallpaper is the dark canvas with faint dots. */
+.dark .support-tg-wallpaper {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 70% 60%, rgba(76, 139, 255, 0.12) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.04) 0 1px, transparent 1.5px),
+    linear-gradient(180deg, var(--surface-muted) 0%, var(--canvas) 50%, var(--canvas) 100%);
 }
 
 .support-tg-header {
@@ -78,7 +87,7 @@
 }
 
 .support-tg-send:disabled {
-  background: #c5cdd6;
+  background: var(--line-strong);
   color: #fff;
 }
 

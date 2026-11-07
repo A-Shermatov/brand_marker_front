@@ -34,7 +34,7 @@ export function TrustLevelCard({
         "relative flex h-full w-full flex-col items-start gap-4 overflow-hidden rounded-2xl border p-5 text-left transition-colors",
         premium
           ? "border-[#5A1890] bg-[radial-gradient(120%_90%_at_85%_0%,#B0309F_0%,#5B1AAE_45%,#250A52_100%)] text-white"
-          : "border-line bg-white",
+          : "border-line bg-card",
         current && !premium && "ring-2 ring-inset",
         interactive && "cursor-pointer",
         className,
@@ -47,7 +47,7 @@ export function TrustLevelCard({
           <span
             className={cn(
               "rounded-full px-2 py-0.5 text-[11.5px] font-semibold",
-              premium ? "bg-white text-[#5B1AAE]" : "bg-surface-muted text-ink",
+              premium ? "bg-card text-[#5B1AAE] dark:text-[#C9A7FF]" : "bg-surface-muted text-ink",
             )}
           >
             Ваш уровень

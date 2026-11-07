@@ -25,7 +25,7 @@ export default function HelpPage() {
             </div>
           </div>
 
-          <div className="bg-white border border-border rounded-2xl divide-y divide-border">
+          <div className="bg-card border border-border rounded-2xl divide-y divide-border">
             {topics.map((topic) => (
               <Link
                 key={topic.title}

@@ -174,7 +174,7 @@ export const PhotoGalleryFields = ({
                   <button
                     type="button"
                     onClick={() => setMain(index)}
-                    className="grid h-7 place-items-center rounded-md bg-white/95 px-2 text-[11.5px] font-semibold shadow"
+                    className="grid h-7 place-items-center rounded-md bg-card/95 px-2 text-[11.5px] font-semibold shadow"
                     title="Сделать главным"
                   >
                     <Star className="size-3.5" aria-hidden />
@@ -188,7 +188,7 @@ export const PhotoGalleryFields = ({
                     onClick={() => move(index, -1)}
                     disabled={index === 0}
                     className={cn(
-                      "grid size-7 place-items-center rounded-md bg-white/95 shadow",
+                      "grid size-7 place-items-center rounded-md bg-card/95 shadow",
                       index === 0 && "invisible",
                     )}
                     aria-label="Левее"
@@ -200,7 +200,7 @@ export const PhotoGalleryFields = ({
                     onClick={() => move(index, 1)}
                     disabled={index === images.length - 1}
                     className={cn(
-                      "grid size-7 place-items-center rounded-md bg-white/95 shadow",
+                      "grid size-7 place-items-center rounded-md bg-card/95 shadow",
                       index === images.length - 1 && "invisible",
                     )}
                     aria-label="Правее"
@@ -212,7 +212,7 @@ export const PhotoGalleryFields = ({
               <button
                 type="button"
                 onClick={() => remove(index)}
-                className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-md bg-white/95 text-red-600 shadow"
+                className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-md bg-card/95 text-red-600 shadow"
                 aria-label="Удалить фото"
               >
                 <Trash2 className="size-3.5" aria-hidden />
@@ -338,7 +338,7 @@ export const VideoMediaFields = ({ media, onChange }: VideoMediaFieldsProps) => 
         <span className="text-[14px] font-semibold">Видео товара</span>
         {uploadedFile && video ? (
           <div className="flex items-center gap-3 rounded-xl border border-line p-3">
-            <span className="grid size-10 place-items-center rounded-lg bg-ink text-white">
+            <span className="grid size-10 place-items-center rounded-lg bg-contrast text-white">
               <Video className="size-4" aria-hidden />
             </span>
             <span className="min-w-0 flex-1">
@@ -395,7 +395,7 @@ export const VideoMediaFields = ({ media, onChange }: VideoMediaFieldsProps) => 
           onChange={(e) => handleUrlChange(e.target.value)}
           placeholder="https://youtu.be/..."
           disabled={uploadedFile}
-          className="h-11 w-full rounded-lg border border-line bg-white px-4 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15 disabled:bg-canvas disabled:text-mute"
+          className="h-11 w-full rounded-lg border border-line bg-card px-4 text-[14.5px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15 disabled:bg-canvas disabled:text-mute"
         />
         <p className="mt-1.5 text-[12.5px] text-mute">YouTube или другой сервис</p>
       </div>

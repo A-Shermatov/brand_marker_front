@@ -4,7 +4,7 @@ import type { RfqWithRelations } from "@/types"
 import { formatIsoDate, formatRfqBudget, pluralRu } from "@/lib/format"
 
 const cardClass =
-  "rounded-xl border border-line bg-white p-5"
+  "rounded-xl border border-line bg-card p-5"
 
 type RfqPositionsCardProps = {
   rfq: RfqWithRelations

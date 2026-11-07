@@ -164,7 +164,7 @@ export const formatRfqBudget = (
   budgetTo: number | null,
   currency: string,
 ): string => {
-  if (budgetType === "open") return "Открытый бюджет"
+  if (budgetType === "open") return "Не указан"
   if (budgetType === "fixed" && budgetFrom != null) {
     return formatCurrency(budgetFrom, currency)
   }

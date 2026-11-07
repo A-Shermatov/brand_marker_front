@@ -342,8 +342,8 @@ export const MarketplaceSearch = ({
       <div
         className={
           isCompact
-            ? "relative flex items-center rounded-lg border border-transparent bg-canvas focus-within:border-brand-600 focus-within:bg-white"
-            : "flex items-center overflow-hidden rounded-lg border border-line bg-white shadow-[0_1px_2px_rgba(28,28,26,.04)]"
+            ? "relative flex items-center rounded-lg border border-transparent bg-canvas focus-within:border-brand-600 focus-within:bg-card"
+            : "flex items-center overflow-hidden rounded-lg border border-line bg-card shadow-[0_1px_2px_rgba(28,28,26,.04)]"
         }
       >
         {!isCompact ? (
@@ -390,7 +390,7 @@ export const MarketplaceSearch = ({
           className={
             isCompact
               ? "h-10 w-full min-w-0 bg-transparent pl-10 pr-3 text-[14.5px] outline-none"
-              : "h-11 min-w-0 flex-1 bg-white px-3 text-[15px] outline-none sm:px-4"
+              : "h-11 min-w-0 flex-1 bg-card px-3 text-[15px] outline-none sm:px-4"
           }
           value={searchQuery}
           onChange={(e) => {
@@ -407,7 +407,7 @@ export const MarketplaceSearch = ({
           <button
             type="button"
             onClick={() => submitSearch()}
-            className="flex h-11 shrink-0 items-center gap-2 bg-brand-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-700 sm:px-5"
+            className="flex h-11 shrink-0 items-center gap-2 bg-brand-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-700 dark:hover:bg-brand-500 sm:px-5"
             aria-label="Найти"
           >
             <Search size={16} />
@@ -437,7 +437,7 @@ export const MarketplaceSearch = ({
           id={listboxId}
           role="listbox"
           aria-label="Подсказки поиска"
-          className="absolute top-[calc(100%+6px)] left-0 right-0 bg-white border border-border shadow-xl z-50 rounded-xl overflow-hidden max-h-[min(420px,70vh)] overflow-y-auto"
+          className="absolute top-[calc(100%+6px)] left-0 right-0 bg-card border border-border shadow-xl z-50 rounded-xl overflow-hidden max-h-[min(420px,70vh)] overflow-y-auto"
         >
           {suggestions.map((item, index) => {
             const Icon = getItemIcon(item)

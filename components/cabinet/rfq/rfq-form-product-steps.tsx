@@ -340,7 +340,7 @@ export const ProductWhatStep = ({
           value={note}
           onChange={(e) => onNoteChange(e.target.value)}
           rows={3}
-          className="w-full resize-none rounded-lg border border-border bg-white px-3.5 py-3 text-[15px] outline-none focus:border-primary"
+          className="w-full resize-none rounded-lg border border-border bg-card px-3.5 py-3 text-[15px] outline-none focus:border-primary"
           placeholder="Бренды, сертификаты, упаковка, гарантия"
         />
       </div>

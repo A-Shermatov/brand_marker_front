@@ -51,7 +51,7 @@ export const CatalogDraftPreview = ({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border border-line bg-white",
+        "overflow-hidden rounded-xl border border-line bg-card",
         className,
       )}
     >

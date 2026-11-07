@@ -30,7 +30,7 @@ export default function SupplierTeamPage() {
     return (
       <PageFrame>
         <PageHeader title="Сотрудники и роли" description="Команда компании и права доступа" />
-        <div className="rounded-2xl border border-dashed border-line-strong bg-white px-6 py-14 text-center">
+        <div className="rounded-2xl border border-dashed border-line-strong bg-card px-6 py-14 text-center">
           <b className="text-[17px]">Компания ещё не создана</b>
           <p className="mx-auto mt-2 max-w-md text-[15px] text-mute">
             Создайте компанию, чтобы пригласить сотрудников и раздать им роли.
@@ -77,7 +77,7 @@ export default function SupplierTeamPage() {
           }
         />
 
-        <section className="rounded-2xl border border-line bg-white p-5">
+        <section className="rounded-2xl border border-line bg-card p-5">
           <h2 className="text-[15.5px] font-semibold">Что может каждая роль</h2>
           <dl className="mt-3 grid gap-3">
             {COMPANY_ROLES.map((role) => (

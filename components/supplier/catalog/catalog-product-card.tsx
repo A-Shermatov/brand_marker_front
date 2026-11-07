@@ -67,7 +67,7 @@ export const CatalogProductCard = ({
   const canPreview = item.status === "active"
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white">
+    <article className="flex flex-col overflow-hidden rounded-2xl border border-line bg-card">
       <Link href={editHref} className="relative block aspect-[4/3] bg-canvas" aria-label={`Изменить «${item.title}»`}>
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -80,7 +80,7 @@ export const CatalogProductCard = ({
         <span className="absolute left-3 top-3">
           <StatusBadge status={item.status} label={meta.label} />
         </span>
-        <span className="absolute bottom-3 right-3 rounded-full bg-white/90 px-2 py-0.5 text-[12px] text-ink-soft">
+        <span className="absolute bottom-3 right-3 rounded-full bg-card/90 px-2 py-0.5 text-[12px] text-ink-soft">
           {photoCount ? `${photoCount} фото` : "нет фото"}
         </span>
       </Link>
@@ -184,7 +184,7 @@ export const CatalogProductCard = ({
           <AlertDialogFooter>
             <AlertDialogCancel>Отмена</AlertDialogCancel>
             <AlertDialogAction
-              className={confirm === "delete" ? "bg-red-600 border-red-600 hover:bg-red-700" : undefined}
+              className={confirm === "delete" ? "bg-red-600 border-red-600 hover:bg-red-700 dark:bg-[#C93B3B] dark:border-[#C93B3B] dark:hover:bg-[#B23131]" : undefined}
               onClick={() => {
                 const action = confirm === "delete" ? onDelete : onArchive
                 setConfirm(null)

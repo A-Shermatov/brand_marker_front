@@ -123,7 +123,7 @@ export default function SupplierTrustPage() {
                       <span
                         className={cn(
                           "grid size-[18px] shrink-0 place-items-center rounded-full",
-                          c.ok ? "bg-brand-600 text-white" : "border border-line-strong bg-white",
+                          c.ok ? "bg-brand-600 text-white" : "border border-line-strong bg-card",
                         )}
                         aria-hidden
                       >

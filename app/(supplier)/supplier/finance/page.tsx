@@ -301,7 +301,7 @@ export default function SupplierFinancePage() {
         <div className="min-w-0">
           <span className="text-[13px] font-semibold text-mute">История</span>
           {historyRows.length === 0 ? (
-            <p className="mt-2 rounded-2xl border border-line bg-white p-6 text-[14px] text-mute">
+            <p className="mt-2 rounded-2xl border border-line bg-card p-6 text-[14px] text-mute">
               Операций пока нет.
             </p>
           ) : (
@@ -344,7 +344,7 @@ export default function SupplierFinancePage() {
       <div
         ref={payoutRef}
         id="payout"
-        className="mt-8 scroll-mt-24 rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
+        className="mt-8 scroll-mt-24 rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6"
       >
         <b className="text-[15px]">Вывести через банк</b>
         <p className="mt-1 text-[13.5px] text-mute">
@@ -360,7 +360,7 @@ export default function SupplierFinancePage() {
         </div>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-line bg-white p-5 md:p-6">
+      <div className="mt-8 rounded-2xl border border-line bg-card p-5 md:p-6">
         <div className="mb-4 flex items-center gap-2">
           <FileText className="size-4 text-mute" aria-hidden />
           <b className="text-[15px]">Счета</b>

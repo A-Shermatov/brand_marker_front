@@ -222,7 +222,7 @@ export const SupportMessageList = ({
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center px-6 text-center">
             <div className="support-tg-date-pill mb-3">чат поддержки</div>
-            <p className="max-w-[240px] text-[13px] leading-relaxed text-black/55">
+            <p className="max-w-[240px] text-[13px] leading-relaxed text-mute">
               {emptyHint}
             </p>
           </div>
@@ -284,12 +284,12 @@ export const SupportMessageList = ({
                             href={fileUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="mb-0.5 flex items-center gap-2 rounded-lg bg-black/[0.04] px-2 py-1.5 no-underline hover:bg-black/[0.06]"
+                            className="mb-0.5 flex items-center gap-2 rounded-lg bg-surface-muted px-2 py-1.5 no-underline hover:bg-line"
                           >
                             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
                               <FileIcon size={16} />
                             </span>
-                            <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-black/80">
+                            <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-ink">
                               {message.attachment.file_name}
                             </span>
                           </a>
@@ -317,13 +317,13 @@ export const SupportMessageList = ({
 
       <div className="support-tg-composer border-t border-black/[0.06] px-2 pt-1.5 pb-2">
         {file ? (
-          <div className="mb-1.5 flex items-center gap-2 rounded-xl bg-[#f0f2f5] px-3 py-2 text-[12px]">
+          <div className="mb-1.5 flex items-center gap-2 rounded-xl bg-surface-muted px-3 py-2 text-[12px]">
             <Paperclip size={14} className="shrink-0 text-brand-600" />
-            <span className="min-w-0 flex-1 truncate text-black/75">{file.name}</span>
+            <span className="min-w-0 flex-1 truncate text-ink-soft">{file.name}</span>
             <button
               type="button"
               onClick={() => onFileChange(null)}
-              className="text-black/40 hover:text-black/70"
+              className="text-faint hover:text-ink"
               aria-label="Убрать файл"
             >
               <X size={14} />
@@ -358,7 +358,7 @@ export const SupportMessageList = ({
           />
           <button
             type="button"
-            className="mb-0.5 flex size-10 shrink-0 items-center justify-center rounded-full text-mute transition hover:bg-black/5 hover:text-brand-600 disabled:opacity-40"
+            className="mb-0.5 flex size-10 shrink-0 items-center justify-center rounded-full text-mute transition hover:bg-surface-muted hover:text-brand-600 disabled:opacity-40"
             disabled={disabled || sending}
             onClick={() => fileInputRef.current?.click()}
             aria-label="Прикрепить файл"
@@ -373,7 +373,7 @@ export const SupportMessageList = ({
             placeholder="Сообщение"
             aria-label="Текст сообщения"
             disabled={disabled || sending}
-            className="support-tg-input max-h-28 min-h-10 flex-1 px-3.5 py-2.5 text-[15px] text-black placeholder:text-black/35 disabled:opacity-50"
+            className="support-tg-input max-h-28 min-h-10 flex-1 px-3.5 py-2.5 text-[15px] text-ink placeholder:text-faint disabled:opacity-50"
           />
           <button
             type="button"
