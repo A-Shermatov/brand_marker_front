@@ -1,6 +1,16 @@
 "use client"
 
-import { StarIcon as Star } from "@phosphor-icons/react/dist/ssr"
+import Link from "next/link"
+import {
+  CaretRightIcon as CaretRight,
+  SealCheckIcon as SealCheck,
+  ShieldCheckIcon as ShieldCheck,
+  StarIcon as Star,
+} from "@phosphor-icons/react/dist/ssr"
+import { CompanyName } from "@/components/bm"
+import { StatusPill } from "@/components/layout/card-list"
+import { performerUrl } from "@/lib/marketplace-routes"
+import { resolveFileUrl } from "@/lib/file-url"
 import type { ItemAttribute, ItemPricing, PublicSupplier } from "@/types"
 import { formatCurrency } from "@/lib/format"
 import {
@@ -77,6 +87,51 @@ export const CatalogItemInfo = ({
             <span className="text-mute">Пока нет отзывов о товаре</span>
           )}
         </div>
+      </div>
+
+      {/* Who sells it, with the marks a buyer checks first. */}
+      <Link
+        href={performerUrl(supplier.actor_id)}
+        className="group flex items-center gap-3 rounded-2xl border border-line bg-canvas/60 p-3 transition-colors hover:border-brand-200 hover:bg-brand-50/50"
+      >
+        {supplier.logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={resolveFileUrl(supplier.logo) || supplier.logo}
+            alt=""
+            className="size-11 shrink-0 rounded-xl border border-line bg-white object-cover"
+          />
+        ) : (
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-[14px] font-semibold text-white">
+            {sellerInitials(supplier.display_name)}
+          </span>
+        )}
+        <span className="grid min-w-0 flex-1">
+          <span className="text-[12px] text-mute">Продавец</span>
+          <CompanyName
+            name={supplier.display_name}
+            verified={supplier.verification_status === "verified"}
+            tier={supplier.reputation_tier}
+            plan={supplier.subscription_plan}
+            size="md"
+          />
+          <span className="truncate text-[12.5px] text-mute">
+            {[supplier.city, supplier.completed_contracts ? `сделок: ${supplier.completed_contracts}` : null]
+              .filter(Boolean)
+              .join(" · ") || "Профиль компании"}
+          </span>
+        </span>
+        <CaretRight className="size-4 shrink-0 text-faint group-hover:text-brand-600" aria-hidden />
+      </Link>
+      <div className="flex flex-wrap gap-2">
+        <StatusPill tone="safe" icon={ShieldCheck}>
+          Оплата через гарантию площадки
+        </StatusPill>
+        {supplier.verification_status === "verified" ? (
+          <StatusPill tone="brand" icon={SealCheck}>
+            Проверенный поставщик
+          </StatusPill>
+        ) : null}
       </div>
 
       <div className="border-t border-line pt-5">
@@ -185,6 +240,14 @@ export const CatalogItemInfo = ({
     </div>
   )
 }
+
+const sellerInitials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("") || "?"
 
 const pluralReviews = (n: number) => {
   const mod10 = n % 10
