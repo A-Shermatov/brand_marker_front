@@ -33,6 +33,8 @@ export const publicKeys = {
     [...publicKeys.all, "supplier-catalog", id, page] as const,
   supplierReviews: (id: number, page = 1) =>
     [...publicKeys.all, "supplier-reviews", id, page] as const,
+  itemReviews: (id: number, page = 1) =>
+    [...publicKeys.all, "item-reviews", id, page] as const,
   company: (id: number) => [...publicKeys.all, "company", id] as const,
   companyCatalog: (id: number, page = 1) =>
     [...publicKeys.all, "company-catalog", id, page] as const,
@@ -133,6 +135,17 @@ export const usePublicSupplierReviewsQuery = (
     queryKey: publicKeys.supplierReviews(id, params.page ?? 1),
     queryFn: () => publicApi.supplierReviews(id, params),
     enabled: enabled && isApiEnabled() && id > 0,
+  })
+
+export const usePublicItemReviewsQuery = (
+  itemId: number,
+  enabled = true,
+  params: PageParams = {},
+) =>
+  useQuery({
+    queryKey: publicKeys.itemReviews(itemId, params.page ?? 1),
+    queryFn: () => publicApi.itemReviews(itemId, params),
+    enabled: enabled && isApiEnabled() && itemId > 0,
   })
 
 export const usePublicCompanyQuery = (id: number, enabled = true) =>

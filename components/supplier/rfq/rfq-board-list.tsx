@@ -101,6 +101,9 @@ export const RfqBoardList = ({
                 {catalog ? (
                   <span className="rounded-md bg-amber-50 px-2 py-0.5 font-medium text-amber-800">из каталога</span>
                 ) : null}
+                {rfq.payment_mode === "direct" ? (
+                  <span className="rounded-md bg-safe-50 px-2 py-0.5 font-medium text-safe-700">оплата сразу</span>
+                ) : null}
                 <span className="mono text-faint">{formatRfqNo(rfq.id)}</span>
               </p>
               <Link

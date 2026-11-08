@@ -131,16 +131,13 @@ export const CatalogItemReviews = ({
           className="grid gap-2 border-t border-line pt-4 first:border-t-0 first:pt-0"
         >
           <div className="flex justify-between gap-3">
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-0.5" role="img" aria-label={`Оценка ${review.rating} из 5`}>
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
-                  size={14}
-                  className={
-                    i < review.rating
-                      ? "fill-amber-400 text-amber-400"
-                      : "text-line"
-                  }
+                  size={15}
+                  weight={i < review.rating ? "fill" : "regular"}
+                  className={i < review.rating ? "text-amber-400" : "text-line-strong"}
                   aria-hidden="true"
                 />
               ))}

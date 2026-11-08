@@ -18,10 +18,10 @@ import { isApiEnabled } from "@/lib/api/config"
 import {
   usePublicCatalogItemQuery,
   usePublicCatalogQuery,
+  usePublicItemReviewsQuery,
   usePublicSupplierQuery,
-  usePublicSupplierReviewsQuery,
 } from "@/hooks/api/use-public-query"
-import { categoryUrl, servicesUrl } from "@/lib/marketplace-routes"
+import { categoryUrl, performerUrl, servicesUrl } from "@/lib/marketplace-routes"
 import { mapCatalogItemToService } from "@/lib/marketplace-hybrid"
 import { useMappedMarketplaceServices } from "@/hooks/api/use-supplier-name"
 import { getPricingMoq } from "@/lib/item-display"
@@ -35,6 +35,11 @@ import type { MarketplaceService } from "@/types/marketplace"
 
 type ServiceDetailContentProps = {
   serviceId: number
+  /**
+   * "public": the site page with its header and footer. "cabinet": the same
+   * product inside the buyer's cabinet, with links that stay in the cabinet.
+   */
+  variant?: "public" | "cabinet"
 }
 
 const marketplaceServiceToItem = (
@@ -89,7 +94,11 @@ const marketplaceServiceToSupplier = (
   success_rate: null,
 })
 
-export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) => {
+export const ServiceDetailContent = ({ serviceId, variant = "public" }: ServiceDetailContentProps) => {
+  const inCabinet = variant === "cabinet"
+  // The cabinet has its own frame; the site page brings the public one.
+  const Frame = inCabinet ? CabinetFrame : PageShell
+  const itemHref = (id: number) => (inCabinet ? `/customer/catalog/${id}` : null)
   const useApi = isApiEnabled()
   const [reportOpen, setReportOpen] = useState(false)
   const [qty, setQty] = useState<number | null>(null)
@@ -103,12 +112,11 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
     apiItem?.actor_id ?? 0,
     useApi && Boolean(apiItem?.actor_id),
   )
-  const { data: reviewsPage, isLoading: reviewsLoading } =
-    usePublicSupplierReviewsQuery(
-      apiItem?.actor_id ?? 0,
-      useApi && Boolean(apiItem?.actor_id),
-      { page: 1, pageSize: 20 },
-    )
+  const { data: reviewsPage, isLoading: reviewsLoading } = usePublicItemReviewsQuery(
+    serviceId,
+    useApi,
+    { page: 1, pageSize: 20 },
+  )
 
   const mockBundle = useMemo(() => {
     if (useApi) return null
@@ -161,6 +169,7 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
   const reviews = useApi
     ? (reviewsPage?.items ?? [])
     : (mockBundle?.reviews ?? [])
+  const reviewSummary = useApi ? (reviewsPage?.summary ?? null) : null
 
   const categorySlug = item?.category?.slug
   const { data: relatedCatalog } = usePublicCatalogQuery(
@@ -205,7 +214,7 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
 
   if (useApi && (itemLoading || (apiItem && supplierLoading))) {
     return (
-      <PageShell>
+      <Frame>
         <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6">
           <div className="animate-pulse space-y-6">
             <div className="h-4 w-48 rounded bg-secondary" />
@@ -218,23 +227,23 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
             </div>
           </div>
         </div>
-      </PageShell>
+      </Frame>
     )
   }
 
   if (!item || !supplier) {
     return (
-      <PageShell>
+      <Frame>
         <div className="mx-auto max-w-[1200px] px-4 py-16 text-center sm:px-6">
           <p className="text-lg font-bold text-foreground">Позиция не найдена</p>
           <Link
-            href={servicesUrl()}
+            href={inCabinet ? "/customer/catalog" : servicesUrl()}
             className="mt-2 inline-block font-semibold text-primary hover:underline"
           >
             К каталогу
           </Link>
         </div>
-      </PageShell>
+      </Frame>
     )
   }
 
@@ -242,13 +251,17 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
   const shortTitle = item.title.split(",")[0] ?? item.title
   const moq = getPricingMoq(item.pricing)
   const effectiveQty = qty ?? moq
+  const supplierHref = inCabinet
+    ? `/customer/suppliers/${supplier.actor_id}`
+    : performerUrl(supplier.actor_id)
+  const returnTo = inCabinet ? `/customer/catalog/${item.id}` : `/services/${item.id}`
 
   return (
-    <PageShell>
-      <section className="bg-canvas pb-12 pt-5 lg:pb-12">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+    <Frame>
+      <section className={inCabinet ? "pb-6" : "bg-canvas pb-12 pt-5 lg:pb-12"}>
+        <div className={inCabinet ? "" : "mx-auto max-w-[1200px] px-4 sm:px-6"}>
           <nav
-            className="mb-4 flex flex-wrap items-center gap-1.5 text-[13px] text-mute"
+            className={inCabinet ? "hidden" : "mb-4 flex flex-wrap items-center gap-1.5 text-[13px] text-mute"}
             aria-label="Навигация"
           >
             <Link href="/" className="hover:text-ink">
@@ -273,8 +286,9 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
             <span className="max-w-[50vw] truncate text-ink">{shortTitle}</span>
           </nav>
 
-          <div className="grid items-start gap-x-6 gap-y-8 lg:grid-cols-[minmax(0,1fr)_340px]">
-            <div className="grid min-w-0 items-start gap-6 lg:col-start-1 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+          <div className="grid items-start gap-x-6 gap-y-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_340px]">
+            {/* The photo gets the whole column so the product is easy to see; title and price follow. */}
+            <div className="grid min-w-0 items-start gap-6">
               <div className="grid min-w-0 gap-4">
                 <CatalogItemGallery media={item.media} title={item.title} />
               </div>
@@ -283,18 +297,20 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
                 pricing={item.pricing}
                 attributes={item.attributes}
                 supplier={supplier}
+                itemRating={reviewSummary}
+                supplierHref={supplierHref}
                 qty={effectiveQty}
               />
             </div>
 
             <CatalogItemBuyCard
-              itemId={item.id}
-              itemTitle={item.title}
+              item={item}
               pricing={item.pricing}
               attributes={item.attributes}
               supplier={supplier}
               isAuthenticated={isAuthenticated}
               canUseApiOffers={useApi}
+              returnTo={returnTo}
               qty={effectiveQty}
               onQtyChange={(next) => setQty(next)}
             />
@@ -307,8 +323,11 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
                 pricing={item.pricing}
                 supplier={supplier}
                 reviews={reviews}
+                reviewSummary={reviewSummary}
                 reviewsLoading={useApi && reviewsLoading}
+                supplierHref={supplierHref}
                 itemId={item.id}
+                itemTitle={item.title}
                 canReport={useApi}
                 isAuthenticated={isAuthenticated}
                 onReport={() => setReportOpen(true)}
@@ -323,7 +342,11 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
               </h2>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 {relatedServices.map((service) => (
-                  <ServiceCard key={service.id} service={service} />
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    href={itemHref(service.id) ?? undefined}
+                  />
                 ))}
               </div>
             </section>
@@ -339,6 +362,9 @@ export const ServiceDetailContent = ({ serviceId }: ServiceDetailContentProps) =
           onOpenChange={setReportOpen}
         />
       )}
-    </PageShell>
+    </Frame>
   )
 }
+
+/** Inside the cabinet the layout already draws the frame. */
+const CabinetFrame = ({ children }: { children: React.ReactNode }) => <>{children}</>

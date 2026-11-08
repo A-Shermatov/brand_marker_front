@@ -4,6 +4,7 @@ import type {
   CompanyUser,
   CompanyWizardInput,
   CompanyWithRelations,
+  ItemReviewEligibility,
   PublicCompanyDetail,
   Review,
 } from "@/types"
@@ -242,6 +243,10 @@ export const reviewsApi = {
 
   voteHelpful: (reviewId: number) =>
     apiFetch<Review>(`/buyer/reviews/${reviewId}/helpful`, { method: "POST" }),
+
+  /** The finished deal for this catalog item the buyer can still review. */
+  itemEligibility: (itemId: number) =>
+    apiFetch<ItemReviewEligibility>(`/buyer/reviews/catalog-items/${itemId}/eligibility`),
 }
 
 export const supplierReviewsApi = {

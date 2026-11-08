@@ -6,6 +6,7 @@ import { SealCheckIcon as BadgeCheck, FileTextIcon as FileText, FlagIcon as Flag
 import type {
   ItemAttribute,
   ItemMedia,
+  ItemReviewSummary,
   ItemPricing,
   PublicSupplier,
   Review,
@@ -13,7 +14,7 @@ import type {
 import { resolveFileUrl } from "@/lib/file-url"
 import { findAttrValue, getPricingMoq } from "@/lib/item-display"
 import { loginRedirect, performerUrl } from "@/lib/marketplace-routes"
-import { CatalogItemReviews } from "@/components/marketplace/catalog-item-detail/catalog-item-reviews"
+import { CatalogItemReviewBlock } from "@/components/marketplace/catalog-item-detail/catalog-item-review-block"
 import { Button } from "@/components/ui/button"
 import { scrollToProductSection } from "@/lib/product-scroll"
 import { cn } from "@/lib/utils"
@@ -34,10 +35,15 @@ type CatalogItemSectionsProps = {
   media: ItemMedia[]
   pricing: ItemPricing | null
   supplier: PublicSupplier
+  /** Reviews of this item, with their star summary. */
   reviews: Review[]
+  reviewSummary: ItemReviewSummary | null
   reviewsLoading?: boolean
+  /** The supplier's page: the public profile or the one in the buyer's cabinet. */
+  supplierHref?: string
   unit?: string
   itemId: number
+  itemTitle: string
   canReport: boolean
   isAuthenticated: boolean
   onReport: () => void
@@ -50,9 +56,12 @@ export const CatalogItemSections = ({
   pricing,
   supplier,
   reviews,
+  reviewSummary,
   reviewsLoading = false,
+  supplierHref: supplierHrefProp,
   unit = "шт",
   itemId,
+  itemTitle,
   canReport,
   isAuthenticated,
   onReport,
@@ -70,7 +79,7 @@ export const CatalogItemSections = ({
   const packDesc =
     findAttrValue(attributes, ["упаковк", "pack"]) ?? null
   const loginHref = loginRedirect(`/services/${itemId}`)
-  const supplierHref = performerUrl(supplier.actor_id)
+  const supplierHref = supplierHrefProp ?? performerUrl(supplier.actor_id)
   const verified = supplier.verification_status === "verified"
 
   useEffect(() => {
@@ -177,49 +186,15 @@ export const CatalogItemSections = ({
         </div>
       </section>
 
-      <section id="previews" className="scroll-mt-36 grid gap-5">
-        <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
-          Рейтинги и отзывы
-        </h2>
-        <div className="grid gap-5 rounded-2xl border border-line bg-card p-5 md:p-6">
-          {supplier.reviews_count > 0 ? (
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              <b className="text-[52px] font-bold leading-none tnum">
-                {supplier.rating.toFixed(1)}
-              </b>
-              <div className="grid gap-1.5">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="inline-flex items-center gap-0.5" aria-hidden>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={20}
-                        className={
-                          i < Math.round(supplier.rating)
-                            ? "fill-amber-400 text-amber-400"
-                            : "text-line"
-                        }
-                      />
-                    ))}
-                  </span>
-                  <span className="text-[13.5px] text-mute">
-                    на основе {supplier.reviews_count}{" "}
-                    {pluralReviews(supplier.reviews_count)} ·{" "}
-                    <span className="inline-flex items-center gap-1 font-semibold text-brand-700">
-                      только подтверждённые сделки
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          ) : null}
-          <CatalogItemReviews
-            reviews={reviews}
-            isLoading={reviewsLoading}
-            bare
-          />
-        </div>
-      </section>
+      <CatalogItemReviewBlock
+        itemId={itemId}
+        itemTitle={itemTitle}
+        reviews={reviews}
+        summary={reviewSummary}
+        isLoading={reviewsLoading}
+        supplier={supplier}
+        supplierHref={supplierHref}
+      />
 
       <section id="psup" className="scroll-mt-36 grid gap-4">
         <h2 className="text-[22px] font-bold tracking-[-0.01em] text-ink">
@@ -351,10 +326,3 @@ export const CatalogItemSections = ({
   )
 }
 
-const pluralReviews = (n: number) => {
-  const mod10 = n % 10
-  const mod100 = n % 100
-  if (mod10 === 1 && mod100 !== 11) return "отзыв"
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return "отзыва"
-  return "отзывов"
-}

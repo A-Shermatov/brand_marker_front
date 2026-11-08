@@ -72,7 +72,7 @@ export default function RootLayout({
     >
       <body className="bg-canvas font-sans text-[15px] text-ink antialiased">
         {/* Light, dark, or the device's own setting (the default); remembered per browser. */}
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="bm-theme" themes={["light", "dark"]} disableTransitionOnChange>
           <QueryProvider>
             {children}
             <Toaster richColors position="bottom-right" />

@@ -7,7 +7,6 @@ import {
   HouseIcon,
   LockKeyIcon,
   PlusIcon,
-  ShoppingCartIcon,
   StarIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { HUB_ICONS } from "@/lib/cabinet-icons"
@@ -29,6 +28,7 @@ import {
 import { useBuyerMarks } from "@/hooks/use-buyer-marks"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { useAuthStore } from "@/lib/store/auth-store"
+import { useCartStore } from "@/lib/store/cart-store"
 import { BUYER_HUBS, matchHub } from "@/lib/cabinet-nav"
 
 const ICONS = HUB_ICONS.buyer
@@ -42,6 +42,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
   const { openSupport } = useSupportChat()
   const marks = useBuyerMarks()
   const activeHub = matchHub(BUYER_HUBS, pathname, "/customer")
+  const cartLines = useCartStore((s) => s.items.length)
 
   const badgeFor = (keys?: string[]) => {
     if (!hydrated || !keys?.length) return 0
@@ -51,6 +52,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
       if (key === "rfqs") n += counts.rfqs_new
       if (key === "deals") n += counts.deals_new
       if (key === "approvals") n += counts.approvals_new
+      if (key === "cart") n += cartLines
     }
     return n
   }
@@ -82,7 +84,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
       </Button>
 
       <SidebarSection>
-        {BUYER_HUBS.map((hub) => (
+        {BUYER_HUBS.filter((hub) => !hub.more).map((hub) => (
           <CabinetNavLink
             key={hub.id}
             href={hub.href}
@@ -96,13 +98,17 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
       </SidebarSection>
 
       <SidebarSection label="Ещё" className="mt-4">
-        <CabinetNavLink
-          href="/services"
-          label="Каталог товаров"
-          icon={ShoppingCartIcon}
-          onClick={onNavigate}
-          quiet
-        />
+        {BUYER_HUBS.filter((hub) => hub.more).map((hub) => (
+          <CabinetNavLink
+            key={hub.id}
+            href={hub.href}
+            label={hub.label}
+            icon={ICONS[hub.id] ?? HouseIcon}
+            active={activeHub?.id === hub.id}
+            onClick={onNavigate}
+            quiet
+          />
+        ))}
         <CabinetNavLink
           href="/customer/reviews"
           label="Отзывы"

@@ -28,6 +28,10 @@ type CatalogItemInfoProps = {
   pricing: ItemPricing | null
   attributes: ItemAttribute[]
   supplier: PublicSupplier
+  /** How buyers rated this very item; the supplier's own rating is shown apart. */
+  itemRating?: { average: number; count: number } | null
+  /** The supplier's page: the public profile or the one in the buyer's cabinet. */
+  supplierHref?: string
   unit?: string
   qty?: number
 }
@@ -37,6 +41,8 @@ export const CatalogItemInfo = ({
   pricing,
   attributes,
   supplier,
+  itemRating,
+  supplierHref,
   unit = "шт",
   qty,
 }: CatalogItemInfoProps) => {
@@ -58,40 +64,47 @@ export const CatalogItemInfo = ({
           {title}
         </h1>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px]">
-          {supplier.reviews_count > 0 ? (
+          {itemRating && itemRating.count > 0 ? (
             <button
               type="button"
               onClick={() => scrollToProductSection("previews")}
               className="inline-flex items-center gap-1.5"
+              aria-label={`Оценка товара ${itemRating.average.toFixed(1)} из 5, ${itemRating.count} ${pluralReviews(itemRating.count)}`}
             >
               <span className="inline-flex items-center gap-0.5" aria-hidden>
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
                     size={14}
+                    weight={i < Math.round(itemRating.average) ? "fill" : "regular"}
                     className={
-                      i < Math.round(supplier.rating)
-                        ? "fill-amber-400 text-amber-400"
-                        : "text-line"
+                      i < Math.round(itemRating.average)
+                        ? "text-amber-400"
+                        : "text-line-strong"
                     }
                   />
                 ))}
               </span>
-              <b>{supplier.rating.toFixed(1)}</b>
+              <b>{itemRating.average.toFixed(1)}</b>
               <span className="text-mute underline underline-offset-2">
-                {supplier.reviews_count}{" "}
-                {pluralReviews(supplier.reviews_count)}
+                {itemRating.count} {pluralReviews(itemRating.count)} о товаре
               </span>
             </button>
           ) : (
-            <span className="text-mute">Пока нет отзывов о товаре</span>
+            <button
+              type="button"
+              onClick={() => scrollToProductSection("previews")}
+              className="text-mute underline-offset-2 hover:underline"
+            >
+              Пока нет отзывов о товаре
+            </button>
           )}
         </div>
       </div>
 
       {/* Who sells it, with the marks a buyer checks first. */}
       <Link
-        href={performerUrl(supplier.actor_id)}
+        href={supplierHref ?? performerUrl(supplier.actor_id)}
         className="group flex items-center gap-3 rounded-2xl border border-line bg-canvas/60 p-3 transition-colors hover:border-brand-200 hover:bg-brand-50/50"
       >
         {supplier.logo ? (
@@ -116,7 +129,13 @@ export const CatalogItemInfo = ({
             size="md"
           />
           <span className="truncate text-[12.5px] text-mute">
-            {[supplier.city, supplier.completed_contracts ? `сделок: ${supplier.completed_contracts}` : null]
+            {[
+              supplier.reviews_count > 0
+                ? `★ ${supplier.rating.toFixed(1)} поставщик`
+                : null,
+              supplier.city,
+              supplier.completed_contracts ? `сделок: ${supplier.completed_contracts}` : null,
+            ]
               .filter(Boolean)
               .join(" · ") || "Профиль компании"}
           </span>
@@ -125,7 +144,7 @@ export const CatalogItemInfo = ({
       </Link>
       <div className="flex flex-wrap gap-2">
         <StatusPill tone="safe" icon={ShieldCheck}>
-          Оплата через гарантию площадки
+          Можно оплатить с гарантией площадки
         </StatusPill>
         {supplier.verification_status === "verified" ? (
           <StatusPill tone="brand" icon={SealCheck}>

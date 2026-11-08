@@ -16,6 +16,7 @@ import {
   useBuyerNavCounts,
 } from "@/hooks/api/use-nav-counts-query"
 import { useHydrated } from "@/hooks/use-hydrated"
+import { useCartStore } from "@/lib/store/cart-store"
 
 export default function CustomerShell({ children }: { children: React.ReactNode }) {
   const gate = useCabinetGate("customer")
@@ -24,6 +25,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   const hydrated = useHydrated()
   const countsQuery = useBuyerNavCounts(gate === "allowed")
   const counts = countsQuery.data ?? emptyBuyerNavCounts()
+  const cartLines = useCartStore((s) => s.items.length)
 
   if (gate !== "allowed") {
     return (
@@ -45,6 +47,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               badges={{
                 rfqs: hydrated ? counts.rfqs_new : 0,
                 approvals: hydrated ? counts.approvals_new : 0,
+                cart: hydrated ? cartLines : 0,
               }}
             />
           </Suspense>

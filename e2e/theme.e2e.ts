@@ -1,26 +1,24 @@
 import { expect, test } from "./support/fixtures"
 
 /**
- * Night theme: the sun or moon in the bar switches the look, the choice
- * outlives a reload and a sign-in, and "Как на устройстве" follows the
- * computer's own setting.
+ * Night theme: one click on the moon turns the page dark at once, one click on
+ * the sun turns it light again. The choice outlives a reload, and the
+ * computer's own dark setting no longer decides it.
  */
 
-test.use({ colorScheme: "light" })
+test.use({ colorScheme: "dark" })
 
-test("the theme switch turns the night look on, keeps it and follows the device", async ({ page, pageAs }) => {
+test("one click switches the night look on and off and the choice stays", async ({ page, pageAs }) => {
   const html = page.locator("html")
 
-  await test.step("the site starts in the device's light look", async () => {
+  await test.step("the site starts light even when the computer is dark", async () => {
     await page.goto("/")
     await expect(html).not.toHaveClass(/\bdark\b/)
   })
 
-  await test.step("choosing «Тёмная» turns the page dark", async () => {
-    await page.getByRole("button", { name: /^Тема: светлая/ }).click()
-    await page.getByRole("menuitem", { name: "Тёмная" }).click()
+  await test.step("one click on the moon turns the page dark", async () => {
+    await page.getByRole("button", { name: "Включить тёмную тему" }).click()
     await expect(html).toHaveClass(/\bdark\b/)
-    await expect(page.getByRole("button", { name: /^Тема: тёмная/ })).toBeVisible()
     // The page itself goes navy, not just a class on the root.
     const background = await page.evaluate(() => getComputedStyle(document.body).backgroundColor)
     expect(background).toBe("rgb(10, 17, 34)")
@@ -31,19 +29,15 @@ test("the theme switch turns the night look on, keeps it and follows the device"
     await expect(html).toHaveClass(/\bdark\b/)
   })
 
-  await test.step("«Как на устройстве» follows the computer", async () => {
-    await page.getByRole("button", { name: /^Тема: тёмная/ }).click()
-    await page.getByRole("menuitem", { name: "Как на устройстве" }).click()
+  await test.step("one click on the sun turns it light again", async () => {
+    await page.getByRole("button", { name: "Включить светлую тему" }).click()
     await expect(html).not.toHaveClass(/\bdark\b/)
-    await page.emulateMedia({ colorScheme: "dark" })
-    await expect(html).toHaveClass(/\bdark\b/)
   })
 
   await test.step("the cabinet has the same switch", async () => {
     const buyer = await pageAs("buyer")
     await buyer.goto("/customer")
-    await buyer.getByRole("button", { name: /^Тема:/ }).click()
-    await buyer.getByRole("menuitem", { name: "Тёмная" }).click()
+    await buyer.getByRole("button", { name: "Включить тёмную тему" }).click()
     await expect(buyer.locator("html")).toHaveClass(/\bdark\b/)
   })
 })

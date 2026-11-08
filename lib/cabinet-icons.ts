@@ -10,6 +10,7 @@ import {
   HouseIcon,
   ScalesIcon,
   SealCheckIcon,
+  ShoppingCartIcon,
   SquaresFourIcon,
   StorefrontIcon,
   TrayIcon,
@@ -29,6 +30,7 @@ export const HUB_ICONS: Record<CabinetRole, Record<string, PhosphorIcon>> = {
     deals: HandshakeIcon,
     suppliers: BuildingsIcon,
     messages: ChatsCircleIcon,
+    catalog: ShoppingCartIcon,
     company: UsersThreeIcon,
   },
   supplier: {

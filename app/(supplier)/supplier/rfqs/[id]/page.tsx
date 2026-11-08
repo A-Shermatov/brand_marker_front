@@ -232,7 +232,11 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
           <RfqPositionsCard rfq={rfq} />
           <RfqTermsCard
             rfq={rfq}
-            paymentLabel="Гарантия сделки: покупатель оплачивает до отгрузки"
+            paymentLabel={
+              rfq.payment_mode === "direct"
+                ? "Сразу вам: деньги приходят в момент оплаты"
+                : "С гарантией: покупатель оплачивает до отгрузки, деньги придут после приёмки"
+            }
           />
           {rfq.attachments?.length ? (
             <RfqAttachmentsSection attachments={rfq.attachments} />

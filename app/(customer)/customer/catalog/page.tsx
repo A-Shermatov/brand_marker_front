@@ -11,21 +11,18 @@ import { mapCategoryTreeToMarketplace } from "@/lib/marketplace-hybrid"
 import { useItemsStore } from "@/lib/store/items-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { isApiEnabled } from "@/lib/api/config"
-import { usePublicSuppliersByActor } from "@/hooks/api/use-supplier-name"
 import { CustomerCatalogGrid } from "@/components/cabinet/catalog/customer-catalog-grid"
 import { ListPagination } from "@/components/list-pagination"
 import { Input } from "@/components/ui/input"
-import {
-  PageEmptyState,
-  PageFrame,
-  PageHeader,
-  PageSurface,
-  SegmentedControl,
-} from "@/components/layout"
+import { PageFrame, PageHeader, SegmentedControl } from "@/components/layout"
 import type { CatalogItemType, CatalogItemWithRelations } from "@/types"
 
 type TypeFilter = "" | CatalogItemType
 
+/**
+ * The catalog inside the buyer's cabinet: find a product or a service, put it
+ * in the cart or ask its price, without leaving the cabinet.
+ */
 export default function CustomerCatalogPage() {
   const hydrated = useHydrated()
   const [page, setPage] = useState(1)
@@ -37,14 +34,10 @@ export default function CustomerCatalogPage() {
   const items = useItemsStore((s) => s.items)
 
   const { data: apiCategories } = usePublicCategoriesQuery(useApi)
-  const categoryTabs = useMemo(() => {
-    if (!useApi) return mockCatalogCategories
+  const categoryOptions = useMemo(() => {
+    if (!useApi) return mockCatalogCategories.map((c) => ({ slug: c.slug, name: c.name }))
     if (!apiCategories?.length) return []
-    return mapCategoryTreeToMarketplace(apiCategories).map((c) => ({
-      id: c.id,
-      slug: c.slug,
-      name: c.label,
-    }))
+    return mapCategoryTreeToMarketplace(apiCategories).map((c) => ({ slug: c.slug, name: c.label }))
   }, [useApi, apiCategories])
 
   const trimmedQuery = query.trim()
@@ -52,7 +45,7 @@ export default function CustomerCatalogPage() {
     trimmedQuery || undefined,
     categorySlug || undefined,
     hydrated && useApi,
-    { page },
+    { page, pageSize: 24 },
   )
 
   const localItems = useMemo(() => {
@@ -60,109 +53,92 @@ export default function CustomerCatalogPage() {
     const q = trimmedQuery.toLowerCase()
     return items
       .filter((item) => item.status === "active")
-      .filter((item) => (typeFilter ? item.type === typeFilter : true))
-      .filter((item) =>
-        categorySlug ? item.category?.slug === categorySlug : true,
-      )
+      .filter((item) => (categorySlug ? item.category?.slug === categorySlug : true))
       .filter((item) => {
         if (!q) return true
-        const haystack = [item.title, item.description ?? "", item.category?.name ?? ""]
+        return [item.title, item.description ?? "", item.category?.name ?? ""]
           .join(" ")
           .toLowerCase()
-        return haystack.includes(q)
+          .includes(q)
       })
-      .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      )
-  }, [hydrated, useApi, items, trimmedQuery, typeFilter, categorySlug])
+  }, [hydrated, useApi, items, trimmedQuery, categorySlug])
 
   const catalogItems = useMemo(() => {
     const source = useApi ? (apiCatalog?.items ?? []) : localItems
-    if (!typeFilter) return source
-    return source.filter((item) => item.type === typeFilter)
+    return typeFilter ? source.filter((item) => item.type === typeFilter) : source
   }, [useApi, apiCatalog, localItems, typeFilter])
   const totalPages = useApi ? (apiCatalog?.total_pages ?? 0) : 1
 
-  const actorIds = useMemo(
-    () => catalogItems.map((item) => item.actor_id),
-    [catalogItems],
-  )
-  const { getName: getSupplierName } = usePublicSuppliersByActor(actorIds)
-
-  const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value)
-  }
+  const resetPage = () => setPage(1)
 
   return (
     <PageFrame>
-      <PageHeader
-        title="Товары и услуги"
-        description="Каталог предложений исполнителей"
-      />
+      <PageHeader title="Каталог товаров" description="Покупайте у проверенных поставщиков без заявки" />
 
-      <div className="relative">
-        <Search
-          size={18}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-          aria-hidden="true"
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_220px] lg:items-center">
+        <div className="relative">
+          <Search
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-mute"
+            aria-hidden="true"
+          />
+          <Input
+            type="search"
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value)
+              resetPage()
+            }}
+            placeholder="Что нужно купить? Например: бумага А4"
+            className="pl-11"
+            aria-label="Поиск товаров и услуг"
+          />
+        </div>
+        <SegmentedControl
+          value={typeFilter}
+          options={[
+            { value: "", label: "Все" },
+            { value: "product", label: "Товары" },
+            { value: "service", label: "Услуги" },
+          ]}
+          onChange={(next) => {
+            setTypeFilter(next)
+            resetPage()
+          }}
+          ariaLabel="Тип позиции"
         />
-        <Input
-          type="search"
-          value={query}
-          onChange={handleQueryChange}
-          placeholder="Поиск по названию, описанию, категории..."
-          className="pl-11"
-          aria-label="Поиск товаров и услуг"
-        />
+        <select
+          value={categorySlug}
+          onChange={(event) => {
+            setCategorySlug(event.target.value)
+            resetPage()
+          }}
+          aria-label="Категория"
+          className="bm-input h-11 w-full cursor-pointer text-[14px] font-medium"
+        >
+          <option value="">Все категории</option>
+          {categoryOptions.map((c) => (
+            <option key={c.slug} value={c.slug}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <SegmentedControl
-        value={typeFilter}
-        options={[
-          { value: "", label: "Все" },
-          { value: "product", label: "Товары" },
-          { value: "service", label: "Услуги" },
-        ]}
-        onChange={setTypeFilter}
-        ariaLabel="Тип позиции"
-      />
-
-      <SegmentedControl
-        value={categorySlug}
-        options={[
-          { value: "", label: "Все категории" },
-          ...categoryTabs.map((c) => ({ value: c.slug, label: c.name })),
-        ]}
-        onChange={setCategorySlug}
-        ariaLabel="Категория"
-      />
-
       {!hydrated || (useApi && isLoading) ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 animate-pulse rounded-xl bg-secondary" />
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 2xl:grid-cols-4" aria-busy>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-surface-muted" />
           ))}
         </div>
-      ) : catalogItems.length === 0 ? (
-        <PageSurface>
-          <PageEmptyState
-            title="Позиции не найдены"
-            description="Попробуйте изменить фильтры или поисковый запрос"
-          />
-        </PageSurface>
       ) : (
         <CustomerCatalogGrid
           items={catalogItems}
-          getSupplierName={getSupplierName}
+          emptyText="Ничего не нашлось. Попробуйте другой запрос или категорию — или разместите заявку, и поставщики сами предложат цену."
         />
       )}
-    
-      <ListPagination
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
-</PageFrame>
+
+      <ListPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+    </PageFrame>
   )
 }

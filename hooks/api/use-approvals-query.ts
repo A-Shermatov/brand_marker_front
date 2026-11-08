@@ -1,10 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import {
-  approvalsApi,
-  type CartCheckoutItem,
-} from "@/lib/api/approvals"
+import { approvalsApi } from "@/lib/api/approvals"
 import { isApiEnabled } from "@/lib/api/config"
 import { navCountsKeys } from "@/hooks/api/use-nav-counts-query"
+import { rfqKeys } from "@/hooks/api/use-rfqs-query"
 import type { PageParams } from "@/lib/pagination"
 
 export const approvalKeys = {
@@ -27,13 +25,13 @@ export const useApprovalsQuery = (
 export const useCartCheckoutMutation = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: {
-      items: CartCheckoutItem[]
-      idempotency_key?: string
-    }) => approvalsApi.checkout(data),
+    mutationFn: (data: Parameters<typeof approvalsApi.checkout>[0]) =>
+      approvalsApi.checkout(data),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: approvalKeys.all })
       void qc.invalidateQueries({ queryKey: navCountsKeys.role("buyer") })
+      // The orders appear in the request list at once.
+      void qc.invalidateQueries({ queryKey: rfqKeys.all })
     },
   })
 }

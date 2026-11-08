@@ -97,7 +97,11 @@ export const BuyerContractMilestonesPanel = ({
                         disabled={!currencySupported}
                         className="h-8 px-3 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold transition-colors disabled:pointer-events-none disabled:opacity-50"
                       >
-                        {viaAlif ? ALIF_PAY_LABEL : "Оплатить безопасно"}
+                        {viaAlif
+                          ? ALIF_PAY_LABEL
+                          : contract.payment_mode === "direct"
+                            ? "Оплатить поставщику"
+                            : "Оплатить безопасно"}
                       </button>
                     )}
                     {canApprove && (

@@ -15,7 +15,8 @@ import { PageFrame, PageHeader } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { DateInputRu } from "@/components/ui/date-input-ru"
 import { InlineHint } from "@/components/process"
-import type { RfqCreate, RfqWithRelations } from "@/types"
+import type { PaymentMode, RfqCreate, RfqWithRelations } from "@/types"
+import { PAYMENT_MODE_LABEL, PaymentModeChoice } from "@/components/payments/payment-mode-choice"
 import type { RfqFormPrefill } from "@/lib/rfq-from-listing"
 import { useCategoryOptions } from "@/hooks/use-category-options"
 import {
@@ -39,7 +40,7 @@ type FormState = {
   description: string
   note: string
   items: ProductLineItem[]
-  payment: "guarantee" | "invoice"
+  payment_mode: PaymentMode
   budget_type: "fixed" | "range" | "open"
   budget_from: string
   budget_to: string
@@ -99,7 +100,7 @@ const defaultValues = (
       description: "",
       note: "",
       items: [emptyProductItem()],
-      payment: "guarantee",
+      payment_mode: "escrow",
       budget_type: "open",
       budget_from: "",
       budget_to: "",
@@ -146,7 +147,7 @@ const defaultValues = (
     description: initial.description ?? "",
     note: parsed.note,
     items: initial.type === "product" ? parsed.items : [emptyProductItem()],
-    payment: "guarantee",
+    payment_mode: initial.payment_mode ?? "escrow",
     budget_type: initial.budget_type,
     budget_from: initial.budget_from != null ? String(initial.budget_from) : "",
     budget_to: initial.budget_to != null ? String(initial.budget_to) : "",
@@ -241,6 +242,7 @@ const toRfqCreate = (values: FormState): RfqCreate => {
     currency: parsed.currency,
     deadline: parsed.deadline,
     visibility: parsed.visibility,
+    payment_mode: values.payment_mode,
     status: "draft" as const,
   }
 
@@ -823,10 +825,10 @@ export const RfqForm = ({
         </div>
       </div>
 
-      <InlineHint variant="escrow">
-        Вы платите только после того, как примете работу. Площадка держит деньги на гарантии
-        и переводит их исполнителю после вашего подтверждения.
-      </InlineHint>
+      <PaymentModeChoice
+        value={values.payment_mode}
+        onChange={(v) => setField("payment_mode", v)}
+      />
     </>
   )
 
@@ -839,6 +841,7 @@ export const RfqForm = ({
     { label: "Принимать предложения до", value: formatDateOrDash(values.deadline), editStep: 2 },
     { label: "Начало работы", value: formatDateOrDash(values.start_date), editStep: 2 },
     { label: "Длительность", value: values.project_duration || "—", editStep: 2 },
+    { label: "Оплата", value: PAYMENT_MODE_LABEL[values.payment_mode], editStep: 2 },
   ]
 
   const renderServiceReviewStep = () => (
@@ -1020,7 +1023,7 @@ export const RfqForm = ({
                 deadline={values.deadline}
                 deliveryAddress={values.delivery_address}
                 visibility={values.visibility}
-                payment={values.payment}
+                paymentMode={values.payment_mode}
                 invitedLocked={!!invitedSupplierId}
                 dateMin={DATE_INPUT_MIN}
                 dateMax={DATE_INPUT_MAX}
@@ -1028,7 +1031,7 @@ export const RfqForm = ({
                 onDeadlineChange={(v) => handleDateChange("deadline", v)}
                 onDeliveryChange={(v) => setField("delivery_address", v)}
                 onVisibilityChange={(v) => setField("visibility", v)}
-                onPaymentChange={(v) => setField("payment", v)}
+                onPaymentModeChange={(v) => setField("payment_mode", v)}
               />
             )}
             {step === 3 && (
@@ -1040,7 +1043,7 @@ export const RfqForm = ({
                 currency={values.currency}
                 deadline={values.deadline}
                 deliveryAddress={values.delivery_address}
-                payment={values.payment}
+                paymentMode={values.payment_mode}
                 visibility={values.visibility}
                 invitedSupplierName={invitedSupplierName}
                 onEdit={goToStep}

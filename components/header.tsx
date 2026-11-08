@@ -27,6 +27,7 @@ import {
 } from "@/lib/marketplace-routes"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { CartButton } from "@/components/cart/cart-button"
 
 const getCabinetBase = (role: SessionRole): string => {
   if (role === "supplier") return "/supplier"
@@ -129,6 +130,9 @@ export default function Header() {
           />
         </div>
 
+        {authedUser && (authedUser.role === "customer" || authedUser.capabilities?.buyer) ? (
+          <CartButton />
+        ) : null}
         <ThemeToggle />
 
         {authedUser ? (

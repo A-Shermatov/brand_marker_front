@@ -4,6 +4,7 @@ import { use, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { WarningIcon as AlertTriangle, CertificateIcon as FileCheck, ChatTextIcon as MessageSquare, PaperclipIcon as Paperclip, UploadSimpleIcon as Upload, GavelIcon as Gavel } from "@phosphor-icons/react/dist/ssr"
 import { PageFrame, PageHeader } from "@/components/layout"
+import { PaymentModeBadge } from "@/components/payments/payment-mode-choice"
 import { DealStepper } from "@/components/process"
 import { SupplierDealNextAction } from "@/components/supplier/contracts/supplier-deal-next-action"
 import { statusPillClass } from "@/components/ui/status-badge"
@@ -230,6 +231,7 @@ export default function SupplierContractDetailPage({ params }: PageProps) {
             variant="prominent"
             showAbsoluteDate
           />
+          <PaymentModeBadge mode={contract.payment_mode} />
           <span className={`${statusPillClass} ${meta.className}`}>
             {meta.label}
           </span>
