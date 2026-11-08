@@ -30,7 +30,7 @@ import {
 } from "@/lib/supplier-directory"
 import { SupplierProfileHeader } from "@/components/cabinet/suppliers/supplier-profile-header"
 import { SupplierStatsPanel } from "@/components/cabinet/suppliers/supplier-stats-panel"
-import { SupplierCatalogGrid } from "@/components/cabinet/suppliers/supplier-catalog-grid"
+import { CustomerCatalogGrid } from "@/components/cabinet/catalog/customer-catalog-grid"
 import { SupplierReviewsList } from "@/components/cabinet/suppliers/supplier-reviews-list"
 import { InviteRfqDialog } from "@/components/cabinet/suppliers/invite-rfq-dialog"
 import { useOpenDirectChatMutation } from "@/hooks/api/use-direct-chats-query"
@@ -193,7 +193,10 @@ export default function SupplierProfilePage({ params }: PageProps) {
         <h2 className="text-base font-bold text-foreground mb-3">
           Каталог ({catalogItems.length})
         </h2>
-        <SupplierCatalogGrid items={catalogItems} />
+        <CustomerCatalogGrid
+          items={catalogItems}
+          emptyText="У исполнителя пока нет опубликованных позиций в каталоге"
+        />
       </div>
 
       <SupplierReviewsList reviews={reviews} />

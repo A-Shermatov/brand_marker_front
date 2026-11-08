@@ -56,8 +56,13 @@ type RfqTermsCardProps = {
 export const RfqTermsCard = ({
   rfq,
   footer,
-  paymentLabel = "Гарантия сделки",
+  paymentLabel,
 }: RfqTermsCardProps) => {
+  const payment =
+    paymentLabel ??
+    (rfq.payment_mode === "direct"
+      ? "Оплата сразу поставщику"
+      : "С гарантией: деньги в банке до приёмки")
   const delivery =
     rfq.type === "product"
       ? rfq.delivery_address ||
@@ -76,7 +81,7 @@ export const RfqTermsCard = ({
       ),
     ],
     ["Доставка", delivery],
-    ["Оплата", paymentLabel],
+    ["Оплата", payment],
     [
       "Кто видит",
       rfq.visibility === "public"

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { SignOutIcon as LogOut, UserIcon as User, CaretDownIcon as ChevronDown, StorefrontIcon as Store, ShoppingCartIcon as ShoppingCart } from "@phosphor-icons/react/dist/ssr"
+import { SignOutIcon as LogOut, UserIcon as User, CaretDownIcon as ChevronDown, StorefrontIcon as Store } from "@phosphor-icons/react/dist/ssr"
 import { CabinetSearch } from "@/components/layout/cabinet-search"
 import { NotificationsPopover } from "@/components/notifications/notifications-popover"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
@@ -19,6 +19,7 @@ import { getUserDisplayName, getUserInitials } from "@/lib/auth-display"
 import { cn } from "@/lib/utils"
 import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { CartButton } from "@/components/cart/cart-button"
 
 export default function CustomerTopbar({
   moreOpen,
@@ -50,13 +51,7 @@ export default function CustomerTopbar({
           <BrandLogo small showWordmark className="shrink-0 lg:hidden" />
           <CabinetSearch target="/customer/rfqs" placeholder="Поиск по вашим заявкам" />
           <span className="flex-1" />
-          <Link
-            href="/services"
-            className="hidden h-9 items-center gap-2 rounded-lg px-3 text-[14px] font-medium text-ink-soft hover:bg-surface-muted hover:text-ink xl:inline-flex"
-          >
-            <ShoppingCart className="size-[18px]" />
-            Каталог
-          </Link>
+          <CartButton withLabel />
           <ThemeToggle />
           <NotificationsPopover role="buyer" />
           <DropdownMenu>

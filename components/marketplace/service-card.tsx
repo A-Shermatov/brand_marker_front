@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ClockIcon as Clock, CrownIcon as Crown } from "@phosphor-icons/react/dist/ssr"
@@ -11,6 +11,10 @@ import { serviceUrl } from "@/lib/marketplace-routes"
 
 type ServiceCardProps = {
   service: MarketplaceService
+  /** Where the card leads; the public product page by default. */
+  href?: string
+  /** Buttons under the card (cart, price request); they sit above the card link. */
+  actions?: ReactNode
 }
 
 const isVipBadge = (label: string) => /vip|премиум|топ/i.test(label)
@@ -18,9 +22,9 @@ const isVipBadge = (label: string) => /vip|премиум|топ/i.test(label)
 const isRequestPrice = (price: string) =>
   /запрос|договорённост/i.test(price)
 
-export const ServiceCard = ({ service }: ServiceCardProps) => {
+export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
   const Icon = getIcon(service.icon)
-  const detailHref = serviceUrl(service.id)
+  const detailHref = href ?? serviceUrl(service.id)
   const [imageBroken, setImageBroken] = useState(false)
   const showImage = Boolean(service.imageUrl) && !imageBroken
   const showVip = Boolean(service.badge && isVipBadge(service.badge.label))
@@ -97,6 +101,7 @@ export const ServiceCard = ({ service }: ServiceCardProps) => {
             </span>
           ) : null}
         </div>
+        {actions ? <div className="relative z-10 grid gap-2 pt-1">{actions}</div> : null}
       </div>
     </article>
   )

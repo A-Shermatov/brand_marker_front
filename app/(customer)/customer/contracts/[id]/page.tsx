@@ -6,6 +6,7 @@ import { WarningIcon as AlertTriangle, CertificateIcon as FileCheck, ChatTextIco
 import { ConfirmActionDialog, DealStepper } from "@/components/process"
 import { BuyerDealNextAction } from "@/components/cabinet/contracts/buyer-deal-next-action"
 import { PageFrame, PageHeader } from "@/components/layout"
+import { PaymentModeBadge } from "@/components/payments/payment-mode-choice"
 import { statusPillClass } from "@/components/ui/status-badge"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
@@ -323,9 +324,13 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
       : contract.agreed_amount - (contract.commission_amount ?? 0),
     contract.currency,
   )
-  const fundDescription = contract.status === "completed"
-    ? "Деньги будут удерживаться банком‑партнёром. Затем подтвердите выплату исполнителю."
-    : "Деньги будут удерживаться банком‑партнёром. Исполнитель получит их только после того, как вы примете работу."
+  // "Pay at once": the money reaches the supplier on payment, nothing is held.
+  const direct = contract.payment_mode === "direct"
+  const fundDescription = direct
+    ? `Вы выбрали оплату сразу: деньги получит ${supplierName} в момент оплаты. Вернуть их через гарантию площадки будет нельзя.`
+    : contract.status === "completed"
+      ? "Деньги будут удерживаться банком‑партнёром. Затем подтвердите выплату исполнителю."
+      : "Деньги будут удерживаться банком‑партнёром. Исполнитель получит их только после того, как вы примете работу."
   const confirmCopy: Record<
     PendingAction["kind"],
     { title: string; description: React.ReactNode; confirmLabel: string }
@@ -350,12 +355,16 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
     accept: unpaidMilestone
       ? {
           title: "Сначала оплатите работу",
-          description: `Принять работу можно после оплаты — ${formatCurrency(unpaidMilestone.amount, contract.currency)}. Деньги будут удерживаться банком до вашей приёмки: после оплаты вернитесь сюда и примите работу.`,
+          description: direct
+            ? `Принять работу можно после оплаты — ${formatCurrency(unpaidMilestone.amount, contract.currency)}. Деньги сразу получит исполнитель: после оплаты вернитесь сюда и примите работу.`
+            : `Принять работу можно после оплаты — ${formatCurrency(unpaidMilestone.amount, contract.currency)}. Деньги будут удерживаться банком до вашей приёмки: после оплаты вернитесь сюда и примите работу.`,
           confirmLabel: viaAlif ? ALIF_CONFIRM_LABEL : "Оплатить",
         }
       : {
           title: "Принять работу?",
-          description: `${supplierName} получит ${supplierGets} из удерживаемых банком ${pendingAmount} (за вычетом комиссии площадки). Отправить работу на доработку после приёмки будет нельзя.`,
+          description: direct
+            ? `Подтвердите, что работа выполнена. ${supplierName} уже получил оплату. Отправить работу на доработку после приёмки будет нельзя.`
+            : `${supplierName} получит ${supplierGets} из удерживаемых банком ${pendingAmount} (за вычетом комиссии площадки). Отправить работу на доработку после приёмки будет нельзя.`,
           confirmLabel: "Да, принять",
         },
   }
@@ -386,6 +395,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
           <span className={`${statusPillClass} ${meta.className}`}>
             {meta.label}
           </span>
+          <PaymentModeBadge mode={contract.payment_mode} />
           <span className="text-xs text-mute">
             с {formatIsoDate(contract.start_date)}
           </span>

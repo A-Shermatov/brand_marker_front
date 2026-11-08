@@ -74,4 +74,12 @@ export type PaymentMilestoneInput = {
 export type ProposalAcceptInput = {
   payment_type: PaymentType
   milestones?: PaymentMilestoneInput[]
+  /** Leave out to keep what the buyer chose in the request. */
+  payment_mode?: PaymentMode
 }
+
+/**
+ * How the buyer pays. "escrow": the bank holds the money until the buyer
+ * accepts the work. "direct": the money goes to the supplier as soon as it is paid.
+ */
+export type PaymentMode = "escrow" | "direct"

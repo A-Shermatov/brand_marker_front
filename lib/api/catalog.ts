@@ -1,4 +1,4 @@
-import type { CatalogReportReason, Currency } from "@/types"
+import type { CatalogReportReason, Currency, PaymentMode } from "@/types"
 import { apiFetch } from "./client"
 
 export type CatalogItemReportResponse = {
@@ -10,20 +10,27 @@ export type CatalogItemReportResponse = {
   created_at: string
 }
 
-export type CatalogOfferKind = "buy" | "negotiate"
+/** buy: at the published price; negotiate: the buyer names a price; quote: ask for one. */
+export type CatalogOfferKind = "buy" | "negotiate" | "quote"
 
 export type CatalogOfferCreate = {
   kind: CatalogOfferKind
+  /** For "negotiate": the buyer's price for the whole order. */
   price?: number
   message?: string
+  qty?: number
+  payment_mode?: PaymentMode
 }
 
 export type CatalogOfferResponse = {
   rfq_id: string
-  proposal_id: number
+  /** Empty for a price request: the supplier answers with an offer. */
+  proposal_id: number | null
   kind: CatalogOfferKind
-  price: number
+  price: number | null
   currency: Currency | string
+  qty?: number
+  payment_mode?: PaymentMode
 }
 
 export const catalogApi = {

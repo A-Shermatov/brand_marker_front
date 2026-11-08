@@ -107,6 +107,22 @@ export type Review = {
   target?: ReviewParty | null
   /** The employee who wrote it for the reviewing company (newer reviews only). */
   author?: ReviewAuthor | null
+  /** Set when the deal came from this catalog item: the review rates it too. */
+  catalog_item_id?: number | null
+}
+
+/** How buyers rated one catalog item. `distribution` maps stars (5..1) to counts. */
+export type ItemReviewSummary = {
+  average: number
+  count: number
+  distribution: Record<string, number>
+}
+
+/** The finished deal for an item the buyer can still review, if any. */
+export type ItemReviewEligibility = {
+  contract_id: number | null
+  target_actor_id: number | null
+  already_reviewed: boolean
 }
 
 export type ReviewAuthor = {

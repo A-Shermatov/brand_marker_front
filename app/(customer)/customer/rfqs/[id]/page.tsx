@@ -315,6 +315,7 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
           supplierName={getSupplierName(acceptTarget.supplier_actor_id)}
           price={acceptTarget.price}
           currency={acceptTarget.currency}
+          defaultPaymentMode={rfq.payment_mode ?? "escrow"}
           onConfirm={(terms) => void handleAccept(acceptTarget.id, terms)}
         />
       )}

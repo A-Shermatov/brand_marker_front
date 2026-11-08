@@ -63,7 +63,11 @@ export const BuyerDealNextAction = ({
 }: BuyerDealNextActionProps) => {
   const [reviewOpen, setReviewOpen] = useState(false)
   const phase = getDealPhase(contract)
-  const title = DEAL_NEXT_STEP.buyer[phase]
+  const direct = contract.payment_mode === "direct"
+  const title =
+    direct && phase === "prepay"
+      ? "Оплатите заказ — деньги сразу получит поставщик"
+      : DEAL_NEXT_STEP.buyer[phase]
   const money = (amount: number) => formatCurrency(amount, contract.currency)
 
   if (phase === "prepay" || phase === "postpay") {
@@ -74,7 +78,9 @@ export const BuyerDealNextAction = ({
         hot
         title={title}
         text={
-          phase === "prepay"
+          phase === "prepay" && direct
+            ? `Вы выбрали оплату сразу: деньги получит ${supplierName} в момент оплаты, без удержания в банке.`
+            : phase === "prepay"
             ? viaAlif
               ? "Оплата через Alif: средства сразу резервируются и уйдут исполнителю только после того, как вы примете работу."
               : "Деньги будут храниться на гарантии площадки и уйдут исполнителю только после того, как вы примете работу."
@@ -185,8 +191,12 @@ export const BuyerDealNextAction = ({
             Срок сдачи — <b>{formatIsoDate(contract.due_date)}</b>. Когда исполнитель сдаст работу,
             здесь появится кнопка приёмки.
             {getUnpaidMilestone(contract)
-              ? " Принять работу можно после оплаты: банк удержит деньги до вашей приёмки."
-              : " Оплата удерживается банком и уйдёт исполнителю после вашей приёмки."}
+              ? direct
+                ? " Принять работу можно после оплаты."
+                : " Принять работу можно после оплаты: банк удержит деньги до вашей приёмки."
+              : direct
+                ? " Оплата уже у исполнителя — вы выбрали оплату сразу."
+                : " Оплата удерживается банком и уйдёт исполнителю после вашей приёмки."}
           </>
         }
         actions={

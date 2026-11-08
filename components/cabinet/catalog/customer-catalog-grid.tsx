@@ -1,152 +1,82 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
-import { PackageIcon as Package, BriefcaseIcon as Briefcase } from "@phosphor-icons/react/dist/ssr"
-import type { CatalogItemWithRelations } from "@/types"
-import { catalogItemTypeLabel, formatItemPricing, resolveListPrice } from "@/lib/item-display"
-import { serviceUrl } from "@/lib/marketplace-routes"
+import { useMemo } from "react"
+import { ShoppingCartIcon, TagIcon } from "@phosphor-icons/react/dist/ssr"
+import { ServiceCard } from "@/components/marketplace/service-card"
 import { Button } from "@/components/ui/button"
-import {
-  CatalogBuyOfferDialog,
-  CatalogNegotiateOfferDialog,
-} from "@/components/marketplace/catalog-item-detail/catalog-item-offer-dialogs"
+import { useMappedMarketplaceServices } from "@/hooks/api/use-supplier-name"
+import { useAddToCart } from "@/hooks/use-add-to-cart"
+import { useHydrated } from "@/hooks/use-hydrated"
+import { resolveListPrice } from "@/lib/item-display"
+import { useCartStore } from "@/lib/store/cart-store"
+import type { CatalogItemWithRelations } from "@/types"
 
 type CustomerCatalogGridProps = {
   items: CatalogItemWithRelations[]
-  getSupplierName: (actorId: number) => string
+  emptyText?: string
 }
 
+/** Catalog inside the buyer's cabinet: product cards that open in the cabinet and go to the cart. */
 export const CustomerCatalogGrid = ({
   items,
-  getSupplierName,
+  emptyText = "Позиции не найдены",
 }: CustomerCatalogGridProps) => {
-  const [activeItem, setActiveItem] = useState<CatalogItemWithRelations | null>(null)
-  const [buyOpen, setBuyOpen] = useState(false)
-  const [negotiateOpen, setNegotiateOpen] = useState(false)
+  const services = useMappedMarketplaceServices(items)
+  const byId = useMemo(() => new Map(items.map((item) => [item.id, item])), [items])
+  const addToCart = useAddToCart()
+  const hydrated = useHydrated()
+  const inCart = useCartStore((s) => s.items)
+  const cartIds = useMemo(
+    () => new Set(hydrated ? inCart.map((line) => line.listingId) : []),
+    [hydrated, inCart],
+  )
 
   if (items.length === 0) {
     return (
-      <div className="bg-card border border-border rounded-xl p-8 text-center text-sm text-muted-foreground">
-        Позиции не найдены
+      <div className="rounded-2xl border border-dashed border-line-strong bg-card p-8 text-center text-[14px] text-mute">
+        {emptyText}
       </div>
     )
   }
 
-  const listPrice = activeItem ? resolveListPrice(activeItem.pricing) : null
-
   return (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item) => {
-          const price = resolveListPrice(item.pricing)
-          return (
-            <article
-              key={item.id}
-              className="bg-card border border-border rounded-xl p-5 flex flex-col"
-            >
-              <div className="flex items-start gap-3">
-                <Link
-                  href={serviceUrl(item.id)}
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary"
-                  aria-label={item.title}
+    <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 2xl:grid-cols-4" aria-label="Товары и услуги">
+      {services.map((service) => {
+        const item = byId.get(service.id)
+        if (!item) return null
+        const priced = resolveListPrice(item.pricing) != null
+        const added = cartIds.has(String(item.id))
+        return (
+          <li key={service.id} className="grid">
+            <ServiceCard
+              service={service}
+              href={`/customer/catalog/${service.id}`}
+              actions={
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={added ? "outline" : priced ? "default" : "outline"}
+                  className="w-full"
+                  aria-label={`${priced ? "В корзину" : "Запросить цену"}: ${item.title}`}
+                  onClick={() =>
+                    addToCart(item, {
+                      mode: priced ? "buy" : "quote",
+                      supplierName: service.provider,
+                    })
+                  }
                 >
-                  {item.type === "product" ? (
-                    <Package size={19} className="text-primary" aria-hidden="true" />
+                  {priced ? (
+                    <ShoppingCartIcon className="size-4" aria-hidden />
                   ) : (
-                    <Briefcase size={19} className="text-primary" aria-hidden="true" />
+                    <TagIcon className="size-4" aria-hidden />
                   )}
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <span className="text-[12.5px] font-medium text-muted-foreground">
-                    {catalogItemTypeLabel[item.type]}
-                  </span>
-                  <Link
-                    href={serviceUrl(item.id)}
-                    className="mt-0.5 block text-sm font-bold leading-snug text-foreground hover:text-primary"
-                  >
-                    {item.title}
-                  </Link>
-                  {item.category && (
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
-                      {item.category.name}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {item.description && (
-                <Link
-                  href={serviceUrl(item.id)}
-                  className="mt-2.5 block text-xs leading-relaxed text-muted-foreground line-clamp-3 hover:text-primary"
-                >
-                  {item.description}
-                </Link>
-              )}
-
-              <div className="mt-auto pt-4 border-t border-border space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-semibold text-primary">
-                    {formatItemPricing(item.pricing)}
-                  </div>
-                  <Link
-                    href={`/customer/suppliers/${item.actor_id}`}
-                    className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors truncate max-w-[50%] text-right"
-                    aria-label={`Открыть профиль исполнителя ${getSupplierName(item.actor_id)}`}
-                  >
-                    {getSupplierName(item.actor_id)}
-                  </Link>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="button"
-                    className="w-full"
-                    disabled={!price}
-                    onClick={() => {
-                      setActiveItem(item)
-                      setBuyOpen(true)
-                    }}
-                  >
-                    Купить с гарантией
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setActiveItem(item)
-                      setNegotiateOpen(true)
-                    }}
-                  >
-                    Торговаться
-                  </Button>
-                </div>
-              </div>
-            </article>
-          )
-        })}
-      </div>
-
-      {activeItem && listPrice && (
-        <CatalogBuyOfferDialog
-          open={buyOpen}
-          onOpenChange={setBuyOpen}
-          itemId={activeItem.id}
-          itemTitle={activeItem.title}
-          price={listPrice.price}
-          currency={listPrice.currency}
-        />
-      )}
-      {activeItem && (
-        <CatalogNegotiateOfferDialog
-          open={negotiateOpen}
-          onOpenChange={setNegotiateOpen}
-          itemId={activeItem.id}
-          itemTitle={activeItem.title}
-          listPrice={listPrice?.price ?? null}
-          currency={listPrice?.currency ?? activeItem.pricing?.currency ?? "TJS"}
-        />
-      )}
-    </>
+                  {added ? "Ещё в корзину" : priced ? "В корзину" : "Запросить цену"}
+                </Button>
+              }
+            />
+          </li>
+        )
+      })}
+    </ul>
   )
 }

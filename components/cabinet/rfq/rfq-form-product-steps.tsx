@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 import { formatCurrency, formatIsoDate } from "@/lib/format"
 import { DateInputRu } from "@/components/ui/date-input-ru"
 import type { ReactNode } from "react"
+import { PAYMENT_MODE_LABEL, PaymentModeChoice } from "@/components/payments/payment-mode-choice"
+import type { PaymentMode } from "@/types"
 
 export type ProductLineItem = {
   name: string
@@ -418,7 +420,7 @@ type Step2Props = SharedProps & {
   deadline: string
   deliveryAddress: string
   visibility: "public" | "invited_only"
-  payment: "guarantee" | "invoice"
+  paymentMode: PaymentMode
   invitedLocked?: boolean
   dateMin: string
   dateMax: string
@@ -426,7 +428,7 @@ type Step2Props = SharedProps & {
   onDeadlineChange: (value: string) => void
   onDeliveryChange: (value: string) => void
   onVisibilityChange: (value: "public" | "invited_only") => void
-  onPaymentChange: (value: "guarantee" | "invoice") => void
+  onPaymentModeChange: (value: PaymentMode) => void
 }
 
 export const ProductConditionsStep = ({
@@ -436,7 +438,7 @@ export const ProductConditionsStep = ({
   deadline,
   deliveryAddress,
   visibility,
-  payment,
+  paymentMode,
   invitedLocked,
   dateMin,
   dateMax,
@@ -444,7 +446,7 @@ export const ProductConditionsStep = ({
   onDeadlineChange,
   onDeliveryChange,
   onVisibilityChange,
-  onPaymentChange,
+  onPaymentModeChange,
 }: Step2Props) => (
   <>
     <div className="grid gap-4 sm:grid-cols-2">
@@ -517,52 +519,7 @@ export const ProductConditionsStep = ({
       </div>
     </div>
 
-    <div className="grid gap-2">
-      <span className={labelClass}>Оплата</span>
-      {(
-        [
-          {
-            value: "guarantee" as const,
-            title: "Гарантия сделки",
-            desc: "Вы оплачиваете до отгрузки, деньги ждут в банке‑партнёре до приёмки. Рекомендуем.",
-          },
-          {
-            value: "invoice" as const,
-            title: "По счёту через гарантию",
-            desc: "Для бухгалтерии: безналичный перевод по счёту, та же защита",
-          },
-        ] as const
-      ).map((option) => {
-        const active = payment === option.value
-        return (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => onPaymentChange(option.value)}
-            aria-pressed={active}
-            className={cn(
-              "flex gap-3 rounded-xl border p-3.5 text-left transition-colors",
-              active
-                ? "border-primary bg-primary/5"
-                : "border-border hover:border-primary",
-            )}
-          >
-            <span
-              className={cn(
-                "mt-0.5 h-4 w-4 shrink-0 rounded-full border-2",
-                active
-                  ? "border-primary bg-primary shadow-[inset_0_0_0_2px_white]"
-                  : "border-border",
-              )}
-            />
-            <span>
-              <b className="block text-[14px]">{option.title}</b>
-              <span className="text-[13px] text-muted-foreground">{option.desc}</span>
-            </span>
-          </button>
-        )
-      })}
-    </div>
+    <PaymentModeChoice value={paymentMode} onChange={onPaymentModeChange} />
   </>
 )
 
@@ -574,7 +531,7 @@ type ReviewProps = {
   currency: string
   deadline: string
   deliveryAddress: string
-  payment: "guarantee" | "invoice"
+  paymentMode: PaymentMode
   visibility: "public" | "invited_only"
   invitedSupplierName?: string
   onEdit: (step: 1 | 2) => void
@@ -588,7 +545,7 @@ export const ProductReviewStep = ({
   currency,
   deadline,
   deliveryAddress,
-  payment,
+  paymentMode,
   visibility,
   invitedSupplierName,
   onEdit,
@@ -627,12 +584,7 @@ export const ProductReviewStep = ({
       editStep: 2,
     },
     { label: "Доставка", value: deliveryAddress.trim() || "—", editStep: 2 },
-    {
-      label: "Оплата",
-      value:
-        payment === "guarantee" ? "Гарантия сделки" : "По счёту через гарантию",
-      editStep: 2,
-    },
+    { label: "Оплата", value: PAYMENT_MODE_LABEL[paymentMode], editStep: 2 },
   ]
 
   return (

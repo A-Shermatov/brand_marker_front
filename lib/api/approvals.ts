@@ -1,4 +1,5 @@
 import { buildPageQuery, type Page, type PageParams } from "@/lib/pagination"
+import type { CartLineMode, PaymentMode } from "@/types"
 import { apiFetch } from "./client"
 
 export type ApprovalStatus = "wait" | "auto" | "approved" | "rejected"
@@ -34,6 +35,8 @@ export type PurchaseApproval = {
 export type CartCheckoutItem = {
   item_id: number
   qty: number
+  /** "quote" asks the supplier to name the price instead of buying. */
+  mode?: CartLineMode
 }
 
 export type CartCheckoutResponse = {
@@ -53,6 +56,7 @@ export const approvalsApi = {
   checkout: (data: {
     items: CartCheckoutItem[]
     idempotency_key?: string
+    payment_mode?: PaymentMode
   }) =>
     apiFetch<CartCheckoutResponse>("/buyer/approvals/checkout", {
       method: "POST",

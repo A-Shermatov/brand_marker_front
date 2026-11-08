@@ -13,7 +13,8 @@ import { usePlatformSettingsQuery } from "@/hooks/api/use-public-query"
 import { exceedsContractLimit } from "@/lib/commission"
 import { formatCurrency } from "@/lib/format"
 import { PaymentTermsBuilder } from "@/components/cabinet/rfq/payment-terms-builder"
-import type { Currency, ProposalAcceptInput } from "@/types"
+import { PaymentModeChoice } from "@/components/payments/payment-mode-choice"
+import type { Currency, PaymentMode, ProposalAcceptInput } from "@/types"
 
 type AcceptProposalDialogProps = {
   open: boolean
@@ -21,6 +22,8 @@ type AcceptProposalDialogProps = {
   supplierName: string
   price: number
   currency: Currency
+  /** What the buyer chose in the request; they can change it here. */
+  defaultPaymentMode?: PaymentMode
   onConfirm: (terms: ProposalAcceptInput) => void
 }
 
@@ -30,15 +33,18 @@ export const AcceptProposalDialog = ({
   supplierName,
   price,
   currency,
+  defaultPaymentMode = "escrow",
   onConfirm,
 }: AcceptProposalDialogProps) => {
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>(defaultPaymentMode)
+  const direct = paymentMode === "direct"
   const [terms, setTerms] = useState<ProposalAcceptInput>({
     payment_type: "full_postpayment",
   })
   const [isValid, setIsValid] = useState(true)
   const { data: platformSettings } = usePlatformSettingsQuery(open)
   const overLimit = platformSettings ? exceedsContractLimit(price, currency, platformSettings) : false
-  const canConfirm = isValid && !overLimit
+  const canConfirm = (direct || isValid) && !overLimit
 
   const handleTermsChange = useCallback(
     (value: ProposalAcceptInput, valid: boolean) => {
@@ -50,7 +56,12 @@ export const AcceptProposalDialog = ({
 
   const handleConfirm = () => {
     if (!canConfirm) return
-    onConfirm(terms)
+    // Paying at once is one payment up front that goes straight to the supplier.
+    onConfirm(
+      direct
+        ? { payment_type: "full_prepayment", payment_mode: "direct" }
+        : { ...terms, payment_mode: "escrow" },
+    )
     onOpenChange(false)
   }
 
@@ -68,13 +79,26 @@ export const AcceptProposalDialog = ({
           <p className="text-sm font-bold">Что будет дальше</p>
           <ol className="mt-2 grid list-decimal gap-2 pl-5 text-[15px]">
             <li>Создадим сделку и договор на {formatCurrency(price, currency)}.</li>
-            <li>Исполнитель выполнит работу, а вы проверите результат.</li>
-            <li>
-              Вы оплатите сделку до приёмки — деньги удерживает банк‑партнёр, исполнитель
-              получит их только после того, как вы примете работу.
-            </li>
+            {direct ? (
+              <>
+                <li>Вы оплатите сделку — деньги сразу получит исполнитель.</li>
+                <li>Исполнитель выполнит работу, а вы примете результат.</li>
+              </>
+            ) : (
+              <>
+                <li>Исполнитель выполнит работу, а вы проверите результат.</li>
+                <li>
+                  Вы оплатите сделку до приёмки — деньги удерживает банк‑партнёр, исполнитель
+                  получит их только после того, как вы примете работу.
+                </li>
+              </>
+            )}
             <li>Остальные предложения по заявке будут закрыты.</li>
           </ol>
+        </div>
+
+        <div className="py-1">
+          <PaymentModeChoice value={paymentMode} onChange={setPaymentMode} stacked />
         </div>
 
         {overLimit && platformSettings?.max_contract_amount != null && (
@@ -85,13 +109,15 @@ export const AcceptProposalDialog = ({
           </p>
         )}
 
-        <div className="py-1">
-          <PaymentTermsBuilder
-            price={price}
-            currency={currency}
-            onChange={handleTermsChange}
-          />
-        </div>
+        {direct ? null : (
+          <div className="py-1">
+            <PaymentTermsBuilder
+              price={price}
+              currency={currency}
+              onChange={handleTermsChange}
+            />
+          </div>
+        )}
 
         <DialogFooter className="gap-2 sm:gap-0">
           <button

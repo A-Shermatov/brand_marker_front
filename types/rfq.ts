@@ -1,4 +1,5 @@
 import type { VerificationStatus } from "./company"
+import type { PaymentMode } from "./payment"
 import type { ProposalStatus } from "./proposal"
 
 export const RFQ_TYPES = ["product", "service"] as const
@@ -69,6 +70,8 @@ type RfqBase = {
   deadline: string
   visibility: RfqVisibility
   status: RfqStatus
+  /** How the buyer wants to pay; "escrow" when not set. */
+  payment_mode?: PaymentMode
   invited_supplier_ids?: number[]
   catalog_item_id?: number | null
   is_catalog_offer?: boolean

@@ -12,6 +12,8 @@ export type CabinetNavHub = {
   /** Path prefixes that belong to this hub (for active state) */
   match: string[]
   badgeKeys?: string[]
+  /** Listed under "Ещё" in the menu rather than among the main sections. */
+  more?: boolean
 }
 
 export type CabinetSubtab = {
@@ -61,10 +63,18 @@ export const BUYER_HUBS: CabinetNavHub[] = [
     badgeKeys: ["messages"],
   },
   {
+    id: "catalog",
+    label: "Каталог товаров",
+    href: "/customer/catalog",
+    match: ["/customer/catalog", "/customer/cart"],
+    badgeKeys: ["cart"],
+  },
+  {
     id: "company",
     label: "Компания",
     href: "/customer/company",
     match: ["/customer/company", "/customer/plan", "/customer/profile"],
+    more: true,
   },
 ]
 
@@ -97,6 +107,20 @@ export const BUYER_SUBTABS: Record<string, CabinetSubtab[]> = {
       match: ["/customer/payments"],
     },
   ],
+  catalog: [
+    {
+      id: "catalog",
+      label: "Товары и услуги",
+      href: "/customer/catalog",
+      match: ["/customer/catalog"],
+    },
+    {
+      id: "cart",
+      label: "Корзина",
+      href: "/customer/cart",
+      match: ["/customer/cart"],
+    },
+  ],
   company: [
     {
       id: "company",
@@ -121,6 +145,10 @@ export const BUYER_SECTION_TITLE: Record<string, SectionMeta> = {
   deals: {
     title: "Сделки и оплаты",
     description: "Договоры, деньги на гарантии и документы",
+  },
+  catalog: {
+    title: "Каталог товаров",
+    description: "Покупайте у проверенных поставщиков без заявки",
   },
   company: {
     title: "Компания",

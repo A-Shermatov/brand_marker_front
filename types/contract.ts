@@ -1,5 +1,6 @@
 import type { Currency } from "./proposal"
 import type {
+  PaymentMode,
   PaymentPlanWithMilestones,
   PaymentType,
 } from "./payment"
@@ -139,6 +140,7 @@ export type Contract = {
   start_date: string
   due_date: string
   payment_type: PaymentType
+  payment_mode?: PaymentMode
   created_at: string
   status: ContractStatus
   commission_amount?: number
