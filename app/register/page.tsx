@@ -54,7 +54,10 @@ function RegisterContent() {
   const searchParams = useSearchParams()
   const registerWithCredentials = useAuthStore((s) => s.registerWithCredentials)
   const [tab, setTab] = useState<"in" | "up">("up")
-  const [role, setRole] = useState<MarketplaceSessionRole>("customer")
+  // A link like /register?role=supplier opens on "Продавать".
+  const [role, setRole] = useState<MarketplaceSessionRole>(
+    searchParams.get("role") === "supplier" ? "supplier" : "customer",
+  )
   const [apiError, setApiError] = useState<string | null>(null)
 
   const {

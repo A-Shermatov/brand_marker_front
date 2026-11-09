@@ -13,6 +13,7 @@ import { ChangePasswordCard } from "@/components/auth/change-password-card"
 import { TwoFactorSettings } from "@/components/auth/two-factor-settings"
 import { IdentityVerificationCard } from "@/components/verification/identity-verification-card"
 import { authApi } from "@/lib/api/auth"
+import { AvatarUploader } from "@/components/profile/avatar-uploader"
 import { getApiErrorMessage } from "@/lib/api/client"
 import { toast } from "sonner"
 
@@ -93,6 +94,7 @@ export default function SupplierProfilePage() {
       />
 
       <div className="space-y-6">
+      <AvatarUploader />
       <form onSubmit={(e) => void handleSave(e)} className="space-y-6">
         <PageSurface className="space-y-5 p-5 sm:p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

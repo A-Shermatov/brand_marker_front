@@ -21,6 +21,7 @@ import {
 import { useCategoryOptions } from "@/hooks/use-category-options"
 import { buyerRfqBadgeLabel, isModeratedRfq } from "@/lib/buyer-rfq-display"
 import { formatIsoDate, formatRfqBudget, pluralRu } from "@/lib/format"
+import { RfqActionsMenu } from "@/components/cabinet/rfq/rfq-manage"
 
 type RfqListProps = {
   rfqs: RfqWithRelations[]
@@ -81,6 +82,7 @@ export const RfqList = ({ rfqs, getProposalCount }: RfqListProps) => {
                     <StatusPill tone={tone}>{buyerRfqBadgeLabel(rfq.status)}</StatusPill>
                   )}
                   <CardAction>
+                    <span className="inline-flex items-center justify-end gap-1">
                     {collecting && offers > 0 ? (
                       <Button asChild size="sm">
                         <Link href={href}>Сравнить КП</Link>
@@ -90,6 +92,8 @@ export const RfqList = ({ rfqs, getProposalCount }: RfqListProps) => {
                         {rfq.status === "draft" ? "Дополнить" : "Открыть"}
                       </Link>
                     )}
+                    <RfqActionsMenu rfq={rfq} offers={offers} />
+                    </span>
                   </CardAction>
                 </>
               }

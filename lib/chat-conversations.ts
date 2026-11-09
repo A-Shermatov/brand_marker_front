@@ -14,6 +14,17 @@ export type InboxLastMessage = {
   created_at: string
 }
 
+/** The counterpart's picture: a known one, or the photo on their latest message. */
+const counterpartAvatar = (
+  messages: { sender_id: number; sender_avatar?: string | null }[],
+  currentUserId: number,
+  known?: string | null,
+): string | null =>
+  known ??
+  [...messages].reverse().find((m) => m.sender_id !== currentUserId && m.sender_avatar)
+    ?.sender_avatar ??
+  null
+
 export type InboxProject = {
   key: string
   kind: "contract" | "proposal" | "direct"
@@ -25,6 +36,8 @@ export type InboxProject = {
   senderName: string
   unreadCount: number
   href: string
+  /** The counterpart's picture, when one is known. */
+  avatarUrl?: string | null
   contract?: ContractWithRelations
   proposalStatus?: ProposalStatus
   rfqId?: string
@@ -38,6 +51,7 @@ export type ChatConversationItem = InboxProject & {
 export type CounterpartChatGroup = {
   counterpartId: number
   counterpartName: string
+  avatarUrl?: string | null
   projects: InboxProject[]
   lastMessage: InboxLastMessage
   senderName: string
@@ -98,6 +112,7 @@ const toContractProject = (
     senderName,
     unreadCount: countUnreadMessages(messages, currentUserId),
     href: `/${hrefBase}/contracts/${contract.id}`,
+    avatarUrl: counterpartAvatar(messages, currentUserId),
     contract,
   }
 }
@@ -138,6 +153,7 @@ export const toProposalProject = (
         : `/supplier/rfqs/${thread.rfq_id}`,
     proposalStatus: thread.status,
     rfqId: thread.rfq_id,
+    avatarUrl: counterpartAvatar(thread.last_message ? [thread.last_message] : [], currentUserId),
   }
 }
 
@@ -204,6 +220,7 @@ export const groupInboxProjects = (projects: InboxProject[]): CounterpartChatGro
     groups.push({
       counterpartId,
       counterpartName: latest.counterpartName,
+      avatarUrl: sorted.find((project) => project.avatarUrl)?.avatarUrl ?? null,
       projects: sorted,
       lastMessage: latest.lastMessage ?? {
         id: 0,
@@ -259,6 +276,11 @@ export const toDirectProject = (
       hrefBase === "customer"
         ? `/customer/messages?supplier=${thread.supplier_actor_id}`
         : `/supplier/messages?buyer=${thread.buyer_actor_id}`,
+    avatarUrl: counterpartAvatar(
+      thread.last_message ? [thread.last_message] : [],
+      currentUserId,
+      thread.counterpart_avatar,
+    ),
   }
 }
 

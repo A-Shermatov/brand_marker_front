@@ -2,7 +2,7 @@
 
 import { use, useState } from "react"
 import Link from "next/link"
-import { ProhibitIcon } from "@phosphor-icons/react/dist/ssr"
+import { ArchiveIcon, ProhibitIcon } from "@phosphor-icons/react/dist/ssr"
 import { useRouter } from "next/navigation"
 import { ArrowRightIcon as ArrowRight, PencilSimpleIcon as Pencil, PlusIcon as Plus, PaperPlaneRightIcon as Send } from "@phosphor-icons/react/dist/ssr"
 import { PageFrame, PageHeader } from "@/components/layout"
@@ -17,7 +17,6 @@ import { usePublicSuppliersByActor } from "@/hooks/api/use-supplier-name"
 import { getActorId } from "@/lib/auth-display"
 import { isApiEnabled } from "@/lib/api/config"
 import {
-  useCloseRfqMutation,
   usePublishRfqMutation,
   useRfqQuery,
 } from "@/hooks/api/use-rfqs-query"
@@ -34,7 +33,7 @@ import {
 } from "@/lib/buyer-rfq-display"
 import { formatCurrency, formatIsoDate, formatRfqNo } from "@/lib/format"
 import { DEAL_NEXT_STEP, getDealPhase } from "@/lib/process/deal-stages"
-import { ConfirmActionDialog } from "@/components/process"
+import { RfqManageButtons, isArchivedRfq } from "@/components/cabinet/rfq/rfq-manage"
 import { ProposalsCompareTable } from "@/components/cabinet/rfq/proposals-compare-table"
 import { AcceptProposalDialog } from "@/components/cabinet/rfq/accept-proposal-dialog"
 import {
@@ -60,7 +59,6 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
 
   const getRfqWithRelations = useRfqsStore((s) => s.getRfqWithRelations)
   const publishRfqLocal = useRfqsStore((s) => s.publishRfq)
-  const closeRfqLocal = useRfqsStore((s) => s.closeRfq)
   const getProposalsForRfq = useProposalsStore((s) => s.getProposalsForRfq)
   const acceptProposalLocal = useProposalsStore((s) => s.acceptProposal)
   const getContractByRfqId = useContractsStore((s) => s.getContractByRfqId)
@@ -72,11 +70,9 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
   const apiContracts = apiContractsPage?.items ?? []
 
   const publishMutation = usePublishRfqMutation()
-  const closeMutation = useCloseRfqMutation()
   const acceptMutation = useAcceptProposalMutation()
 
   const [acceptTarget, setAcceptTarget] = useState<Proposal | null>(null)
-  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false)
 
   const localRfq = hydrated ? getRfqWithRelations(id) : undefined
   const rfq: RfqWithRelations | undefined = useApi ? apiRfq : localRfq
@@ -143,13 +139,6 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
     publishRfqLocal(rfq.id)
   }
 
-  const handleClose = () => {
-    if (useApi) {
-      closeMutation.mutate(rfq.id)
-      return
-    }
-    closeRfqLocal(rfq.id)
-  }
 
   const publishedLabel = formatIsoDate(rfq.created_at)
   const description = [
@@ -175,10 +164,13 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
         backHref="/customer/rfqs"
         backLabel="Заявки"
         actions={
-          <StatusBadge
-            status={buyerRfqBadgeStatus(rfq.status)}
-            label={buyerRfqBadgeLabel(rfq.status)}
-          />
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <StatusBadge
+              status={buyerRfqBadgeStatus(rfq.status)}
+              label={buyerRfqBadgeLabel(rfq.status)}
+            />
+            <RfqManageButtons rfq={rfq} offers={proposals.length} />
+          </div>
         }
       />
 
@@ -193,6 +185,26 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
                 Если не согласны, напишите в поддержку. Можно создать новую заявку с исправлениями.
               </p>
             </div>
+          </div>
+        ) : null}
+
+        {rfq.status === "cancelled" && !isModeratedRfq(rfq) ? (
+          <div role="status" className="flex gap-3 rounded-xl border border-line bg-surface-muted p-4 text-[14px] text-ink">
+            <ProhibitIcon className="mt-0.5 size-5 shrink-0 text-mute" aria-hidden />
+            <div>
+              <b className="font-semibold">Заявка отменена</b>
+              {rfq.cancel_reason ? <p className="mt-0.5 text-ink-soft">Причина: {rfq.cancel_reason}</p> : null}
+              <p className="mt-0.5 text-mute">
+                {isArchivedRfq(rfq)
+                  ? "Она в архиве. Чтобы снова найти поставщика, создайте новую заявку."
+                  : "Её можно убрать в архив, чтобы не мешала в списке."}
+              </p>
+            </div>
+          </div>
+        ) : isArchivedRfq(rfq) ? (
+          <div role="status" className="flex gap-3 rounded-xl border border-line bg-surface-muted p-4 text-[14px] text-ink">
+            <ArchiveIcon className="mt-0.5 size-5 shrink-0 text-mute" aria-hidden />
+            <p>Заявка в архиве и не показывается в общем списке.</p>
           </div>
         ) : null}
 
@@ -221,14 +233,6 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
               <Link href="/customer/rfqs/new">
                 <Plus size={16} /> Новая заявка
               </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-9"
-              onClick={() => setCloseConfirmOpen(true)}
-            >
-              Закрыть заявку
             </Button>
           </div>
         ) : null}
@@ -274,39 +278,15 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
             rfq={rfq}
             footer={
               canManageProposals || rfq.status === "draft" ? (
-                <>
-                  <Button asChild variant="outline" size="sm" className="h-9">
-                    <Link href={`/customer/rfqs/${rfq.id}/edit`}>Изменить</Link>
-                  </Button>
-                  {canManageProposals ? (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="h-9"
-                      disabled={closeMutation.isPending}
-                      onClick={() => setCloseConfirmOpen(true)}
-                    >
-                      Закрыть заявку
-                    </Button>
-                  ) : null}
-                </>
+                <Button asChild variant="outline" size="sm" className="h-9">
+                  <Link href={`/customer/rfqs/${rfq.id}/edit`}>Изменить</Link>
+                </Button>
               ) : undefined
             }
           />
         </section>
       </div>
 
-      <ConfirmActionDialog
-        open={closeConfirmOpen}
-        onOpenChange={setCloseConfirmOpen}
-        title="Закрыть заявку?"
-        description="Исполнители больше не смогут присылать предложения. Вернуть заявку в работу будет нельзя."
-        confirmLabel="Закрыть заявку"
-        cancelLabel="Не закрывать"
-        destructive
-        onConfirm={handleClose}
-      />
 
       {acceptTarget && (
         <AcceptProposalDialog

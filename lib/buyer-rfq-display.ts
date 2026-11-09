@@ -2,7 +2,15 @@ import type { RfqStatus } from "@/types"
 import { rfqStatusMeta } from "@/lib/rfq-display"
 
 /** v5 bRfqs tabs */
-export type BuyerRfqStatusFilter = "all" | "quotes" | "deal" | "draft" | "closed" | "active" | RfqStatus
+export type BuyerRfqStatusFilter =
+  | "all"
+  | "quotes"
+  | "deal"
+  | "draft"
+  | "closed"
+  | "archived"
+  | "active"
+  | RfqStatus
 
 const CLOSED_STATUSES: RfqStatus[] = [
   "completed",
@@ -28,14 +36,15 @@ export const ACTIVE_RFQ_STATUSES: RfqStatus[] = [
 ]
 
 export const BUYER_RFQ_V5_TABS: {
-  value: Extract<BuyerRfqStatusFilter, "all" | "quotes" | "deal" | "draft" | "closed">
+  value: Extract<BuyerRfqStatusFilter, "all" | "quotes" | "deal" | "draft" | "closed" | "archived">
   label: string
 }[] = [
   { value: "all", label: "Все" },
   { value: "quotes", label: "Приём КП" },
   { value: "deal", label: "Сделка" },
   { value: "draft", label: "Черновики" },
-  { value: "closed", label: "Архив" },
+  { value: "closed", label: "Закрытые" },
+  { value: "archived", label: "Архив" },
 ]
 
 export const BUYER_RFQ_STATUS_FILTER_OPTIONS = BUYER_RFQ_V5_TABS
@@ -52,6 +61,7 @@ export const getRfqStatusesForBuyerFilter = (
   if (filter === "quotes") return QUOTES_STATUSES
   if (filter === "deal") return DEAL_STATUSES
   if (filter === "closed") return CLOSED_STATUSES
+  if (filter === "archived") return ["archived"]
   return [filter as RfqStatus]
 }
 

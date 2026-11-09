@@ -90,14 +90,29 @@ export const usePublishRfqMutation = () => {
 export const useCloseRfqMutation = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => rfqsApi.close(id),
-    onSuccess: (_d, id) => {
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) => rfqsApi.close(id, reason),
+    onSuccess: (_d, { id }) => {
       invalidateRfqs(qc)
       qc.invalidateQueries({ queryKey: rfqKeys.detail(id) })
     },
     meta: {
-      successMessage: "Заявка закрыта",
-      errorMessage: "Не удалось закрыть заявку",
+      successMessage: "Заявка отменена",
+      errorMessage: "Не удалось отменить заявку",
+    },
+  })
+}
+
+export const useArchiveRfqMutation = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, archived }: { id: string; archived: boolean }) =>
+      rfqsApi.archive(id, archived),
+    onSuccess: (_d, { id }) => {
+      invalidateRfqs(qc)
+      qc.invalidateQueries({ queryKey: rfqKeys.detail(id) })
+    },
+    meta: {
+      errorMessage: "Не удалось изменить архив",
     },
   })
 }

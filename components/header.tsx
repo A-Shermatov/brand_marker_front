@@ -16,7 +16,7 @@ import {
 import { BrandLogo } from "@/components/bm"
 import { Button } from "@/components/ui/button"
 import { useAuthStore, type SessionRole } from "@/lib/store/auth-store"
-import { getUserDisplayName, getUserInitials } from "@/lib/auth-display"
+import { getUserDisplayName } from "@/lib/auth-display"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { createRfqHref } from "@/lib/create-rfq-href"
 import {
@@ -27,6 +27,7 @@ import {
 } from "@/lib/marketplace-routes"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { UserAvatar } from "@/components/bm/user-avatar"
 import { CartButton } from "@/components/cart/cart-button"
 
 const getCabinetBase = (role: SessionRole): string => {
@@ -77,7 +78,6 @@ export default function Header() {
     : "/login"
   const rfqHref = createRfqHref()
   const displayName = authedUser ? getUserDisplayName(authedUser) : ""
-  const initials = authedUser ? getUserInitials(authedUser) : ""
 
   const handleLogout = () => {
     void logout()
@@ -143,9 +143,7 @@ export default function Header() {
                 aria-label="Кабинет"
                 className="flex h-10 shrink-0 items-center gap-2 rounded-lg pl-1 pr-3 transition-colors hover:bg-surface-muted"
               >
-                <span className="grid size-8 place-items-center rounded-full bg-surface-muted text-[12px] font-semibold text-ink ring-1 ring-line">
-                  {initials}
-                </span>
+                <UserAvatar src={authedUser.avatarUrl} name={authedUser.name || authedUser.email} size={32} />
                 <span className="hidden text-[14px] font-medium sm:block">
                   Кабинет
                 </span>

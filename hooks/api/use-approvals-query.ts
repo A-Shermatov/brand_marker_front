@@ -33,6 +33,7 @@ export const useCartCheckoutMutation = () => {
       // The orders appear in the request list at once.
       void qc.invalidateQueries({ queryKey: rfqKeys.all })
     },
+    meta: { errorMessage: "Не удалось оформить корзину" },
   })
 }
 

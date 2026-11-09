@@ -19,6 +19,7 @@ import { getUserDisplayName, getUserInitials } from "@/lib/auth-display"
 import { cn } from "@/lib/utils"
 import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { UserAvatar } from "@/components/bm/user-avatar"
 import { CartButton } from "@/components/cart/cart-button"
 
 export default function CustomerTopbar({
@@ -61,9 +62,13 @@ export default function CustomerTopbar({
                 className="flex h-10 items-center gap-2 rounded-lg pl-1 pr-2 hover:bg-surface-muted"
                 aria-label="Аккаунт"
               >
-                <span className="grid size-8 place-items-center rounded-full bg-surface-muted text-[12px] font-semibold text-ink ring-1 ring-line">
-                  {initials || <User size={15} />}
-                </span>
+                {initials ? (
+                  <UserAvatar src={hydrated ? user?.avatarUrl : null} name={displayName} size={32} />
+                ) : (
+                  <span className="grid size-8 place-items-center rounded-full bg-surface-muted text-ink ring-1 ring-line">
+                    <User size={15} />
+                  </span>
+                )}
                 <span className="hidden text-[14px] font-medium md:block">
                   {displayName.split(" ")[0]}
                 </span>

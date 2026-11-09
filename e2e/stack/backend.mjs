@@ -77,6 +77,8 @@ const env = {
   CORS_ORIGINS: frontOrigins.join(","),
   FRONTEND_URL: frontOrigins[0],
   PUBLIC_API_URL: `http://127.0.0.1:${API_PORT}`,
+  // Uploaded files (photos) are served by this API, not by the dev one on 8000.
+  FILES_BASE_URL: `http://localhost:${API_PORT}/uploads`,
   RATE_LIMIT_LOGIN_PER_MINUTE: lifted,
   RATE_LIMIT_LOGIN_PER_ACCOUNT: lifted,
   RATE_LIMIT_REGISTER_PER_MINUTE: lifted,

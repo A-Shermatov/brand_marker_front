@@ -1,5 +1,6 @@
 export { LandingHero } from "@/components/landing/landing-hero"
 export { LandingRibbon } from "@/components/landing/landing-ribbon"
+export { LandingLiveRequests } from "@/components/landing/landing-live-requests"
 export { LandingHowItWorks } from "@/components/landing/landing-how-it-works"
 export { LandingAbout } from "@/components/landing/landing-about"
 export { LandingPopular } from "@/components/landing/landing-popular"

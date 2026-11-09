@@ -112,6 +112,7 @@ const MyRfqsContent = () => {
         deal: undefined as number | undefined,
         draft: undefined as number | undefined,
         closed: undefined as number | undefined,
+        archived: undefined as number | undefined,
       }
     }
     const typed = filterRfqsByType(
@@ -129,6 +130,7 @@ const MyRfqsContent = () => {
       deal: count("deal"),
       draft: count("draft"),
       closed: count("closed"),
+      archived: count("archived"),
     }
   }, [useApi, localAll, debouncedSearch, typeFilter, navCounts.rfqs])
 

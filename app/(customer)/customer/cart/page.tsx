@@ -17,7 +17,6 @@ import {
 import { toast } from "sonner"
 import { useCartCheckoutMutation } from "@/hooks/api/use-approvals-query"
 import { useHydrated } from "@/hooks/use-hydrated"
-import { getApiErrorMessage } from "@/lib/api/client"
 import { isApiEnabled } from "@/lib/api/config"
 import { cartLineTotal, cartUnitPrice, isPurchase } from "@/lib/cart"
 import { formatCurrency } from "@/lib/format"
@@ -98,8 +97,8 @@ export default function CartPage() {
             : "Заказы отправлены поставщикам",
       )
       router.push("/customer/rfqs?status=all")
-    } catch (err) {
-      toast.error(getApiErrorMessage(err, "Не удалось оформить корзину"))
+    } catch {
+      // The query client has already shown the reason.
     }
   }
 

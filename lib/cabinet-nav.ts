@@ -349,6 +349,7 @@ export const ADMIN_HUBS: CabinetNavHub[] = [
       "/admin/categories",
       "/admin/staff",
       "/admin/roles",
+      "/admin/telegram",
     ],
   },
 ]
@@ -426,6 +427,12 @@ export const ADMIN_SUBTABS: Record<string, CabinetSubtab[]> = {
       label: "Тарифы и правила",
       href: "/admin/settings",
       match: ["/admin/settings", "/admin/staff", "/admin/roles"],
+    },
+    {
+      id: "telegram",
+      label: "Telegram-бот",
+      href: "/admin/telegram",
+      match: ["/admin/telegram"],
     },
   ],
 }

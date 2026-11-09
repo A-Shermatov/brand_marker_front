@@ -33,6 +33,8 @@ export type SessionUser = {
   city?: string
   phone?: string
   company?: string
+  /** Public link to the person's photo. */
+  avatarUrl?: string | null
 }
 
 export type LoginFlowResult =
@@ -140,6 +142,7 @@ const sessionFromMe = (
       companyIds: [],
       activeCompanyId: null,
       phone: me.user.phone ?? undefined,
+      avatarUrl: me.user.avatar_url ?? null,
     }
   }
 
@@ -169,6 +172,7 @@ const sessionFromMe = (
     activeCompanyId: active?.company_id ?? me.active_company_id,
     company: active?.display_name,
     phone: me.user.phone ?? undefined,
+    avatarUrl: me.user.avatar_url ?? null,
   }
 }
 

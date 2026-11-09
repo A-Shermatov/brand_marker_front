@@ -21,6 +21,8 @@ export type MeResponse = {
     role: string
     status: string
     totp_enabled?: boolean
+    /** Public link to the person's photo; null until they upload one. */
+    avatar_url?: string | null
   }
   actors: ActorSummary[]
   active_actor_id: number | null
@@ -204,4 +206,13 @@ export const authApi = {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
+
+  /** A new profile photo; the answer carries its public link. */
+  uploadAvatar: (file: File) => {
+    const form = new FormData()
+    form.append("file", file)
+    return apiFetch<MeResponse["user"]>("/auth/me/avatar", { method: "POST", body: form })
+  },
+
+  deleteAvatar: () => apiFetch<MeResponse["user"]>("/auth/me/avatar", { method: "DELETE" }),
 }
