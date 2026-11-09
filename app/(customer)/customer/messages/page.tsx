@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { ChatTextIcon as MessageSquare, CaretRightIcon as ChevronRight } from "@phosphor-icons/react/dist/ssr"
+import { ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
 import { useCompaniesStore } from "@/lib/store/companies-store"
@@ -29,8 +29,7 @@ import {
 import { ContractMessagesPanel } from "@/components/supplier/contracts/contract-messages-panel"
 import { DirectMessagesPanel } from "@/components/contracts/direct-messages-panel"
 import { ProposalMessagesPanel } from "@/components/cabinet/rfq/proposal-messages-panel"
-import { ConversationsSidebar } from "@/components/contracts/conversations-sidebar"
-import { ChatProjectSwitcher } from "@/components/contracts/chat-project-switcher"
+import { MessagesWorkspace } from "@/components/chat/messages-workspace"
 import {
   mergeContractAndProposalChats,
   pickDefaultProject,
@@ -296,94 +295,74 @@ export default function BuyerMessagesPage() {
           ) : null}
         </PageSurface>
       ) : (
-        <div className="grid md:grid-cols-[320px_1fr] gap-4 h-[calc(100vh-220px)] min-h-[420px]">
-          <ConversationsSidebar
-            groups={groups}
-            selectedId={selectedCounterpartId}
-            onSelect={handleSelectCounterpart}
-            searchPlaceholder="Поиск по исполнителю или проекту..."
-          />
-
-          <div className="min-h-0 flex flex-col gap-2">
-            {selectedGroup && selected ? (
-              <>
-                <ChatProjectSwitcher
-                  projects={selectedGroup.projects}
-                  selectedKey={selected.key}
-                  onSelect={handleSelectProject}
-                />
-                {selected.kind === "proposal" ? (
-                  <ProposalMessagesPanel
-                    key={selected.key}
-                    proposalId={selected.id}
-                    proposalStatus={selected.proposalStatus ?? "submitted"}
-                    side="buyer"
-                    peerName={selected.counterpartName}
-                  />
-                ) : selected.kind === "direct" ? (
-                  <DirectMessagesPanel
-                    key={selected.key}
-                    chatId={selected.id}
-                    role="buyer"
-                    currentUserId={userId}
-                    counterpartName={selected.counterpartName}
-                  />
-                ) : selected.contract ? (
-                  <ContractMessagesPanel
-                    key={selected.key}
-                    contract={selected.contract}
-                    currentUserId={userId}
-                    counterpartName={selected.counterpartName}
-                    onSendMessage={(text) => {
-                      if (useApi) {
-                        sendMessageMutation.mutate({
-                          contractId: selected.contract!.id,
-                          text,
-                        })
-                        return
-                      }
-                      addMessageLocal(selected.contract!.id, userId, text, user?.name)
-                    }}
-                    onMarkRead={(id) => {
-                      if (useApi) markMessagesReadMutation.mutate(id)
-                      else markConversationRead(id, userId)
-                    }}
-                  />
-                ) : null}
-                {selected.kind !== "direct" ? (
-                  <Link
-                    href={selected.href}
-                    className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 px-1"
-                  >
-                    {selected.kind === "proposal" ? "Открыть заявку" : "Открыть сделку"}{" "}
-                    <ChevronRight size={14} />
-                  </Link>
-                ) : null}
-              </>
-            ) : counterpartParam > 0 &&
-              !groups.some((g) => g.counterpartId === counterpartParam) ? (
-              <PageSurface className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+        <MessagesWorkspace
+          groups={groups}
+          selectedGroup={selectedGroup}
+          selected={selected}
+          onSelectCounterpart={handleSelectCounterpart}
+          onSelectProject={handleSelectProject}
+          searchPlaceholder="Поиск по исполнителю или проекту"
+          noChat={
+            counterpartParam > 0 && !groups.some((g) => g.counterpartId === counterpartParam) ? (
+              <PageSurface className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
                 <p className="text-sm text-muted-foreground">
                   С этим исполнителем ещё нет переписки. Создайте заявку — чат откроется после
                   предложения или сделки.
                 </p>
                 <Link
-                  href={createRfqHref({
-                    supplierId: counterpartParam,
-                    performer: counterpartParam,
-                  })}
+                  href={createRfqHref({ supplierId: counterpartParam, performer: counterpartParam })}
                   className="text-sm font-semibold text-primary hover:underline"
                 >
                   Создать заявку для исполнителя
                 </Link>
               </PageSurface>
-            ) : (
-              <PageSurface className="flex flex-1 items-center justify-center">
-                <p className="text-sm text-muted-foreground">Выберите диалог</p>
-              </PageSurface>
-            )}
-          </div>
-        </div>
+            ) : undefined
+          }
+          renderChat={(slot) =>
+            !selected ? null : selected.kind === "proposal" ? (
+              <ProposalMessagesPanel
+                key={selected.key}
+                proposalId={selected.id}
+                proposalStatus={selected.proposalStatus ?? "submitted"}
+                side="buyer"
+                peerName={selected.counterpartName}
+                peerAvatar={selectedGroup?.avatarUrl}
+                subject={selected.title}
+                {...slot}
+              />
+            ) : selected.kind === "direct" ? (
+              <DirectMessagesPanel
+                key={selected.key}
+                chatId={selected.id}
+                role="buyer"
+                currentUserId={userId}
+                counterpartName={selected.counterpartName}
+                counterpartAvatar={selectedGroup?.avatarUrl}
+                {...slot}
+              />
+            ) : selected.contract ? (
+              <ContractMessagesPanel
+                key={selected.key}
+                contract={selected.contract}
+                currentUserId={userId}
+                counterpartName={selected.counterpartName}
+                counterpartAvatar={selectedGroup?.avatarUrl}
+                {...slot}
+                onSendMessage={(text) => {
+                  if (useApi) {
+                    sendMessageMutation.mutate({ contractId: selected.contract!.id, text })
+                    return
+                  }
+                  addMessageLocal(selected.contract!.id, userId, text, user?.name)
+                }}
+                onMarkRead={(id) => {
+                  if (useApi) markMessagesReadMutation.mutate(id)
+                  else markConversationRead(id, userId)
+                }}
+              />
+            ) : null
+          }
+        />
       )}
     </PageFrame>
   )

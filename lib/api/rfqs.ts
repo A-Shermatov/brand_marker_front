@@ -35,8 +35,18 @@ export const rfqsApi = {
   publish: (id: string) =>
     apiFetch<RfqWithRelations>(`${PREFIX}/${id}/publish`, { method: "POST" }),
 
-  close: (id: string) =>
-    apiFetch<RfqWithRelations>(`${PREFIX}/${id}/close`, { method: "POST" }),
+  /** Cancel the request; suppliers who answered are told, with the reason if given. */
+  close: (id: string, reason?: string) =>
+    apiFetch<RfqWithRelations>(`${PREFIX}/${id}/close`, {
+      method: "POST",
+      body: JSON.stringify({ reason: reason?.trim() || null }),
+    }),
+
+  /** Put a finished request away, or bring it back. */
+  archive: (id: string, archived: boolean) =>
+    apiFetch<RfqWithRelations>(`${PREFIX}/${id}/${archived ? "archive" : "unarchive"}`, {
+      method: "POST",
+    }),
 
   invite: (id: string, supplierIds: number[]) =>
     apiFetch<RfqWithRelations>(`${PREFIX}/${id}/invite`, {

@@ -72,6 +72,10 @@ type RfqBase = {
   status: RfqStatus
   /** How the buyer wants to pay; "escrow" when not set. */
   payment_mode?: PaymentMode
+  /** Set when the buyer moved the request to the archive. */
+  archived_at?: string | null
+  /** Why the buyer cancelled the request, if they said. */
+  cancel_reason?: string | null
   invited_supplier_ids?: number[]
   catalog_item_id?: number | null
   is_catalog_offer?: boolean

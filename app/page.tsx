@@ -4,6 +4,7 @@ import Footer from "@/components/footer"
 import {
   LandingHero,
   LandingRibbon,
+  LandingLiveRequests,
   LandingHowItWorks,
   LandingAbout,
   LandingPopular,
@@ -20,6 +21,7 @@ export default function Home() {
       </Suspense>
       <LandingHero />
       <LandingRibbon />
+      <LandingLiveRequests />
       <LandingHowItWorks />
       <LandingAbout />
       <LandingPopular />

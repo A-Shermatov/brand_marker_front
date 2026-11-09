@@ -28,6 +28,7 @@ export const ADMIN_ROUTE_PERMISSIONS: ReadonlyArray<{ href: string; permission: 
   { href: "/admin/staff", permission: "admin_staff.view" },
   { href: "/admin/roles", permission: "roles.manage" },
   { href: "/admin/settings", permission: "platform_settings.view" },
+  { href: "/admin/telegram", permission: "platform_settings.view" },
   { href: "/admin/analytics", permission: "admin_dashboard.view" },
 ]
 
@@ -74,6 +75,7 @@ export const ADMIN_NAV_LANDING_ORDER: ReadonlyArray<{
   { href: "/admin/categories", permissions: ["admin_catalog.view"] },
   { href: "/admin/staff", permissions: ["admin_staff.view", "roles.manage"] },
   { href: "/admin/settings", permissions: ["platform_settings.view"] },
+  { href: "/admin/telegram", permissions: ["platform_settings.view"] },
 ]
 
 export const hasPermission = (user: PermissionHolder, permission: string): boolean => {

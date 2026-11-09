@@ -1,19 +1,17 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { ChatTextIcon as MessageSquare, MagnifyingGlassIcon as Search } from "@phosphor-icons/react/dist/ssr"
+import { ChatsCircleIcon, MagnifyingGlassIcon } from "@phosphor-icons/react/dist/ssr"
+import { UserAvatar } from "@/components/bm/user-avatar"
 import { cn } from "@/lib/utils"
-import {
-  filterChatGroups,
-  type CounterpartChatGroup,
-} from "@/lib/chat-conversations"
-import { formatRelativeIso } from "@/lib/format"
+import { filterChatGroups, type CounterpartChatGroup } from "@/lib/chat-conversations"
 
 type ConversationsSidebarProps = {
   groups: CounterpartChatGroup[]
   selectedId: number | null
   onSelect: (counterpartId: number) => void
   searchPlaceholder?: string
+  className?: string
 }
 
 const formatProjectCount = (count: number): string => {
@@ -24,31 +22,54 @@ const formatProjectCount = (count: number): string => {
   return `${count} проектов`
 }
 
-const getProjectsLine = (group: CounterpartChatGroup): string =>
-  group.projects.length === 1
-    ? group.projects[0]!.title
-    : formatProjectCount(group.projects.length)
+/** "14:05" today, "вчера", "5 нояб." earlier: short enough for a list row. */
+const shortTime = (iso: string): string => {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ""
+  const today = new Date()
+  const yesterday = new Date()
+  yesterday.setDate(today.getDate() - 1)
+  if (date.toDateString() === today.toDateString()) {
+    return new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" }).format(date)
+  }
+  if (date.toDateString() === yesterday.toDateString()) return "вчера"
+  return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short" }).format(date)
+}
 
+/** Everyone the user talks to, newest first: photo, name, what about, the last words. */
 export const ConversationsSidebar = ({
   groups,
   selectedId,
   onSelect,
-  searchPlaceholder = "Поиск по чатам...",
+  searchPlaceholder = "Поиск по чатам",
+  className,
 }: ConversationsSidebarProps) => {
   const [query, setQuery] = useState("")
-
-  const filtered = useMemo(
-    () => filterChatGroups(groups, query),
-    [groups, query],
-  )
+  const filtered = useMemo(() => filterChatGroups(groups, query), [groups, query])
+  const unreadTotal = groups.reduce((sum, group) => sum + group.unreadCount, 0)
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden flex flex-col h-full min-h-[420px]">
-      <div className="p-3 border-b border-border">
-        <div className="relative">
-          <Search
+    <aside
+      className={cn(
+        "flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl border border-line bg-card",
+        className,
+      )}
+      aria-label="Диалоги"
+    >
+      <div className="grid gap-3 border-b border-line p-4">
+        <div className="flex items-baseline justify-between">
+          <b className="text-[16px] font-semibold text-ink">Диалоги</b>
+          {unreadTotal > 0 ? (
+            <span className="text-[12.5px] font-medium text-brand-700">
+              {unreadTotal} непрочитанн{unreadTotal === 1 ? "ое" : "ых"}
+            </span>
+          ) : null}
+        </div>
+        <label className="relative block">
+          <MagnifyingGlassIcon
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-mute"
+            aria-hidden
           />
           <input
             maxLength={100}
@@ -57,88 +78,91 @@ export const ConversationsSidebar = ({
             onChange={(e) => setQuery(e.target.value)}
             placeholder={searchPlaceholder}
             aria-label="Поиск по чатам"
-            className="w-full h-10 pl-9 pr-3 rounded-xl border border-input bg-background text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+            className="h-10 w-full rounded-xl border border-line bg-canvas pl-9 pr-3 text-[14px] text-ink outline-none transition-colors placeholder:text-faint focus:border-brand-300 focus:ring-2 focus:ring-brand-500/15"
           />
-        </div>
+        </label>
       </div>
 
-      <div className="overflow-y-auto flex-1">
+      <div className="min-h-0 flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center">
-            <MessageSquare size={24} className="text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">
+          <div className="grid justify-items-center gap-2 p-8 text-center">
+            <ChatsCircleIcon size={28} className="text-mute" aria-hidden />
+            <p className="text-[14px] text-mute">
               {query.trim() ? "Ничего не найдено" : "Диалогов пока нет"}
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-border">
+          <ul className="grid gap-0.5 p-2">
             {filtered.map((group) => {
-              const isSelected = selectedId === group.counterpartId
-              const hasUnread = group.unreadCount > 0
-              const timeLabel = group.lastMessage.created_at
-                ? formatRelativeIso(group.lastMessage.created_at)
-                : null
-
+              const selected = selectedId === group.counterpartId
+              const unread = group.unreadCount > 0
+              const time = group.lastMessage.created_at ? shortTime(group.lastMessage.created_at) : ""
+              const about =
+                group.projects.length === 1
+                  ? group.projects[0]!.title
+                  : formatProjectCount(group.projects.length)
               return (
-                <button
-                  key={group.counterpartId}
-                  type="button"
-                  onClick={() => onSelect(group.counterpartId)}
-                  className={cn(
-                    "w-full text-left p-4 hover:bg-secondary/50 transition-colors",
-                    isSelected && "bg-secondary",
-                  )}
-                  aria-label={`Открыть переписку с ${group.counterpartName}`}
-                  aria-current={isSelected ? "true" : undefined}
-                >
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p
+                <li key={group.counterpartId}>
+                  <button
+                    type="button"
+                    onClick={() => onSelect(group.counterpartId)}
+                    aria-label={`Открыть переписку с ${group.counterpartName}`}
+                    aria-current={selected ? "true" : undefined}
+                    className={cn(
+                      "grid w-full grid-cols-[44px_minmax(0,1fr)] gap-3 rounded-xl px-2.5 py-2.5 text-left transition-colors",
+                      selected ? "bg-brand-50" : "hover:bg-surface-muted",
+                    )}
+                  >
+                    <span className="relative">
+                      <UserAvatar src={group.avatarUrl} name={group.counterpartName} size={44} />
+                      {unread ? (
+                        <span className="absolute -right-0.5 -top-0.5 size-3 rounded-full bg-brand-600 ring-2 ring-card" />
+                      ) : null}
+                    </span>
+                    <span className="grid min-w-0 gap-0.5">
+                      <span className="flex items-baseline gap-2">
+                        <span
                           className={cn(
-                            "text-sm truncate flex-1",
-                            hasUnread
-                              ? "font-bold text-foreground"
-                              : "font-semibold text-foreground",
+                            "flex-1 truncate text-[14.5px] text-ink",
+                            unread ? "font-bold" : "font-semibold",
                           )}
                         >
                           {group.counterpartName}
-                        </p>
-                        {timeLabel && (
-                          <span className="text-[10px] text-muted-foreground flex-shrink-0">
-                            {timeLabel}
+                        </span>
+                        {time ? (
+                          <span className={cn("shrink-0 text-[12px] tnum", unread ? "font-semibold text-brand-700" : "text-mute")}>
+                            {time}
                           </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {getProjectsLine(group)}
-                      </p>
-                      <p
-                        className={cn(
-                          "text-xs mt-1 truncate",
-                          hasUnread
-                            ? "font-semibold text-foreground"
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        {group.senderName}: {group.lastMessage.text}
-                      </p>
-                    </div>
-                    {hasUnread && (
-                      <span
-                        className="mt-0.5 min-w-5 h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center flex-shrink-0"
-                        aria-label={`Непрочитанных: ${group.unreadCount}`}
-                      >
-                        {group.unreadCount > 99 ? "99+" : group.unreadCount}
+                        ) : null}
                       </span>
-                    )}
-                  </div>
-                </button>
+                      <span className="truncate text-[12.5px] text-brand-700">{about}</span>
+                      <span className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "flex-1 truncate text-[13px]",
+                            unread ? "font-medium text-ink" : "text-mute",
+                          )}
+                        >
+                          {group.senderName ? `${group.senderName}: ` : ""}
+                          {group.lastMessage.text}
+                        </span>
+                        {unread ? (
+                          <span
+                            className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-brand-600 px-1.5 text-[11px] font-bold text-white"
+                            aria-label={`Непрочитанных: ${group.unreadCount}`}
+                          >
+                            {group.unreadCount > 99 ? "99+" : group.unreadCount}
+                          </span>
+                        ) : null}
+                      </span>
+                    </span>
+                  </button>
+                </li>
               )
             })}
-          </div>
+          </ul>
         )}
       </div>
-    </div>
+    </aside>
   )
 }

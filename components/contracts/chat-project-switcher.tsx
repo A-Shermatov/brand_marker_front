@@ -58,7 +58,7 @@ export const ChatProjectSwitcher = ({
       role="tablist"
       aria-label="Проекты с этим контрагентом"
       onKeyDown={handleKeyDown}
-      className="flex gap-2 overflow-x-auto pb-1"
+      className="no-scrollbar flex gap-1.5 overflow-x-auto px-4 pb-3 sm:px-5"
     >
       {projects.map((project, index) => {
         const isSelected = index === selectedIndex
@@ -77,10 +77,10 @@ export const ChatProjectSwitcher = ({
             onClick={() => onSelect(project.key)}
             title={project.title}
             className={cn(
-              "inline-flex items-center gap-2 shrink-0 max-w-65 rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "inline-flex h-8 max-w-65 shrink-0 items-center gap-2 rounded-full border px-3 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               isSelected
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-foreground hover:bg-secondary",
+                ? "border-brand-300 bg-brand-50 text-brand-700"
+                : "border-line bg-card text-ink-soft hover:bg-surface-muted",
             )}
           >
             <span className="truncate">
@@ -94,9 +94,7 @@ export const ChatProjectSwitcher = ({
               <span
                 className={cn(
                   "min-w-5 h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center",
-                  isSelected
-                    ? "bg-primary-foreground text-primary"
-                    : "bg-primary text-primary-foreground",
+                  "bg-brand-600 text-white",
                 )}
                 aria-label={`Непрочитанных: ${project.unreadCount}`}
               >

@@ -47,6 +47,8 @@ export type Message = {
   /** Role in the company the sender speaks for (director, admin, moderator, accountant). */
   sender_role?: string | null
   sender_company?: string | null
+  /** Public link to the sender's photo. */
+  sender_avatar?: string | null
   text: string
   attachment: MessageAttachment | null
   created_at?: string

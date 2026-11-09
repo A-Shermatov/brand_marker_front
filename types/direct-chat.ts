@@ -8,6 +8,8 @@ export type DirectChatMessage = {
   /** Role in the company the sender speaks for (director, admin, moderator, accountant). */
   sender_role?: string | null
   sender_company?: string | null
+  /** Public link to the sender's photo. */
+  sender_avatar?: string | null
   text: string
   created_at?: string | null
   status?: MessageDeliveryStatus
@@ -21,6 +23,8 @@ export type DirectChatThread = {
   supplier_actor_id: number
   counterpart_actor_id: number
   counterpart_name: string
+  /** The other side's picture: company logo or the person's photo. */
+  counterpart_avatar?: string | null
   unread_count: number
   last_message: DirectChatMessage | null
   messages: DirectChatMessage[]
