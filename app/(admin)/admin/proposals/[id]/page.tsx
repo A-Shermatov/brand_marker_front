@@ -19,7 +19,7 @@ const formatMoney = (value: number | null | undefined, currency?: string | null)
   value == null ? "—" : formatCurrency(value, currency || "TJS")
 
 const sections = [
-  ["supplier", "Исполнитель"],
+  ["supplier", "Поставщик"],
   ["buyer", "Покупатель"],
   ["price", "Цена"],
   ["attachments", "Вложения"],
@@ -99,7 +99,7 @@ export default function AdminProposalDetailPage({ params }: PageProps) {
           <>
             {formatMoney(proposal.price, proposal.currency)}
             {" · "}
-            {proposal.supplier?.company_title || proposal.supplier?.name || "Исполнитель"}
+            {proposal.supplier?.company_title || proposal.supplier?.name || "Поставщик"}
           </>
         }
         backHref="/admin/proposals"
@@ -142,7 +142,7 @@ export default function AdminProposalDetailPage({ params }: PageProps) {
                 onClick={() => setSelectedAction("block_supplier")}
               >
                 <ShieldBan aria-hidden="true" />
-                Заблокировать исполнителя
+                Заблокировать поставщика
               </Button>
             )}
             {canDelete && !proposal.has_contract && (

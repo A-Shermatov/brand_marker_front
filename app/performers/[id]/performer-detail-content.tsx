@@ -126,7 +126,7 @@ export const PerformerDetailContent = ({
       <PageShell>
         <div className="mx-auto max-w-[900px] px-6 py-16 text-center">
           <p className="text-lg font-bold text-foreground">
-            Исполнитель не найден
+            Поставщик не найден
           </p>
           <Link
             href={performersUrl()}
@@ -173,7 +173,7 @@ export const PerformerDetailContent = ({
       return
     }
     if (user?.role !== "customer" && !user?.capabilities.buyer) {
-      toast.error("Написать исполнителю можно из кабинета покупателя")
+      toast.error("Написать поставщику можно из кабинета покупателя")
       return
     }
     if (useApi) {

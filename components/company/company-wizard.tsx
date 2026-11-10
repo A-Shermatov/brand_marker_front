@@ -60,7 +60,7 @@ export const CompanyWizard = ({
 
   const currentStep = WIZARD_STEPS[stepIndex]
   const isLast = currentStep === "review"
-  const actorLabel = actorType === "buyer" ? "Заказчик" : "Исполнитель"
+  const actorLabel = actorType === "buyer" ? "Покупатель" : "Поставщик"
 
   const handleChange = (patch: Partial<CompanyWizardInput>) => {
     setData((prev) => ({ ...prev, ...patch }))

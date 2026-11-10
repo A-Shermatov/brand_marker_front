@@ -35,7 +35,7 @@ const summaryCards: Array<{
   label: string
   hint: string
 }> = [
-  { key: "held", label: "Удерживается", hint: "Оплачено заказчиком, ждёт приёмки" },
+  { key: "held", label: "Удерживается", hint: "Оплачено покупателем, ждёт приёмки" },
   { key: "disputed", label: "Заморожено спором", hint: "Решение принимает администратор" },
   { key: "awaiting", label: "Ожидает оплаты", hint: "Этапы, выставленные к оплате" },
   { key: "expected_commission", label: "Ожидаемая комиссия", hint: "С удерживаемых и спорных средств" },
@@ -156,7 +156,7 @@ export function AdminEscrowContent({ embedded = true }: { embedded?: boolean } =
       {!embedded && (
         <PageHeader
         title="Escrow"
-        description="Средства заказчиков, удерживаемые платформой до приёмки работ"
+        description="Средства покупателей, удерживаемые платформой до приёмки работ"
       />
       )}
 

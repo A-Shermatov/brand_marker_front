@@ -292,7 +292,7 @@ export default function AdminTelegramPage() {
             <h2 className="text-[16px] font-semibold text-ink">Так выглядит пост</h2>
             <TelegramPostPreview />
             <p className="text-[12.5px] text-mute">
-              Картинка с логотипом заказчика и Brend Market, под ней текст заявки и кнопка «Открыть заявку».
+              Картинка с логотипом покупателя и Brend Market, под ней текст заявки и кнопка «Открыть заявку».
             </p>
           </PageSurface>
         </aside>

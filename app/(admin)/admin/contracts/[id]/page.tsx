@@ -21,7 +21,7 @@ const formatMoney = (value: number | null | undefined, currency?: string | null)
 const sections = [
   ["overview", "Обзор"],
   ["buyer", "Покупатель"],
-  ["supplier", "Исполнитель"],
+  ["supplier", "Поставщик"],
   ["payment-plan", "План оплаты"],
   ["milestones", "Этапы"],
   ["files", "Файлы"],
@@ -105,7 +105,7 @@ export default function AdminContractDetailPage({ params }: PageProps) {
     contract.supplier?.company_title ||
     contract.supplier?.name ||
     contract.supplier?.display_name ||
-    "Без исполнителя"
+    "Без поставщика"
 
   return (
     <PageFrame>

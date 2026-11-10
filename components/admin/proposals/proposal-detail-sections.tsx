@@ -50,7 +50,7 @@ export const AdminProposalDetailSections = ({
   return (
     <div className="space-y-5">
       <section id="supplier" className={sectionClassName}>
-        <h2 className="mb-5 text-lg font-bold">Исполнитель</h2>
+        <h2 className="mb-5 text-lg font-bold">Поставщик</h2>
         {proposal.supplier ? (
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -82,7 +82,7 @@ export const AdminProposalDetailSections = ({
             )}
           </dl>
         ) : (
-          <EmptyState>Исполнитель не найден.</EmptyState>
+          <EmptyState>Поставщик не найден.</EmptyState>
         )}
       </section>
 

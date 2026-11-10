@@ -109,7 +109,7 @@ const SupplierContractsContent = () => {
         <DealList
           contracts={contracts}
           role="supplier"
-          getCounterpartName={(c) => getCompany(c.buyer_actor_id)?.title ?? "Заказчик"}
+          getCounterpartName={(c) => getCompany(c.buyer_actor_id)?.title ?? "Покупатель"}
         />
       )}
 

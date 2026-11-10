@@ -36,8 +36,8 @@ const formatDate = (value: string) =>
   }).format(new Date(value))
 
 const fileUploaderSideLabel: Record<"buyer" | "supplier", string> = {
-  buyer: "Заказчик",
-  supplier: "Исполнитель",
+  buyer: "Покупатель",
+  supplier: "Поставщик",
 }
 
 const fileMetaLine = (file: AdminContractDetail["files"][number]): string => {
@@ -203,7 +203,7 @@ export const AdminContractDetailSections = ({
       </section>
 
       <PartySection id="buyer" title="Покупатель" party={contract.buyer} />
-      <PartySection id="supplier" title="Исполнитель" party={contract.supplier} />
+      <PartySection id="supplier" title="Поставщик" party={contract.supplier} />
 
       <section id="payment-plan" className={sectionClassName}>
         <h2 className="mb-5 text-lg font-bold">План оплаты</h2>

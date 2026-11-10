@@ -130,7 +130,7 @@ export default function SuppliersPage() {
   return (
     <PageFrame>
       <PageHeader
-        title="Каталог исполнителей"
+        title="Каталог поставщиков"
         description="Компании и физлица - поиск и приглашение к заявке"
       />
 
@@ -146,7 +146,7 @@ export default function SuppliersPage() {
           onChange={handleQueryChange}
           placeholder="Поиск по названию, ФИО, описанию, категории..."
           className="pl-11"
-          aria-label="Поиск исполнителей"
+          aria-label="Поиск поставщиков"
         />
       </div>
 
@@ -157,7 +157,7 @@ export default function SuppliersPage() {
           ...categoryTabs.map((c) => ({ value: c.slug, label: c.name })),
         ]}
         onChange={setCategorySlug}
-        ariaLabel="Категория исполнителей"
+        ariaLabel="Категория поставщиков"
       />
 
       {!hydrated || (useApi && isLoading) ? (
@@ -169,7 +169,7 @@ export default function SuppliersPage() {
       ) : suppliers.length === 0 ? (
         <PageSurface>
           <PageEmptyState
-            title="Исполнители не найдены"
+            title="Поставщики не найдены"
             description="Попробуйте изменить фильтры"
           />
         </PageSurface>

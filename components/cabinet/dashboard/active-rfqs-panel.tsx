@@ -48,7 +48,7 @@ export const ActiveRfqsPanel = ({
           variant="card"
           icon={<FileText />}
           title="Здесь пока пусто"
-          description="Опишите, что нужно, — исполнители пришлют цены. Это займёт 3 минуты."
+          description="Опишите, что нужно, — поставщики пришлют цены. Это займёт 3 минуты."
           action={
             <Button asChild>
               <Link href="/customer/rfqs/new">

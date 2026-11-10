@@ -125,7 +125,7 @@ export default function SupplierDashboard() {
   )
 
   const getBuyerName = (buyerId: number) =>
-    getCompany(buyerId)?.title ?? `Заказчик #${buyerId}`
+    getCompany(buyerId)?.title ?? `Покупатель #${buyerId}`
 
   const contracts: ContractWithRelations[] = useApi
     ? ((apiContracts?.items ?? []) as ContractWithRelations[])

@@ -61,7 +61,7 @@ export const RfqSubmitProposalCard = ({
           <h2 className="text-sm font-semibold text-foreground">Предложение принято</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          {buyerName} выбрал вас исполнителем. Работа по заявке продолжается в сделке.
+          {buyerName} выбрал вас поставщиком. Работа по заявке продолжается в сделке.
         </p>
         <Button asChild size="lg" className="w-full">
           <Link href={`/supplier/contracts/${contractId}`}>
@@ -76,7 +76,7 @@ export const RfqSubmitProposalCard = ({
     return (
       <ClosedState
         icon={<Lock size={18} className="text-muted-foreground" />}
-        title="Заказчик выбрал другого исполнителя"
+        title="Покупатель выбрал другого поставщика"
         text="Приём предложений по этой заявке завершён. Спасибо за участие."
       />
     )
@@ -87,7 +87,7 @@ export const RfqSubmitProposalCard = ({
       <ClosedState
         icon={<XCircle size={18} className="text-muted-foreground" />}
         title="Предложение отклонено"
-        text="Заказчик отклонил ваше предложение по этой заявке."
+        text="Покупатель отклонил ваше предложение по этой заявке."
       />
     )
   }
@@ -132,7 +132,7 @@ export const RfqSubmitProposalCard = ({
       <section className={cardClassName}>
         <div className="flex items-center gap-2 mb-3">
           <CheckCircle2 size={18} className="text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">Запрос от заказчика</h2>
+          <h2 className="text-sm font-semibold text-foreground">Запрос от покупателя</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-3">
           {buyerName} предлагает условия из каталога. Примите — и сразу откроется сделка.
@@ -195,7 +195,7 @@ export const RfqSubmitProposalCard = ({
           <h2 className="text-sm font-semibold text-foreground">Вы отправили предложение</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-3">
-          Ваше предложение отправлено заказчику и ожидает рассмотрения.
+          Ваше предложение отправлено покупателю и ожидает рассмотрения.
         </p>
         <div className="rounded-xl bg-primary/10 border border-primary/20 p-4 space-y-2">
           <div className="flex justify-between gap-3 text-sm min-w-0">
@@ -229,7 +229,7 @@ export const RfqSubmitProposalCard = ({
       <ClosedState
         icon={<Lock size={18} className="text-muted-foreground" />}
         title="Приём предложений закрыт"
-        text="Заказчик больше не принимает предложения по этой заявке."
+        text="Покупатель больше не принимает предложения по этой заявке."
       />
     )
   }
@@ -238,7 +238,7 @@ export const RfqSubmitProposalCard = ({
     <section className={cardClassName}>
       <h2 className="text-sm font-semibold text-foreground mb-2">Отправить предложение</h2>
       <p className="text-xs text-muted-foreground mb-4">
-        Укажите цену, срок и сообщение заказчику. Предложение будет видно в списке предложений.
+        Укажите цену, срок и сообщение покупателю. Предложение будет видно в списке предложений.
       </p>
       <button
         type="button"

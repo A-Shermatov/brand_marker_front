@@ -130,7 +130,7 @@ export default function CustomerDashboard() {
   const getSupplierName = (supplierId: number) =>
     useApi
       ? resolveSupplierName(supplierId)
-      : (getCompany(supplierId)?.title ?? "Исполнитель")
+      : (getCompany(supplierId)?.title ?? "Поставщик")
 
   const unreadMessages = hydrated
     ? useApi

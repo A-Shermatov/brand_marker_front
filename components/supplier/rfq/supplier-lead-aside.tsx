@@ -116,7 +116,7 @@ export const SupplierLeadAside = ({
     return (
       <section className="rounded-xl border border-line bg-card p-5 lg:sticky lg:top-20">
         <h2 className="text-[12.5px] font-medium text-mute">
-          Запрос от заказчика
+          Запрос от покупателя
         </h2>
         <p className="mt-2 text-[14px] text-mute">
           {buyerName} предлагает условия из каталога.

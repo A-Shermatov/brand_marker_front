@@ -83,7 +83,7 @@ export default function ProfilePage() {
   return (
     <PageFrame>
       <PageHeader
-        title="Профиль заказчика"
+        title="Профиль покупателя"
         description="Контактные данные и настройки доставки"
       />
 

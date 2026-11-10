@@ -63,7 +63,7 @@ export default function RespondDialog({
         <DialogHeader>
           <DialogTitle>Ответить на заказ</DialogTitle>
           <DialogDescription>
-            Бюджет заказчика: {formatPrice(budget)}. Предложите свои условия.
+            Бюджет покупателя: {formatPrice(budget)}. Предложите свои условия.
           </DialogDescription>
         </DialogHeader>
 
@@ -108,7 +108,7 @@ export default function RespondDialog({
         </div>
 
         <div>
-          <label htmlFor="r-message" className="block text-sm font-medium text-foreground mb-1.5">Сообщение заказчику</label>
+          <label htmlFor="r-message" className="block text-sm font-medium text-foreground mb-1.5">Сообщение покупателю</label>
           <textarea
             id="r-message"
             value={message}

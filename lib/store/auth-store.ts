@@ -202,7 +202,7 @@ const finalizeMarketplaceSession = async (
     }
   }
   if (!active) {
-    const sideLabel = role === "customer" ? "заказчика" : "исполнителя"
+    const sideLabel = role === "customer" ? "покупателя" : "поставщика"
     throw new Error(
       `Нет профиля ${sideLabel}. Активируйте роль в настройках или создайте компанию.`,
     )
@@ -382,7 +382,7 @@ export const useAuthStore = create<AuthState>()(
         const me = await authApi.me()
         const active = pickActorForRole(me.actors, role, me.active_actor_id)
         if (!active) {
-          const sideLabel = role === "customer" ? "заказчика" : "исполнителя"
+          const sideLabel = role === "customer" ? "покупателя" : "поставщика"
           throw new Error(
             `Нет профиля ${sideLabel}. Активируйте роль в настройках или создайте компанию.`,
           )

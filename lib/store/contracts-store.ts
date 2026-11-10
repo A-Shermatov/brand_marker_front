@@ -427,7 +427,7 @@ export const useContractsStore = create<ContractsState>()(
             file_url: file.file_url,
             file_type: file.file_type,
             uploaded_by: input.buyer_actor_id,
-            uploaded_by_name: "Заказчик",
+            uploaded_by_name: "Покупатель",
             uploaded_by_side: "buyer" as const,
             created_at: createdAt,
           })),

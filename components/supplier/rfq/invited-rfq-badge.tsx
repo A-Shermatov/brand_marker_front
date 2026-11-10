@@ -9,7 +9,7 @@ type InvitedRfqBadgeProps = {
 export const InvitedRfqBadge = ({ className }: InvitedRfqBadgeProps) => (
   <span
     className={cn(statusPillClass, "gap-1 bg-primary/10 text-primary", className)}
-    title="Заказчик отправил эту заявку лично вам"
+    title="Покупатель отправил эту заявку лично вам"
   >
     <UserCheck size={12} aria-hidden="true" />
     Персональная заявка

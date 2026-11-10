@@ -74,7 +74,7 @@ export const SupplierProposalInfo = ({
           </>
         ) : (
           <p className="text-xs text-muted-foreground mt-0.5">
-            Открыть профиль исполнителя
+            Открыть профиль поставщика
           </p>
         )}
       </div>

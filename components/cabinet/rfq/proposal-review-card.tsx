@@ -126,7 +126,7 @@ export const ProposalReviewCard = ({
               onClick={onAccept}
               className="h-10 px-4 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-colors"
             >
-              Выбрать исполнителя
+              Выбрать поставщика
             </button>
           </>
         )}

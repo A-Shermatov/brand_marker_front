@@ -101,7 +101,7 @@ export function FeaturedServices() {
             </div>
             <div>
               <h2 className="text-xl font-bold text-foreground">Рекомендуемые услуги</h2>
-              <p className="text-sm text-muted-foreground">Лучшие предложения от проверенных исполнителей</p>
+              <p className="text-sm text-muted-foreground">Лучшие предложения от проверенных поставщиков</p>
             </div>
           </div>
           <Link href={servicesUrl()} className="text-sm font-semibold text-primary hover:underline flex items-center gap-1.5">
@@ -138,12 +138,12 @@ export function ProviderShowcase() {
               <Award size={18} className="text-primary" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-foreground">Топ исполнители</h2>
+              <h2 className="text-xl font-bold text-foreground">Топ поставщики</h2>
               <p className="text-sm text-muted-foreground">Проверенные компании с высоким рейтингом</p>
             </div>
           </div>
           <Link href={performersUrl({ featured: true })} className="text-sm font-semibold text-primary hover:underline flex items-center gap-1.5">
-            Все исполнители <ArrowRight size={14} />
+            Все поставщики <ArrowRight size={14} />
           </Link>
         </div>
 
@@ -159,8 +159,8 @@ export function ProviderShowcase() {
 
 export function TrustBanners() {
   const trustFeatures = [
-    { Icon: BadgeCheck, title: "Верификация компаний", desc: "Проверяем документы, реквизиты и репутацию каждого исполнителя", href: verificationUrl() },
-    { Icon: CircleDollarSign, title: "Безопасная оплата", desc: "Деньги переводятся исполнителю только после принятия работы", href: guaranteeUrl() },
+    { Icon: BadgeCheck, title: "Верификация компаний", desc: "Проверяем документы, реквизиты и репутацию каждого поставщика", href: verificationUrl() },
+    { Icon: CircleDollarSign, title: "Безопасная оплата", desc: "Деньги переводятся поставщику только после принятия работы", href: guaranteeUrl() },
     { Icon: Zap, title: "Быстрый отклик", desc: "Получите первые предложения уже через 2 часа после публикации", href: ordersUrl() },
     { Icon: Star, title: "Система рейтингов", desc: "Реальные отзывы от клиентов без цензуры и накрутки", href: performersUrl({ featured: true }) },
   ]
@@ -197,10 +197,10 @@ export function TrustBanners() {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <BadgeCheck size={15} className="text-primary" />
-                <span className="text-primary text-[12.5px] font-medium">Для заказчиков</span>
+                <span className="text-primary text-[12.5px] font-medium">Для покупателей</span>
               </div>
               <h3 className="text-white text-xl font-bold leading-tight mb-1.5">
-                Найдите исполнителя<br />за 24 часа
+                Найдите поставщика<br />за 24 часа
               </h3>
               <p className="text-white/65 text-xs leading-relaxed mb-5 max-w-xs">
                 Опубликуйте задание бесплатно и получите предложения от проверенных компаний
@@ -221,7 +221,7 @@ export function TrustBanners() {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <Star size={15} className="text-primary fill-primary" weight="fill" />
-                <span className="text-primary text-[12.5px] font-medium">Для исполнителей</span>
+                <span className="text-primary text-[12.5px] font-medium">Для поставщиков</span>
               </div>
               <h3 className="text-foreground text-xl font-bold leading-tight mb-1.5">
                 Получайте новых<br />клиентов каждый день
@@ -233,7 +233,7 @@ export function TrustBanners() {
                 href="/login"
                 className="inline-flex items-center gap-2 bg-foreground hover:bg-foreground/90 text-background text-sm font-bold px-6 py-2.5 rounded-xl transition-all shadow-lg hover:-translate-y-px"
               >
-                Стать исполнителем <ChevronRight size={15} />
+                Стать поставщиком <ChevronRight size={15} />
               </Link>
             </div>
           </div>

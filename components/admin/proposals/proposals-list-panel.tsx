@@ -139,7 +139,7 @@ export function AdminProposalsContent({ embedded = true }: { embedded?: boolean 
       {!embedded && (
         <PageHeader
         title="Предложения"
-        description="Модерация ответов исполнителей на RFQ"
+        description="Модерация ответов поставщиков на RFQ"
         actions={<p className="text-sm text-muted-foreground">
           Найдено <strong className="ml-1 text-foreground">{total}</strong>
         </p>}
@@ -183,7 +183,7 @@ export function AdminProposalsContent({ embedded = true }: { embedded?: boolean 
             title={hasFilters ? "Предложения не найдены" : "Предложений пока нет"}
             description={hasFilters
               ? "Измените поисковый запрос или выбранный фильтр."
-              : "Новые предложения появятся после откликов исполнителей."}
+              : "Новые предложения появятся после откликов поставщиков."}
           />
         </PageSurface>
       ) : (
@@ -192,7 +192,7 @@ export function AdminProposalsContent({ embedded = true }: { embedded?: boolean 
             <TableHeader>
               <TableRow>
                 <TableHead>Предложение</TableHead>
-                <TableHead>Исполнитель</TableHead>
+                <TableHead>Поставщик</TableHead>
                 <TableHead>Покупатель</TableHead>
                 <TableHead>Цена</TableHead>
                 <TableHead>Статус</TableHead>

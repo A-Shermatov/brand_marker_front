@@ -20,8 +20,8 @@ const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 const ACCEPTED_FILE_TYPES = ".pdf,.jpg,.jpeg,.png,.webp,.gif,.mp4,.webm,.doc,.docx,.zip"
 
 const sideLabel: Record<"buyer" | "supplier", string> = {
-  buyer: "Заказчик",
-  supplier: "Исполнитель",
+  buyer: "Покупатель",
+  supplier: "Поставщик",
 }
 
 const fileMetaLine = (file: ContractFile): string => {

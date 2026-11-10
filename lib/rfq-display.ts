@@ -11,7 +11,7 @@ export const rfqStatusMeta: Record<
     className: "bg-primary/10 text-primary",
   },
   supplier_selected: {
-    label: "Исполнитель выбран",
+    label: "Поставщик выбран",
     className: "bg-info/10 text-info",
   },
   contract_created: {

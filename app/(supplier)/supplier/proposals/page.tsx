@@ -64,7 +64,7 @@ export default function SupplierProposalsPage() {
 
   const getBuyerName = (rfqId: string) => {
     const rfq = resolveRfq(rfqId)
-    return rfq ? getRfqBuyerName(rfq, getCompany) : "Заказчик"
+    return rfq ? getRfqBuyerName(rfq, getCompany) : "Покупатель"
   }
 
   const getDeadline = (rfqId: string) => resolveRfq(rfqId)?.deadline

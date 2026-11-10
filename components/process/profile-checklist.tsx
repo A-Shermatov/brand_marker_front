@@ -19,7 +19,7 @@ type ProfileChecklistProps = {
 export const ProfileChecklist = ({
   items,
   title = "Подготовьте профиль",
-  description = "Заказчики чаще выбирают исполнителей с полным профилем",
+  description = "Покупатели чаще выбирают поставщиков с полным профилем",
 }: ProfileChecklistProps) => {
   const total = items.length
   const done = items.filter((i) => i.done).length

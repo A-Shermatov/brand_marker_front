@@ -65,7 +65,7 @@ export default function BuyerReviewsPage() {
 
   const getSupplierName = (supplierActorId: number) => {
     if (useApi) return resolveName(supplierActorId)
-    return getCompany(supplierActorId)?.title ?? "Исполнитель"
+    return getCompany(supplierActorId)?.title ?? "Поставщик"
   }
 
   return (
@@ -98,7 +98,7 @@ export default function BuyerReviewsPage() {
             <h2 className="mb-3 text-sm font-bold text-foreground">Полученные</h2>
             {receivedReviews.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">
-                Пока нет отзывов от исполнителей
+                Пока нет отзывов от поставщиков
               </p>
             ) : (
               <ReviewsGivenTable

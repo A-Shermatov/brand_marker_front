@@ -18,9 +18,9 @@ const slides = [
     id: 1,
     image: "/images/hero-banner-1.jpg",
     badge: "Топ-1 платформа",
-    title: "Найдите лучших\nB2B исполнителей",
+    title: "Найдите лучших\nB2B поставщиков",
     subtitle: "Более 50 000 проверенных компаний и специалистов по всему Таджикистану",
-    cta: "Найти исполнителя",
+    cta: "Найти поставщика",
     ctaHref: performersUrl(),
     ctaSecondary: "Разместить заказ",
     ctaSecondaryHref: "create-rfq" as const,
@@ -56,7 +56,7 @@ const slides = [
 ]
 
 const stats = [
-  { value: "50 000+", label: "Исполнителей", Icon: Users },
+  { value: "50 000+", label: "Поставщиков", Icon: Users },
   { value: "120+", label: "Категорий услуг", Icon: Layers },
   { value: "98%", label: "Довольных клиентов", Icon: ThumbsUp },
   { value: "15 млрд  TJS", label: "Сделок в месяц", Icon: TrendingUp },

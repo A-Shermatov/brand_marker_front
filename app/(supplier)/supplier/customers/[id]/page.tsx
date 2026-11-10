@@ -66,7 +66,7 @@ export default function SupplierCustomerDetailPage({ params }: PageProps) {
   if (!Number.isInteger(actorId) || actorId <= 0) {
     return (
       <PageFrame>
-        <PageEmptyState title="Некорректный заказчик" />
+        <PageEmptyState title="Некорректный покупатель" />
       </PageFrame>
     )
   }
@@ -84,7 +84,7 @@ export default function SupplierCustomerDetailPage({ params }: PageProps) {
     return (
       <PageFrame>
         <PageHeader
-          title="Заказчик не найден"
+          title="Покупатель не найден"
           backHref="/supplier/customers"
           backLabel="К списку"
         />
@@ -96,9 +96,9 @@ export default function SupplierCustomerDetailPage({ params }: PageProps) {
     <PageFrame>
       <PageHeader
         title={buyer.display_name}
-        description="Профиль заказчика"
+        description="Профиль покупателя"
         backHref="/supplier/customers"
-        backLabel="Заказчики"
+        backLabel="Покупатели"
       />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
@@ -177,7 +177,7 @@ export default function SupplierCustomerDetailPage({ params }: PageProps) {
           </PageSurface>
 
           <PageSurface className="p-5">
-            <h3 className="mb-3 text-sm font-bold">Отзывы об этом заказчике</h3>
+            <h3 className="mb-3 text-sm font-bold">Отзывы об этом покупателе</h3>
             {reviews.length === 0 ? (
               <p className="text-sm text-muted-foreground">Отзывов пока нет</p>
             ) : (

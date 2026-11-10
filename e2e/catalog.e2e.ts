@@ -84,7 +84,7 @@ test("a buyer buys from the cabinet catalog, pays at once and reviews the item",
     await expect(confirm).toContainText("Вы выбрали оплату сразу")
     await confirm.getByRole("button", { name: "Оплатить", exact: true }).click()
     await expect(buyer.getByText("Выплачен", { exact: true }).first()).toBeVisible()
-    await expect(buyer.getByRole("main")).toContainText("Оплата уже у исполнителя")
+    await expect(buyer.getByRole("main")).toContainText("Оплата уже у поставщика")
   })
 
   await test.step("the supplier hands in the work and the buyer accepts it", async () => {

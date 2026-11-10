@@ -17,8 +17,8 @@ const HUB_TABS: {
   label: string
   countKey: keyof AdminVerificationCounts
 }[] = [
-  { value: "suppliers", label: "Исполнители (компании)", countKey: "supplier_companies" },
-  { value: "buyers", label: "Заказчики (компании)", countKey: "buyer_companies" },
+  { value: "suppliers", label: "Поставщики (компании)", countKey: "supplier_companies" },
+  { value: "buyers", label: "Покупатели (компании)", countKey: "buyer_companies" },
   { value: "individuals", label: "Физлица", countKey: "individuals" },
   { value: "changes", label: "Изменения данных", countKey: "changes" },
 ]

@@ -29,47 +29,47 @@ export const getRfqTimeline = (
   const published: ProcessStep = isDraft
     ? {
         title: "Опубликуйте заявку",
-        description: "Исполнители не увидят заявку, пока вы её не опубликуете.",
+        description: "Поставщики не увидят заявку, пока вы её не опубликуете.",
         state: "now",
       }
     : {
         title: "Заявка опубликована",
         description: `${formatIsoDate(rfq.created_at.split("T")[0] ?? rfq.created_at)}. ${
-          isPersonal ? "Её видит только приглашённый исполнитель." : "Её видят исполнители из выбранной категории."
+          isPersonal ? "Её видит только приглашённый поставщик." : "Её видят поставщики из выбранной категории."
         }`,
         state: "done",
       }
 
   const selectDescription = (() => {
     if (rfq.status === "expired") return "Срок приёма предложений истёк."
-    if (!isSelecting) return isDraft ? undefined : "Исполнитель выбран."
+    if (!isSelecting) return isDraft ? undefined : "Поставщик выбран."
     if (isPersonal) {
       return proposalsCount === 0
-        ? "Заявка отправлена исполнителю. Ждём, когда он подтвердит и пришлёт предложение."
-        : "Исполнитель прислал предложение. Проверьте цену и сроки и подтвердите выбор."
+        ? "Заявка отправлена поставщику. Ждём, когда он подтвердит и пришлёт предложение."
+        : "Поставщик прислал предложение. Проверьте цену и сроки и подтвердите выбор."
     }
     if (proposalsCount === 0) {
-      return "Ждём первые предложения — мы сообщим, когда исполнители ответят."
+      return "Ждём первые предложения — мы сообщим, когда поставщики ответят."
     }
-    return "Сравните цены и сроки, выберите подходящего исполнителя."
+    return "Сравните цены и сроки, выберите подходящего поставщика."
   })()
 
   const select: ProcessStep = {
     title: awaitingSupplier
-      ? "Ожидание подтверждения исполнителя"
+      ? "Ожидание подтверждения поставщика"
       : isPersonal
-        ? "Подтвердите исполнителя"
-        : "Выберите исполнителя",
+        ? "Подтвердите поставщика"
+        : "Выберите поставщика",
     description: selectDescription,
     state: isDraft ? "todo" : isSelecting ? "now" : "done",
   }
 
   const workDone = phase != null && ["acceptance", "postpay", "release", "done"].includes(phase)
   const work: ProcessStep = {
-    title: "Исполнитель выполняет работу",
+    title: "Поставщик выполняет работу",
     description: postpay
-      ? "Сделка создаётся сразу после выбора. Вы видите этап работы и можете писать исполнителю."
-      : "После выбора оплатите сделку на гарантию площадки — исполнитель приступит к работе.",
+      ? "Сделка создаётся сразу после выбора. Вы видите этап работы и можете писать поставщику."
+      : "После выбора оплатите сделку на гарантию площадки — поставщик приступит к работе.",
     state: workDone ? "done" : phase === "work" || phase === "prepay" || phase === "disputed" ? "now" : "todo",
   }
 
@@ -77,7 +77,7 @@ export const getRfqTimeline = (
   const acceptNow = phase === "acceptance" || phase === "postpay" || phase === "release"
   const accept: ProcessStep = {
     title: postpay ? "Примите работу и оплатите" : "Примите работу",
-    description: "Деньги уходят исполнителю только после вашей приёмки.",
+    description: "Деньги уходят поставщику только после вашей приёмки.",
     state: acceptDone ? "done" : acceptNow ? "now" : "todo",
   }
 

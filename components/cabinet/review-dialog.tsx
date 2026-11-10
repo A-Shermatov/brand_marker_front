@@ -37,7 +37,7 @@ const VARIANT_CONFIG: Record<
       { key: "quality_rating", label: "Качество" },
     ],
     tags: ["Надёжный", "Вежливый", "Быстро", "Качественно", "Рекомендую", "Дорого"],
-    defaultLabel: "исполнителем",
+    defaultLabel: "поставщиком",
   },
   about_buyer: {
     axes: [
@@ -53,7 +53,7 @@ const VARIANT_CONFIG: Record<
       "Рекомендую",
       "Сложный клиент",
     ],
-    defaultLabel: "заказчиком",
+    defaultLabel: "покупателем",
   },
 }
 

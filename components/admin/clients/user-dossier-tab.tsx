@@ -28,8 +28,8 @@ const RISK_STYLES: Record<AdminDossierRiskLevel, string> = {
 }
 
 const SIDE_LABELS: Record<string, string> = {
-  buyer: "Заказчик",
-  supplier: "Исполнитель",
+  buyer: "Покупатель",
+  supplier: "Поставщик",
 }
 
 const formatDateTime = (value: string) =>
@@ -168,11 +168,11 @@ const DossierBody = ({ dossier }: { dossier: AdminUserDossier }) => {
         <Section title="Деньги">
           <dl className="grid grid-cols-2 gap-2">
             <Fact
-              label={`Оборот как заказчик (${money.contracts_as_buyer})`}
+              label={`Оборот как покупатель (${money.contracts_as_buyer})`}
               value={formatMoneyDisplay(money.buyer_turnover, currency)}
             />
             <Fact
-              label={`Оборот как исполнитель (${money.contracts_as_supplier})`}
+              label={`Оборот как поставщик (${money.contracts_as_supplier})`}
               value={formatMoneyDisplay(money.supplier_turnover, currency)}
             />
             <Fact
@@ -188,7 +188,7 @@ const DossierBody = ({ dossier }: { dossier: AdminUserDossier }) => {
               value={formatMoneyDisplay(money.pending_withdrawals_amount, currency)}
             />
             <Fact
-              label="Отзывы как исполнитель / заказчик"
+              label="Отзывы как поставщик / покупатель"
               value={`${ratingLabel(reviews.supplier)} / ${ratingLabel(reviews.buyer)}`}
             />
           </dl>

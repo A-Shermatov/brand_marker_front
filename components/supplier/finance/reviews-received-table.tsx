@@ -20,7 +20,7 @@ export const ReviewsReceivedTable = ({ reviews, getReviewerName, getContractTitl
   }
   return (
     <ReviewCardList
-      label="Отзывы заказчиков"
+      label="Отзывы покупателей"
       items={sorted.map((review) => {
         const { primary, secondary } = formatReviewAuthor(review, getReviewerName(review.reviewer_actor_id))
         return {

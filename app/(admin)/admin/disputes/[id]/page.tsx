@@ -26,7 +26,7 @@ const formatMoney = (value: number | null | undefined, currency?: string | null)
 const sections = [
   ["overview", "Обзор"],
   ["buyer-statement", "Заявление покупателя"],
-  ["supplier-statement", "Заявление исполнителя"],
+  ["supplier-statement", "Заявление поставщика"],
   ["evidence", "Доказательства"],
   ["files", "Файлы"],
   ["chat", "Чат"],
@@ -130,7 +130,7 @@ export default function AdminDisputeDetailPage({ params }: PageProps) {
     dispute.supplier?.company_title ||
     dispute.supplier?.name ||
     dispute.supplier?.display_name ||
-    "Без исполнителя"
+    "Без поставщика"
 
   return (
     <PageFrame>

@@ -23,7 +23,7 @@ export const ContractBuyerCard = ({ buyer, loading }: ContractBuyerCardProps) =>
   if (loading) {
     return (
       <section className="rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-3 text-sm font-semibold text-foreground">Заказчик</h2>
+        <h2 className="mb-3 text-sm font-semibold text-foreground">Покупатель</h2>
         <div className="h-20 animate-pulse rounded-lg bg-secondary" />
       </section>
     )
@@ -32,7 +32,7 @@ export const ContractBuyerCard = ({ buyer, loading }: ContractBuyerCardProps) =>
   if (!buyer) {
     return (
       <section className="rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-3 text-sm font-semibold text-foreground">Заказчик</h2>
+        <h2 className="mb-3 text-sm font-semibold text-foreground">Покупатель</h2>
         <p className="text-sm text-muted-foreground">Данные недоступны</p>
       </section>
     )
@@ -40,7 +40,7 @@ export const ContractBuyerCard = ({ buyer, loading }: ContractBuyerCardProps) =>
 
   return (
     <section className="rounded-xl border border-border bg-card p-6">
-      <h2 className="mb-4 text-sm font-semibold text-foreground">Заказчик</h2>
+      <h2 className="mb-4 text-sm font-semibold text-foreground">Покупатель</h2>
 
       <div className="mb-4 flex items-start gap-3">
         <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-secondary">

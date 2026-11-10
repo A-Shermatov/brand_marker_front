@@ -68,7 +68,7 @@ export const mapCompanyToPerformer = (
   return {
     id: company.id,
     name: company.title,
-    category: company.description?.slice(0, 40) ?? "Исполнитель",
+    category: company.description?.slice(0, 40) ?? "Поставщик",
     categoryId: categorySlug,
     city: company.city ?? "—",
     rating: company.rating ?? company.stats?.average_rating ?? 4.5,
@@ -110,7 +110,7 @@ export const mapPublicSupplierToPerformer = (
     id: supplier.actor_id,
     name: supplier.display_name,
     category: supplier.description?.slice(0, 40)
-      ?? (supplier.kind === "individual" ? "Физлицо" : "Исполнитель"),
+      ?? (supplier.kind === "individual" ? "Физлицо" : "Поставщик"),
     categoryId: supplier.industries[0] ?? "services",
     city: supplier.city ?? "—",
     rating: supplier.rating || 0,

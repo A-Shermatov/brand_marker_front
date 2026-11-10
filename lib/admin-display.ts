@@ -44,12 +44,12 @@ export const adminHistoryActionLabels: Record<string, string> = {
   "admin.rfq.warn_buyer": "Предупреждение покупателя",
   "admin.proposal.delete": "Удаление предложения",
   "admin.proposal.investigate": "Расследование жалобы",
-  "admin.proposal.block_supplier": "Блокировка исполнителя",
+  "admin.proposal.block_supplier": "Блокировка поставщика",
   "admin.contract.freeze": "Заморозка escrow",
   "admin.contract.cancel": "Отмена контракта",
   "admin.contract.force_complete": "Принудительное завершение",
   "admin.contract.open_investigation": "Открытие расследования",
-  "admin.dispute.release_funds": "Выплата исполнителю",
+  "admin.dispute.release_funds": "Выплата поставщику",
   "admin.dispute.refund_buyer": "Возврат покупателю",
   "admin.dispute.partial_refund": "Частичный возврат",
   "admin.dispute.request_evidence": "Запрос доказательств",
@@ -87,7 +87,7 @@ export const adminDisputeStatusMeta: Record<
 }
 
 export const adminDisputeResolutionLabels: Record<string, string> = {
-  release_funds: "Выплата исполнителю",
+  release_funds: "Выплата поставщику",
   refund_buyer: "Возврат покупателю",
   partial_refund: "Частичный возврат",
   close_case: "Закрытие дела",

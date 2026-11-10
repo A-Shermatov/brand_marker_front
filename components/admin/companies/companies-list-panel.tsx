@@ -51,8 +51,8 @@ const ALL = "all"
 
 const sideOptions: Array<{ value: SideFilter; label: string }> = [
   { value: "all", label: "Все" },
-  { value: "buyer", label: "Заказчики" },
-  { value: "supplier", label: "Исполнители" },
+  { value: "buyer", label: "Покупатели" },
+  { value: "supplier", label: "Поставщики" },
 ]
 
 const verificationOptions: Array<{ value: AdminCompanyVerificationStatus; label: string }> = [
@@ -89,7 +89,7 @@ const formatDate = (value: string) =>
 
 const sideLabel = (company: AdminCompany) => {
   const sides = company.actor_types.length ? company.actor_types : [company.actor_type]
-  return sides.map((side) => (side === "buyer" ? "Заказчик" : "Исполнитель")).join(", ")
+  return sides.map((side) => (side === "buyer" ? "Покупатель" : "Поставщик")).join(", ")
 }
 
 const CompanyIdentity = ({ company }: { company: AdminCompany }) => {
@@ -248,7 +248,7 @@ export function AdminCompaniesContent() {
     <PageFrame>
       <PageHeader
         title="Компании"
-        description="Все организации платформы — заказчики и исполнители"
+        description="Все организации платформы — покупатели и поставщики"
         actions={
           <p className="text-sm text-muted-foreground">
             Найдено <strong className="ml-1 text-foreground">{total}</strong>

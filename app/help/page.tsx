@@ -7,7 +7,7 @@ export default function HelpPage() {
   const topics = [
     { title: "Как разместить заказ", href: newRfqRedirect() },
     { title: "Гарантии и безопасность", href: guaranteeUrl() },
-    { title: "Верификация исполнителей", href: verificationUrl() },
+    { title: "Верификация поставщиков", href: verificationUrl() },
     { title: "Условия размещения", href: "/help" },
   ]
 

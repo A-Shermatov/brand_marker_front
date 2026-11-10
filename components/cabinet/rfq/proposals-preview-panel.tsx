@@ -58,11 +58,11 @@ export const ProposalsPreviewPanel = ({
           variant="card"
           icon={<Clock />}
           title="Предложений пока нет"
-          description="Мы уведомим вас, когда исполнители ответят. Можно пригласить исполнителей самим."
+          description="Мы уведомим вас, когда поставщики ответят. Можно пригласить поставщиков самим."
           action={
             <Button asChild variant="outline">
               <Link href="/customer/suppliers">
-                <Users /> Найти исполнителей
+                <Users /> Найти поставщиков
               </Link>
             </Button>
           }

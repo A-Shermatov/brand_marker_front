@@ -127,7 +127,7 @@ export const ContractDisputePanel = ({
           </p>
         </div>
         <div>
-          <p className="text-xs font-medium text-muted-foreground mb-1">Исполнитель</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Поставщик</p>
           <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
             {dispute.supplier_statement?.trim() || "Заявление не предоставлено"}
           </p>

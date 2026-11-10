@@ -122,7 +122,7 @@ export default function SupplierCustomersPage() {
         : avgRating(myReviews)
     return {
       ...group,
-      name: fromApi?.display_name ?? `Заказчик #${group.id}`,
+      name: fromApi?.display_name ?? `Покупатель #${group.id}`,
       rating,
       reviewsCount: fromApi?.reviews_count ?? myReviews.length,
       marks: fromApi ? profileMarks(fromApi) : null,
@@ -141,7 +141,7 @@ export default function SupplierCustomersPage() {
   return (
     <PageFrame>
       <PageHeader
-        title="Заказчики"
+        title="Покупатели"
         description="Контрагенты по вашим сделкам и их рейтинг"
       />
 
@@ -149,8 +149,8 @@ export default function SupplierCustomersPage() {
         <PageSurface>
           <PageEmptyState
             icon={<Users size={32} />}
-            title="Заказчиков пока нет"
-            description="Заказчики появятся после первых сделок"
+            title="Покупателей пока нет"
+            description="Покупатели появятся после первых сделок"
           />
         </PageSurface>
       ) : (

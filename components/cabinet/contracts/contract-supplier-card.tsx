@@ -19,7 +19,7 @@ export const ContractSupplierCard = ({ supplier, supplierTitle }: ContractSuppli
   if (!supplier) {
     return (
       <section className="bg-card border border-border rounded-xl p-6">
-        <h2 className="text-sm font-semibold text-foreground mb-3">Исполнитель</h2>
+        <h2 className="text-sm font-semibold text-foreground mb-3">Поставщик</h2>
         <p className="text-sm font-bold text-foreground">{supplierTitle ?? "Данные недоступны"}</p>
       </section>
     )
@@ -27,7 +27,7 @@ export const ContractSupplierCard = ({ supplier, supplierTitle }: ContractSuppli
 
   return (
     <section className="bg-card border border-border rounded-xl p-6">
-      <h2 className="text-sm font-semibold text-foreground mb-4">Исполнитель</h2>
+      <h2 className="text-sm font-semibold text-foreground mb-4">Поставщик</h2>
 
       <div className="flex items-start gap-3 mb-4">
         <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
