@@ -121,7 +121,11 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
 
   const handleAccept = async (proposalId: number, terms: ProposalAcceptInput) => {
     if (useApi) {
-      const result = await acceptMutation.mutateAsync({ id: proposalId, terms })
+      const seen = proposals.find((p) => p.id === proposalId)
+      const result = await acceptMutation.mutateAsync({
+        id: proposalId,
+        terms: seen ? { ...terms, expected_price: Number(seen.price) } : terms,
+      })
       router.push(`/customer/contracts/${result.contract_id}`)
       return
     }

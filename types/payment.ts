@@ -76,6 +76,8 @@ export type ProposalAcceptInput = {
   milestones?: PaymentMilestoneInput[]
   /** Leave out to keep what the buyer chose in the request. */
   payment_mode?: PaymentMode
+  /** Price the buyer saw; the API refuses the accept if the supplier changed it. */
+  expected_price?: number
 }
 
 /**

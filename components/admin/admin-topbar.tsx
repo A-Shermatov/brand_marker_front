@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { CaretRightIcon } from "@phosphor-icons/react/dist/ssr"
 import { ADMIN_HUBS, matchHub } from "@/lib/cabinet-nav"
@@ -29,15 +29,13 @@ import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function AdminTopbar() {
-  const router = useRouter()
   const hydrated = useHydrated()
   const [mobileOpen, setMobileOpen] = useState(false)
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
 
   const handleLogout = async () => {
-    await logout()
-    router.push("/admin/login")
+    await logout("/admin/login")
   }
 
   const pathname = usePathname()

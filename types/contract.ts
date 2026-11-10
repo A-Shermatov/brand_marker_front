@@ -156,6 +156,8 @@ export type ContractWithRelations = Contract & {
   files: ContractFile[]
   submissions: WorkSubmission[]
   dispute?: ContractDispute | null
+  /** Closed deal with a decided dispute: an appeal may be opened until this moment. */
+  appeal_until?: string | null
 }
 
 export type ContractCreate = Omit<

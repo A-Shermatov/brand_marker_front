@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { TruckIcon as Truck, CheckIcon as Check, SignOutIcon as LogOut } from "@phosphor-icons/react/dist/ssr"
-import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,7 +16,6 @@ import { authApi } from "@/lib/api/auth"
 import { AvatarUploader } from "@/components/profile/avatar-uploader"
 
 export default function ProfilePage() {
-  const router = useRouter()
   const hydrated = useHydrated()
   const user = useAuthStore((s) => s.user)
   const updateProfile = useAuthStore((s) => s.updateProfile)
@@ -74,8 +72,7 @@ export default function ProfilePage() {
   }
 
   const handleLogout = () => {
-    logout()
-    router.push("/login")
+    void logout("/login")
   }
 
   const inputClass =

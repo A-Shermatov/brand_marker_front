@@ -10,6 +10,11 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ]
 
+// Where the Next server proxies /api and /uploads. Read at build time (rewrites are
+// baked into the build). The API container listens on 8000 in backend/Dockerfile
+// and docker-compose; set BACKEND_INTERNAL_URL to match your deployment.
+const BACKEND_INTERNAL_URL = (process.env.BACKEND_INTERNAL_URL || "http://backend:8080").replace(/\/+$/, "")
+
 const nextConfig = {
   output: "standalone",
   async headers() {
@@ -24,13 +29,13 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://backend:8080/api/:path*',
+        destination: `${BACKEND_INTERNAL_URL}/api/:path*`,
       },
       {
         // Files are served by the API with nosniff, a CSP sandbox and
         // Content-Disposition: attachment for anything that is not an image/PDF/video.
         source: '/uploads/:path*',
-        destination: 'http://backend:8080/uploads/:path*',
+        destination: `${BACKEND_INTERNAL_URL}/uploads/:path*`,
       },
     ]
   },

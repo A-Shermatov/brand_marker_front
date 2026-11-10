@@ -121,9 +121,15 @@ export default function SupplierContractDetailPage({ params }: PageProps) {
   const hasReview = Boolean(
     givenReviews?.items?.some((review) => review.contract_id === contractId),
   )
-  const canDispute = !DISPUTE_DISABLED_STATUSES.includes(
-    contract.status as (typeof DISPUTE_DISABLED_STATUSES)[number],
+  // A decided dispute on a closed deal can be appealed within the API's window.
+  const canAppeal = Boolean(
+    contract.appeal_until && new Date(contract.appeal_until).getTime() > Date.now(),
   )
+  const canDispute =
+    canAppeal ||
+    !DISPUTE_DISABLED_STATUSES.includes(
+      contract.status as (typeof DISPUTE_DISABLED_STATUSES)[number],
+    )
   const messageCount = contract.conversation?.messages?.length ?? 0
   const fileCount = contract.files?.length ?? 0
   const activeDispute = contract.dispute ?? null
@@ -245,7 +251,7 @@ export default function SupplierContractDetailPage({ params }: PageProps) {
               className="ml-auto inline-flex items-center gap-1 text-xs text-destructive hover:text-destructive/80 transition-colors"
             >
               <AlertTriangle size={12} />
-              Открыть спор
+              {canAppeal ? "Обжаловать решение" : "Открыть спор"}
             </button>
           )}
           {showDisputeTab && (
