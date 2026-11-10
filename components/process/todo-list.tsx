@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { WarningIcon as AlertTriangle, SealCheckIcon as BadgeCheck, BriefcaseIcon as Briefcase, ClockIcon as Clock, FileTextIcon as FileText, TrayIcon as Inbox, ChatTextIcon as MessageSquare, PaperPlaneRightIcon as Send } from "@phosphor-icons/react/dist/ssr"
+import { PanelEmpty } from "@/components/layout/panel-empty"
+import { CheckCircleIcon, WarningIcon as AlertTriangle, SealCheckIcon as BadgeCheck, BriefcaseIcon as Briefcase, ClockIcon as Clock, FileTextIcon as FileText, TrayIcon as Inbox, ChatTextIcon as MessageSquare, PaperPlaneRightIcon as Send } from "@phosphor-icons/react/dist/ssr"
 import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import type { TodoIcon, TodoItem } from "@/lib/process/todo"
@@ -95,19 +96,17 @@ export const TodoList = ({
       <span className="text-[13px] font-semibold text-mute">{title}</span>
     ) : null}
     {loading ? (
-      <div className="mt-0 h-20 animate-pulse rounded-xl border border-line bg-card" />
+      <div className="mt-0 h-20 rounded-xl border border-line bm-shimmer" />
     ) : items.length === 0 ? (
-      <div className="rounded-xl border border-dashed border-line-strong p-5 text-[14px] text-mute">
-        {emptyText}
-      </div>
+      <PanelEmpty icon={CheckCircleIcon} tone="ok" text={emptyText} />
     ) : compact ? (
-      <div className="overflow-hidden rounded-xl border border-line bg-card">
+      <div className="overflow-hidden rounded-xl border border-line bg-card bm-stagger">
         {items.map((item) => (
           <TodoRow key={item.id} item={item} compact />
         ))}
       </div>
     ) : (
-      <ul className="grid gap-3">
+      <ul className="grid gap-3 bm-stagger">
         {items.map((item) => (
           <li key={item.id}>
             <TodoRow item={item} />

@@ -3,7 +3,8 @@
 import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { CheckCircleIcon as CheckCircle2, ClockIcon as Clock, CircleNotchIcon as Loader2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
+import { ClockIcon as Clock, CircleNotchIcon as Loader2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
+import { SuccessCheck } from "@/components/ui/success-check"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { useHydrated } from "@/hooks/use-hydrated"
@@ -35,27 +36,27 @@ const viewCopy: Record<ViewState, { title: string; description: string; icon: Re
   ok: {
     title: "Подписка оплачена",
     description: "Тариф активирован на 30 дней. Ваши предложения получают приоритет в каталоге.",
-    icon: <CheckCircle2 className="text-emerald-600" />,
+    icon: <SuccessCheck />,
   },
   failed: {
     title: "Оплата не прошла",
     description: "Списания не было. Попробуйте оформить подписку ещё раз.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
   canceled: {
     title: "Платёж отменён",
     description: "Подписка не активирована.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
   error: {
     title: "Не удалось проверить оплату",
     description: "Попробуйте обновить страницу позже или откройте раздел подписки.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
   invalid: {
     title: "Платёж не найден",
     description: "Ссылка возврата некорректна.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
 }
 
@@ -108,12 +109,17 @@ const SubscriptionReturnContent = () => {
 
   const copy = viewCopy[view] ?? viewCopy.error
   const isSuccess = view === "ok"
+  const waiting = view === "pending" || view === "timeout"
+  const tone = isSuccess ? "success" : view === "checking" ? "brand" : waiting ? "wait" : "danger"
 
   return (
     <PageFrame>
       <PageHeader title="Оплата подписки" backHref="/supplier/subscription" backLabel="К подписке" />
       <PageSurface aria-live="polite" aria-busy={view === "checking" || view === "pending"}>
         <PageEmptyState
+          // Remounted per state, so the tick is drawn when the payment is confirmed.
+          key={view}
+          tone={tone}
           icon={copy.icon}
           title={copy.title}
           description={copy.description}

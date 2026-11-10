@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import Link from "next/link"
 import { useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
 import { ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
@@ -272,7 +274,12 @@ export default function SupplierMessagesPage() {
           <PageEmptyState
             icon={<MessageSquare size={32} />}
             title="Сообщений пока нет"
-            description="Чат появится, когда заказчик напишет вам, вы обсудите предложение или начнётся сделка"
+            description="Чат появится, когда покупатель напишет вам, вы обсудите предложение или начнётся сделка."
+            action={
+              <Button asChild variant="outline">
+                <Link href="/supplier/rfqs?response=open">Заявки покупателей</Link>
+              </Button>
+            }
           />
         </PageSurface>
       ) : (

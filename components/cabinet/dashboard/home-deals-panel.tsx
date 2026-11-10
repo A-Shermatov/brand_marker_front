@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { HandshakeIcon } from "@phosphor-icons/react/dist/ssr"
+import { PanelEmpty } from "@/components/layout/panel-empty"
 import type { ContractWithRelations } from "@/types"
 import { formatCurrency } from "@/lib/format"
 import { DealStageBar } from "@/components/process"
@@ -19,21 +21,25 @@ export const HomeDealsPanel = ({
   return (
     <div className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-[13px] font-semibold text-mute">Сделки в работе</span>
+        <h2 className="text-[15.5px] font-semibold text-ink">Сделки в работе</h2>
         <Link
           href="/customer/contracts?tab=active"
-          className="text-[13px] text-brand-700 hover:underline"
+          className="text-[13px] font-medium text-mute hover:text-ink"
         >
-          Все сделки →
+          Все сделки
         </Link>
       </div>
 
       {loading ? (
-        <div className="h-32 animate-pulse rounded-lg bg-canvas" />
+        <div className="h-32 rounded-lg bm-shimmer" />
       ) : list.length === 0 ? (
-        <p className="py-6 text-[14px] text-mute">Сделок пока нет.</p>
+        <PanelEmpty
+          icon={HandshakeIcon}
+          text="Сейчас сделок в работе нет. Новая появится, когда вы выберете предложение поставщика или купите товар в каталоге."
+          action={{ label: "Мои заявки", href: "/customer/rfqs?status=quotes" }}
+        />
       ) : (
-        <ul className="divide-y divide-line">
+        <ul className="divide-y divide-line bm-stagger">
           {list.map((contract) => (
             <li key={contract.id}>
               <Link

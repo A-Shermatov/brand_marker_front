@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { HeadsetIcon as Headphones, CircleNotchIcon as Loader2, ChatCircleIcon as MessageCircle, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { SupportMessageList } from "@/components/support/support-message-list"
 import { useSupportChat } from "@/components/support/support-chat-context"
@@ -37,6 +37,10 @@ export const SupportChatWidget = ({ role }: SupportChatWidgetProps) => {
   const sendMessage = useSendSupportMessageMutation(role)
   const markRead = useMarkSupportReadMutation(role)
   const closeTicket = useCloseSupportTicketMutation(role)
+
+  // In the corner on wide screens; on the chat pages it stays above the
+  // message field, so it never covers the send button.
+  const overChat = usePathname().endsWith("/messages")
 
   const ticket = ticketQuery.data?.ticket ?? null
   const unread = unreadQuery.data?.count ?? ticket?.unread_count ?? 0
@@ -75,7 +79,12 @@ export const SupportChatWidget = ({ role }: SupportChatWidgetProps) => {
   }, [markRead, ticket])
 
   return (
-    <div className="pointer-events-none fixed right-4 bottom-24 z-50 flex flex-col items-end gap-3 sm:bottom-28">
+    <div
+      className={cn(
+        "pointer-events-none fixed right-4 bottom-24 z-50 flex flex-col items-end gap-3 sm:bottom-28",
+        !overChat && "lg:bottom-6",
+      )}
+    >
       {open ? (
         <div
           className="support-tg pointer-events-auto flex h-[min(72vh,580px)] w-[min(100vw-2rem,390px)] flex-col overflow-hidden rounded-[14px]"

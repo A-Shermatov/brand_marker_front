@@ -1,10 +1,12 @@
 "use client"
 
 import { Suspense, useState } from "react"
-import { HouseIcon as LayoutDashboard, FileTextIcon as FileText, HandshakeIcon as Briefcase, ChatsCircleIcon as MessageSquare, ListIcon as Menu, CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
+import { HouseIcon as LayoutDashboard, FileTextIcon as FileText, HandshakeIcon as Briefcase, ChatsCircleIcon as MessageSquare, ListIcon as Menu } from "@phosphor-icons/react/dist/ssr"
 import CustomerSidebar from "@/components/cabinet/sidebar"
 import CustomerTopbar from "@/components/cabinet/topbar"
 import { CabinetShell } from "@/components/layout/cabinet-shell"
+import { CabinetSkeleton } from "@/components/layout/cabinet-skeleton"
+import { PageTransition } from "@/components/layout/page-transition"
 import { CabinetMobileNav } from "@/components/layout/cabinet-mobile-nav"
 import { SectionHub } from "@/components/layout/section-hub"
 import { SupportChatProvider } from "@/components/support/support-chat-context"
@@ -28,11 +30,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   const cartLines = useCartStore((s) => s.items.length)
 
   if (gate !== "allowed") {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-canvas">
-        <Loader2 className="animate-spin text-brand-600" size={32} aria-label="Проверка доступа" />
-      </div>
-    )
+    return <CabinetSkeleton />
   }
 
   return (
@@ -96,7 +94,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           />
         }
       >
-        {children}
+        <PageTransition>{children}</PageTransition>
         <Suspense fallback={null}>
           <SupportChatWidget role="buyer" />
         </Suspense>

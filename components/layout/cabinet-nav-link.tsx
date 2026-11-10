@@ -68,8 +68,9 @@ export function CabinetNavLink({
       <span className="relative min-w-0 flex-1 truncate">{label}</span>
       {badge && badge > 0 ? (
         <span
+          key={badge}
           className={cn(
-            "relative grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-semibold tnum",
+            "relative grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-semibold tnum bm-pop",
             badgeTone === "danger" ? "bg-red-600 text-white" : "bg-brand-600 text-white",
           )}
         >

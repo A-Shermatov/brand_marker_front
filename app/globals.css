@@ -704,6 +704,171 @@
   animation: shake 0.25s ease-in-out 2;
 }
 
+/* ── Motion of the working screens ────────────────────────────────────────
+   One language for the whole platform: things arrive from just below and
+   settle, fast enough not to slow anyone down. Every animation here answers
+   something that happened (a page opened, a list loaded, a counter changed);
+   the only loops are the "you are here" dot and the loading shimmer. */
+:root {
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-spring: cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+/* A page opened: its content settles into place. */
+@keyframes bmPageIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.bm-page {
+  animation: bmPageIn 0.24s var(--ease-out) both;
+}
+
+/* A block or a list loaded: items arrive one after another, top down.
+   Only the first eight are staggered, the rest come with the eighth. */
+@keyframes bmRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.bm-rise {
+  animation: bmRise 0.32s var(--ease-out) both;
+}
+.bm-stagger > * {
+  animation: bmRise 0.32s var(--ease-out) both;
+  animation-delay: 0.28s;
+}
+.bm-stagger > *:nth-child(1) {
+  animation-delay: 0s;
+}
+.bm-stagger > *:nth-child(2) {
+  animation-delay: 0.04s;
+}
+.bm-stagger > *:nth-child(3) {
+  animation-delay: 0.08s;
+}
+.bm-stagger > *:nth-child(4) {
+  animation-delay: 0.12s;
+}
+.bm-stagger > *:nth-child(5) {
+  animation-delay: 0.16s;
+}
+.bm-stagger > *:nth-child(6) {
+  animation-delay: 0.2s;
+}
+.bm-stagger > *:nth-child(7) {
+  animation-delay: 0.24s;
+}
+
+/* A counter changed: the badge pops once. */
+@keyframes bmPop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.14);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+  }
+}
+.bm-pop {
+  animation: bmPop 0.36s var(--ease-spring) both;
+}
+
+/* "You are here": a soft ring breathes around the step that waits for you. */
+@keyframes bmHere {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-500) 45%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 9px transparent;
+  }
+}
+.bm-here {
+  animation: bmHere 2.2s ease-out infinite;
+}
+
+/* A line that fills as the process moves on (deal steps, first steps). */
+@keyframes bmGrowX {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+.bm-grow-x {
+  transform-origin: left center;
+  animation: bmGrowX 0.6s var(--ease-out) both;
+}
+
+/* Loading: a light band runs across the placeholder. */
+@keyframes bmShimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+.bm-shimmer {
+  background-color: var(--surface-muted);
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    color-mix(in srgb, var(--card) 70%, transparent) 50%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: bmShimmer 1.4s ease-in-out infinite;
+}
+
+/* Done: the circle closes, then the tick is drawn. */
+@keyframes bmDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.bm-check-ring {
+  stroke-dasharray: 152;
+  stroke-dashoffset: 152;
+  animation: bmDraw 0.5s var(--ease-out) 0.05s forwards;
+}
+.bm-check-tick {
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: bmDraw 0.28s var(--ease-out) 0.45s forwards;
+}
+
+/* The picture of an empty list floats a little, so the screen is not dead. */
+@keyframes bmFloat {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+.bm-float {
+  animation: bmFloat 4.5s ease-in-out infinite;
+}
+
 /* Landing ribbon: lanes drift sideways forever (each lane holds its items
    twice, so -50% lands on the same picture); edges fade into the page. */
 .bm-ribbon {
@@ -754,6 +919,11 @@
   }
   .bm-d-edge {
     opacity: 0;
+  }
+  /* The drawn tick is simply there. */
+  .bm-check-ring,
+  .bm-check-tick {
+    stroke-dashoffset: 0;
   }
   *,
   *::before,

@@ -38,6 +38,7 @@ import { RfqListToolbar } from "@/components/cabinet/rfq/rfq-list-toolbar"
 import { ListPagination } from "@/components/list-pagination"
 import { ProposalDialog } from "@/components/supplier/proposal-dialog"
 import {
+  ListSkeleton,
   PageEmptyState,
   PageFrame,
   PageSurface,
@@ -248,21 +249,15 @@ const SupplierRfqsContent = () => {
         filterAriaLabel="Источник заявки"
       />
 
-      {isEmpty ? (
+      {isEmpty && isLoadingState ? (
+        <ListSkeleton label="Загружаем заявки" />
+      ) : isEmpty ? (
         <PageSurface>
           <PageEmptyState
             icon={<Search />}
-            title={
-              isLoadingState
-                ? "Загрузка заявок..."
-                : hasFilters
-                  ? "Заявки не найдены"
-                  : "Заявок нет"
-            }
+            title={hasFilters ? "Заявки не найдены" : "Заявок нет"}
             description={
-              isLoadingState
-                ? undefined
-                : hasFilters
+              hasFilters
                   ? "Измените поиск или фильтры."
                   : subscribedIds.length
                     ? "Пришлём уведомление, когда появится заявка в выбранных категориях."

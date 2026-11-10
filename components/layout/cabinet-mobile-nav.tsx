@@ -50,7 +50,10 @@ export function CabinetMobileNav({ tabs, moreOpen }: CabinetMobileNavProps) {
               {tab.label}
             </span>
             {tab.badge && tab.badge > 0 ? (
-              <span className="absolute top-1.5 left-1/2 ml-2 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-brand-600 px-1 text-[11px] font-semibold text-white ring-2 ring-card">
+              <span
+                key={tab.badge}
+                className="absolute top-1.5 left-1/2 ml-2 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-brand-600 px-1 text-[11px] font-semibold text-white ring-2 ring-card bm-pop"
+              >
                 {tab.badge}
               </span>
             ) : null}

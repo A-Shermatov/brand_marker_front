@@ -14,6 +14,34 @@ test.describe("sign-in and access", () => {
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
   })
 
+  test("a newcomer registers, is shown where to start and is led to the first request", async ({ page }) => {
+    // An account of its own each run: the guide depends on the cabinet being empty.
+    const email = `newcomer.${Date.now().toString(36)}@example.com`
+    await page.goto("/register")
+    await page.locator("#first_name").fill("Нигина")
+    await page.locator("#last_name").fill("Новая")
+    await page.locator("#email").fill(email)
+    await page.locator("#password").fill("Newcomer-2026!")
+    await page.locator("#confirmPassword").fill("Newcomer-2026!")
+    await page.locator('form button[type="submit"]').click()
+    await expect(page).toHaveURL(/\/customer$/)
+
+    // No page of zeros: the path to a first deal, with the first step marked as the current one.
+    const guide = page.getByRole("region", { name: "Первая сделка: четыре шага" })
+    await expect(guide).toBeVisible()
+    await expect(guide.getByRole("listitem")).toHaveCount(4)
+    await expect(guide.locator('li[aria-current="step"]')).toContainText("Расскажите, что нужно")
+    await expect(page.getByText("На гарантии в банке")).toHaveCount(0)
+
+    // An empty tab explains itself instead of answering "nothing found".
+    await page.getByRole("navigation", { name: "Меню кабинета" }).getByRole("link", { name: "Закупки" }).click()
+    await expect(page.getByRole("heading", { name: "Сейчас нет заявок, которые ждут предложений" })).toBeVisible()
+
+    await page.goto("/customer")
+    await guide.getByRole("link", { name: "Новая заявка" }).click()
+    await expect(page).toHaveURL(/\/customer\/rfqs\/new$/)
+  })
+
   test("a wrong password keeps the door closed", async ({ page }) => {
     await page.goto("/login")
     await page.getByLabel("Email").fill(accounts.buyer.email)

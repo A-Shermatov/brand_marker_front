@@ -1,7 +1,10 @@
 "use client"
 
 import { Suspense, useMemo, useState } from "react"
+import Link from "next/link"
 import { BriefcaseIcon as Briefcase } from "@phosphor-icons/react/dist/ssr"
+import { Button } from "@/components/ui/button"
+import { ListSkeleton } from "@/components/layout/list-skeleton"
 import {
   PageEmptyState,
   PageFrame,
@@ -31,8 +34,8 @@ type SupplierDealTab = Extract<DealListTab, "active" | "completed">
 const TAB_VALUES: SupplierDealTab[] = ["active", "completed"]
 
 const emptyMessages: Record<SupplierDealTab, string> = {
-  active: "Сделка появится, когда покупатель выберет ваше КП.",
-  completed: "Здесь будут сделки, по которым вы получили оплату",
+  active: "Сделка появится, когда покупатель выберет ваше предложение (КП).",
+  completed: "Здесь будут сделки, по которым вы получили оплату.",
 }
 
 const SupplierContractsContent = () => {
@@ -86,12 +89,21 @@ const SupplierContractsContent = () => {
         ariaLabel="Фильтр сделок"
       />
 
-      {isEmpty ? (
+      {!hydrated || isLoading ? (
+        <ListSkeleton label="Загружаем сделки" />
+      ) : isEmpty ? (
         <PageEmptyState
           variant="card"
           icon={<Briefcase />}
-          title={isLoading ? "Загружаем сделки..." : "Сделок нет"}
-          description={!isLoading ? emptyMessages[tab] : undefined}
+          title="Сделок нет"
+          description={emptyMessages[tab]}
+          action={
+            tab === "active" ? (
+              <Button asChild>
+                <Link href="/supplier/rfqs?response=open">Заявки покупателей</Link>
+              </Button>
+            ) : undefined
+          }
         />
       ) : (
         <DealList

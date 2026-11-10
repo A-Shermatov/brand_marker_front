@@ -3,7 +3,8 @@
 import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { CheckCircleIcon as CheckCircle2, ClockIcon as Clock, CircleNotchIcon as Loader2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
+import { ClockIcon as Clock, CircleNotchIcon as Loader2, XCircleIcon as XCircle } from "@phosphor-icons/react/dist/ssr"
+import { SuccessCheck } from "@/components/ui/success-check"
 import { PageEmptyState, PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { useHydrated } from "@/hooks/use-hydrated"
@@ -59,39 +60,39 @@ const viewCopy: Record<ViewState, { title: string; description: string; icon: Re
     title: "Оплата прошла",
     description:
       "Средства зарезервированы на безопасной сделке. Исполнитель получит их после того, как вы примете работу.",
-    icon: <CheckCircle2 className="text-emerald-600" />,
+    icon: <SuccessCheck />,
   },
   to_approve: {
     title: "Оплата прошла",
     description:
       "Средства зарезервированы до приёмки. Они уйдут исполнителю, когда вы подтвердите результат работы.",
-    icon: <CheckCircle2 className="text-emerald-600" />,
+    icon: <SuccessCheck />,
   },
   partially_approved: {
     title: "Оплата прошла",
     description:
       "Средства зарезервированы до приёмки. Они уйдут исполнителю, когда вы подтвердите результат работы.",
-    icon: <CheckCircle2 className="text-emerald-600" />,
+    icon: <SuccessCheck />,
   },
   failed: {
     title: "Оплата не прошла",
     description: "Списания не было. Попробуйте оплатить этап ещё раз.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
   canceled: {
     title: "Платёж отменён",
     description: "Средства возвращены на карту.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
   error: {
     title: "Не удалось проверить оплату",
     description: "Попробуйте обновить страницу позже или откройте сделку.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
   invalid: {
     title: "Платёж не найден",
     description: "Ссылка возврата некорректна.",
-    icon: <XCircle className="text-destructive" />,
+    icon: <XCircle />,
   },
 }
 
@@ -142,6 +143,8 @@ const PaymentReturnContent = () => {
 
   const copy = viewCopy[view] ?? viewCopy.error
   const isSuccess = SUCCESS_VIEWS.has(view)
+  const waiting = view === "pending" || view === "timeout"
+  const tone = isSuccess ? "success" : view === "checking" ? "brand" : waiting ? "wait" : "danger"
   const backHref = contractId ? `/customer/contracts/${contractId}` : "/customer/payments"
   const backLabel = contractId ? "Вернуться к сделке" : "К платежам"
 
@@ -150,6 +153,9 @@ const PaymentReturnContent = () => {
       <PageHeader title="Результат оплаты" backHref={backHref} backLabel={backLabel} />
       <PageSurface aria-live="polite" aria-busy={view === "checking" || view === "pending"}>
         <PageEmptyState
+          // Remounted per state, so the tick is drawn when the payment is confirmed.
+          key={view}
+          tone={tone}
           icon={copy.icon}
           title={copy.title}
           description={copy.description}

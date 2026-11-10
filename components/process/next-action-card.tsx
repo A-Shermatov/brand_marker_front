@@ -40,10 +40,13 @@ export const NextActionCard = ({
     >
       <span
         className={cn(
-          "text-[12.5px] font-medium",
+          "inline-flex items-center gap-2 text-[12.5px] font-medium",
           isDanger ? "text-destructive" : hot ? "text-brand-700" : "text-mute",
         )}
       >
+        {hot && !isDanger ? (
+          <span className="size-2 rounded-full bg-brand-600 bm-here" aria-hidden />
+        ) : null}
         {eyebrow}
       </span>
       <h2 className="text-[20px] font-bold tracking-[-0.02em] text-balance text-ink">

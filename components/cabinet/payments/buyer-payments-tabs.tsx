@@ -9,8 +9,8 @@ export type BuyerPaymentsTab =
   | "refunds"
 
 export const BUYER_PAYMENTS_TABS: { value: BuyerPaymentsTab; label: string }[] = [
-  { value: "outgoing", label: "Исходящие платежи" },
-  { value: "escrow", label: "Безопасная оплата" },
+  { value: "outgoing", label: "Мои оплаты" },
+  { value: "escrow", label: "Деньги в банке" },
   { value: "invoices", label: "Счета" },
   { value: "refunds", label: "Возвраты" },
 ]

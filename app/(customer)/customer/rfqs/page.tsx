@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ListPagination } from "@/components/list-pagination"
 import {
+  ListSkeleton,
   PageEmptyState,
   PageFrame,
   PageSurface,
@@ -46,6 +47,39 @@ import {
   useBuyerNavCounts,
   useMarkNavSectionSeen,
 } from "@/hooks/api/use-nav-counts-query"
+
+/**
+ * What an empty tab says. A tab is not a filter the person set by hand (the
+ * menu itself opens "Приём КП"), so it never answers "nothing found".
+ */
+const EMPTY_TAB: Partial<Record<BuyerRfqStatusFilter, { title: string; text: string; create?: boolean }>> = {
+  all: {
+    title: "Заявок нет",
+    text: "Опишите, что нужно купить, — поставщики сами пришлют цены. Это займёт около трёх минут.",
+    create: true,
+  },
+  quotes: {
+    title: "Сейчас нет заявок, которые ждут предложений",
+    text: "Здесь заявки, на которые поставщики присылают цены. Создайте заявку — она появится в этом списке.",
+    create: true,
+  },
+  deal: {
+    title: "Заявок со сделкой нет",
+    text: "Заявка попадёт сюда, когда вы выберете предложение поставщика.",
+  },
+  draft: {
+    title: "Черновиков нет",
+    text: "Здесь лежат заявки, которые вы сохранили, но ещё не опубликовали.",
+  },
+  closed: {
+    title: "Закрытых заявок нет",
+    text: "Сюда попадают завершённые, отменённые заявки и те, у которых истёк срок.",
+  },
+  archived: {
+    title: "Архив пуст",
+    text: "В архив можно убрать заявку, которая больше не нужна в общем списке.",
+  },
+}
 
 const MyRfqsContent = () => {
   const hydrated = useHydrated()
@@ -102,7 +136,9 @@ const MyRfqsContent = () => {
   }, [useApi, apiRfqs, localRfqs, debouncedSearch, typeFilter])
 
   const totalPages = useApi ? (apiRfqs?.total_pages ?? 0) : 1
-  const hasFilters = Boolean(debouncedSearch) || typeFilter !== "all" || statusFilter !== "all"
+  // Search and the kind of request are filters the person sets; the tab is a place.
+  const hasFilters = Boolean(debouncedSearch) || typeFilter !== "all"
+  const emptyTab = EMPTY_TAB[statusFilter] ?? EMPTY_TAB.all!
 
   const tabCounts = useMemo(() => {
     if (useApi) {
@@ -196,29 +232,23 @@ const MyRfqsContent = () => {
       </div>
 
       {useApi && isLoading ? (
-        <PageSurface className="animate-pulse p-12">
-          <div className="mx-auto h-4 w-1/3 rounded bg-secondary" />
-        </PageSurface>
+        <ListSkeleton label="Загружаем заявки" />
       ) : rfqs.length === 0 ? (
         <PageSurface>
           <PageEmptyState
             icon={<FileText />}
-            title={hasFilters ? "Заявки не найдены" : "Заявок нет"}
-            description={
-              hasFilters
-                ? "Измените поиск или фильтры."
-                : "Создайте заявку — это займёт 3 минуты."
+            title={hasFilters ? "Заявки не найдены" : emptyTab.title}
+            description={hasFilters ? "Измените поиск или фильтры." : emptyTab.text}
+            action={
+              !hasFilters && emptyTab.create ? (
+                <Button asChild size="lg">
+                  <Link href="/customer/rfqs/new">
+                    <Plus size={17} /> Новая заявка
+                  </Link>
+                </Button>
+              ) : undefined
             }
           />
-          {!hasFilters ? (
-            <div className="flex justify-center pb-10">
-              <Button asChild size="lg">
-                <Link href="/customer/rfqs/new">
-                  <Plus size={17} /> Новая заявка
-                </Link>
-              </Button>
-            </div>
-          ) : null}
         </PageSurface>
       ) : (
         <RfqList rfqs={rfqs} getProposalCount={getProposalCount} />

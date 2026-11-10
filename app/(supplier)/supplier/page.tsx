@@ -4,7 +4,9 @@ import Link from "next/link"
 import {
   ArrowDownLeftIcon,
   HandshakeIcon,
+  HeadsetIcon,
   LockKeyIcon,
+  PackageIcon,
   PlusIcon as Plus,
   TrayIcon,
   TrayIcon as Inbox,
@@ -58,6 +60,12 @@ import {
   type OpsItem,
 } from "@/components/cabinet/dashboard/ops-list"
 import { TodoList, ProfileChecklist, type ChecklistItem } from "@/components/process"
+import { FirstSteps } from "@/components/process/first-steps"
+import { buildSupplierFirstSteps } from "@/lib/process/first-steps"
+import { ShortcutCards } from "@/components/cabinet/dashboard/shortcut-cards"
+import { CountUp } from "@/components/ui/count-up"
+import { useSupportChat } from "@/components/support/support-chat-context"
+import { useSavedValue } from "@/hooks/use-saved-value"
 import { firstName, greet } from "@/lib/greet"
 import type { ContractWithRelations } from "@/types"
 import type { SubscriptionPlan } from "@/lib/store/subscription-store"
@@ -100,6 +108,7 @@ export default function SupplierDashboard() {
 
   const apiEnabled = hydrated && useApi
   const marks = useSupplierMarks()
+  const { openSupport } = useSupportChat()
   const { data: apiContracts, isLoading: contractsLoading } =
     useSupplierContractsQuery(apiEnabled)
   const { data: apiRfqs, isLoading: rfqsLoading } =
@@ -276,14 +285,32 @@ export default function SupplierDashboard() {
   const planActive = Boolean(apiSub?.is_active)
   const incompleteChecklist = checklist.filter((c) => !c.done)
 
+  // The path to a first deal. The profile step lists what the checklist
+  // still misses (the admin's check is not the supplier's to do).
+  const GAP_TEXT: Record<string, { label: string; cta: string }> = {
+    company: { label: "описание компании и город", cta: "Заполнить профиль" },
+    catalog: { label: "товар или услуга в каталоге", cta: "Добавить товар" },
+    payout: { label: "счёт для выплат", cta: "Добавить счёт" },
+  }
+  const firstStepsKey = `bm-first-steps:supplier:${actorId}`
+  const firstSteps = buildSupplierFirstSteps({
+    profileGaps: incompleteChecklist
+      .filter((item) => GAP_TEXT[item.id] && item.href)
+      .map((item) => ({ ...GAP_TEXT[item.id]!, href: item.href! })),
+    newRfqCount: newRfqs.length,
+    proposalCount: proposalItems.length,
+    contracts,
+    hasPayoutAccount: Boolean(destinations?.length),
+  })
+  const guideLoading =
+    loading || (useApi && (!apiCompanies || !apiItems || !apiDestinations || !apiProposals))
+  // No offers sent and no deals yet: the guide and the ways in, not a page of zeros.
+  const isNewcomer = !guideLoading && contracts.length === 0 && proposalItems.length === 0
+  const knownVeteran = useSavedValue(firstStepsKey) === "finished"
+  const showNumbers = guideLoading ? knownVeteran : !isNewcomer
+
   return (
     <PageFrame className="max-w-none space-y-5">
-      <ActivateRoleBanner
-        targetSide="buyer"
-        redirectTo="/customer"
-        label="Хотите размещать заказы? Активируйте роль заказчика на этом же аккаунте."
-      />
-
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0 flex-[1_1_18rem]">
           <p className="text-[14px] text-mute">
@@ -316,10 +343,52 @@ export default function SupplierDashboard() {
         </div>
       </div>
 
+      <FirstSteps
+        storageKey={firstStepsKey}
+        title="Первая сделка: четыре шага"
+        description="Так вы получаете заказы на площадке. Покупатель платит заранее, деньги хранит банк и переводит вам после приёмки."
+        steps={firstSteps}
+        loading={guideLoading}
+      />
+
+      {isNewcomer ? (
+        <>
+          <ShortcutCards
+            label="С чего ещё можно начать"
+            items={[
+              {
+                title: "Заявки покупателей",
+                text:
+                  newRfqs.length > 0
+                    ? `${formatCount(newRfqs.length, "новая заявка", "новые заявки", "новых заявок")} без вашего предложения`
+                    : "Что сейчас ищут покупатели",
+                icon: TrayIcon,
+                href: "/supplier/rfqs?response=open",
+              },
+              {
+                title: "Добавить товар",
+                text: "Покупатели найдут вас в каталоге",
+                icon: PackageIcon,
+                href: "/supplier/catalog/new",
+              },
+              {
+                title: "Спросить поддержку",
+                text: "Подскажем, как отправить первое предложение",
+                icon: HeadsetIcon,
+                onClick: openSupport,
+              },
+            ]}
+          />
+        </>
+      ) : null}
+
+      {showNumbers ? (
+      <div className="space-y-5 bm-rise">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KpiTile
           label="Поступит после приёмки"
-          value={loading ? "—" : formatPrice(expectedAmount)}
+          loading={loading}
+          value={<CountUp value={expectedAmount} format={formatPrice} />}
           hint={
             expectedDeals.length > 0
               ? `Деньги уже у банка · ${formatCount(expectedDeals.length, "сделка", "сделки", "сделок")}`
@@ -331,7 +400,8 @@ export default function SupplierDashboard() {
         />
         <KpiTile
           label="Зачислено в этом месяце"
-          value={loading ? "—" : formatPrice(monthReleased)}
+          loading={loading}
+          value={<CountUp value={monthReleased} format={formatPrice} />}
           hint={
             balance ? `На счёте ${formatPrice(balance.available)}` : "История выплат"
           }
@@ -340,7 +410,8 @@ export default function SupplierDashboard() {
         />
         <KpiTile
           label="Сделки в работе"
-          value={loading ? "—" : openDeals.length}
+          loading={loading}
+          value={<CountUp value={openDeals.length} />}
           hint={
             unreadCount > 0
               ? formatCount(unreadCount, "новое сообщение", "новых сообщения", "новых сообщений")
@@ -352,7 +423,8 @@ export default function SupplierDashboard() {
         />
         <KpiTile
           label="Новые заявки"
-          value={loading ? "—" : newRfqs.length}
+          loading={loading}
+          value={<CountUp value={newRfqs.length} />}
           hint={newRfqs.length > 0 ? "Без вашего предложения" : "Новых заявок нет"}
           icon={TrayIcon}
           tone={newRfqs.length > 0 ? "attention" : "default"}
@@ -477,8 +549,16 @@ export default function SupplierDashboard() {
         hydrated={!loading}
         getBuyerName={getBuyerName}
       />
+      </div>
+      ) : null}
 
       <TeamAccessCard side="supplier" teamHref="/supplier/team" />
+
+      <ActivateRoleBanner
+        targetSide="buyer"
+        redirectTo="/customer"
+        label="Хотите ещё и покупать на площадке? Включите роль покупателя на этом же аккаунте."
+      />
     </PageFrame>
   )
 }

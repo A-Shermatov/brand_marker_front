@@ -2,10 +2,11 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { SealCheckIcon as BadgeCheck, InfoIcon as Info, CircleNotchIcon as Loader2, GearIcon as Settings } from "@phosphor-icons/react/dist/ssr"
+import { SealCheckIcon as BadgeCheck, InfoIcon as Info, GearIcon as Settings } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/bm"
 import {
+  ListSkeleton,
   PageEmptyState,
   PageFrame,
   PageHeader,
@@ -128,11 +129,7 @@ export default function CustomerApprovalsPage() {
       />
 
       {useApi && isLoading ? (
-        <PageEmptyState
-          variant="card"
-          icon={<Loader2 className="animate-spin" />}
-          title="Загрузка…"
-        />
+        <ListSkeleton label="Загружаем согласования" />
       ) : list.length === 0 ? (
         <PageEmptyState
           variant="card"
