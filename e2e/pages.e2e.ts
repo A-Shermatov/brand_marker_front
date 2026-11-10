@@ -42,6 +42,16 @@ test.describe("public pages", () => {
     }
     expect(health.take()).toEqual([])
   })
+
+  test("a wrong address says so in Russian and shows the ways back", async ({ page }) => {
+    const response = await page.goto("/no-such-page")
+    expect(response?.status()).toBe(404)
+    await expect(page.getByRole("heading", { level: 1, name: "Такой страницы нет" })).toBeVisible()
+    const ways = page.getByRole("list", { name: "Куда можно перейти" })
+    await expect(ways.getByRole("link")).toHaveCount(3)
+    await ways.getByRole("link", { name: /Каталог/ }).click()
+    await expect(page).toHaveURL(/\/services$/)
+  })
 })
 
 /** Every distinct cabinet page linked from the side menu. */

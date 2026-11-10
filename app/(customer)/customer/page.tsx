@@ -3,11 +3,14 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import {
+  BuildingsIcon,
   HandshakeIcon,
+  HeadsetIcon,
   LockKeyIcon,
   PlusIcon as Plus,
   ReceiptIcon,
   ShoppingCartIcon as ShoppingCart,
+  ShieldCheckIcon,
   WalletIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { useQueries, useQuery } from "@tanstack/react-query"
@@ -50,6 +53,12 @@ import {
 } from "@/components/cabinet/dashboard/ops-list"
 import { ActivateRoleBanner } from "@/components/company/activate-role-banner"
 import { TodoList } from "@/components/process"
+import { FirstSteps } from "@/components/process/first-steps"
+import { buildBuyerFirstSteps } from "@/lib/process/first-steps"
+import { ShortcutCards } from "@/components/cabinet/dashboard/shortcut-cards"
+import { CountUp } from "@/components/ui/count-up"
+import { useSupportChat } from "@/components/support/support-chat-context"
+import { useSavedValue } from "@/hooks/use-saved-value"
 import { firstName, greet } from "@/lib/greet"
 import {
   sumAwaitingPayment,
@@ -65,6 +74,7 @@ export default function CustomerDashboard() {
   const userId = user?.userId ?? 0
   const marks = useBuyerMarks()
   const useApi = isApiEnabled()
+  const { openSupport } = useSupportChat()
 
   const getRfqsByBuyer = useRfqsStore((s) => s.getRfqsByBuyer)
   const getProposalsForRfq = useProposalsStore((s) => s.getProposalsForRfq)
@@ -233,14 +243,22 @@ export default function CustomerDashboard() {
   const companyTitle = marks.title ?? (hydrated && user?.company ? user.company : "Покупатель")
   const name = firstName(user?.name)
 
+  // The path to a first deal, marked from what the account already has.
+  const firstStepsKey = `bm-first-steps:buyer:${actorId}`
+  const firstSteps = buildBuyerFirstSteps({
+    rfqs,
+    offers: rfqsWithNewProposals.map((r) => ({ rfqId: r.rfqId, count: r.count })),
+    contracts,
+  })
+  // An account with no requests and no deals has nothing to chart: it gets
+  // the guide and the ways in instead of a page of zeros. While the data is
+  // loading, only an account already known to have deals shows the numbers.
+  const isNewcomer = !loading && rfqs.length === 0 && contracts.length === 0
+  const knownVeteran = useSavedValue(firstStepsKey) === "finished"
+  const showNumbers = loading ? knownVeteran : !isNewcomer
+
   return (
     <PageFrame className="max-w-none space-y-5">
-      <ActivateRoleBanner
-        targetSide="supplier"
-        redirectTo="/supplier"
-        label="Хотите продавать на платформе? Активируйте роль исполнителя на этом же аккаунте."
-      />
-
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0 flex-[1_1_18rem]">
           <p className="text-[14px] text-mute">
@@ -259,7 +277,7 @@ export default function CustomerDashboard() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">
-            <Link href="/services">
+            <Link href="/customer/catalog">
               <ShoppingCart className="size-4" />
               Каталог
             </Link>
@@ -273,10 +291,47 @@ export default function CustomerDashboard() {
         </div>
       </div>
 
+      <FirstSteps
+        storageKey={firstStepsKey}
+        title="Первая сделка: четыре шага"
+        description="Так проходит любая покупка на площадке. Деньги всё это время под защитой банка: поставщик получит их только после вашей приёмки."
+        steps={firstSteps}
+        loading={loading}
+      />
+
+      {isNewcomer ? (
+        <ShortcutCards
+          label="С чего ещё можно начать"
+          items={[
+            {
+              title: "Как защищены деньги",
+              text: "Банк хранит оплату до вашей приёмки",
+              icon: ShieldCheckIcon,
+              href: "/guarantee",
+            },
+            {
+              title: "Поставщики",
+              text: "Проверенные компании и отзывы о них",
+              icon: BuildingsIcon,
+              href: "/customer/suppliers",
+            },
+            {
+              title: "Спросить поддержку",
+              text: "Подскажем, как оформить первую заявку",
+              icon: HeadsetIcon,
+              onClick: openSupport,
+            },
+          ]}
+        />
+      ) : null}
+
+      {showNumbers ? (
+      <div className="space-y-5 bm-rise">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KpiTile
           label="На гарантии в банке"
-          value={loading ? "—" : formatPrice(heldAmount)}
+          loading={loading}
+          value={<CountUp value={heldAmount} format={formatPrice} />}
           hint="Поставщик получит после вашей приёмки"
           icon={LockKeyIcon}
           tone="brand"
@@ -284,7 +339,8 @@ export default function CustomerDashboard() {
         />
         <KpiTile
           label="Ждёт оплаты"
-          value={loading ? "—" : formatPrice(toPayAmount)}
+          loading={loading}
+          value={<CountUp value={toPayAmount} format={formatPrice} />}
           hint={toPayAmount > 0 ? "Оплатите, чтобы поставщик начал работу" : "Неоплаченных этапов нет"}
           icon={WalletIcon}
           tone={toPayAmount > 0 ? "attention" : "default"}
@@ -292,14 +348,16 @@ export default function CustomerDashboard() {
         />
         <KpiTile
           label="Оплачено в этом месяце"
-          value={loading ? "—" : formatPrice(monthSpend)}
+          loading={loading}
+          value={<CountUp value={monthSpend} format={formatPrice} />}
           hint="Все оплаты по сделкам"
           icon={ReceiptIcon}
           href="/customer/payments"
         />
         <KpiTile
           label="Сделки в работе"
-          value={loading ? "—" : openDeals.length}
+          loading={loading}
+          value={<CountUp value={openDeals.length} />}
           hint={
             unreadMessages > 0
               ? formatCount(unreadMessages, "новое сообщение", "новых сообщения", "новых сообщений")
@@ -372,7 +430,7 @@ export default function CustomerDashboard() {
           <TodoList
             items={todo}
             loading={loading}
-            emptyText="Всё сделано."
+            emptyText="Всё сделано: сейчас от вас ничего не требуется."
             title=""
           />
         </DashboardPanel>
@@ -386,8 +444,16 @@ export default function CustomerDashboard() {
         getSupplierName={getSupplierName}
         loading={loading}
       />
+      </div>
+      ) : null}
 
       <TeamAccessCard side="buyer" teamHref="/customer/company" />
+
+      <ActivateRoleBanner
+        targetSide="supplier"
+        redirectTo="/supplier"
+        label="Хотите ещё и продавать на площадке? Включите роль поставщика на этом же аккаунте."
+      />
     </PageFrame>
   )
 }

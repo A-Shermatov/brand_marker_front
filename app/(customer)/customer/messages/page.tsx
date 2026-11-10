@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
 import { ChatTextIcon as MessageSquare } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
@@ -277,7 +278,14 @@ export default function BuyerMessagesPage() {
             description={
               counterpartParam > 0
                 ? "С этим исполнителем ещё нет переписки. Создайте заявку — чат откроется после предложения или сделки."
-                : "Чат появится, когда вы напишете исполнителю, обсудите предложение или начнётся сделка"
+                : "Чат появится, когда вы напишете поставщику, обсудите его предложение или начнётся сделка."
+            }
+            action={
+              counterpartParam > 0 ? undefined : (
+                <Button asChild variant="outline">
+                  <Link href="/customer/suppliers">Найти поставщика</Link>
+                </Button>
+              )
             }
           />
           {counterpartParam > 0 ? (

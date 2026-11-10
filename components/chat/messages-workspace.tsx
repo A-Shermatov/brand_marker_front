@@ -63,7 +63,7 @@ export function MessagesWorkspace({
   ) : null
 
   return (
-    <div className="grid h-[calc(100dvh-220px)] min-h-[480px] gap-4 md:grid-cols-[340px_minmax(0,1fr)]">
+    <div data-fill-screen className="grid h-[calc(100dvh-220px)] min-h-[480px] gap-4 md:grid-cols-[340px_minmax(0,1fr)]">
       <ConversationsSidebar
         groups={groups}
         selectedId={selectedGroup?.counterpartId ?? null}

@@ -11,6 +11,6 @@ export const BUYER_CONTRACT_LIST_TABS: {
 ]
 
 export const buyerContractEmptyMessages: Record<BuyerContractListTab, string> = {
-  active: "Сделка появится, когда вы купите в каталоге или выберете КП.",
-  completed: "Здесь будут сделки, по которым исполнитель получил оплату",
+  active: "Сделка появится, когда вы выберете предложение поставщика в заявке или купите товар в каталоге.",
+  completed: "Здесь будут сделки, которые вы приняли и по которым поставщик получил оплату.",
 }

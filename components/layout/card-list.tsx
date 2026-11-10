@@ -28,7 +28,7 @@ const PILL: Record<CardTone, string> = {
 
 export function CardList({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
-    <ul aria-label={label} className={cn("grid gap-3", className)}>
+    <ul aria-label={label} className={cn("grid gap-3 bm-stagger", className)}>
       {children}
     </ul>
   )

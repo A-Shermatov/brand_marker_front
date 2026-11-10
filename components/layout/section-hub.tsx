@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { LayoutGroup, motion, useReducedMotion } from "motion/react"
 import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react/dist/ssr"
 import { usePathname, useSearchParams } from "next/navigation"
 import {
@@ -95,6 +96,7 @@ export function SectionHub({ role, badges }: SectionHubProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const section = resolveSection(role, pathname, searchParams.toString())
+  const reduceMotion = useReducedMotion()
   if (!section?.isRoot) return null
   const { hub, tabs, active, meta } = section
   const Icon = HUB_ICONS[role][hub.id]
@@ -116,6 +118,7 @@ export function SectionHub({ role, badges }: SectionHubProps) {
           </h1>
         </div>
       ) : null}
+      <LayoutGroup id={`hub-${role}-${hub.id}`}>
       <div
         role="tablist"
         aria-label={meta?.title ?? hub.label}
@@ -131,17 +134,26 @@ export function SectionHub({ role, badges }: SectionHubProps) {
               role="tab"
               aria-selected={on}
               className={cn(
-                "inline-flex h-8 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3.5 text-[14px] transition-colors",
+                "relative inline-flex h-8 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3.5 text-[14px] transition-colors",
                 on
-                  ? "bg-brand-600 font-semibold text-white"
+                  ? "font-semibold text-white"
                   : "font-medium text-mute hover:bg-brand-50 hover:text-brand-700",
               )}
             >
-              {tab.label}
+              {on ? (
+                <motion.span
+                  layoutId="hub-tab"
+                  aria-hidden
+                  transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 520, damping: 42 }}
+                  className="absolute inset-0 rounded-lg bg-brand-600"
+                />
+              ) : null}
+              <span className="relative">{tab.label}</span>
               {badge > 0 ? (
                 <span
+                  key={badge}
                   className={cn(
-                    "grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11px] font-semibold tnum",
+                    "relative grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11px] font-semibold tnum bm-pop",
                     on ? "bg-card text-brand-700" : "bg-brand-600 text-white",
                   )}
                 >
@@ -152,6 +164,7 @@ export function SectionHub({ role, badges }: SectionHubProps) {
           )
         })}
       </div>
+      </LayoutGroup>
     </div>
   )
 }

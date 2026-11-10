@@ -1,6 +1,8 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { isApiEnabled } from "@/lib/api/config"
 
@@ -18,6 +20,7 @@ export const ActivateRoleBanner = ({
   const router = useRouter()
   const user = useAuthStore((s) => s.user)
   const activateRole = useAuthStore((s) => s.activateRole)
+  const [busy, setBusy] = useState(false)
 
   if (!user || !isApiEnabled()) return null
 
@@ -27,20 +30,23 @@ export const ActivateRoleBanner = ({
   if (hasCapability) return null
 
   const handleActivate = async () => {
-    await activateRole(targetSide)
-    router.push(redirectTo)
+    if (busy) return
+    setBusy(true)
+    try {
+      await activateRole(targetSide)
+      router.push(redirectTo)
+    } finally {
+      setBusy(false)
+    }
   }
 
+  // An offer, not a task: it sits quietly below the person's own work.
   return (
-    <div className="mb-6 rounded-xl border border-primary/30 bg-primary/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <p className="text-sm text-foreground">{label}</p>
-      <button
-        type="button"
-        onClick={handleActivate}
-        className="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shrink-0"
-      >
-        Активировать
-      </button>
+    <div className="flex flex-col justify-between gap-3 rounded-2xl border border-line bg-card p-4 sm:flex-row sm:items-center md:px-5">
+      <p className="text-[14px] text-ink-soft">{label}</p>
+      <Button type="button" variant="outline" onClick={handleActivate} disabled={busy} className="shrink-0">
+        {busy ? "Активируем…" : "Активировать"}
+      </Button>
     </div>
   )
 }

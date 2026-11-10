@@ -39,7 +39,7 @@ export default function HelpPage() {
 
           <p className="text-sm text-muted-foreground mt-6 text-center">
             Не нашли ответ? Позвоните{" "}
-            <a href="tel:88005553535" className="text-primary font-semibold hover:underline">
+            <a href="tel:+992928829955" className="text-primary font-semibold hover:underline">
               +992 92 882 9955
             </a>
           </p>

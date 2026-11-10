@@ -1,4 +1,5 @@
-import { ArrowDownLeftIcon as ArrowDownLeft, ArrowUpRightIcon as ArrowUpRight, LockIcon as Lock } from "@phosphor-icons/react/dist/ssr"
+import { ArrowDownLeftIcon as ArrowDownLeft, ArrowUpRightIcon as ArrowUpRight, LockIcon as Lock, ReceiptIcon } from "@phosphor-icons/react/dist/ssr"
+import { PanelEmpty } from "@/components/layout/panel-empty"
 import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
@@ -38,14 +39,14 @@ type OpsListProps = {
 
 export function OpsList({
   items,
-  emptyText = "Операций пока нет.",
+  emptyText = "Здесь появятся оплаты и возвраты по вашим сделкам.",
 }: OpsListProps) {
   if (items.length === 0) {
-    return <p className="py-4 text-[14px] text-mute">{emptyText}</p>
+    return <PanelEmpty icon={ReceiptIcon} text={emptyText} />
   }
 
   return (
-    <ul className="divide-y divide-line">
+    <ul className="divide-y divide-line bm-stagger">
       {items.map((item) => {
         const Icon = TONE_ICON[item.tone]
         return (

@@ -11,6 +11,8 @@ type KpiTileProps = {
   href?: string
   /** Draws attention when something waits for the user */
   tone?: "default" | "brand" | "attention"
+  /** The number is still on its way: a placeholder holds its place. */
+  loading?: boolean
 }
 
 const TONES = {
@@ -20,7 +22,7 @@ const TONES = {
 }
 
 /** One headline number with what it means; the whole tile opens the section. */
-export function KpiTile({ label, value, hint, icon: Icon, href, tone = "default" }: KpiTileProps) {
+export function KpiTile({ label, value, hint, icon: Icon, href, tone = "default", loading = false }: KpiTileProps) {
   const body = (
     <>
       <div className="flex items-start justify-between gap-3">
@@ -29,7 +31,13 @@ export function KpiTile({ label, value, hint, icon: Icon, href, tone = "default"
           <Icon weight="duotone" className="size-[18px]" aria-hidden />
         </span>
       </div>
-      <p className="mt-2 text-[26px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">{value}</p>
+      <p className="mt-2 text-[26px] font-semibold leading-none tracking-[-0.02em] text-ink tnum">
+        {loading ? (
+          <span className="inline-block h-[26px] w-28 max-w-full rounded-md align-top bm-shimmer" aria-label="Загрузка" />
+        ) : (
+          value
+        )}
+      </p>
       {hint ? (
         <p className="mt-2 flex items-center gap-1 text-[12.5px] text-mute">
           <span className="min-w-0 flex-1 truncate">{hint}</span>

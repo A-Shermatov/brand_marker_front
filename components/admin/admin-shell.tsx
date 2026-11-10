@@ -6,6 +6,8 @@ import { usePathname, useRouter } from "next/navigation"
 import AdminSidebar from "@/components/admin/admin-sidebar"
 import AdminTopbar from "@/components/admin/admin-topbar"
 import { CabinetShell } from "@/components/layout/cabinet-shell"
+import { CabinetSkeleton } from "@/components/layout/cabinet-skeleton"
+import { PageTransition } from "@/components/layout/page-transition"
 import { SectionHub } from "@/components/layout/section-hub"
 import { PageEmptyState } from "@/components/layout"
 import { Button } from "@/components/ui/button"
@@ -56,11 +58,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   if (!hydrated || !isAllowed) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-primary" size={32} aria-label="Проверка доступа" />
-      </div>
-    )
+    return <CabinetSkeleton label="Открываем панель управления" />
   }
 
   if (!fallbackPath) {
@@ -92,7 +90,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       }
     >
       {canAccessPath ? (
-        children
+        <PageTransition>{children}</PageTransition>
       ) : (
         <div className="flex min-h-[55dvh] items-center justify-center">
           <Loader2 className="animate-spin text-primary" size={28} aria-label="Перенаправление" />

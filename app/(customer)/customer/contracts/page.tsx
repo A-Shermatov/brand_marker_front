@@ -1,7 +1,9 @@
 "use client"
 
 import { Suspense, useMemo, useState } from "react"
-import { BriefcaseIcon as Briefcase } from "@phosphor-icons/react/dist/ssr"
+import Link from "next/link"
+import { BriefcaseIcon as Briefcase, PlusIcon } from "@phosphor-icons/react/dist/ssr"
+import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
 import { usePublicSuppliersByActor } from "@/hooks/api/use-supplier-name"
@@ -24,6 +26,7 @@ import {
   useMarkNavSectionSeen,
 } from "@/hooks/api/use-nav-counts-query"
 import {
+  ListSkeleton,
   PageEmptyState,
   PageFrame,
   PageHeader,
@@ -86,12 +89,29 @@ const BuyerContractsContent = () => {
         ariaLabel="Фильтр сделок"
       />
 
-      {!hydrated || isLoading || contracts.length === 0 ? (
+      {!hydrated || isLoading ? (
+        <ListSkeleton label="Загружаем сделки" />
+      ) : contracts.length === 0 ? (
         <PageEmptyState
           variant="card"
           icon={<Briefcase />}
-          title={isLoading ? "Загружаем сделки..." : "Сделок нет"}
-          description={!isLoading ? buyerContractEmptyMessages[tab] : undefined}
+          title="Сделок нет"
+          description={buyerContractEmptyMessages[tab]}
+          action={
+            tab === "active" ? (
+              <>
+                <Button asChild>
+                  <Link href="/customer/rfqs/new">
+                    <PlusIcon weight="bold" className="size-4" />
+                    Новая заявка
+                  </Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href="/customer/catalog">Каталог товаров</Link>
+                </Button>
+              </>
+            ) : undefined
+          }
         />
       ) : (
         <DealList

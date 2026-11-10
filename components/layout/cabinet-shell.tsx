@@ -34,7 +34,7 @@ export const CabinetShell = ({
       </aside>
       <div className="flex min-w-0 flex-1 flex-col pb-20 lg:pb-0">
         {topbar}
-        <main className="mx-auto w-full max-w-[1240px] flex-1 px-4 py-5 lg:px-8 lg:py-7">
+        <main className="mx-auto w-full max-w-[1240px] flex-1 px-4 py-5 lg:px-8 lg:pt-7 lg:pb-24 lg:has-[[data-fill-screen]]:pb-7">
           <CabinetBreadcrumbs />
           {sectionHub}
           {children}

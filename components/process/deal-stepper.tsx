@@ -33,19 +33,21 @@ export const DealStepper = ({ contract, className }: { contract: DealContract; c
                   done
                     ? "bg-brand-600 text-white"
                     : now
-                      ? "border-2 border-brand-600 bg-card text-brand-700"
+                      ? "border-2 border-brand-600 bg-card text-brand-700 ring-4 ring-brand-50"
                       : "bg-surface-muted text-mute",
                 )}
               >
                 {done ? <Check className="size-3.5" aria-hidden /> : index + 1}
               </span>
               {index < steps.length - 1 ? (
-                <span
-                  className={cn(
-                    "ml-1.5 h-0.5 flex-1",
-                    done || finished ? "bg-brand-600" : "bg-line",
-                  )}
-                />
+                <span className="ml-1.5 h-0.5 flex-1 overflow-hidden rounded-full bg-line">
+                  {done || finished ? (
+                    <span
+                      className="block size-full bg-brand-600 bm-grow-x"
+                      style={{ animationDelay: `${index * 0.14}s` }}
+                    />
+                  ) : null}
+                </span>
               ) : null}
             </span>
             <span
