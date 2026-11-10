@@ -118,10 +118,34 @@ test("the admin manages the Telegram bot in the settings", async ({ pageAs }) =>
   await expect(admin).toHaveURL(/\/admin\/telegram$/)
   await expect(admin.getByRole("tab", { name: "Telegram-бот" })).toHaveAttribute("aria-selected", "true")
   await expect(admin.getByText("Так выглядит пост")).toBeVisible()
+  // The preview is the real next post: the picture card and its caption.
+  await expect(admin.getByAltText("Картинка поста")).toBeVisible()
+  await expect(admin.getByText(/Заказчик: /)).toBeVisible()
 
   // A token that is not a bot token is refused before anything is sent to Telegram.
   await admin.getByLabel("Токен бота").fill("not-a-token")
   await admin.getByRole("textbox", { name: "Канал" }).fill("@brend_zayavki")
   await admin.getByRole("button", { name: "Сохранить" }).click()
   await expect(admin.getByText(/Токен бота выглядит неверно/)).toBeVisible()
+})
+
+test("the site never scrolls sideways, signed in or not", async ({ browser }) => {
+  for (const storageState of [undefined, "e2e/.auth/buyer.json"]) {
+    for (const width of [1440, 1280, 1100, 1024]) {
+      const context = await browser.newContext({ viewport: { width, height: 900 }, storageState })
+      const page = await context.newPage()
+      await page.goto("/")
+      const banner = page.locator("header").first()
+      await expect(banner).toBeVisible()
+      const sideways = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      )
+      expect(sideways, `${storageState ? "signed in" : "guest"} at ${width}px`).toBe(0)
+      // The main button stays inside the header.
+      const header = await banner.boundingBox()
+      const button = await banner.getByRole("link", { name: /^(Заявка|Разместить заявку)$/ }).boundingBox()
+      expect(button!.x + button!.width).toBeLessThanOrEqual(header!.x + header!.width)
+      await context.close()
+    }
+  }
 })

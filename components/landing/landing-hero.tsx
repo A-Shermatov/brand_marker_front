@@ -45,11 +45,29 @@ export const LandingHero = () => {
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-12 px-4 py-12 lg:grid-cols-[1.15fr_1fr] lg:px-8 lg:py-20">
         <div className="grid content-start gap-6">
           <span className="inline-flex items-center gap-2 justify-self-start rounded-full bg-white/15 px-3 py-1.5 text-[14px] font-medium text-white ring-1 ring-white/25">
-            <ShieldCheck weight="fill" className="size-[18px]" aria-hidden />
+            <ShieldCheck weight="fill" className="size-[18px] text-volt-400" aria-hidden />
             Каждая сделка под защитой банка‑партнёра
           </span>
           <h1 className="text-[38px] font-semibold leading-[1.04] tracking-[-0.035em] text-white sm:text-[54px] [text-wrap:balance]">
-            Закупки для бизнеса — просто и&nbsp;безопасно
+            Закупки для бизнеса — просто и&nbsp;
+            <span className="relative inline-block whitespace-nowrap">
+              безопасно
+              {/* A hand-drawn lime stroke under the promise. */}
+              <svg
+                aria-hidden
+                viewBox="0 0 300 24"
+                preserveAspectRatio="none"
+                className="absolute -bottom-[0.2em] left-0 h-[0.3em] w-full"
+              >
+                <path
+                  d="M4 16 C 70 6, 150 4, 296 12"
+                  fill="none"
+                  stroke="var(--volt-400)"
+                  strokeWidth="7"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
           </h1>
           <p className="max-w-xl text-[17px] leading-relaxed text-[#E3ECFF]">
             Найдите проверенного поставщика, сравните цены и платите только после того, как получили товар.
@@ -63,10 +81,10 @@ export const LandingHero = () => {
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && submit()}
                 placeholder="Что нужно купить? Например: цемент М500"
-                className="h-12 w-full rounded-lg border border-transparent bg-card pl-12 pr-3.5 text-[15.5px] text-ink shadow-[0_10px_30px_-12px_rgb(0_30_90/0.55)] outline-none transition placeholder:text-faint focus:ring-[3px] focus:ring-sun/70"
+                className="h-12 w-full rounded-lg border border-transparent bg-card pl-12 pr-3.5 text-[15.5px] text-ink shadow-[0_10px_30px_-12px_rgb(0_30_90/0.55)] outline-none transition placeholder:text-faint focus:ring-[3px] focus:ring-volt-400/70"
               />
             </label>
-            <Button type="button" size="lg" className="h-12 bg-sun px-7 text-sun-ink shadow-[0_10px_30px_-12px_rgb(0_30_90/0.55)] hover:bg-[#FFDA57]" onClick={() => submit()}>
+            <Button type="button" size="lg" className="h-12 border-volt-500/40 bg-volt-400 px-7 font-semibold text-volt-ink shadow-[0_10px_30px_-12px_rgb(0_30_90/0.55)] hover:bg-volt-300 dark:border-volt-500/40 dark:hover:bg-volt-300" onClick={() => submit()}>
               Найти
             </Button>
           </div>
@@ -77,7 +95,7 @@ export const LandingHero = () => {
                 key={item}
                 type="button"
                 onClick={() => submit(item)}
-                className="h-8 rounded-full border border-white/30 bg-white/10 px-3 text-[13.5px] font-medium text-white transition-colors hover:border-white/60 hover:bg-white/20"
+                className="h-8 rounded-full border border-white/30 bg-white/10 px-3 text-[13.5px] font-medium text-white transition-colors hover:border-volt-400 hover:bg-volt-400 hover:text-volt-ink"
               >
                 {item}
               </button>

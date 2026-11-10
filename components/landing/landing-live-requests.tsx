@@ -56,45 +56,62 @@ export function LandingLiveRequests() {
   if (pool.length === 0) return null
 
   return (
-    <section className="border-y border-line bg-card" aria-labelledby="live-requests-title">
-      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+    <section
+      className="relative overflow-hidden bg-[#0A1733] text-white"
+      aria-labelledby="live-requests-title"
+    >
+      {/* A soft lime glow behind the feed, and a faint blue one behind the text. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(520px_320px_at_78%_40%,rgb(217_245_70/0.16),transparent_70%),radial-gradient(600px_400px_at_10%_0%,rgb(47_128_255/0.28),transparent_70%)]"
+      />
+      <div className="relative mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:px-8">
         <div className="grid content-start gap-4">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-safe-50 px-3 py-1 text-[13px] font-semibold text-safe-700">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-volt-400/15 px-3 py-1 text-[13px] font-semibold text-volt-300 ring-1 ring-volt-400/30">
             <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-safe-500 opacity-60 motion-reduce:hidden" />
-              <span className="relative inline-flex size-2 rounded-full bg-safe-500" />
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-volt-400 opacity-70 motion-reduce:hidden" />
+              <span className="relative inline-flex size-2 rounded-full bg-volt-400" />
             </span>
             Заявки прямо сейчас
           </span>
-          <h2 id="live-requests-title" className="text-[30px] font-bold leading-tight tracking-[-0.02em] text-ink sm:text-[34px]">
+          <h2 id="live-requests-title" className="text-[30px] font-bold leading-tight tracking-[-0.02em] text-white sm:text-[34px]">
             Покупатели ищут поставщиков каждый день
           </h2>
-          <p className="max-w-[460px] text-[16px] leading-relaxed text-ink-soft">
+          <p className="max-w-[460px] text-[16px] leading-relaxed text-[#C5D3F2]">
             Здесь видны свежие заявки с бюджетами. Поставщики отвечают предложением, покупатель
             выбирает лучшее — и платит через банк‑партнёр.
           </p>
           <dl className="flex flex-wrap gap-x-8 gap-y-2 pt-1">
             <div>
-              <dt className="text-[13px] text-mute">Открытых заявок</dt>
-              <dd className="text-[26px] font-bold text-ink tnum">{total}</dd>
+              <dt className="text-[13px] text-[#93A6CC]">Открытых заявок</dt>
+              <dd className="text-[28px] font-bold text-volt-400 tnum">{total}</dd>
             </div>
             {budgetSum > 0 ? (
               <div>
-                <dt className="text-[13px] text-mute">Бюджеты свежих заявок</dt>
-                <dd className="text-[26px] font-bold text-ink tnum">
-                  <span className="text-[15px] font-medium text-mute">от </span>
+                <dt className="text-[13px] text-[#93A6CC]">Бюджеты свежих заявок</dt>
+                <dd className="text-[28px] font-bold text-volt-400 tnum">
+                  <span className="text-[15px] font-medium text-[#93A6CC]">от </span>
                   {formatCurrency(budgetSum, pool.find((r) => r.budget_from)?.currency ?? "TJS")}
                 </dd>
               </div>
             ) : null}
           </dl>
           <div className="flex flex-wrap gap-3 pt-2">
-            <Button asChild size="lg">
+            <Button
+              asChild
+              size="lg"
+              className="border-volt-500/40 bg-volt-400 font-semibold text-volt-ink hover:bg-volt-300 dark:border-volt-500/40 dark:hover:bg-volt-300"
+            >
               <Link href="/supplier/rfqs">
                 Смотреть все заявки <ArrowRightIcon className="size-4" aria-hidden />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            >
               <Link href="/register?role=supplier">Стать поставщиком</Link>
             </Button>
           </div>
@@ -118,7 +135,7 @@ export function LandingLiveRequests() {
             </AnimatePresence>
           </ul>
           {/* The list fades out at the bottom, as if it went on. */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0A1733] to-transparent" />
         </div>
       </div>
     </section>
@@ -137,8 +154,8 @@ function LiveRequestCard({ rfq, fresh }: { rfq: RfqWithRelations; fresh: boolean
       className={cn(
         "group grid grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-4 rounded-2xl border bg-card p-4 transition-[border-color,box-shadow]",
         fresh
-          ? "border-brand-200 shadow-[0_12px_28px_-16px_rgb(0_80_200/0.55)]"
-          : "border-line hover:border-brand-200",
+          ? "border-volt-400 shadow-[0_0_0_3px_rgb(217_245_70/0.25),0_16px_32px_-18px_rgb(0_0_0/0.6)]"
+          : "border-transparent hover:border-volt-400/60",
       )}
     >
       <span className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600">

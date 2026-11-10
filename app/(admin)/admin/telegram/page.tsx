@@ -13,6 +13,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { PageFrame, PageHeader, PageSurface } from "@/components/layout"
+import { TelegramPostPreview } from "@/components/admin/telegram-post-preview"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -289,24 +290,9 @@ export default function AdminTelegramPage() {
 
           <PageSurface className="grid gap-3 p-5">
             <h2 className="text-[16px] font-semibold text-ink">Так выглядит пост</h2>
-            <div className="rounded-2xl bg-[#E7EEF5] p-3 dark:bg-[#0E1621]">
-              <div className="rounded-xl rounded-bl-sm bg-white p-3 text-[14px] leading-[1.45] text-[#0F1419] shadow-sm dark:bg-[#182533] dark:text-[#E9EEF2]">
-                <p>
-                  🆕 <b>Новая заявка</b> · Компьютеры и оргтехника
-                </p>
-                <p>
-                  <b>Ноутбуки для отдела продаж</b>
-                </p>
-                <p>💰 12 500 TJS · 📦 40 шт · 🛡 с гарантией</p>
-                <p>📍 Душанбе · ⏳ КП до 28 ноя</p>
-                <p className="text-[#168ACD]">Открыть заявку →</p>
-              </div>
-              <div className="mt-1.5 rounded-lg bg-white/70 py-2 text-center text-[13.5px] font-medium text-[#168ACD] dark:bg-[#182533]/80">
-                Открыть заявку
-              </div>
-            </div>
+            <TelegramPostPreview />
             <p className="text-[12.5px] text-mute">
-              Поставщик видит суть за секунду и одним нажатием открывает заявку на сайте.
+              Картинка с логотипом заказчика и Brend Market, под ней текст заявки и кнопка «Открыть заявку».
             </p>
           </PageSurface>
         </aside>
