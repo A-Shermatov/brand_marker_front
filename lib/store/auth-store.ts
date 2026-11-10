@@ -396,7 +396,7 @@ export const useAuthStore = create<AuthState>()(
 
       restoreSession: async () => {
         if (!isApiEnabled()) return false
-        if (!tokenStorage.getAccess() && !tokenStorage.getRefresh()) return false
+        if (!tokenStorage.hasSession()) return false
         try {
           const me = await authApi.me()
           if (["admin", "superadmin", "moderator"].includes(me.user.role)) {

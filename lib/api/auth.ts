@@ -168,11 +168,13 @@ export const authApi = {
   me: () => apiFetch<MeResponse>("/auth/me"),
 
   logout: async () => {
-    const refresh = tokenStorage.getRefresh()
-    if (refresh) {
+    if (tokenStorage.hasSession()) {
+      // The API revokes the token from the body (older sessions) or from the cookie,
+      // and clears the cookie.
+      const refresh = tokenStorage.getRefresh()
       await apiFetch("/auth/logout", {
         method: "POST",
-        body: JSON.stringify({ refresh_token: refresh }),
+        body: JSON.stringify(refresh ? { refresh_token: refresh } : {}),
         skipAuth: true,
       }).catch(() => undefined)
     }
