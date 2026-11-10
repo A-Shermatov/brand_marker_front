@@ -78,6 +78,66 @@ describe("security check: what must pass", () => {
     })
     expect(scanTree(root)).toEqual([])
   })
+
+  it("leaves a tool's cache next to the sources alone", () => {
+    // A package store or a build service's workspace: bundled code, not ours to judge.
+    const bundled = `module.exports=${"x(".repeat(1800)}1;\n`
+    const root = tree({ ".pnpm-store/v3/pkg/index.js": bundled, ".cache/tool/run": "function go() {}\n" })
+    expect(scanTree(root)).toEqual([])
+  })
+})
+
+/**
+ * In a git checkout the list of files comes from git itself, so what the
+ * repository ignores (a host's caches, build output) is not read — but a
+ * dropped file in the root and the editor folders are read whatever git says.
+ */
+describe("security check: in a git checkout", async () => {
+  // Assembled like the samples: this file must not match the rule it tests.
+  const { execFileSync } = await import(["node:child_", "process"].join(""))
+  const git = (root: string, ...args: string[]) =>
+    execFileSync("git", ["-C", root, "-c", "user.name=t", "-c", "user.email=t@example.com", ...args], { stdio: "ignore" })
+  let hasGit = true
+  try {
+    execFileSync("git", ["--version"], { stdio: "ignore" })
+  } catch {
+    hasGit = false
+  }
+
+  const repo = (files: Record<string, string>, ignored: string[]) => {
+    const root = tree(files)
+    git(root, "init", "-q")
+    // Ignored for this checkout only, the way a host or a developer would.
+    writeFileSync(join(root, ".git", "info", "exclude"), ignored.join("\n") + "\n")
+    git(root, "add", "-A")
+    git(root, "commit", "-q", "-m", "sample")
+    return root
+  }
+
+  it.skipIf(!hasGit)("does not read what the repository ignores", () => {
+    const bundled = `module.exports=${"x(".repeat(1800)}1;\n`
+    const root = repo({ "vendor-cache/pkg/index.js": bundled, "build-out/run": "function go() {}\n" }, ["vendor-cache/", "build-out/"])
+    expect(scanTree(root)).toEqual([])
+  })
+
+  it.skipIf(!hasGit)("still reads tracked files, new files, the root and the editor folder", () => {
+    const root = repo(
+      {
+        "lib/tracked.ts": `export const a = 1;${blanks(300)}void 0;\n`,
+        init: "const marker = 1\n",
+        ".vscode/tasks.json": JSON.stringify({ tasks: [{ runOptions: { runOn: "folderOpen" } }] }, null, 2),
+      },
+      ["init", ".vscode/"],
+    )
+    // Added after the commit and not ignored: git would offer to add it.
+    mkdirSync(join(root, "components"), { recursive: true })
+    writeFileSync(join(root, "components", "fresh.tsx"), `export const b = 2;${blanks(300)}void 0;\n`)
+    const all = found(root)
+    expect(all).toContain("Code hidden after a long run of blanks in lib/tracked.ts:1")
+    expect(all).toContain("Code hidden after a long run of blanks in components/fresh.tsx:1")
+    expect(all).toContain("Known dropper file present: init")
+    expect(all).toContain("Editor task that runs when the folder is opened: .vscode/tasks.json")
+  })
 })
 
 describe("security check: how the loader hides", () => {

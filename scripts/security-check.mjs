@@ -17,9 +17,16 @@
  *              hooks, an editor task that runs when the folder is opened;
  *   known    – names, addresses and code shapes seen in past versions.
  *
+ * What is read: every file git tracks, new files git would offer to add,
+ * everything directly in the root, and the editor folders. Ignored folders
+ * and the caches a build service keeps next to the sources are left alone —
+ * the loader has to be started from a tracked file, and those are all read.
+ * Without git (a Docker build context) the tree is walked instead.
+ *
  * Usage: node scripts/security-check.mjs [--root <dir>]
  * Exit code 1 and a list of findings when something is found.
  */
+import { execFileSync } from "node:child_process"
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import { basename, join, relative, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
@@ -97,7 +104,16 @@ const INSTALL_HOOKS = ["preinstall", "install", "postinstall", "prepare", "prepu
 
 const LOOKS_LIKE_CODE = /\brequire\s*\(|\bfunction\b|=>|\bimport\s|\bconst\s|\bvar\s/
 
-function walk(dir, out = []) {
+// Dot-folders that are part of a project. Any other dot-folder at the top is
+// some tool's cache (a package store, a build service's workspace).
+const PROJECT_DOT_DIRS = new Set([".vscode", ".cursor", ".github", ".husky"])
+const EDITOR_DIRS = [".vscode", ".cursor"]
+
+const isToolCache = (topName) => topName.startsWith(".") && !PROJECT_DOT_DIRS.has(topName)
+const slashed = (path) => path.split("\\").join("/")
+
+/** Files under `dir`, relative to `root`; `deep: false` lists only those directly in it. */
+function walk(root, dir = root, deep = true, out = []) {
   let names
   try {
     names = readdirSync(dir)
@@ -113,10 +129,47 @@ function walk(dir, out = []) {
     } catch {
       continue
     }
-    if (st.isDirectory()) walk(path, out)
-    else out.push({ path, size: st.size })
+    if (!st.isDirectory()) out.push(slashed(relative(root, path)))
+    else if (deep && !(dir === root && isToolCache(name))) walk(root, path, deep, out)
   }
   return out
+}
+
+/** What git knows here: `--cached` for tracked files, `--others` for new ones it does not ignore. */
+function gitList(root, kind) {
+  if (!existsSync(join(root, ".git"))) return null
+  try {
+    const out = execFileSync("git", ["-C", root, "ls-files", "-z", kind, "--exclude-standard"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      maxBuffer: 256 * 1024 * 1024,
+    })
+    return out.split(String.fromCharCode(0)).filter(Boolean)
+  } catch {
+    return null
+  }
+}
+
+/** The files to read, relative to the root, each once. */
+function filesToRead(root) {
+  const found = new Set()
+  const tracked = gitList(root, "--cached")
+  if (tracked?.length) {
+    for (const rel of tracked) found.add(rel)
+    for (const rel of gitList(root, "--others") ?? []) {
+      const parts = rel.split("/")
+      if (parts.some((part) => SKIP_DIRS.has(part))) continue
+      if (parts.length > 1 && isToolCache(parts[0])) continue
+      found.add(rel)
+    }
+  } else {
+    for (const rel of walk(root)) found.add(rel)
+  }
+  // Whatever git thinks of them: a file dropped next to package.json, a
+  // config a tool picks up by its name, and what an editor runs on opening.
+  for (const rel of walk(root, root, false)) found.add(rel)
+  for (const dir of EDITOR_DIRS) for (const rel of walk(root, join(root, dir))) found.add(rel)
+  return [...found]
 }
 
 const extOf = (name) => {
@@ -188,9 +241,16 @@ export function scanTree(root = REPO_ROOT) {
     }
   }
 
-  for (const { path, size } of walk(root)) {
+  for (const rel of filesToRead(root)) {
+    const path = join(root, rel)
     if (path === HERE) continue
-    const rel = relative(root, path).replace(/\\/g, "/")
+    let size
+    try {
+      size = statSync(path).size
+    } catch {
+      // Tracked, but not on disk.
+      continue
+    }
     const name = basename(path)
     const ext = extOf(name)
     const atRoot = !rel.includes("/")
