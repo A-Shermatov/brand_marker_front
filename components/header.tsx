@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { UserIcon as User, ListIcon as Menu, XIcon as X, SignOutIcon as LogOut, ShoppingBagIcon as ShoppingBag, GridFourIcon as LayoutGrid } from "@phosphor-icons/react/dist/ssr"
 import { MarketplaceSearch } from "@/components/marketplace/marketplace-search"
 import {
@@ -66,7 +66,6 @@ const NAV = [
 
 export default function Header() {
   const pathname = usePathname()
-  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const hydrated = useHydrated()
   const user = useAuthStore((s) => s.user)
@@ -80,9 +79,8 @@ export default function Header() {
   const displayName = authedUser ? getUserDisplayName(authedUser) : ""
 
   const handleLogout = () => {
-    void logout()
     setMobileMenuOpen(false)
-    router.push("/")
+    void logout("/")
   }
 
   const closeMobileMenu = () => setMobileMenuOpen(false)

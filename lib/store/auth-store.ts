@@ -78,7 +78,8 @@ interface AuthState {
     role: MarketplaceSessionRole
   }) => Promise<void>
   restoreSession: () => Promise<boolean>
-  logout: () => Promise<void>
+  /** Ends the session; with `redirectTo` reloads that page so no data of this user stays in memory. */
+  logout: (redirectTo?: string) => Promise<void>
   updateProfile: (patch: Partial<SessionUser>) => void
   switchActor: (actorId: number) => Promise<void>
   switchCompany: (companyId: number) => Promise<void>
@@ -212,6 +213,18 @@ const finalizeMarketplaceSession = async (
     user: sessionFromMe(me, role),
   })
   return role
+}
+
+/** Every `bm-*` key in localStorage holds data of the signed-in user (tokens, stores). */
+const clearPersistedUserData = () => {
+  if (typeof window === "undefined") return
+  try {
+    for (const key of Object.keys(window.localStorage)) {
+      if (key.startsWith("bm-")) window.localStorage.removeItem(key)
+    }
+  } catch {
+    // storage blocked: nothing persisted to clear
+  }
 }
 
 const finalizeAdminSession = async (set: AuthStoreSet): Promise<void> => {
@@ -412,11 +425,18 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      logout: async () => {
+      logout: async (redirectTo?: string) => {
         if (isApiEnabled()) {
           await authApi.logout()
+          // Cart, cached deals, companies, notifications… persist per browser, not per
+          // user: the next person to sign in on this device must not see them.
+          clearPersistedUserData()
         }
         set({ user: null, isAuthenticated: false, isReady: true })
+        if (redirectTo && typeof window !== "undefined") {
+          // A full load also drops the React Query cache (keys are not per user).
+          window.location.replace(redirectTo)
+        }
       },
 
       updateProfile: (patch) =>
