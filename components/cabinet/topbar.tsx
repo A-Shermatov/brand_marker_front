@@ -41,8 +41,7 @@ export default function CustomerTopbar({
   const initials = hydrated && user ? getUserInitials(user) : ""
 
   const handleLogout = () => {
-    logout()
-    router.push("/login")
+    void logout("/login")
   }
 
   return (

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { TruckIcon as Truck, CheckIcon as Check, SignOutIcon as LogOut } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "@/components/ui/button"
 import { PageFrame, PageHeader, PageSurface } from "@/components/layout"
-import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useHydrated } from "@/hooks/use-hydrated"
@@ -18,7 +17,6 @@ import { getApiErrorMessage } from "@/lib/api/client"
 import { toast } from "sonner"
 
 export default function SupplierProfilePage() {
-  const router = useRouter()
   const hydrated = useHydrated()
   const user = useAuthStore((s) => s.user)
   const updateProfile = useAuthStore((s) => s.updateProfile)
@@ -77,8 +75,7 @@ export default function SupplierProfilePage() {
   }
 
   const handleLogout = () => {
-    logout()
-    router.push("/login")
+    void logout("/login")
   }
 
   const inputClass =

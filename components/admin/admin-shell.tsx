@@ -53,8 +53,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }, [canAccessPath, fallbackPath, isAllowed, router])
 
   const handleLogout = async () => {
-    await logout()
-    router.replace("/admin/login")
+    await logout("/admin/login")
   }
 
   if (!hydrated || !isAllowed) {

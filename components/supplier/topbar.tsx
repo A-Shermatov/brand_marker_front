@@ -40,8 +40,7 @@ export default function SupplierTopbar({
   const initials = hydrated && user ? getUserInitials(user) : ""
 
   const handleLogout = () => {
-    logout()
-    router.push("/login")
+    void logout("/login")
   }
 
   return (

@@ -38,7 +38,12 @@ export type TokenPair = {
 }
 
 const TOKEN_KEY = "bm-access-token"
+/** Only for sessions started before the cookie: the API now keeps the refresh token in an httpOnly cookie. */
 const REFRESH_KEY = "bm-refresh-token"
+/** "A session exists": lets the client try a cookie refresh without probing anonymous visitors. */
+const SESSION_KEY = "bm-session"
+/** Asks the API to put the refresh token in an httpOnly cookie instead of the response body. */
+const REFRESH_COOKIE_HEADER = "X-Refresh-Cookie"
 const ACTOR_KEY = "bm-actor-id"
 const COMPANY_KEY = "bm-company-id"
 const ACCESS_REFRESH_SKEW_SEC = 60
@@ -58,9 +63,19 @@ export const tokenStorage = {
     const v = localStorage.getItem(COMPANY_KEY)
     return v ? Number(v) : null
   },
+  hasSession: (): boolean =>
+    typeof window !== "undefined" &&
+    Boolean(
+      localStorage.getItem(SESSION_KEY) ||
+        localStorage.getItem(TOKEN_KEY) ||
+        localStorage.getItem(REFRESH_KEY),
+    ),
   setTokens: (tokens: TokenPair) => {
     localStorage.setItem(TOKEN_KEY, tokens.access_token)
-    localStorage.setItem(REFRESH_KEY, tokens.refresh_token)
+    localStorage.setItem(SESSION_KEY, "1")
+    // The refresh token comes back in the body only from an API without the cookie.
+    if (tokens.refresh_token) localStorage.setItem(REFRESH_KEY, tokens.refresh_token)
+    else localStorage.removeItem(REFRESH_KEY)
   },
   setActorId: (id: number) => {
     localStorage.setItem(ACTOR_KEY, String(id))
@@ -76,6 +91,7 @@ export const tokenStorage = {
   clear: () => {
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(REFRESH_KEY)
+    localStorage.removeItem(SESSION_KEY)
     localStorage.removeItem(ACTOR_KEY)
     localStorage.removeItem(COMPANY_KEY)
   },
@@ -107,13 +123,16 @@ const refreshAccessToken = (): Promise<string | null> => {
   if (refreshPromise) return refreshPromise
 
   refreshPromise = (async () => {
-    const refresh = tokenStorage.getRefresh()
-    if (!refresh) return null
+    if (!tokenStorage.hasSession()) return null
+    // A token left in localStorage by an older session is sent once; after that the
+    // httpOnly cookie carries it.
+    const legacyRefresh = tokenStorage.getRefresh()
     try {
       const res = await fetch(`${API_URL}/auth/refresh`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh_token: refresh }),
+        credentials: "include",
+        headers: { "Content-Type": "application/json", [REFRESH_COOKIE_HEADER]: "1" },
+        body: JSON.stringify(legacyRefresh ? { refresh_token: legacyRefresh } : {}),
       })
       if (res.status === 401 || res.status === 403) {
         tokenStorage.clear()
@@ -189,14 +208,17 @@ export const apiFetch = async <T>(
     headers.set("Content-Type", "application/json")
   }
 
+  // Login, 2FA, register and password change then set the refresh cookie.
+  headers.set(REFRESH_COOKIE_HEADER, "1")
+
   const sentToken = headers.get("Authorization")
-  let res = await fetch(`${API_URL}${path}`, { ...init, headers })
+  let res = await fetch(`${API_URL}${path}`, { credentials: "include", ...init, headers })
 
   if (res.status === 401 && !skipAuth) {
     const newToken = await refreshAccessToken()
     if (newToken && `Bearer ${newToken}` !== sentToken) {
       headers.set("Authorization", `Bearer ${newToken}`)
-      res = await fetch(`${API_URL}${path}`, { ...init, headers })
+      res = await fetch(`${API_URL}${path}`, { credentials: "include", ...init, headers })
     }
   }
 
