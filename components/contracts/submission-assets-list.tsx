@@ -2,6 +2,7 @@
 
 import { DownloadSimpleIcon as Download, ArrowSquareOutIcon as ExternalLink, FileTextIcon as FileText, ImageIcon, LinkIcon as Link2, VideoCameraIcon as Video } from "@phosphor-icons/react/dist/ssr"
 import type { SubmissionAsset } from "@/types"
+import { safeUserUrl } from "@/lib/file-url"
 
 type SubmissionAssetsListProps = {
   assets: SubmissionAsset[]
@@ -21,14 +22,16 @@ export const SubmissionAssetsList = ({ assets }: SubmissionAssetsListProps) => {
     <ul className="space-y-2 mt-3">
       {assets.map((asset) => {
         const Icon = kindIcon[asset.kind] ?? FileText
-        const isExternal = asset.kind === "link" || asset.url.startsWith("http")
+        // Written by the other party: never render javascript:/data: links.
+        const url = safeUserUrl(asset.url)
+        const isExternal = asset.kind === "link" || url.startsWith("http")
         const key = `${asset.kind}-${asset.name}-${asset.url}`
 
         return (
           <li key={key} className="rounded-xl border border-border p-3">
-            {asset.kind === "image" && asset.url && asset.url !== "#" ? (
+            {asset.kind === "image" && url ? (
               <a
-                href={asset.url}
+                href={url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block"
@@ -36,16 +39,16 @@ export const SubmissionAssetsList = ({ assets }: SubmissionAssetsListProps) => {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={asset.url}
+                  src={url}
                   alt={asset.name}
                   className="w-full max-h-48 object-contain rounded-lg bg-secondary"
                 />
                 <p className="text-xs text-muted-foreground mt-2 truncate">{asset.name}</p>
               </a>
-            ) : asset.kind === "video" && asset.url && asset.url !== "#" ? (
+            ) : asset.kind === "video" && url ? (
               <div>
                 <video
-                  src={asset.url}
+                  src={url}
                   controls
                   className="w-full max-h-56 rounded-lg bg-black"
                   aria-label={asset.name}
@@ -54,9 +57,9 @@ export const SubmissionAssetsList = ({ assets }: SubmissionAssetsListProps) => {
                 </video>
                 <p className="text-xs text-muted-foreground mt-2 truncate">{asset.name}</p>
               </div>
-            ) : asset.url && asset.url !== "#" ? (
+            ) : url ? (
               <a
-                href={asset.url}
+                href={url}
                 target={isExternal ? "_blank" : undefined}
                 rel={isExternal ? "noopener noreferrer" : undefined}
                 className="flex items-center gap-3 hover:opacity-90 transition-opacity"
