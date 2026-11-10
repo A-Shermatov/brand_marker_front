@@ -89,7 +89,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-line bg-card/90 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-2 px-4 sm:gap-3 lg:h-16 lg:gap-6 lg:px-8">
+      <div className="mx-auto flex h-14 max-w-[1200px] items-center gap-2 px-4 sm:gap-3 lg:h-16 lg:px-8">
         <span className="shrink-0 sm:hidden">
           <BrandLogo small showWordmark={false} />
         </span>
@@ -108,7 +108,7 @@ export default function Header() {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "relative inline-flex h-9 items-center whitespace-nowrap rounded-md px-3 text-[14.5px] transition-colors",
+                  "relative inline-flex h-9 items-center whitespace-nowrap rounded-md px-2.5 text-[14.5px] transition-colors xl:px-3",
                   on
                     ? "font-semibold text-ink after:absolute after:inset-x-3 after:-bottom-[13px] after:h-[2px] after:rounded-full after:bg-brand-600"
                     : "font-medium text-ink-soft hover:bg-surface-muted hover:text-ink",
@@ -120,9 +120,10 @@ export default function Header() {
           })}
         </nav>
 
-        <span className="min-w-2 flex-1" aria-hidden="true" />
+        <span className="min-w-2 flex-1 xl:hidden" aria-hidden="true" />
 
-        <div className="relative hidden w-[240px] shrink-0 xl:block">
+        {/* The search takes the room that is left, so the header never pushes past the screen. */}
+        <div className="relative hidden min-w-[140px] max-w-[260px] flex-1 xl:ml-2 xl:block">
           <MarketplaceSearch
             variant="compact"
             className="w-full"
@@ -144,7 +145,7 @@ export default function Header() {
                 className="flex h-10 shrink-0 items-center gap-2 rounded-lg pl-1 pr-3 transition-colors hover:bg-surface-muted"
               >
                 <UserAvatar src={authedUser.avatarUrl} name={authedUser.name || authedUser.email} size={32} />
-                <span className="hidden text-[14px] font-medium sm:block">
+                <span className="hidden text-[14px] font-medium sm:block xl:hidden">
                   Кабинет
                 </span>
               </button>
@@ -194,8 +195,8 @@ export default function Header() {
 
         <Button asChild className="h-10 shrink-0 px-4">
           <Link href={rfqHref}>
-            <span className="hidden sm:inline">Разместить заявку</span>
-            <span className="sm:hidden">Заявка</span>
+            <span className="hidden xl:inline">Разместить заявку</span>
+            <span className="xl:hidden">Заявка</span>
           </Link>
         </Button>
 

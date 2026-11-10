@@ -41,6 +41,14 @@
   --sun: #FFD02F;
   --sun-ink: #2B2200;
 
+  /* Volt: a yellow-lime spark for the landing page. It lights up the blue
+     and the navy without competing with them; text on it is near-black. */
+  --volt-200: #F2FCC4;
+  --volt-300: #E7F98A;
+  --volt-400: #D9F546;
+  --volt-500: #C2E02B;
+  --volt-ink: #1C2400;
+
   --verify-50: var(--brand-50);
   --verify-600: var(--brand-600);
 
@@ -237,6 +245,11 @@
   --color-rail-active: var(--rail-active);
   --color-rail-accent: var(--rail-accent);
   --color-sun: var(--sun);
+  --color-volt-200: var(--volt-200);
+  --color-volt-300: var(--volt-300);
+  --color-volt-400: var(--volt-400);
+  --color-volt-500: var(--volt-500);
+  --color-volt-ink: var(--volt-ink);
   --color-contrast: var(--contrast);
   --color-sun-ink: var(--sun-ink);
   --color-ink: var(--ink);
@@ -308,6 +321,8 @@
     font-weight: 430;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Nothing may make the page scroll sideways (a wide ribbon, an animation). */
+    overflow-x: clip;
   }
   h1,
   h2,

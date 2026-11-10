@@ -41,6 +41,9 @@ export const telegramApi = {
   update: (data: TelegramSettingsInput) =>
     apiFetch<TelegramSettings>(PREFIX, { method: "PUT", body: JSON.stringify(data) }),
   test: () => apiFetch<{ ok: boolean }>(`${PREFIX}/test`, { method: "POST" }),
+  /** The next post: the picture as a data URL (none without a font) and the caption. */
+  preview: () =>
+    apiFetch<{ caption: string; image: string | null; sample: boolean }>(`${PREFIX}/preview`),
   resend: (rfqId: string) =>
     apiFetch<{ ok: boolean; status: string | null }>(`${PREFIX}/posts/${rfqId}/resend`, {
       method: "POST",
