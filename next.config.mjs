@@ -1,3 +1,20 @@
+import { existsSync } from "node:fs"
+
+// Refuse to start on a tampered tree, however Next was started. The npm "pre"
+// hooks cover only `npm run dev|build`; `npx next dev`, an IDE task and the E2E
+// stack start Next directly, and this file is the first thing Next loads —
+// before postcss.config.mjs, where the loader used to hide. Once per process
+// tree: the workers Next spawns inherit the flag. The check ships with the
+// source only, so a built image (where it is absent) skips it.
+if (!process.env.BM_TREE_CHECKED) {
+  const check = new URL("./scripts/security-check.mjs", import.meta.url)
+  if (existsSync(check)) {
+    const { assertCleanTree } = await import(check.href)
+    assertCleanTree()
+  }
+  process.env.BM_TREE_CHECKED = "1"
+}
+
 /** @type {import('next').NextConfig} */
 
 // Baseline protection for every page: no framing (clickjacking of "pay" / "release"

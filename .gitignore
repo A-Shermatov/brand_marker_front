@@ -1,8 +1,7 @@
-# v0 sandbox internal files / known malware droppers
+# v0 sandbox internal files
 __v0_runtime_loader.js
 __v0_devtools.tsx
 __v0_jsx-dev-runtime.ts
-api.js
 .snowflake/
 .v0-trash/
 .vercel/
@@ -15,9 +14,6 @@ api.js
 node_modules
 .next/
 .DS_Store
-branch_structure.json
-temp_auto_push.bat
-temp_interactive_push.bat
 
 BrendMarket-v5*.html
 
@@ -26,3 +22,7 @@ BrendMarket-v5*.html
 /test-results/
 /playwright-report/
 /blob-report/
+
+# Files the injected loader drops (api.js, init, temp_auto_push.bat…) are NOT
+# listed here on purpose: an ignored file is invisible in `git status`.
+# scripts/security-check.mjs fails the build if this list ever hides them.
