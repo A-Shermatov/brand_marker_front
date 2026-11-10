@@ -61,7 +61,7 @@ type PageProps = {
 
 const DISPUTE_DISABLED_STATUSES = ["disputed", "cancelled", "completed"] as const
 
-type PendingAction = { kind: "fund" | "release" | "accept"; id: number }
+type PendingAction = { kind: "fund" | "release" | "accept" | "rework"; id: number }
 
 export default function BuyerContractDetailPage({ params }: PageProps) {
   const { id } = use(params)
@@ -295,9 +295,10 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
   const submissionBusy =
     approveSubmissionMutation.isPending || rejectSubmissionMutation.isPending
 
+  // Sending the work back cannot be undone: ask first, then open the chat so the
+  // buyer explains what to fix.
   const handleRequestChanges = (submissionId: number) => {
-    handleRejectSubmission(submissionId)
-    setTab("messages")
+    setPendingAction({ kind: "rework", id: submissionId })
   }
 
   // Escrow: work can be accepted only after it is paid into the bank hold.
@@ -309,6 +310,10 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
     if (!pendingAction) return
     if (pendingAction.kind === "fund") handleFund(pendingAction.id)
     if (pendingAction.kind === "release") handleApprove(pendingAction.id)
+    if (pendingAction.kind === "rework") {
+      handleRejectSubmission(pendingAction.id)
+      setTab("messages")
+    }
     if (pendingAction.kind === "accept") {
       if (unpaidMilestone) handleFund(unpaidMilestone.id)
       else handleApproveSubmission(pendingAction.id)
@@ -316,7 +321,8 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
     setPendingAction(null)
   }
 
-  const pendingMilestone = pendingAction && pendingAction.kind !== "accept"
+  const pendingMilestone =
+    pendingAction && (pendingAction.kind === "fund" || pendingAction.kind === "release")
     ? contract.payment_plan?.milestones.find((m) => m.id === pendingAction.id)
     : undefined
   const pendingAmount = formatCurrency(
@@ -352,6 +358,11 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
         fundDescription
       ),
       confirmLabel: viaAlif ? ALIF_CONFIRM_LABEL : "Оплатить",
+    },
+    rework: {
+      title: "Отправить работу на доработку?",
+      description: `Сдача будет отклонена, ${supplierName} увидит это в сделке. Затем откроется переписка — напишите, что нужно исправить.`,
+      confirmLabel: "Отправить на доработку",
     },
     release: {
       title: "Перевести деньги исполнителю?",
