@@ -88,7 +88,7 @@ export default function BuyerMessagesPage() {
 
   const getSupplierName = (supplierId: number) => {
     if (useApi) return resolveSupplierName(supplierId)
-    return getCompany(supplierId)?.title ?? `Исполнитель #${supplierId}`
+    return getCompany(supplierId)?.title ?? `Поставщик #${supplierId}`
   }
 
   const localThreads: ProposalMessageThread[] = useMemo(() => {
@@ -267,7 +267,7 @@ export default function BuyerMessagesPage() {
     <PageFrame>
       <PageHeader
         title="Сообщения"
-        description="Переписка с исполнителями по заявкам, сделкам и личным сообщениям"
+        description="Переписка с поставщиками по заявкам, сделкам и личным сообщениям"
       />
 
       {groups.length === 0 ? (
@@ -277,7 +277,7 @@ export default function BuyerMessagesPage() {
             title="Сообщений пока нет"
             description={
               counterpartParam > 0
-                ? "С этим исполнителем ещё нет переписки. Создайте заявку — чат откроется после предложения или сделки."
+                ? "С этим поставщиком ещё нет переписки. Создайте заявку — чат откроется после предложения или сделки."
                 : "Чат появится, когда вы напишете поставщику, обсудите его предложение или начнётся сделка."
             }
             action={
@@ -297,7 +297,7 @@ export default function BuyerMessagesPage() {
                 })}
                 className="text-sm font-semibold text-primary hover:underline"
               >
-                Создать заявку для исполнителя
+                Создать заявку для поставщика
               </Link>
             </div>
           ) : null}
@@ -309,19 +309,19 @@ export default function BuyerMessagesPage() {
           selected={selected}
           onSelectCounterpart={handleSelectCounterpart}
           onSelectProject={handleSelectProject}
-          searchPlaceholder="Поиск по исполнителю или проекту"
+          searchPlaceholder="Поиск по поставщику или проекту"
           noChat={
             counterpartParam > 0 && !groups.some((g) => g.counterpartId === counterpartParam) ? (
               <PageSurface className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
                 <p className="text-sm text-muted-foreground">
-                  С этим исполнителем ещё нет переписки. Создайте заявку — чат откроется после
+                  С этим поставщиком ещё нет переписки. Создайте заявку — чат откроется после
                   предложения или сделки.
                 </p>
                 <Link
                   href={createRfqHref({ supplierId: counterpartParam, performer: counterpartParam })}
                   className="text-sm font-semibold text-primary hover:underline"
                 >
-                  Создать заявку для исполнителя
+                  Создать заявку для поставщика
                 </Link>
               </PageSurface>
             ) : undefined

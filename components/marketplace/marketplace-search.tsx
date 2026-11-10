@@ -204,7 +204,7 @@ export const MarketplaceSearch = ({
     items.push({
       type: "search-performers",
       id: "search-performers",
-      label: `Искать «${trimmed}» среди исполнителей`,
+      label: `Искать «${trimmed}» среди поставщиков`,
       href: performersUrl({ q: trimmed }),
     })
 
@@ -330,7 +330,7 @@ export const MarketplaceSearch = ({
     if (item.type === "popular") return "Популярные запросы"
     if (item.type === "category") return "Категории"
     if (item.type === "service") return "Услуги"
-    if (item.type === "performer") return "Исполнители"
+    if (item.type === "performer") return "Поставщики"
     if (item.type === "search-services" || item.type === "search-performers") return "Поиск"
     return null
   }
@@ -400,7 +400,7 @@ export const MarketplaceSearch = ({
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          aria-label="Поиск услуг и исполнителей"
+          aria-label="Поиск услуг и поставщиков"
         />
 
         {!isCompact ? (

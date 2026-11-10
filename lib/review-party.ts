@@ -54,7 +54,7 @@ export const formatReviewAuthor = (
 
 export const reviewAuthorLabel = (
   review: Review,
-  fallback = "Заказчик",
+  fallback = "Покупатель",
 ): string => {
   const { primary, secondary } = formatReviewAuthor(review, fallback)
   return secondary ? `${primary} · ${secondary}` : primary

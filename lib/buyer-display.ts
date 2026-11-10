@@ -11,7 +11,7 @@ export const getRfqBuyerName = (
   const company = getCompany?.(Number(rfq.actor_id))
   if (company?.title) return company.title
   if (rfq.created_by && !/^\d+$/.test(rfq.created_by)) return rfq.created_by
-  return "Заказчик"
+  return "Покупатель"
 }
 
 export const getRfqBuyerRating = (

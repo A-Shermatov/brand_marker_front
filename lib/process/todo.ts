@@ -77,7 +77,7 @@ const buyerDealText = (contract: ContractWithRelations, supplierName: string): {
   const amount = formatCurrency(contract.agreed_amount, contract.currency)
   if (phase === "acceptance") {
     return {
-      text: `${supplierName} сдал работу. Деньги уйдут исполнителю только после вашей приёмки.`,
+      text: `${supplierName} сдал работу. Деньги уйдут поставщику только после вашей приёмки.`,
       cta: "Проверить работу",
     }
   }
@@ -85,7 +85,7 @@ const buyerDealText = (contract: ContractWithRelations, supplierName: string): {
     const milestone = getUnpaidMilestone(contract)
     const due = milestone ? formatCurrency(milestone.amount, contract.currency) : amount
     return {
-      text: `Оплатите ${due} на гарантию площадки — исполнитель получит деньги только после приёмки.`,
+      text: `Оплатите ${due} на гарантию площадки — поставщик получит деньги только после приёмки.`,
       cta: "Оплатить",
     }
   }
@@ -97,7 +97,7 @@ const buyerDealText = (contract: ContractWithRelations, supplierName: string): {
   const funded = getFundedMilestone(contract)
   const held = funded ? formatCurrency(funded.amount, contract.currency) : amount
   return {
-    text: `${held} на гарантии площадки. Подтвердите выплату исполнителю.`,
+    text: `${held} на гарантии площадки. Подтвердите выплату поставщику.`,
     cta: "Подтвердить",
   }
 }
@@ -147,7 +147,7 @@ export const buildBuyerTodo = ({
         id: `proposals-${rfq.rfqId}`,
         icon: "proposal",
         title: `${formatCount(rfq.count, "предложение", "предложения", "предложений")} по заявке «${rfq.rfqTitle}»`,
-        text: "Сравните цены и сроки и выберите исполнителя.",
+        text: "Сравните цены и сроки и выберите поставщика.",
         href: `/customer/rfqs/${rfq.rfqId}/proposals`,
         cta: "Сравнить",
       })
@@ -162,7 +162,7 @@ export const buildBuyerTodo = ({
       id: `draft-${draft.id}`,
       icon: "draft",
       title: `Черновик «${draft.title}» не опубликован`,
-      text: "Исполнители не увидят заявку, пока вы её не опубликуете.",
+      text: "Поставщики не увидят заявку, пока вы её не опубликуете.",
       href: `/customer/rfqs/${draft.id}/edit`,
       cta: "Продолжить",
     })
@@ -208,7 +208,7 @@ export const buildSupplierTodo = ({
     items.push({
       id: "new-rfqs",
       icon: "rfq",
-      title: `${formatCount(newRfqs.length, "новая заявка", "новые заявки", "новых заявок")} от заказчиков`,
+      title: `${formatCount(newRfqs.length, "новая заявка", "новые заявки", "новых заявок")} от покупателей`,
       text: newRfqs.length > 3 ? `${titles} и другие` : titles,
       href: "/supplier/rfqs",
       cta: "Смотреть",
@@ -222,7 +222,7 @@ export const buildSupplierTodo = ({
         id: `acceptance-${contract.id}`,
         icon: "clock",
         title: dealTodoTitle(contract, DEAL_NEXT_STEP.supplier.acceptance),
-        text: "Заказчик проверяет работу. Деньги поступят после приёмки.",
+        text: "Покупатель проверяет работу. Деньги поступят после приёмки.",
         href: `/supplier/contracts/${contract.id}`,
         cta: "Открыть",
       })

@@ -79,7 +79,7 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
     return found && found.status !== "withdrawn" ? found : undefined
   })()
   const buyer = rfq ? getRfqBuyerSummary(rfq, getCompany) : undefined
-  const buyerName = rfq ? getRfqBuyerName(rfq, getCompany) : "Заказчик"
+  const buyerName = rfq ? getRfqBuyerName(rfq, getCompany) : "Покупатель"
   const verified = buyer?.verification_status === "verified"
 
   if (!hydrated || (useApi && isLoading)) {

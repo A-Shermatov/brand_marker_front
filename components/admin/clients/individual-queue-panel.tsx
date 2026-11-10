@@ -34,8 +34,8 @@ import { DEFAULT_PAGE_SIZE } from "@/lib/pagination"
 import { cn } from "@/lib/utils"
 
 const SIDE_LABELS: Record<string, string> = {
-  buyer: "Заказчик",
-  supplier: "Исполнитель",
+  buyer: "Покупатель",
+  supplier: "Поставщик",
 }
 
 const STATUS_FILTERS: { value: AdminIndividualListStatus; label: string }[] = [
@@ -562,8 +562,8 @@ export function IndividualQueuePanel() {
           <div className="flex gap-1.5">
             {[
               { value: null, label: "Все стороны" },
-              { value: "supplier", label: "Исполнители" },
-              { value: "buyer", label: "Заказчики" },
+              { value: "supplier", label: "Поставщики" },
+              { value: "buyer", label: "Покупатели" },
             ].map((option) => (
               <button
                 key={option.label}

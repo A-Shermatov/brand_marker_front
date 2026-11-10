@@ -123,7 +123,7 @@ export default function SupplierProfilePage({ params }: PageProps) {
   if (!supplier) {
     return (
       <PageFrame>
-        <PageHeader title="Исполнитель не найден" backHref="/customer/suppliers" backLabel="К каталогу" />
+        <PageHeader title="Поставщик не найден" backHref="/customer/suppliers" backLabel="К каталогу" />
       </PageFrame>
     )
   }
@@ -152,12 +152,12 @@ export default function SupplierProfilePage({ params }: PageProps) {
             notify({
               type: "order",
               title: "Приглашение отправлено",
-              body: `Исполнитель «${supplier.display_name}» приглашён к участию в заявке.`,
+              body: `Поставщик «${supplier.display_name}» приглашён к участию в заявке.`,
               href: `/customer/rfqs/${rfqId}`,
             })
           },
           onError: (err) => {
-            toast.error(err instanceof Error ? err.message : "Не удалось пригласить исполнителя")
+            toast.error(err instanceof Error ? err.message : "Не удалось пригласить поставщика")
           },
         },
       )
@@ -167,7 +167,7 @@ export default function SupplierProfilePage({ params }: PageProps) {
     notify({
       type: "order",
       title: "Приглашение отправлено",
-      body: `Исполнитель «${supplier.display_name}» приглашён к участию в заявке.`,
+      body: `Поставщик «${supplier.display_name}» приглашён к участию в заявке.`,
       href: `/customer/rfqs/${rfqId}`,
     })
   }
@@ -195,7 +195,7 @@ export default function SupplierProfilePage({ params }: PageProps) {
         </h2>
         <CustomerCatalogGrid
           items={catalogItems}
-          emptyText="У исполнителя пока нет опубликованных позиций в каталоге"
+          emptyText="У поставщика пока нет опубликованных позиций в каталоге"
         />
       </div>
 

@@ -126,8 +126,8 @@ export default function NewRfqPage() {
         type: "order",
         title: "Заявка опубликована",
         body: invitedSupplierName
-          ? `Запрос «${rfq.title}» отправлен исполнителю «${invitedSupplierName}».`
-          : `Запрос «${rfq.title}» доступен исполнителям на маркетплейсе.`,
+          ? `Запрос «${rfq.title}» отправлен поставщику «${invitedSupplierName}».`
+          : `Запрос «${rfq.title}» доступен поставщикам на маркетплейсе.`,
         href: `/customer/rfqs/${rfq.id}`,
       })
     } else {

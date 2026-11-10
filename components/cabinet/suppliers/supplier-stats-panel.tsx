@@ -54,7 +54,7 @@ export const SupplierStatsPanel = ({ supplier }: SupplierStatsPanelProps) => {
   return (
     <section
       className="bg-card border border-border rounded-xl p-5 sm:p-6"
-      aria-label="Статистика исполнителя"
+      aria-label="Статистика поставщика"
     >
       <div className="flex flex-col sm:flex-row sm:items-end gap-5 sm:gap-8">
         {successRate != null && (

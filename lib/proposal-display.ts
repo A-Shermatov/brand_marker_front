@@ -9,7 +9,7 @@ export const proposalBadgeStatus = (
   }
   if (status === "shortlisted") return { status: "wait", label: "В избранном" }
   if (status === "pending_supplier") {
-    return { status: "pending", label: "Ожидает исполнителя" }
+    return { status: "pending", label: "Ожидает поставщика" }
   }
   if (status === "accepted") return { status: "won", label: "Принято" }
   if (status === "rejected") return { status: "rejected", label: "Отклонено" }
@@ -58,7 +58,7 @@ export const proposalStatusMeta: Record<
     className: "bg-warning/10 text-warning",
   },
   pending_supplier: {
-    label: "Ожидает исполнителя",
+    label: "Ожидает поставщика",
     className: "bg-warning/10 text-warning",
   },
   accepted: {

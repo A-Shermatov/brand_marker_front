@@ -74,7 +74,7 @@ export default function SupplierMessagesPage() {
   const openedBuyerRef = useRef<number | null>(null)
 
   const getBuyerName = (buyerId: number) =>
-    getCompany(buyerId)?.title ?? `Заказчик #${buyerId}`
+    getCompany(buyerId)?.title ?? `Покупатель #${buyerId}`
 
   const contracts = useApi
     ? ((apiContracts?.items ?? []) as ContractWithRelations[])
@@ -145,7 +145,7 @@ export default function SupplierMessagesPage() {
         rfq_title: rfq?.title ?? proposal.rfq_id,
         status: proposal.status,
         counterpart_actor_id: Number(rfq?.actor_id ?? 0),
-        counterpart_name: rfq ? getRfqBuyerName(rfq, getCompany) : "Заказчик",
+        counterpart_name: rfq ? getRfqBuyerName(rfq, getCompany) : "Покупатель",
         message_count: proposalMessages[proposal.id]?.length ?? 0,
         last_message: null,
       },
@@ -266,7 +266,7 @@ export default function SupplierMessagesPage() {
     <PageFrame>
       <PageHeader
         title="Сообщения"
-        description="Переписка с заказчиками по заявкам, сделкам и личным сообщениям"
+        description="Переписка с покупателями по заявкам, сделкам и личным сообщениям"
       />
 
       {groups.length === 0 ? (
@@ -289,7 +289,7 @@ export default function SupplierMessagesPage() {
           selected={selected}
           onSelectCounterpart={handleSelectCounterpart}
           onSelectProject={handleSelectProject}
-          searchPlaceholder="Поиск по заказчику или проекту"
+          searchPlaceholder="Поиск по покупателю или проекту"
           renderChat={(slot) =>
             !selected ? null : selected.kind === "proposal" ? (
               <ProposalMessagesPanel

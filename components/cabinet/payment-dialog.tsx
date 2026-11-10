@@ -45,7 +45,7 @@ export default function PaymentDialog({
             <TermHint term="escrow" iconOnly />
           </DialogTitle>
           <DialogDescription>
-            Оплата после приёмки. Деньги переводятся исполнителю только после того,
+            Оплата после приёмки. Деньги переводятся поставщику только после того,
             как вы примете работу.
           </DialogDescription>
         </DialogHeader>

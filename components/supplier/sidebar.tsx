@@ -97,7 +97,7 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
       <SidebarSection label="Ещё" className="mt-4">
         <CabinetNavLink
           href="/supplier/customers"
-          label="Заказчики"
+          label="Покупатели"
           icon={UsersThreeIcon}
           active={pathname.startsWith("/supplier/customers")}
           onClick={onNavigate}

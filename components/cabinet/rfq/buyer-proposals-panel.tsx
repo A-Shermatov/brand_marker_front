@@ -27,7 +27,7 @@ export const BuyerProposalsPanel = ({
   return (
     <section className="bg-card border border-border rounded-xl p-6">
       <h2 className="text-sm font-semibold text-foreground mb-4">
-        Предложения исполнителей
+        Предложения поставщиков
         {proposals.length > 0 && (
           <span className="ml-2 text-sm font-normal text-muted-foreground">({proposals.length})</span>
         )}
@@ -35,7 +35,7 @@ export const BuyerProposalsPanel = ({
 
       {proposals.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          Пока нет предложений. Опубликуйте заявку и дождитесь предложений исполнителей.
+          Пока нет предложений. Опубликуйте заявку и дождитесь предложений поставщиков.
         </p>
       ) : (
         <div className="space-y-3">

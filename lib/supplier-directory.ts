@@ -47,7 +47,7 @@ export const formatSupplierCatalogSummary = (
   if (parts.length === 0 && company.description) {
     return company.description.slice(0, 80)
   }
-  return parts.join(" · ") || "Исполнитель на платформе"
+  return parts.join(" · ") || "Поставщик на платформе"
 }
 
 export const formatPublicSupplierSummary = (supplier: PublicSupplier): string => {
@@ -62,9 +62,9 @@ export const formatPublicSupplierSummary = (supplier: PublicSupplier): string =>
     return supplier.description.slice(0, 80)
   }
   if (parts.length === 0 && supplier.kind === "individual") {
-    return "Индивидуальный исполнитель"
+    return "Индивидуальный поставщик"
   }
-  return parts.join(" · ") || "Исполнитель на платформе"
+  return parts.join(" · ") || "Поставщик на платформе"
 }
 
 export const computeSupplierSuccessRate = (

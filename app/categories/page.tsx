@@ -18,7 +18,7 @@ export default function CategoriesPage() {
             <div>
               <h1 className="text-2xl font-bold text-foreground">Категории услуг</h1>
               <p className="text-sm text-muted-foreground mt-1">
-                Выберите направление и найдите подходящего исполнителя
+                Выберите направление и найдите подходящего поставщика
               </p>
             </div>
             <Link

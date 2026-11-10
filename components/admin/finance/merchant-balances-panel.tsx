@@ -101,7 +101,7 @@ const TotalsRow = ({ totals }: { totals: AdminMerchantTotals }) => (
         Icon: Building2,
       },
       { label: "Подписки", value: totals.subscriptions_released, Icon: Wallet },
-      { label: "Доступно исполнителям", value: totals.supplier_available, Icon: Wallet },
+      { label: "Доступно поставщикам", value: totals.supplier_available, Icon: Wallet },
       { label: "Выведено", value: totals.withdrawn, Icon: Wallet },
     ].map((item) => (
       <PageSurface key={item.label} className="flex items-center gap-3 p-4">
@@ -222,16 +222,16 @@ export function AdminMerchantBalancesContent({
               type="search"
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Исполнитель, компания, email или #ID"
+              placeholder="Поставщик, компания, email или #ID"
               className="pl-11"
-              aria-label="Поиск балансов исполнителей"
+              aria-label="Поиск балансов поставщиков"
             />
           </div>
         </div>
 
         {items.length === 0 ? (
           <PageEmptyState
-            title="Исполнителей нет"
+            title="Поставщиков нет"
             description={
               query ? "Измените поисковый запрос." : "Пока нет поставщиков с актёром supplier."
             }
@@ -241,7 +241,7 @@ export function AdminMerchantBalancesContent({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Исполнитель</TableHead>
+                  <TableHead>Поставщик</TableHead>
                   <TableHead className="text-right">Доступно</TableHead>
                   <TableHead className="text-right">В escrow</TableHead>
                   <TableHead className="text-right">Выплачено</TableHead>

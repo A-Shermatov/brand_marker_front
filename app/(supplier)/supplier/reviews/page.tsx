@@ -29,13 +29,13 @@ const GivenReviewsTable = ({
   if (reviews.length === 0) {
     return (
       <p className="py-6 text-center text-sm text-muted-foreground">
-        Вы ещё не оставляли отзывов заказчикам
+        Вы ещё не оставляли отзывов покупателям
       </p>
     )
   }
   return (
     <ReviewCardList
-      label="Ваши отзывы о заказчиках"
+      label="Ваши отзывы о покупателях"
       items={reviews.map((review) => {
         const { primary, secondary } = formatReviewParty(review.target, getBuyerName(review.target_actor_id))
         return {
@@ -96,13 +96,13 @@ export default function SupplierReviewsPage() {
     <PageFrame>
       <PageHeader
         title="Отзывы"
-        description="Оценки заказчиков о вас и ваши отзывы о заказчиках"
+        description="Оценки покупателей о вас и ваши отзывы о покупателях"
       />
 
       <PageSurface className="space-y-8 p-6">
         <section>
           <h2 className="mb-3 text-sm font-bold text-foreground">
-            Полученные от заказчиков
+            Полученные от покупателей
           </h2>
           {loading ? (
             <PageEmptyState title="Загрузка…" />
@@ -122,7 +122,7 @@ export default function SupplierReviewsPage() {
 
         <section>
           <h2 className="mb-3 text-sm font-bold text-foreground">
-            Оставленные заказчикам
+            Оставленные покупателям
           </h2>
           {loading ? (
             <PageEmptyState title="Загрузка…" />

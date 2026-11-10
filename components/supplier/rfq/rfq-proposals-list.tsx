@@ -23,7 +23,7 @@ export const RfqProposalsList = ({
     </h2>
 
     {proposals.length === 0 ? (
-      <p className="text-sm text-muted-foreground">Пока нет предложений от других исполнителей</p>
+      <p className="text-sm text-muted-foreground">Пока нет предложений от других поставщиков</p>
     ) : (
       <div className="space-y-3">
         {proposals.map((proposal) => {

@@ -44,11 +44,11 @@ const actionMetadata: Record<
   reject: {
     title: "Отклонить позицию?",
     description:
-      "Исполнитель увидит причину отклонения и сможет исправить карточку, затем отправить её снова на модерацию.",
-    success: "Позиция отклонена, исполнитель уведомлён",
+      "Поставщик увидит причину отклонения и сможет исправить карточку, затем отправить её снова на модерацию.",
+    success: "Позиция отклонена, поставщик уведомлён",
     confirm: "Отклонить",
     destructive: true,
-    reasonPlaceholder: "Опишите причину отклонения для исполнителя",
+    reasonPlaceholder: "Опишите причину отклонения для поставщика",
   },
   delete: {
     title: "Удалить позицию?",
@@ -126,14 +126,14 @@ export const CatalogActionDialog = ({
         {reasonRequired && (
           <div className="space-y-2">
             <label htmlFor="catalog-action-reason" className="text-sm font-semibold">
-              Причина для исполнителя <span className="text-destructive">*</span>
+              Причина для поставщика <span className="text-destructive">*</span>
             </label>
             <Textarea
               id="catalog-action-reason"
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               placeholder={
-                metadata?.reasonPlaceholder || "Опишите причину для исполнителя"
+                metadata?.reasonPlaceholder || "Опишите причину для поставщика"
               }
               rows={5}
               maxLength={2000}

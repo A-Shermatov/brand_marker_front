@@ -140,7 +140,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
   const supplier = getCompany(contract.supplier_actor_id)
   const supplierName = useApi
     ? resolveSupplierName(contract.supplier_actor_id)
-    : (supplier?.title ?? "Исполнитель")
+    : (supplier?.title ?? "Поставщик")
   // A decided dispute on a closed deal can be appealed within the API's window.
   const canAppeal = Boolean(
     contract.appeal_until && new Date(contract.appeal_until).getTime() > Date.now(),
@@ -341,8 +341,8 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
   const fundDescription = direct
     ? `Вы выбрали оплату сразу: деньги получит ${supplierName} в момент оплаты. Вернуть их через гарантию площадки будет нельзя.`
     : contract.status === "completed"
-      ? "Деньги будут удерживаться банком‑партнёром. Затем подтвердите выплату исполнителю."
-      : "Деньги будут удерживаться банком‑партнёром. Исполнитель получит их только после того, как вы примете работу."
+      ? "Деньги будут удерживаться банком‑партнёром. Затем подтвердите выплату поставщику."
+      : "Деньги будут удерживаться банком‑партнёром. Поставщик получит их только после того, как вы примете работу."
   const confirmCopy: Record<
     PendingAction["kind"],
     { title: string; description: React.ReactNode; confirmLabel: string }
@@ -365,7 +365,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
       confirmLabel: "Отправить на доработку",
     },
     release: {
-      title: "Перевести деньги исполнителю?",
+      title: "Перевести деньги поставщику?",
       description: `${supplierName} получит ${supplierGets} (за вычетом комиссии площадки). Отменить выплату будет нельзя.`,
       confirmLabel: "Да, перевести",
     },
@@ -373,7 +373,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
       ? {
           title: "Сначала оплатите работу",
           description: direct
-            ? `Принять работу можно после оплаты — ${formatCurrency(unpaidMilestone.amount, contract.currency)}. Деньги сразу получит исполнитель: после оплаты вернитесь сюда и примите работу.`
+            ? `Принять работу можно после оплаты — ${formatCurrency(unpaidMilestone.amount, contract.currency)}. Деньги сразу получит поставщик: после оплаты вернитесь сюда и примите работу.`
             : `Принять работу можно после оплаты — ${formatCurrency(unpaidMilestone.amount, contract.currency)}. Деньги будут удерживаться банком до вашей приёмки: после оплаты вернитесь сюда и примите работу.`,
           confirmLabel: viaAlif ? ALIF_CONFIRM_LABEL : "Оплатить",
         }

@@ -45,7 +45,7 @@ export const SupplierDealNextAction = ({
 
   const messageButton = (
     <Button variant="outline" onClick={() => onOpenTab("messages")}>
-      <MessageSquare /> Написать заказчику
+      <MessageSquare /> Написать покупателю
     </Button>
   )
 
@@ -58,9 +58,9 @@ export const SupplierDealNextAction = ({
         title={returned ? "Доработайте и сдайте работу снова" : title}
         text={
           <>
-            {returned ? "Заказчик вернул работу с замечаниями — подробности в сообщениях. " : null}
+            {returned ? "Покупатель вернул работу с замечаниями — подробности в сообщениях. " : null}
             Срок сдачи — <b>{formatIsoDate(contract.due_date)}</b>. Когда будет готово, прикрепите
-            результат: заказчик проверит и примет работу.
+            результат: покупатель проверит и примет работу.
             {isPostpaymentDeal(contract) ? " Оплата придёт после приёмки." : null}
           </>
         }
@@ -80,7 +80,7 @@ export const SupplierDealNextAction = ({
     return (
       <NextActionCard
         title={title}
-        text="Заказчик оплачивает сделку на гарантию площадки. Начинайте работу после оплаты — так ваши деньги защищены."
+        text="Покупатель оплачивает сделку на гарантию площадки. Начинайте работу после оплаты — так ваши деньги защищены."
         actions={messageButton}
       />
     )
@@ -93,8 +93,8 @@ export const SupplierDealNextAction = ({
         title={title}
         text={
           latest
-            ? `Работа сдана ${formatIsoDate(latest.submitted_at.split("T")[0] ?? latest.submitted_at)}. Заказчик проверит результат и примет работу или вернёт с замечаниями.`
-            : "Заказчик проверит результат и примет работу или вернёт с замечаниями."
+            ? `Работа сдана ${formatIsoDate(latest.submitted_at.split("T")[0] ?? latest.submitted_at)}. Покупатель проверит результат и примет работу или вернёт с замечаниями.`
+            : "Покупатель проверит результат и примет работу или вернёт с замечаниями."
         }
         actions={messageButton}
       />
@@ -105,7 +105,7 @@ export const SupplierDealNextAction = ({
     return (
       <NextActionCard
         title={title}
-        text="Заказчик принял работу. После оплаты деньги поступят на гарантию площадки, а затем — на ваш баланс."
+        text="Покупатель принял работу. После оплаты деньги поступят на гарантию площадки, а затем — на ваш баланс."
       />
     )
   }
@@ -117,8 +117,8 @@ export const SupplierDealNextAction = ({
         title={title}
         text={
           funded
-            ? `${formatCurrency(funded.amount, contract.currency)} уже на гарантии площадки. Деньги поступят на баланс, когда заказчик подтвердит выплату.`
-            : "Деньги поступят на баланс, когда заказчик подтвердит выплату."
+            ? `${formatCurrency(funded.amount, contract.currency)} уже на гарантии площадки. Деньги поступят на баланс, когда покупатель подтвердит выплату.`
+            : "Деньги поступят на баланс, когда покупатель подтвердит выплату."
         }
       />
     )
@@ -146,7 +146,7 @@ export const SupplierDealNextAction = ({
         text={
           hasReview
             ? "Спасибо за отзыв! Оплата по сделке зачислена на ваш баланс."
-            : `Оцените заказчика ${buyerName} — отзыв поможет другим исполнителям.`
+            : `Оцените покупателя ${buyerName} — отзыв поможет другим поставщикам.`
         }
         actions={
           <>
@@ -164,7 +164,7 @@ export const SupplierDealNextAction = ({
             open={reviewOpen}
             onOpenChange={setReviewOpen}
             counterpartName={buyerName}
-            counterpartLabel="заказчиком"
+            counterpartLabel="покупателем"
             variant="about_buyer"
             onUploadPhoto={onUploadReviewPhoto}
             onConfirm={onSubmitReview}

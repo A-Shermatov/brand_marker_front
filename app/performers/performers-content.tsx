@@ -49,12 +49,12 @@ export const PerformersPageContent = () => {
   }, [query, verified, featured, scope, useApi, apiSuppliers])
 
   const pageTitle = scope === "worldwide"
-    ? "Исполнители по всему миру"
+    ? "Поставщики по всему миру"
     : featured
-      ? "ТОП исполнители"
+      ? "ТОП поставщики"
       : verified
-        ? "Проверенные исполнители"
-        : "Каталог исполнителей"
+        ? "Проверенные поставщики"
+        : "Каталог поставщиков"
 
   const pageSubtitle = scope === "worldwide"
     ? "Компании с международным опытом и удалённой работой"
@@ -76,7 +76,7 @@ export const PerformersPageContent = () => {
 
           {performers.length === 0 ? (
             <div className="rounded-2xl border border-border bg-secondary/30 p-12 text-center">
-              <p className="text-sm text-muted-foreground">Исполнители не найдены</p>
+              <p className="text-sm text-muted-foreground">Поставщики не найдены</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

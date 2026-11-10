@@ -221,13 +221,13 @@ export const AdminDisputeDetailSections = ({
       </section>
 
       <section id="supplier-statement" className={sectionClassName}>
-        <h2 className="mb-5 text-lg font-bold">Заявление исполнителя</h2>
+        <h2 className="mb-5 text-lg font-bold">Заявление поставщика</h2>
         {dispute.supplier_statement ? (
           <p className="text-sm leading-6 text-muted-foreground whitespace-pre-wrap">
             {dispute.supplier_statement}
           </p>
         ) : (
-          <EmptyState>Заявление исполнителя отсутствует.</EmptyState>
+          <EmptyState>Заявление поставщика отсутствует.</EmptyState>
         )}
       </section>
 
@@ -243,7 +243,7 @@ export const AdminDisputeDetailSections = ({
       </section>
 
       <PartySection id="buyer" title="Покупатель" party={dispute.buyer} />
-      <PartySection id="supplier" title="Исполнитель" party={dispute.supplier} />
+      <PartySection id="supplier" title="Поставщик" party={dispute.supplier} />
 
       <section id="evidence" className={sectionClassName}>
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">

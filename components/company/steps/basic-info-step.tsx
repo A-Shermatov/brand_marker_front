@@ -79,7 +79,7 @@ export const BasicInfoStep = ({
           <div className="flex flex-wrap gap-3">
             {(["buyer", "supplier"] as const).map((side) => {
               const checked = data.actor_types.includes(side)
-              const label = side === "buyer" ? "Заказчик" : "Исполнитель"
+              const label = side === "buyer" ? "Покупатель" : "Поставщик"
               return (
                 <label
                   key={side}
@@ -103,7 +103,7 @@ export const BasicInfoStep = ({
             })}
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Компания может участвовать как заказчик, исполнитель или в обеих ролях
+            Компания может участвовать как покупатель, поставщик или в обеих ролях
           </p>
         </WizardField>
       )}

@@ -23,7 +23,7 @@ const actionMetadata: Record<
 > = {
   hide: {
     title: "Скрыть заявку?",
-    description: "Заявка будет перенесена в архив и скрыта с доски исполнителей.",
+    description: "Заявка будет перенесена в архив и скрыта с доски поставщиков.",
     success: "Заявка скрыта",
     destructive: true,
   },

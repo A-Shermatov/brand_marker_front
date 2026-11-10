@@ -124,7 +124,7 @@ const CommissionExamples = ({ settings }: { settings: PlatformSettingsInput | nu
             <tr className="border-b border-border text-left text-[12.5px] font-medium text-muted-foreground">
               <th className="py-2 pr-4 font-semibold">Сумма договора</th>
               <th className="py-2 pr-4 font-semibold">Комиссия</th>
-              <th className="py-2 font-semibold">Исполнитель получит</th>
+              <th className="py-2 font-semibold">Поставщик получит</th>
             </tr>
           </thead>
           <tbody>
@@ -213,7 +213,7 @@ const SettingsFormCard = ({ settings }: { settings: AdminPlatformSettings }) => 
           <div>
             <h2 className="text-base font-bold text-foreground">Комиссия и лимиты</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Удерживается с исполнителя при выплате каждого этапа.
+              Удерживается с поставщика при выплате каждого этапа.
             </p>
           </div>
 

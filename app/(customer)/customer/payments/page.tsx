@@ -165,7 +165,7 @@ const BuyerPaymentsContent = () => {
         {tab === "outgoing" && (
           <OutgoingPaymentsTable
             payments={effectiveOutgoing}
-            getSupplierName={(id) => getCompany(id)?.title ?? "Исполнитель"}
+            getSupplierName={(id) => getCompany(id)?.title ?? "Поставщик"}
           />
         )}
         {tab === "outgoing" && (
@@ -178,7 +178,7 @@ const BuyerPaymentsContent = () => {
         {tab === "escrow" && (
           <EscrowFundingTable
             rows={effectiveEscrowQueue}
-            getSupplierName={(id) => getCompany(id)?.title ?? "Исполнитель"}
+            getSupplierName={(id) => getCompany(id)?.title ?? "Поставщик"}
             viaAlif={viaAlif}
             alifCurrency={alifCurrency}
             onFund={handleFund}
@@ -207,7 +207,7 @@ const BuyerPaymentsContent = () => {
             <>
               <p>
                 Этап «{pendingFund.title}» по сделке «{pendingFund.contractTitle}». Деньги поступят
-                на гарантию площадки и уйдут исполнителю только после приёмки работы.
+                на гарантию площадки и уйдут поставщику только после приёмки работы.
               </p>
               <AlifPaymentNote />
             </>
