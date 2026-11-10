@@ -141,9 +141,15 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
   const supplierName = useApi
     ? resolveSupplierName(contract.supplier_actor_id)
     : (supplier?.title ?? "Исполнитель")
-  const canDispute = !DISPUTE_DISABLED_STATUSES.includes(
-    contract.status as (typeof DISPUTE_DISABLED_STATUSES)[number],
+  // A decided dispute on a closed deal can be appealed within the API's window.
+  const canAppeal = Boolean(
+    contract.appeal_until && new Date(contract.appeal_until).getTime() > Date.now(),
   )
+  const canDispute =
+    canAppeal ||
+    !DISPUTE_DISABLED_STATUSES.includes(
+      contract.status as (typeof DISPUTE_DISABLED_STATUSES)[number],
+    )
   const paymentHistory: PaymentHistoryEvent[] = useApi
     ? paymentHistoryApi
         .filter((p) => p.contract_id === contractId)
@@ -406,7 +412,7 @@ export default function BuyerContractDetailPage({ params }: PageProps) {
               className="ml-auto inline-flex items-center gap-1 text-xs text-destructive transition-colors hover:text-destructive/80"
             >
               <AlertTriangle size={12} />
-              Открыть спор
+              {canAppeal ? "Обжаловать решение" : "Открыть спор"}
             </button>
           )}
           {showDisputeTab && (
