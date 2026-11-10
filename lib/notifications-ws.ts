@@ -1,7 +1,15 @@
 import { API_URL } from "@/lib/api/config"
 
+// Next.js rewrites do not proxy WebSocket upgrades: with a relative API_URL set
+// NEXT_PUBLIC_WS_URL to the API origin (e.g. wss://api.b2b.jupiter.tj/api/v1).
+const WS_URL = (process.env.NEXT_PUBLIC_WS_URL ?? "").trim().replace(/\/+$/, "")
+
 export const getNotificationsWsUrl = (accessToken: string): string => {
   const token = encodeURIComponent(accessToken)
+
+  if (WS_URL) {
+    return `${WS_URL}/ws/notifications?token=${token}`
+  }
 
   if (API_URL.startsWith("/")) {
     const isSecure =
