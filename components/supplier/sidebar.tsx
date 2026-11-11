@@ -67,7 +67,6 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
         initials={initialsOf(companyName, "ПС")}
         verified={marks.verified}
         tier={marks.tier}
-        plan={marks.plan}
         onClick={onNavigate}
       />
 

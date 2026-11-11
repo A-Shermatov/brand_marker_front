@@ -22,6 +22,7 @@ import { useCategoryOptions } from "@/hooks/use-category-options"
 import { buyerRfqBadgeLabel, isModeratedRfq } from "@/lib/buyer-rfq-display"
 import { formatIsoDate, formatRfqBudget, pluralRu } from "@/lib/format"
 import { cn } from "@/lib/utils"
+import { PromotedTag } from "@/components/bm/promoted"
 import { RfqActionsMenu } from "@/components/cabinet/rfq/rfq-manage"
 
 type RfqListProps = {
@@ -112,6 +113,7 @@ export const RfqList = ({ rfqs, getProposalCount }: RfqListProps) => {
               }
             >
               <CardMeta>
+                {rfq.promoted && collecting ? <PromotedTag /> : null}
                 {category ? <CardChip>{category}</CardChip> : null}
                 <span>{whatLine(rfq)}</span>
                 <CardNo>{formatRfqNo(rfq.id)}</CardNo>

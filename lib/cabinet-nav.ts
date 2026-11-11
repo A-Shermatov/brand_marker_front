@@ -134,6 +134,13 @@ export const BUYER_HUBS: CabinetNavHub[] = [
     group: "Аккаунт",
   },
   {
+    id: "tariff",
+    label: "Тариф и надёжность",
+    href: "/customer/plan",
+    match: ["/customer/plan", "/customer/trust"],
+    group: "Аккаунт",
+  },
+  {
     id: "reviews",
     label: "Отзывы",
     href: "/customer/reviews",
@@ -156,6 +163,21 @@ export const BUYER_SUBTABS: Record<string, CabinetSubtab[]> = {
       label: "Корзина",
       href: "/customer/cart",
       match: ["/customer/cart"],
+    },
+  ],
+  // The plan is bought, the mark is earned: two pages, kept apart on purpose.
+  tariff: [
+    {
+      id: "tariff",
+      label: "Подписка",
+      href: "/customer/plan",
+      match: ["/customer/plan"],
+    },
+    {
+      id: "trust",
+      label: "Знак надёжности",
+      href: "/customer/trust",
+      match: ["/customer/trust"],
     },
   ],
 }
@@ -197,6 +219,10 @@ export const BUYER_SECTION_TITLE: Record<string, SectionMeta> = {
   profile: {
     title: "Мой профиль",
     description: "Имя, фото, пароль и защита входа",
+  },
+  tariff: {
+    title: "Тариф и надёжность",
+    description: "Подписка поднимает ваши заявки в ленте поставщиков; знак надёжности зарабатывается сделками",
   },
   reviews: {
     title: "Отзывы",
@@ -275,8 +301,8 @@ export const SUPPLIER_HUBS: CabinetNavHub[] = [
   {
     id: "tariff",
     label: "Тариф и надёжность",
-    href: "/supplier/trust",
-    match: ["/supplier/trust", "/supplier/subscription"],
+    href: "/supplier/subscription",
+    match: ["/supplier/subscription", "/supplier/trust"],
     group: "Деньги",
   },
   {
@@ -311,18 +337,19 @@ export const SUPPLIER_SUBTABS: Record<string, CabinetSubtab[]> = {
       match: ["/supplier/company"],
     },
   ],
+  // The same two pages, in the same order, as in the buying cabinet.
   tariff: [
-    {
-      id: "trust",
-      label: "Знак надёжности",
-      href: "/supplier/trust",
-      match: ["/supplier/trust"],
-    },
     {
       id: "tariff",
       label: "Подписка",
       href: "/supplier/subscription",
       match: ["/supplier/subscription"],
+    },
+    {
+      id: "trust",
+      label: "Знак надёжности",
+      href: "/supplier/trust",
+      match: ["/supplier/trust"],
     },
   ],
 }
@@ -362,7 +389,7 @@ export const SUPPLIER_SECTION_TITLE: Record<string, SectionMeta> = {
   },
   tariff: {
     title: "Тариф и надёжность",
-    description: "Знак надёжности зарабатывается сделками, тариф поднимает вас в каталоге",
+    description: "Подписка поднимает ваши товары и предложения в списках; знак надёжности зарабатывается сделками",
   },
   company: {
     title: "Компания",

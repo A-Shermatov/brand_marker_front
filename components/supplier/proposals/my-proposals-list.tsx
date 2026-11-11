@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { formatDeliveryTime, formatIsoDate, formatMoneyDisplay } from "@/lib/format"
 import { outcomeOf, outcomeView, type OutcomeTone } from "@/lib/proposal-outcome"
 import { cn } from "@/lib/utils"
+import { PromotedTag } from "@/components/bm/promoted"
 import type { ProposalWithRelations } from "@/types"
 
 type MyProposalsListProps = {
@@ -60,7 +61,8 @@ export function MyProposalsList({ proposals, getRfqTitle, getBuyerName, getDeadl
             <span aria-hidden className={cn("absolute inset-y-0 left-0 w-1", tone.bar)} />
             <div className="grid gap-4 p-4 pl-5 md:grid-cols-[minmax(0,1fr)_300px] md:items-center md:gap-6">
               <div className="grid min-w-0 gap-1">
-                <p className="text-[12.5px] text-mute">
+                <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12.5px] text-mute">
+                  {proposal.promoted && view.tone === "waiting" ? <PromotedTag className="mr-1" /> : null}
                   <span className="mono">{formatRfqNo(proposal.rfq_id)}</span>
                   {" · "}
                   {proposal.actor?.name ?? getBuyerName(proposal.rfq_id)}

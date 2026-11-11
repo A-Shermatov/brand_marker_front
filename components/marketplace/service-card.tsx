@@ -5,6 +5,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { ClockIcon as Clock, CrownIcon as Crown, MapPinIcon as MapPin } from "@phosphor-icons/react/dist/ssr"
 import { CompanyName } from "@/components/bm"
+import { PromotedTag, promotedCardClass } from "@/components/bm/promoted"
+import { cn } from "@/lib/utils"
 import type { MarketplaceService } from "@/types/marketplace"
 import { getIcon } from "@/lib/icon-map"
 import { serviceUrl } from "@/lib/marketplace-routes"
@@ -42,9 +44,17 @@ export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
   const price = splitPrice(service.price)
   const summary = toSummary(service.description ?? "")
   const city = service.city && service.city !== "—" ? service.city : ""
+  // The seller holds a paid plan: the card stands first in the catalog and is coloured.
+  const promoted = Boolean(service.providerPlan)
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]">
+    <article
+      data-promoted={promoted ? "true" : undefined}
+      className={cn(
+        "group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]",
+        promoted && promotedCardClass,
+      )}
+    >
       <Link
         href={detailHref}
         className="relative aspect-[4/3] w-full overflow-hidden bg-canvas"
@@ -65,6 +75,7 @@ export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
             <Icon size={36} weight="duotone" className="text-faint" aria-hidden />
           </span>
         )}
+        {promoted ? <PromotedTag className="absolute left-2 top-2 shadow-[0_1px_2px_rgb(14_22_48/0.18)]" /> : null}
         {showVip ? (
           <span
             className="absolute right-2 top-2 inline-flex h-5 items-center gap-1 rounded-md bg-gradient-to-r from-[#F6D365] to-[#E9A73B] px-1.5 text-[11px] font-bold tracking-wide text-[#4A3000]"
@@ -127,7 +138,6 @@ export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
               name={service.provider || "…"}
               verified={service.verified}
               tier={service.providerTier}
-              plan={service.providerPlan}
               size="sm"
               nameClassName="text-[13px] font-semibold text-ink"
               className="relative z-10"

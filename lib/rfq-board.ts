@@ -16,16 +16,27 @@ export const filterRfqsBySource = (
   return rfqs.filter((rfq) => !isCatalogOfferRfq(rfq))
 }
 
+/**
+ * The order of the supplier's feed. An order from the catalog that waits for
+ * this supplier's answer comes first: it is theirs alone. Then requests of
+ * buyers with a paid plan — the place the plan pays for — then other catalog
+ * orders and personal invitations. Inside each group the server's order stays
+ * (a higher plan above a lower one, newer above older).
+ */
 export const sortSupplierBoardRfqs = (
   rfqs: RfqWithRelations[],
   actorId: number,
   isInvited: (rfq: RfqWithRelations, actorId: number) => boolean,
-): RfqWithRelations[] =>
-  [...rfqs].sort((a, b) => {
-    const catalogDelta = Number(isCatalogOfferRfq(b)) - Number(isCatalogOfferRfq(a))
-    if (catalogDelta !== 0) return catalogDelta
-    return Number(isInvited(b, actorId)) - Number(isInvited(a, actorId))
-  })
+): RfqWithRelations[] => {
+  const rank = (rfq: RfqWithRelations): number => {
+    if (rfq.my_proposal_status === "pending_supplier") return 0
+    if (rfq.promoted) return 1
+    if (isCatalogOfferRfq(rfq)) return 2
+    if (isInvited(rfq, actorId)) return 3
+    return 4
+  }
+  return [...rfqs].sort((a, b) => rank(a) - rank(b))
+}
 
 export const isPendingCatalogOffer = (
   status: ProposalStatus | null | undefined,

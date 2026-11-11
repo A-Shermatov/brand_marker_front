@@ -49,7 +49,6 @@ function RibbonCard({ service, hidden }: { service: MarketplaceService; hidden?:
           name={service.provider || "…"}
           verified={service.verified}
           tier={service.providerTier}
-          plan={service.providerPlan}
           size="sm"
           nameClassName="text-[12.5px] font-medium text-mute"
         />

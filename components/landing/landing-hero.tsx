@@ -109,7 +109,7 @@ export const LandingHero = () => {
               <div className="min-w-0">
                 <span className="text-[12.5px] text-mute tnum">Сделка БМ‑2041</span>
                 <b className="block truncate text-[15px] font-semibold">Ноутбуки Lenovo, 20 шт</b>
-                <CompanyName name="ТехноСнаб" verified tier="gold" plan="pro" size="sm" className="mt-1" nameClassName="font-medium text-ink-soft" />
+                <CompanyName name="ТехноСнаб" verified tier="gold" size="sm" className="mt-1" nameClassName="font-medium text-ink-soft" />
               </div>
               <b className="shrink-0 text-[16px] font-semibold tnum">167 000 TJS</b>
             </div>

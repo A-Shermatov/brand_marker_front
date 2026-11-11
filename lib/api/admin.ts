@@ -1026,9 +1026,14 @@ export type AdminSupplierMark = {
   override_at: string | null
 }
 
+/** The cabinet a paid plan belongs to: each one has its own. */
+export type AdminPlanSide = "supplier" | "buyer"
+
 export type AdminMarks = {
   user_id: number
+  /** The selling cabinet's plan; both cabinets are in `subscriptions`. */
   subscription: AdminSubscriptionState
+  subscriptions?: Partial<Record<AdminPlanSide, AdminSubscriptionState>>
   suppliers: AdminSupplierMark[]
 }
 
@@ -1037,7 +1042,7 @@ export const adminApi = {
   companyMarks: (companyId: number) => apiFetch<AdminMarks>(`/admin/companies/${companyId}/marks`),
   setUserSubscription: (
     userId: number,
-    payload: { plan: AdminPlanCode; months?: number; reason?: string | null },
+    payload: { plan: AdminPlanCode; side?: AdminPlanSide; months?: number; reason?: string | null },
   ) =>
     apiFetch<AdminSubscriptionState>(`/admin/users/${userId}/subscription`, {
       method: "PUT",

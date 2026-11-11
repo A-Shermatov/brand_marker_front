@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { SealCheckIcon } from "@phosphor-icons/react/dist/ssr"
-import { CompanyName, PlanMark, TrustMark } from "@/components/bm"
+import { CompanyName, TrustMark } from "@/components/bm"
+import { PromotedTag } from "@/components/bm/promoted"
 import { TRUST_LEVELS, TRUST_MARK_NAME } from "@/lib/trust-levels"
 import { plans } from "@/lib/subscription"
 import { forSuppliersUrl } from "@/lib/marketplace-routes"
@@ -18,7 +19,7 @@ export const LandingMarks = () => (
           увидеть, за что он выдан.
         </p>
         <div className="rounded-xl border border-line bg-canvas/60 p-4">
-          <CompanyName name="ТехноСнаб" verified tier="diamond" plan="business" size="lg" />
+          <CompanyName name="ТехноСнаб" verified tier="diamond" size="lg" />
           <p className="mt-1 text-[13px] text-mute">Так выглядит поставщик с высшим знаком</p>
         </div>
       </div>
@@ -51,22 +52,21 @@ export const LandingMarks = () => (
           </dd>
         </div>
         <div className="grid grid-cols-[44px_1fr] gap-3">
-          <dt className="flex items-center">
-            <PlanMark plan="pro" size={36} decorative />
+          <dt className="grid size-11 place-items-center rounded-lg bg-amber-50">
+            <PromotedTag label="" className="h-7 w-7 justify-center px-0" />
           </dt>
           <dd>
-            <b className="text-[15px] font-semibold text-ink">Тариф подписки</b>
+            <b className="text-[15px] font-semibold text-ink">Метка «В топе» и цветная карточка</b>
             <p className="text-[14px] text-mute">
-              {plans.map((p) => p.name).join(", ")}: платное продвижение в каталоге. На
-              надёжность не влияет.{" "}
+              Это платная подписка ({plans.map((p) => p.name).join(", ")}): заявка, товар или
+              предложение стоят первыми в списке и выделены цветом. Рядом с названием значка
+              нет, на надёжность подписка не влияет.{" "}
               <Link href={forSuppliersUrl()} className="font-medium text-brand-700 hover:underline">
                 Тарифы для поставщиков
               </Link>
             </p>
-            <div className="mt-2 flex items-center gap-2">
-              {plans.map((p) => (
-                <PlanMark key={p.id} plan={p.id} size={22} />
-              ))}
+            <div className="mt-2">
+              <PromotedTag />
             </div>
           </dd>
         </div>

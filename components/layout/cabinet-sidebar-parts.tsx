@@ -68,7 +68,6 @@ export function SidebarAccount({
           name={name}
           verified={verified}
           tier={tier}
-          plan={plan}
           size="sm"
           nameClassName="text-[14px]"
         />

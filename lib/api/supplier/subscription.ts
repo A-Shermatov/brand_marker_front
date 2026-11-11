@@ -40,32 +40,28 @@ export type SubscriptionOrderSyncResponse = {
 
 export type SubscriptionPaymentMethodId = "alif" | "dc" | "eskhata"
 
-export const supplierSubscriptionApi = {
-  get: () => apiFetch<SubscriptionResponse>("/supplier/subscription"),
+/** The plan of one cabinet: each side has its own, bought separately. */
+export const subscriptionApi = (side: "supplier" | "buyer") => {
+  const base = `/${side}/subscription`
+  return {
+    get: () => apiFetch<SubscriptionResponse>(base),
 
-  paymentConfig: () =>
-    apiFetch<SubscriptionPaymentConfig>("/supplier/subscription/payments/config"),
+    paymentConfig: () => apiFetch<SubscriptionPaymentConfig>(`${base}/payments/config`),
 
-  checkout: (plan: string, method: SubscriptionPaymentMethodId = "alif") =>
-    apiFetch<SubscriptionCheckoutResponse>("/supplier/subscription/checkout", {
-      method: "POST",
-      body: JSON.stringify({ plan, method }),
-    }),
+    checkout: (plan: string, method: SubscriptionPaymentMethodId = "alif") =>
+      apiFetch<SubscriptionCheckoutResponse>(`${base}/checkout`, {
+        method: "POST",
+        body: JSON.stringify({ plan, method }),
+      }),
 
-  activate: (plan: string, method: SubscriptionPaymentMethodId = "alif") =>
-    apiFetch<SubscriptionCheckoutResponse>("/supplier/subscription/activate", {
-      method: "POST",
-      body: JSON.stringify({ plan, method }),
-    }),
+    syncAlifOrder: (orderId: string) =>
+      apiFetch<SubscriptionOrderSyncResponse>(
+        `${base}/alif/orders/${encodeURIComponent(orderId)}/sync`,
+        { method: "POST" },
+      ),
 
-  syncAlifOrder: (orderId: string) =>
-    apiFetch<SubscriptionOrderSyncResponse>(
-      `/supplier/subscription/alif/orders/${encodeURIComponent(orderId)}/sync`,
-      { method: "POST" },
-    ),
-
-  cancel: () =>
-    apiFetch<SubscriptionCheckoutResponse>("/supplier/subscription/cancel", {
-      method: "POST",
-    }),
+    cancel: () => apiFetch<SubscriptionCheckoutResponse>(`${base}/cancel`, { method: "POST" }),
+  }
 }
+
+export const supplierSubscriptionApi = subscriptionApi("supplier")

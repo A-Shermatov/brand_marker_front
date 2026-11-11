@@ -125,7 +125,6 @@ export const CatalogItemInfo = ({
             name={supplier.display_name}
             verified={supplier.verification_status === "verified"}
             tier={supplier.reputation_tier}
-            plan={supplier.subscription_plan}
             size="md"
           />
           <span className="truncate text-[12.5px] text-mute">

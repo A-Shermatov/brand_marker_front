@@ -298,7 +298,6 @@ export const PerformerDetailContent = ({
                   name={performer.name}
                   verified={performer.verified}
                   tier={profileTier}
-                  plan={apiSupplier?.subscription_plan ?? performer.plan}
                   size="xl"
                 />
                 <ReputationBadge tier={profileTier} size={22} />

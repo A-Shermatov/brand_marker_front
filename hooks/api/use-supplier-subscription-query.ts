@@ -1,30 +1,33 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import {
-  supplierSubscriptionApi,
-  type SubscriptionPaymentMethodId,
-} from "@/lib/api/supplier/subscription"
+import { subscriptionApi, type SubscriptionPaymentMethodId } from "@/lib/api/supplier/subscription"
 import { isApiEnabled } from "@/lib/api/config"
+import type { PlanSide } from "@/lib/subscription"
 
-export const supplierSubscriptionKeys = {
-  all: ["supplier-subscription"] as const,
-  config: ["supplier-subscription", "payment-config"] as const,
+/** Cache keys of one cabinet's plan; the selling cabinet keeps the old key. */
+export const subscriptionKeys = (side: PlanSide) => {
+  const root = side === "supplier" ? "supplier-subscription" : "buyer-subscription"
+  return { all: [root] as const, config: [root, "payment-config"] as const }
 }
 
-export const useSupplierSubscriptionQuery = (enabled = true) =>
+export const supplierSubscriptionKeys = subscriptionKeys("supplier")
+
+export const useSubscriptionQuery = (side: PlanSide, enabled = true) =>
   useQuery({
-    queryKey: supplierSubscriptionKeys.all,
-    queryFn: () => supplierSubscriptionApi.get(),
+    queryKey: subscriptionKeys(side).all,
+    queryFn: () => subscriptionApi(side).get(),
     enabled: enabled && isApiEnabled(),
   })
 
-export const useSubscriptionPaymentConfigQuery = (enabled = true) =>
+export const useSupplierSubscriptionQuery = (enabled = true) => useSubscriptionQuery("supplier", enabled)
+
+export const useSubscriptionPaymentConfigQuery = (enabled = true, side: PlanSide = "supplier") =>
   useQuery({
-    queryKey: supplierSubscriptionKeys.config,
-    queryFn: () => supplierSubscriptionApi.paymentConfig(),
+    queryKey: subscriptionKeys(side).config,
+    queryFn: () => subscriptionApi(side).paymentConfig(),
     enabled: enabled && isApiEnabled(),
   })
 
-export const useActivateSubscriptionMutation = () => {
+export const useActivateSubscriptionMutation = (side: PlanSide = "supplier") => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -33,10 +36,10 @@ export const useActivateSubscriptionMutation = () => {
     }: {
       plan: string
       method?: SubscriptionPaymentMethodId
-    }) => supplierSubscriptionApi.checkout(plan, method),
+    }) => subscriptionApi(side).checkout(plan, method),
     onSuccess: (data) => {
       if (data.is_active || data.payment_status === "paid") {
-        qc.invalidateQueries({ queryKey: supplierSubscriptionKeys.all })
+        qc.invalidateQueries({ queryKey: subscriptionKeys(side).all })
       }
     },
     meta: {
@@ -45,23 +48,23 @@ export const useActivateSubscriptionMutation = () => {
   })
 }
 
-export const useSyncSubscriptionOrderMutation = () => {
+export const useSyncSubscriptionOrderMutation = (side: PlanSide = "supplier") => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (orderId: string) => supplierSubscriptionApi.syncAlifOrder(orderId),
+    mutationFn: (orderId: string) => subscriptionApi(side).syncAlifOrder(orderId),
     onSuccess: (data) => {
       if (data.is_active || data.payment_status === "ok") {
-        qc.invalidateQueries({ queryKey: supplierSubscriptionKeys.all })
+        qc.invalidateQueries({ queryKey: subscriptionKeys(side).all })
       }
     },
   })
 }
 
-export const useCancelSubscriptionMutation = () => {
+export const useCancelSubscriptionMutation = (side: PlanSide = "supplier") => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: () => supplierSubscriptionApi.cancel(),
-    onSuccess: () => qc.invalidateQueries({ queryKey: supplierSubscriptionKeys.all }),
+    mutationFn: () => subscriptionApi(side).cancel(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: subscriptionKeys(side).all }),
     meta: {
       successMessage: "Подписка отменена",
       errorMessage: "Не удалось отменить подписку",
