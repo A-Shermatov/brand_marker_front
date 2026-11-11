@@ -84,6 +84,9 @@ type RfqBase = {
   /** Set when a moderator hid or closed the RFQ */
   moderation_reason?: string | null
   moderated_at?: string | null
+  /** The buyer holds a paid plan: the request stands first in lists and is highlighted. */
+  promoted?: boolean
+  promotion_plan?: string | null
   created_at: string
   updated_at: string
 }

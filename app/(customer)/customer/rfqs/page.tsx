@@ -38,6 +38,7 @@ import {
   type RfqTypeFilter,
 } from "@/lib/rfq-list-search"
 import { RfqList } from "@/components/cabinet/rfq/rfq-list"
+import { PlanUpsell } from "@/components/subscription/plan-upsell"
 import { isApiEnabled } from "@/lib/api/config"
 import { useRfqsQuery } from "@/hooks/api/use-rfqs-query"
 import { proposalsApi } from "@/lib/api/proposals"
@@ -180,6 +181,7 @@ const MyRfqsContent = () => {
 
   return (
     <PageFrame>
+      <PlanUpsell side="buyer" place="rfqs" className="mb-5" />
       {/* One row: status first, then type and search. The section title and the
           "Новая заявка" button already sit in the cabinet header and sidebar. */}
       <div className="mb-5 flex flex-wrap items-center gap-3">

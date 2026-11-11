@@ -17,6 +17,7 @@ import {
   adminApi,
   type AdminMarks,
   type AdminPlanCode,
+  type AdminPlanSide,
   type AdminSupplierMark,
   type AdminTierChoice,
 } from "@/lib/api/admin"
@@ -27,6 +28,10 @@ import type { SubscriptionPlan } from "@/lib/store/subscription-store"
 type AdminMarksCardProps = { userId: number; companyId?: never } | { companyId: number; userId?: never }
 
 const MONTHS = [1, 3, 6, 12]
+const SIDES: { value: AdminPlanSide; label: string }[] = [
+  { value: "supplier", label: "Кабинет поставщика" },
+  { value: "buyer", label: "Кабинет покупателя" },
+]
 const TIER_CHOICES: { value: AdminTierChoice; label: string }[] = [
   { value: "auto", label: "Авто, по сделкам" },
   { value: "none", label: "Снять знак" },
@@ -70,7 +75,15 @@ export function AdminMarksCard(props: AdminMarksCardProps) {
 
   return (
     <section className="grid gap-4 rounded-2xl border border-line bg-card p-5 lg:grid-cols-2">
-      <SubscriptionBlock data={data} onChange={(subscription) => refresh({ subscription })} />
+      <SubscriptionBlock
+        data={data}
+        onChange={(side, subscription) =>
+          refresh({
+            subscriptions: { ...data.subscriptions, [side]: subscription },
+            ...(side === "supplier" ? { subscription } : {}),
+          })
+        }
+      />
       <div className="grid content-start gap-3 border-line lg:border-l lg:pl-5">
         <h2 className="text-[15.5px] font-semibold text-ink">{TRUST_MARK_NAME}</h2>
         {data.suppliers.length === 0 ? (
@@ -98,9 +111,13 @@ function SubscriptionBlock({
   onChange,
 }: {
   data: AdminMarks
-  onChange: (subscription: AdminMarks["subscription"]) => void
+  onChange: (side: AdminPlanSide, subscription: AdminMarks["subscription"]) => void
 }) {
-  const current = data.subscription
+  // A plan belongs to one cabinet: the selling and the buying one are granted separately.
+  const [side, setSide] = useState<AdminPlanSide>("supplier")
+  const current =
+    data.subscriptions?.[side] ??
+    (side === "supplier" ? data.subscription : { plan: "none", active_until: null, is_active: false })
   const [plan, setPlan] = useState<AdminPlanCode>(
     current.is_active ? (current.plan as AdminPlanCode) : "pro",
   )
@@ -108,9 +125,9 @@ function SubscriptionBlock({
   const [reason, setReason] = useState("")
   const mutation = useMutation({
     mutationFn: (payload: { plan: AdminPlanCode; months?: number; reason?: string }) =>
-      adminApi.setUserSubscription(data.user_id, payload),
+      adminApi.setUserSubscription(data.user_id, { ...payload, side }),
     onSuccess: (next, payload) => {
-      onChange(next)
+      onChange(side, next)
       setReason("")
       toast.success(
         payload.plan === "none"
@@ -123,6 +140,31 @@ function SubscriptionBlock({
   return (
     <div className="grid content-start gap-3">
       <h2 className="text-[15.5px] font-semibold text-ink">Тариф подписки</h2>
+      <div
+        role="radiogroup"
+        aria-label="Кабинет, для которого тариф"
+        className="inline-flex gap-1 justify-self-start rounded-lg bg-surface-muted p-1"
+      >
+        {SIDES.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={side === option.value}
+            onClick={() => setSide(option.value)}
+            className={
+              side === option.value
+                ? "h-8 rounded-md bg-card px-3 text-[13.5px] font-medium text-ink shadow-[0_1px_2px_rgba(28,28,26,.1)]"
+                : "h-8 rounded-md px-3 text-[13.5px] font-medium text-mute hover:text-ink"
+            }
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+      <p className="text-[12.5px] text-mute">
+        Тариф действует в одном кабинете. Тому, кто и покупает, и продаёт, он выдаётся для каждого отдельно.
+      </p>
       <div className="flex items-center gap-3 rounded-lg bg-canvas px-3 py-2.5">
         {current.is_active ? (
           <PlanMark plan={current.plan} size={32} />

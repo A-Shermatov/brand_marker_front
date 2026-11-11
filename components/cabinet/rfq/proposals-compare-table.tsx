@@ -15,6 +15,7 @@ import {
   formatRating,
 } from "@/lib/format"
 import { cn } from "@/lib/utils"
+import { PromotedTag, promotedCellClass } from "@/components/bm/promoted"
 
 type ProposalsCompareTableProps = {
   rfq: RfqWithRelations
@@ -84,8 +85,10 @@ export const ProposalsCompareTable = ({
                 return (
                   <th
                     key={proposal.id}
-                    className="px-4 py-3 text-left align-top"
+                    data-promoted={proposal.promoted ? "true" : undefined}
+                    className={cn("px-4 py-3 text-left align-top", proposal.promoted && promotedCellClass)}
                   >
+                    {proposal.promoted ? <PromotedTag className="mb-1.5" /> : null}
                     <Link
                       href={`/customer/suppliers/${proposal.supplier_actor_id}`}
                       className="flex min-w-0 hover:[&_*]:text-brand-700"

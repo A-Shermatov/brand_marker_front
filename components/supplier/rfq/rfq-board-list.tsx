@@ -12,6 +12,7 @@ import type { ProposalStatus, RfqWithRelations } from "@/types"
 import { cn } from "@/lib/utils"
 import { formatCurrency, formatRfqBudget, getDaysLeft, pluralRu } from "@/lib/format"
 import { isDeadlinePassed, splitDateTime } from "@/lib/iso-date"
+import { PromotedTag, promotedCardClass } from "@/components/bm/promoted"
 import { OPEN_RFQ_STATUSES } from "@/lib/rfq-display"
 import { isCatalogOfferRfq, isPendingCatalogOffer } from "@/lib/rfq-board"
 
@@ -94,14 +95,18 @@ export const RfqBoardList = ({
       return (
         <li
           key={rfq.id}
+          data-promoted={rfq.promoted ? "true" : undefined}
           className={cn(
             "rounded-2xl border border-line bg-card transition-[border-color,box-shadow] hover:border-brand-200 hover:shadow-[0_10px_24px_-16px_rgb(0_80_200/0.45)]",
+            // A buyer with a paid plan: the request stands first and is coloured.
+            rfq.promoted && promotedCardClass,
             closed && "opacity-70",
           )}
         >
           <div className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-8 md:px-5">
             <div className="grid min-w-0 gap-1.5">
               <p className="flex flex-wrap items-center gap-2 text-[12.5px]">
+                {rfq.promoted ? <PromotedTag /> : null}
                 {category ? (
                   <span className="rounded-md bg-brand-50 px-2 py-0.5 font-medium text-brand-700">{category}</span>
                 ) : null}

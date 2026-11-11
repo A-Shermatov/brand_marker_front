@@ -29,7 +29,6 @@ export const CatalogItemSellerCard = ({
               name={supplier.display_name}
               verified={marks.verified}
               tier={marks.tier}
-              plan={marks.plan}
               size="lg"
             />
           </Link>

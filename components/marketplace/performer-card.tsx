@@ -3,6 +3,8 @@ import Image from "next/image"
 import { ClockIcon, MapPinIcon, PackageIcon, StarIcon } from "@phosphor-icons/react/dist/ssr"
 import type { MarketplacePerformer } from "@/types/marketplace"
 import { CompanyName } from "@/components/bm"
+import { PromotedTag, promotedCardClass } from "@/components/bm/promoted"
+import { cn } from "@/lib/utils"
 import { performerUrl } from "@/lib/marketplace-routes"
 import { resolveFileUrl } from "@/lib/file-url"
 import { formatCount } from "@/lib/format"
@@ -14,11 +16,17 @@ type PerformerCardProps = {
 export const PerformerCard = ({ performer }: PerformerCardProps) => {
   const products = Number(performer.clients) || 0
   const rated = performer.reviews > 0 && performer.rating > 0
+  // A supplier with a paid plan stands first in the list and is coloured.
+  const promoted = Boolean(performer.promoted || performer.plan)
 
   return (
     <Link
       href={performerUrl(performer.id)}
-      className="group grid content-start gap-4 rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]"
+      data-promoted={promoted ? "true" : undefined}
+      className={cn(
+        "group grid content-start gap-4 rounded-2xl border border-line bg-card p-5 transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]",
+        promoted && promotedCardClass,
+      )}
     >
       <div className="flex items-start gap-3.5">
         <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-brand-tile text-[14px] font-semibold text-white">
@@ -36,11 +44,11 @@ export const PerformerCard = ({ performer }: PerformerCardProps) => {
           )}
         </div>
         <div className="grid min-w-0 flex-1 gap-1">
+          {promoted ? <PromotedTag className="justify-self-start" /> : null}
           <CompanyName
             name={performer.name}
             verified={performer.verified}
             tier={performer.tier}
-            plan={performer.plan}
             size="md"
             nameClassName="group-hover:text-brand-700"
           />

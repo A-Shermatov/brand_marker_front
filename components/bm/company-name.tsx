@@ -1,9 +1,7 @@
 import { SealCheckIcon } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { normalizeReputationTier } from "@/lib/trust-levels"
-import { normalizePlan } from "@/lib/subscription"
 import { TrustMark } from "@/components/bm/trust-mark"
-import { PlanMark } from "@/components/bm/plan-mark"
 
 type CompanyNameSize = "sm" | "md" | "lg" | "xl"
 
@@ -12,8 +10,6 @@ type CompanyNameProps = {
   verified?: boolean
   /** Reliability tier: silver / gold / diamond */
   tier?: string | null
-  /** Active subscription plan: start / pro / business */
-  plan?: string | null
   size?: CompanyNameSize
   className?: string
   nameClassName?: string
@@ -23,23 +19,23 @@ type CompanyNameProps = {
   as?: "span" | "h1" | "h2" | "h3" | "p"
 }
 
-const SIZES: Record<CompanyNameSize, { text: string; mark: number; plan: number; seal: string; gap: string }> = {
+const SIZES: Record<CompanyNameSize, { text: string; mark: number; seal: string; gap: string }> = {
   // Whole-pixel sizes; up to 24 px the marks switch to their sharp small drawing.
-  sm: { text: "text-[13.5px]", mark: 18, plan: 16, seal: "size-4", gap: "gap-1" },
-  md: { text: "text-[15px]", mark: 20, plan: 18, seal: "size-[18px]", gap: "gap-1.5" },
-  lg: { text: "text-[18px]", mark: 24, plan: 20, seal: "size-5", gap: "gap-1.5" },
-  xl: { text: "text-[26px] leading-tight tracking-[-0.02em]", mark: 34, plan: 26, seal: "size-6", gap: "gap-2" },
+  sm: { text: "text-[13.5px]", mark: 18, seal: "size-4", gap: "gap-1" },
+  md: { text: "text-[15px]", mark: 20, seal: "size-[18px]", gap: "gap-1.5" },
+  lg: { text: "text-[18px]", mark: 24, seal: "size-5", gap: "gap-1.5" },
+  xl: { text: "text-[26px] leading-tight tracking-[-0.02em]", mark: 34, seal: "size-6", gap: "gap-2" },
 }
 
 /**
- * Company name with its marks, in a fixed order: document check, earned
- * reliability mark, then the paid plan. Every mark has a tooltip.
+ * Company name with its marks, in a fixed order: document check, then the
+ * earned reliability mark. Every mark has a tooltip. A paid plan is not a mark
+ * next to the name: it shows as a highlighted card in lists (see promoted.tsx).
  */
 export function CompanyName({
   name,
   verified = false,
   tier,
-  plan,
   size = "md",
   className,
   nameClassName,
@@ -48,14 +44,13 @@ export function CompanyName({
 }: CompanyNameProps) {
   const s = SIZES[size]
   const trust = normalizeReputationTier(tier)
-  const paid = normalizePlan(plan)
 
   return (
     <span className={cn("inline-flex min-w-0 max-w-full items-center", s.gap, className)}>
       <Name className={cn("min-w-0 truncate font-semibold text-ink", s.text, nameClassName)}>
         {name}
       </Name>
-      {verified || trust !== "none" || paid ? (
+      {verified || trust !== "none" ? (
         <span className={cn("inline-flex shrink-0 items-center", s.gap)}>
           {verified ? (
             <span title="Компания проверена по документам" className="inline-flex">
@@ -68,7 +63,6 @@ export function CompanyName({
             </span>
           ) : null}
           {trust !== "none" ? <TrustMark tier={trust} size={s.mark} /> : null}
-          {paid ? <PlanMark plan={paid} size={s.plan} /> : null}
         </span>
       ) : null}
     </span>

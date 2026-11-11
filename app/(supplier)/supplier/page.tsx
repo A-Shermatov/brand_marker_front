@@ -306,7 +306,6 @@ export default function SupplierDashboard() {
             name={companyTitle}
             verified={marks.verified}
             tier={marks.tier}
-            plan={marks.plan}
             size="xl"
             className="mt-0.5"
           />

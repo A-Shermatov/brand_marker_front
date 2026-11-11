@@ -19,6 +19,7 @@ import { useHydrated } from "@/hooks/use-hydrated"
 import { getActorId } from "@/lib/auth-display"
 import { getRfqBuyerName } from "@/lib/buyer-display"
 import { isApiEnabled } from "@/lib/api/config"
+import { PlanUpsell } from "@/components/subscription/plan-upsell"
 import {
   useSupplierProposalsQuery,
   useSupplierRfqBoardQuery,
@@ -75,6 +76,8 @@ export default function SupplierProposalsPage() {
         title="Мои КП"
         description="Отправленные КП и что с ними: покупатель ещё выбирает, выбрал вас или другого поставщика"
       />
+
+      <PlanUpsell side="supplier" place="proposals" className="mb-5" />
 
       {!hydrated || (useApi && isLoading) ? (
         <PageSurface className="animate-pulse p-12">

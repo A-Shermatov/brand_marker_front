@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button"
 import { MetricTile } from "@/components/process"
 import { PageFrame, PageHeader, SegmentedControl } from "@/components/layout"
 import { scoreCatalogItem, scoreLevel } from "@/lib/catalog-quality-score"
+import { PlanUpsell } from "@/components/subscription/plan-upsell"
 import type { ItemStatus } from "@/types"
 
 type Tab = "all" | ItemStatus
@@ -125,6 +126,8 @@ function SupplierCatalogContent() {
           </Button>
         }
       />
+
+      <PlanUpsell side="supplier" place="catalog" className="mb-5" />
 
       <section className="mb-6 grid gap-3 sm:grid-cols-3" aria-label="Сводка каталога">
         <MetricTile

@@ -27,6 +27,9 @@ export type Proposal = {
   id: number
   rfq_id: string
   supplier_actor_id: number
+  /** The supplier holds a paid plan: the offer stands first and is highlighted. */
+  promoted?: boolean
+  promotion_plan?: string | null
   price: number
   currency: Currency
   delivery_time: string | null

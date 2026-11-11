@@ -164,18 +164,24 @@ describe("PlanMark", () => {
 })
 
 describe("CompanyName", () => {
-  it("puts marks in a fixed order: check, reliability, plan", () => {
-    const out = html(<CompanyName name="ТехноСнаб" verified tier="gold" plan="pro" />)
+  it("puts marks in a fixed order: check, then reliability", () => {
+    const out = html(<CompanyName name="ТехноСнаб" verified tier="gold" />)
     const seal = out.indexOf("проверена по документам")
     const trust = out.indexOf('data-tier="gold"')
-    const plan = out.indexOf('data-plan="pro"')
     expect(seal).toBeGreaterThan(-1)
     expect(seal).toBeLessThan(trust)
-    expect(trust).toBeLessThan(plan)
+  })
+
+  it("never draws a plan mark next to the name: one mark is enough", () => {
+    // A paid plan shows as a highlighted card in lists, not as a second logo by the name.
+    const marks = { verified: true, tier: "gold", plan: "business" }
+    const out = html(<CompanyName name="ТехноСнаб" {...marks} />)
+    expect(out).toContain('data-tier="gold"')
+    expect(out).not.toContain("data-plan")
   })
 
   it("shows only the name when there is nothing to show", () => {
-    const out = html(<CompanyName name="Новая компания" tier="none" plan="none" />)
+    const out = html(<CompanyName name="Новая компания" tier="none" />)
     expect(out).toContain("Новая компания")
     expect(out).not.toContain("data-tier")
     expect(out).not.toContain("data-plan")

@@ -70,7 +70,6 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
         initials={initialsOf(companyName, "ПК")}
         verified={marks.verified}
         tier={marks.tier}
-        plan={marks.plan}
         onClick={onNavigate}
       />
 

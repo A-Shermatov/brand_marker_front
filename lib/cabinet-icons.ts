@@ -5,7 +5,6 @@ import {
   ChatsCircleIcon,
   ClipboardTextIcon,
   ClockCounterClockwiseIcon,
-  CrownSimpleIcon,
   GearSixIcon,
   HandshakeIcon,
   HouseIcon,
@@ -42,7 +41,7 @@ export const HUB_ICONS: Record<CabinetRole, Record<string, PhosphorIcon>> = {
     company: UsersThreeIcon,
     approvals: StampIcon,
     profile: UserCircleIcon,
-    plan: CrownSimpleIcon,
+    tariff: SealCheckIcon,
     reviews: StarIcon,
   },
   supplier: {
