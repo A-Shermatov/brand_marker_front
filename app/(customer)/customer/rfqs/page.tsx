@@ -54,7 +54,7 @@ import {
  */
 const EMPTY_TAB: Partial<Record<BuyerRfqStatusFilter, { title: string; text: string; create?: boolean }>> = {
   all: {
-    title: "Заявок нет",
+    title: "У вас пока нет заявок",
     text: "Опишите, что нужно купить, — поставщики сами пришлют цены. Это займёт около трёх минут.",
     create: true,
   },

@@ -2,18 +2,35 @@
 
 import { useRef, useState } from "react"
 import Link from "next/link"
-import { ArrowLeftIcon as ArrowLeft, ArrowRightIcon as ArrowRight, ShoppingCartIcon as ShoppingCart, BriefcaseIcon as Briefcase, PaperclipIcon as Paperclip, PaperPlaneRightIcon as Send, XIcon as X } from "@phosphor-icons/react/dist/ssr"
+import {
+  ArrowLeftIcon as ArrowLeft,
+  ArrowRightIcon as ArrowRight,
+  BriefcaseIcon as Briefcase,
+  CalendarDotsIcon,
+  CoinsIcon,
+  FlagCheckeredIcon,
+  HourglassIcon,
+  LightningIcon,
+  MapPinIcon,
+  PaperPlaneRightIcon as Send,
+  PaperclipIcon as Paperclip,
+  ShieldCheckIcon,
+  ShoppingCartIcon as ShoppingCart,
+  XIcon as X,
+} from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
-import { validateRfqForm, type RfqFormValues } from "@/lib/schemas/rfq-form"
-import { isoDateBounds, sanitizeIsoDateInput } from "@/lib/iso-date"
-import { formatIsoDate, formatRfqBudget } from "@/lib/format"
+import { RFQ_TITLE_MAX_LENGTH, validateRfqForm, type RfqFormValues } from "@/lib/schemas/rfq-form"
+import { isoDateBounds, toIsoDay } from "@/lib/iso-date"
+import { formatCurrency, formatDateSpan, formatIsoDate, formatRfqBudget, formatTimeLeft } from "@/lib/format"
 import {
   MAX_NUMERIC_INPUT_LENGTH,
   sanitizeDigitInput,
 } from "@/lib/bounded-number-input"
 import { PageFrame, PageHeader } from "@/components/layout"
 import { Button } from "@/components/ui/button"
-import { DateInputRu } from "@/components/ui/date-input-ru"
+import { DateTimeInput } from "@/components/ui/date-time-input"
+import { RfqReview } from "@/components/cabinet/rfq/rfq-form-review"
+import type { RequestFact } from "@/components/rfq/fact-tile"
 import { InlineHint } from "@/components/process"
 import type { PaymentMode, RfqCreate, RfqWithRelations } from "@/types"
 import { PAYMENT_MODE_LABEL, PaymentModeChoice } from "@/components/payments/payment-mode-choice"
@@ -22,7 +39,6 @@ import { useCategoryOptions } from "@/hooks/use-category-options"
 import {
   PRODUCT_WIZARD_STEPS,
   ProductConditionsStep,
-  ProductReviewStep,
   ProductWhatStep,
   cityFromAddress,
   composeProductDescription,
@@ -161,7 +177,7 @@ const defaultValues = (
       initial.type === "product"
         ? (initial.delivery_address || address)
         : "",
-    delivery_date: initial.type === "product" ? initial.delivery_date : "",
+    delivery_date: initial.delivery_date ?? "",
     project_duration: initial.type === "service" ? initial.project_duration : "",
     start_date: initial.type === "service" ? initial.start_date : "",
     team_size_required:
@@ -201,7 +217,7 @@ const toFormValues = (values: FormState): RfqFormValues => {
       delivery_country: "Таджикистан",
       delivery_city: cityFromAddress(address),
       delivery_address: address || undefined,
-      delivery_date: values.deadline,
+      delivery_date: values.delivery_date,
     }
   }
 
@@ -216,8 +232,11 @@ const toFormValues = (values: FormState): RfqFormValues => {
     currency: values.currency,
     deadline: values.deadline,
     visibility: values.visibility,
-    project_duration: values.project_duration,
+    // The length of the work follows from its two dates; older requests keep their own wording.
+    project_duration:
+      formatDateSpan(values.start_date, values.delivery_date) || values.project_duration,
     start_date: values.start_date,
+    delivery_date: values.delivery_date,
     team_size_required: values.team_size_required,
     experience_required: values.experience_required,
   }
@@ -263,6 +282,7 @@ const toRfqCreate = (values: FormState): RfqCreate => {
     type: "service",
     project_duration: parsed.project_duration.trim(),
     start_date: parsed.start_date,
+    delivery_date: parsed.delivery_date,
     team_size_required: parsed.team_size_required
       ? Number(parsed.team_size_required)
       : null,
@@ -288,6 +308,7 @@ const STEP_FIELDS_SERVICE: Record<1 | 2, string[]> = {
     "deadline",
     "project_duration",
     "start_date",
+    "delivery_date",
   ],
 }
 
@@ -311,7 +332,7 @@ const FIELD_INPUT_ID: Record<string, string> = {
   budget_from: "budget-from",
   budget_to: "budget-to",
   deadline: "deadline",
-  delivery_date: "delivery-date",
+  delivery_date: "work-deadline",
   delivery_country: "delivery-country",
   delivery_city: "delivery-city",
   delivery_address: "w-delivery",
@@ -334,6 +355,7 @@ const focusField = (field: string, type: FormState["type"]) => {
     quantity: "item-0-qty",
     budget_from: "w-budget",
     deadline: "w-deadline",
+    delivery_date: "w-work-deadline",
     delivery_address: "w-delivery",
   }
   const inputId =
@@ -353,7 +375,28 @@ const labelClass = "block text-sm font-medium text-foreground mb-1.5"
 const FieldError = ({ message }: { message?: string }) =>
   message ? <p className="text-xs text-destructive mt-1">{message}</p> : null
 
-const formatDateOrDash = (value: string) => (value ? formatIsoDate(value) : "—")
+/** A date of the request as a tile: the day (and time), and how far away it is. */
+const dateFact = (
+  icon: RequestFact["icon"],
+  label: string,
+  value: string,
+  hint?: string,
+): RequestFact => ({
+  icon,
+  label,
+  value: value ? formatIsoDate(value) : "Не указан",
+  hint: value ? (hint ?? formatTimeLeft(value)) : undefined,
+})
+
+const paymentFact = (mode: PaymentMode): RequestFact => ({
+  icon: mode === "escrow" ? ShieldCheckIcon : LightningIcon,
+  label: "Оплата",
+  value: PAYMENT_MODE_LABEL[mode],
+  hint:
+    mode === "escrow"
+      ? "Банк держит деньги до вашей приёмки"
+      : "Деньги сразу уходят поставщику",
+})
 
 export const RfqForm = ({
   initial,
@@ -380,19 +423,27 @@ export const RfqForm = ({
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }))
+    // The person is fixing the field: its complaint goes away until the next check.
+    setErrors((prev) => {
+      const stale = key === "delivery_address" ? ["delivery_address", "delivery_city"] : [key as string]
+      if (!stale.some((field) => prev[field])) return prev
+      return Object.fromEntries(Object.entries(prev).filter(([field]) => !stale.includes(field)))
+    })
   }
 
   const handleDateChange = (
     key: "deadline" | "delivery_date" | "start_date",
     value: string,
   ) => {
-    const next = sanitizeIsoDateInput(value, {
-      minYear: rfqDateYear - 1,
-      maxYear: rfqDateYear + 10,
-    })
-    if (next === null) return
-    setField(key, next)
+    setField(key, value)
   }
+
+  const today = toIsoDay(new Date())
+  const dateFieldClass = (field: string) =>
+    cn(
+      "h-11 rounded-xl text-sm focus-within:ring-2 focus-within:ring-primary/20",
+      !errors[field] && "border-input",
+    )
 
   const inputClass = (field: string) =>
     cn(
@@ -540,7 +591,7 @@ export const RfqForm = ({
             Что нужно сделать или купить
           </label>
           <input
-            maxLength={100}
+            maxLength={RFQ_TITLE_MAX_LENGTH}
             id="rfq-title"
             value={values.title}
             onChange={(e) => setField("title", e.target.value)}
@@ -776,51 +827,66 @@ export const RfqForm = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
             <label htmlFor="deadline" className={labelClass}>
-              Принимать предложения до
+              Дедлайн заявки
             </label>
-            <DateInputRu
+            <DateTimeInput
               id="deadline"
+              label="дедлайн заявки"
               min={DATE_INPUT_MIN}
               max={DATE_INPUT_MAX}
+              notBefore={today}
               value={values.deadline}
               onChange={(v) => handleDateChange("deadline", v)}
-              className={inputClass("deadline")}
-              aria-invalid={!!errors.deadline}
+              invalid={!!errors.deadline}
+              className={dateFieldClass("deadline")}
             />
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              До этого времени исполнители присылают предложения. Время можно не указывать — тогда до
+              конца дня.
+            </p>
             <FieldError message={errors.deadline} />
           </div>
           <div>
             <label htmlFor="start-date" className={labelClass}>
               Когда начать работу
             </label>
-            <DateInputRu
+            <DateTimeInput
               id="start-date"
+              label="начало работы"
               min={DATE_INPUT_MIN}
               max={DATE_INPUT_MAX}
+              notBefore={today}
               value={values.start_date}
               onChange={(v) => handleDateChange("start_date", v)}
-              className={inputClass("start_date")}
-              aria-invalid={!!errors.start_date}
+              invalid={!!errors.start_date}
+              className={dateFieldClass("start_date")}
             />
             <FieldError message={errors.start_date} />
           </div>
           <div>
-            <label htmlFor="duration" className={labelClass}>
-              Сколько займёт работа
+            <label htmlFor="work-deadline" className={labelClass}>
+              Дедлайн работы
             </label>
-            <input
-              maxLength={25}
-              id="duration"
-              value={values.project_duration}
-              onChange={(e) => setField("project_duration", e.target.value)}
-              placeholder="Например: 2 недели"
-              className={inputClass("project_duration")}
-              aria-invalid={!!errors.project_duration}
+            <DateTimeInput
+              id="work-deadline"
+              label="дедлайн работы"
+              min={DATE_INPUT_MIN}
+              max={DATE_INPUT_MAX}
+              notBefore={values.start_date.slice(0, 10) || today}
+              value={values.delivery_date}
+              onChange={(v) => handleDateChange("delivery_date", v)}
+              invalid={!!errors.delivery_date}
+              className={dateFieldClass("delivery_date")}
             />
-            <FieldError message={errors.project_duration} />
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              {formatDateSpan(values.start_date, values.delivery_date)
+                ? `К этому времени результат должен быть готов. На работу: ${formatDateSpan(values.start_date, values.delivery_date)}.`
+                : "К этому времени результат должен быть готов."}
+            </p>
+            <FieldError message={errors.delivery_date} />
           </div>
         </div>
       </div>
@@ -832,53 +898,66 @@ export const RfqForm = ({
     </>
   )
 
-  const serviceSummaryRows: { label: string; value: string; editStep: 1 | 2 }[] = [
-    { label: "Что нужно", value: values.title || "—", editStep: 1 },
-    { label: "Тип", value: "Услуга", editStep: 1 },
-    { label: "Категория", value: categoryLabel, editStep: 1 },
-    { label: "Файлы", value: attachmentsCount ? String(attachmentsCount) : "Нет", editStep: 1 },
-    { label: "Бюджет", value: budgetLabel, editStep: 2 },
-    { label: "Принимать предложения до", value: formatDateOrDash(values.deadline), editStep: 2 },
-    { label: "Начало работы", value: formatDateOrDash(values.start_date), editStep: 2 },
-    { label: "Длительность", value: values.project_duration || "—", editStep: 2 },
-    { label: "Оплата", value: PAYMENT_MODE_LABEL[values.payment_mode], editStep: 2 },
-  ]
+  const workSpan = formatDateSpan(values.start_date, values.delivery_date)
+  const reviewFacts: RequestFact[] =
+    values.type === "product"
+      ? [
+          dateFact(HourglassIcon, "Дедлайн заявки", values.deadline),
+          dateFact(FlagCheckeredIcon, "Дедлайн поставки", values.delivery_date),
+          {
+            icon: CoinsIcon,
+            label: "Бюджет",
+            value: values.budget_from.trim()
+              ? formatCurrency(Number(values.budget_from), values.currency)
+              : "Не указан",
+            hint: values.budget_from.trim() ? undefined : "Поставщики предложат цену сами",
+          },
+          paymentFact(values.payment_mode),
+          {
+            icon: MapPinIcon,
+            label: "Адрес доставки",
+            value: values.delivery_address.trim() || "Не указан",
+            wide: true,
+          },
+        ]
+      : [
+          { ...dateFact(HourglassIcon, "Дедлайн заявки", values.deadline), wide: true },
+          dateFact(CalendarDotsIcon, "Начало работы", values.start_date, ""),
+          dateFact(
+            FlagCheckeredIcon,
+            "Дедлайн работы",
+            values.delivery_date,
+            workSpan ? `На работу: ${workSpan}` : undefined,
+          ),
+          {
+            icon: CoinsIcon,
+            label: "Бюджет",
+            value: budgetLabel,
+            hint: values.budget_type === "open" ? "Исполнители предложат цену сами" : undefined,
+          },
+          paymentFact(values.payment_mode),
+        ]
 
-  const renderServiceReviewStep = () => (
-    <>
-      <div className="bg-card border border-border rounded-2xl p-5 sm:p-6">
-        <dl className="divide-y divide-border">
-          {serviceSummaryRows.map((row) => (
-            <div key={row.label} className="flex items-start justify-between gap-4 py-3 first:pt-0">
-              <div className="min-w-0">
-                <dt className="text-xs text-muted-foreground">{row.label}</dt>
-                <dd className="text-sm font-semibold text-foreground mt-0.5 wrap-break-word">{row.value}</dd>
-              </div>
-              <button
-                type="button"
-                onClick={() => goToStep(row.editStep)}
-                className="shrink-0 text-sm font-semibold text-primary hover:underline"
-                aria-label={`Изменить: ${row.label}`}
-              >
-                Изменить
-              </button>
-            </div>
-          ))}
-          <div className="py-3 last:pb-0">
-            <dt className="text-xs text-muted-foreground">Подробности</dt>
-            <dd className="text-sm text-foreground mt-0.5 whitespace-pre-line line-clamp-6">
-              {values.description || "—"}
-            </dd>
-          </div>
-        </dl>
-      </div>
+  const reviewFootnote =
+    values.visibility === "invited_only" && invitedSupplierName
+      ? `После публикации заявку увидит только ${invitedSupplierName}. Его предложение появится на странице заявки. Ваши контакты не показываются — общение только в чате площадки.`
+      : values.type === "product"
+        ? `После публикации поставщики категории «${categoryLabel}» получат уведомление. Предложения появятся на странице заявки — вы сравните их и выберете лучшее. Ваши контакты не показываются.`
+        : "После публикации заявку увидят исполнители. Предложения появятся на странице заявки — вы сравните их и выберете лучшее. Ваши контакты не показываются."
 
-      <InlineHint>
-        {values.visibility === "invited_only" && invitedSupplierName
-          ? `Заявку увидит только ${invitedSupplierName}. Его предложение появится на странице заявки.`
-          : "После публикации заявку увидят поставщики. Предложения появятся на странице заявки — вы сравните их и выберете лучшее."}
-      </InlineHint>
-    </>
+  const renderReviewStep = () => (
+    <RfqReview
+      type={values.type}
+      title={values.title}
+      categoryLabel={categoryLabel}
+      positions={values.type === "product" ? values.items : undefined}
+      details={values.type === "product" ? values.note : values.description}
+      detailsLabel={values.type === "product" ? "Дополнительно" : "Подробности"}
+      filesCount={attachmentsCount}
+      facts={reviewFacts}
+      footnote={reviewFootnote}
+      onEdit={goToStep}
+    />
   )
 
   const isProduct = values.type === "product"
@@ -966,7 +1045,9 @@ export const RfqForm = ({
           </div>
         )}
 
-        {isProduct ? (
+        {step === 3 ? (
+          renderReviewStep()
+        ) : isProduct ? (
           <div className="grid gap-5 rounded-xl border border-border bg-card p-5 md:p-6">
             {step === 1 && (
               <ProductWhatStep
@@ -1021,32 +1102,17 @@ export const RfqForm = ({
                 categories={rfqCategories}
                 budgetFrom={values.budget_from}
                 deadline={values.deadline}
+                deliveryDate={values.delivery_date}
                 deliveryAddress={values.delivery_address}
-                visibility={values.visibility}
                 paymentMode={values.payment_mode}
-                invitedLocked={!!invitedSupplierId}
                 dateMin={DATE_INPUT_MIN}
                 dateMax={DATE_INPUT_MAX}
+                today={today}
                 onBudgetChange={(v) => setField("budget_from", v)}
                 onDeadlineChange={(v) => handleDateChange("deadline", v)}
+                onDeliveryDateChange={(v) => handleDateChange("delivery_date", v)}
                 onDeliveryChange={(v) => setField("delivery_address", v)}
-                onVisibilityChange={(v) => setField("visibility", v)}
                 onPaymentModeChange={(v) => setField("payment_mode", v)}
-              />
-            )}
-            {step === 3 && (
-              <ProductReviewStep
-                title={values.title}
-                categoryLabel={categoryLabel}
-                items={values.items}
-                budgetFrom={values.budget_from}
-                currency={values.currency}
-                deadline={values.deadline}
-                deliveryAddress={values.delivery_address}
-                paymentMode={values.payment_mode}
-                visibility={values.visibility}
-                invitedSupplierName={invitedSupplierName}
-                onEdit={goToStep}
               />
             )}
           </div>
@@ -1054,12 +1120,11 @@ export const RfqForm = ({
           <>
             {step === 1 && renderServiceWhatStep()}
             {step === 2 && renderServiceBudgetStep()}
-            {step === 3 && renderServiceReviewStep()}
           </>
         )}
 
         {isProduct ? (
-          <div className="mt-5 flex flex-wrap items-center gap-3">
+          <div className={cn("flex flex-wrap items-center gap-3", step === 3 ? "mt-6" : "mt-5")}>
             {step > 1 ? (
               <Button type="button" variant="ghost" onClick={handleBack}>
                 <ArrowLeft /> Назад

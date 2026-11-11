@@ -62,17 +62,14 @@ export default function SupplierShell({ children }: { children: React.ReactNode 
                 label: "Заявки",
                 Icon: Inbox,
                 badge: hydrated ? counts.rfqs_new : 0,
-                match: (p) =>
-                  p.startsWith("/supplier/rfqs") || p.startsWith("/supplier/proposals"),
+                match: (p) => p.startsWith("/supplier/rfqs"),
               },
               {
                 href: "/supplier/contracts?tab=active",
                 label: "Сделки",
                 Icon: Briefcase,
                 badge: hydrated ? counts.deals_new : 0,
-                match: (p) =>
-                  p.startsWith("/supplier/contracts") ||
-                  p.startsWith("/supplier/finance"),
+                match: (p) => p.startsWith("/supplier/contracts"),
               },
               {
                 href: "/supplier/messages",

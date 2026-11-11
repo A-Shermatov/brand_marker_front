@@ -3,24 +3,19 @@
 import { LayoutGroup } from "motion/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  HouseIcon,
-  PlusIcon,
-  StarIcon,
-  UsersThreeIcon,
-} from "@phosphor-icons/react/dist/ssr"
+import { PlusIcon } from "@phosphor-icons/react/dist/ssr"
 import { HUB_ICONS } from "@/lib/cabinet-icons"
-import { CabinetNavLink } from "@/components/layout/cabinet-nav-link"
+import { CabinetMenu } from "@/components/layout/cabinet-menu"
 import {
   initialsOf,
   RAIL_ACTION,
   SidebarAccount,
-  SidebarSection,
   SidebarSupport,
   SidebarTop,
 } from "@/components/layout/cabinet-sidebar-parts"
 import { Button } from "@/components/ui/button"
 import { useSupportChat } from "@/components/support/support-chat-context"
+import { useSideProfiles } from "@/components/company/profile-switch-menu"
 import {
   emptySupplierNavCounts,
   useSupplierNavCounts,
@@ -28,9 +23,7 @@ import {
 import { useHydrated } from "@/hooks/use-hydrated"
 import { useSupplierMarks } from "@/hooks/use-supplier-marks"
 import { useAuthStore } from "@/lib/store/auth-store"
-import { matchHub, SUPPLIER_HUBS } from "@/lib/cabinet-nav"
-
-const ICONS = HUB_ICONS.supplier
+import { hubsFor, matchHub, SUPPLIER_HUBS } from "@/lib/cabinet-nav"
 
 export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
@@ -40,7 +33,12 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
   const counts = countsQuery.data ?? emptySupplierNavCounts()
   const marks = useSupplierMarks()
   const { openSupport } = useSupportChat()
-  const activeHub = matchHub(SUPPLIER_HUBS, pathname, "/supplier")
+  // A private person has no company to manage: the menu follows the profile
+  // the person works from right now.
+  const { active } = useSideProfiles("supplier")
+  const kind = hydrated ? (active?.kind ?? null) : null
+  const hubs = hubsFor(SUPPLIER_HUBS, kind)
+  const activeHub = matchHub(hubs, pathname, "/supplier")
 
   const badgeFor = (keys?: string[]) => {
     if (!hydrated || !keys?.length) return 0
@@ -63,7 +61,7 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
       <SidebarTop onClose={onNavigate} />
 
       <SidebarAccount
-        href="/supplier/company"
+        href={kind === "company" ? "/supplier/company" : "/supplier/profile"}
         name={companyName}
         role="Кабинет поставщика"
         initials={initialsOf(companyName, "ПС")}
@@ -80,40 +78,15 @@ export default function SupplierSidebar({ onNavigate }: { onNavigate?: () => voi
         </Link>
       </Button>
 
-      <SidebarSection>
-        {SUPPLIER_HUBS.map((hub) => (
-          <CabinetNavLink
-            key={hub.id}
-            href={hub.href}
-            label={hub.label}
-            icon={ICONS[hub.id] ?? HouseIcon}
-            active={activeHub?.id === hub.id}
-            badge={badgeFor(hub.badgeKeys)}
-            onClick={onNavigate}
-          />
-        ))}
-      </SidebarSection>
+      <CabinetMenu
+        hubs={hubs}
+        activeId={activeHub?.id}
+        icons={HUB_ICONS.supplier}
+        badgeFor={badgeFor}
+        onNavigate={onNavigate}
+      />
 
-      <SidebarSection label="Ещё" className="mt-4">
-        <CabinetNavLink
-          href="/supplier/customers"
-          label="Покупатели"
-          icon={UsersThreeIcon}
-          active={pathname.startsWith("/supplier/customers")}
-          onClick={onNavigate}
-          quiet
-        />
-        <CabinetNavLink
-          href="/supplier/reviews"
-          label="Отзывы"
-          icon={StarIcon}
-          active={pathname.startsWith("/supplier/reviews")}
-          onClick={onNavigate}
-          quiet
-        />
-      </SidebarSection>
-
-      <div className="mt-auto pt-6">
+      <div className="mt-auto pt-5">
         <SidebarSupport
           onClick={() => {
             openSupport()

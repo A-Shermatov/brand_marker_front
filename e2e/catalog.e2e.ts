@@ -22,10 +22,11 @@ test("a buyer buys from the cabinet catalog, pays at once and reviews the item",
   await test.step("the catalog is a main menu section and opens inside the cabinet", async () => {
     await buyer.goto("/customer")
     const menu = buyer.getByRole("navigation", { name: "Меню кабинета" })
-    await menu.getByRole("link", { name: "Каталог товаров" }).click()
+    await menu.getByRole("link", { name: "Каталог", exact: true }).click()
     await expect(buyer).toHaveURL(/\/customer\/catalog$/)
-    // Company moved under "Ещё".
-    await expect(menu.getByRole("link", { name: "Компания" })).toHaveAttribute("href", "/customer/company")
+    // The buyer works under their own name: the menu has their profile and no company pages.
+    await expect(menu.getByRole("link", { name: "Мой профиль" })).toHaveAttribute("href", "/customer/profile")
+    await expect(menu.getByRole("link", { name: "Компания" })).toHaveCount(0)
   })
 
   await test.step("the buyer opens the service in the cabinet", async () => {
@@ -35,7 +36,7 @@ test("a buyer buys from the cabinet catalog, pays at once and reviews the item",
     await expect(buyer).toHaveURL(/\/customer\/catalog\/\d+$/)
     itemPath = new URL(buyer.url()).pathname
     await expect(buyer.getByRole("heading", { level: 1 })).toHaveText(SERVICE)
-    await expect(buyer.getByRole("navigation", { name: "Вы здесь" })).toContainText("Каталог товаров")
+    await expect(buyer.getByRole("navigation", { name: "Вы здесь" })).toContainText("Каталог")
   })
 
   await test.step("the photo magnifies under the cursor", async () => {
@@ -61,7 +62,7 @@ test("a buyer buys from the cabinet catalog, pays at once and reviews the item",
     await buyer.getByRole("button", { name: "Оформить заказ" }).click()
     await expect(buyer).toHaveURL(/\/customer\/rfqs\?status=all$/)
     await buyer.getByRole("link", { name: SERVICE }).first().click()
-    await expect(buyer.getByRole("main")).toContainText("Оплата сразу поставщику")
+    await expect(buyer.getByRole("region", { name: "Условия" })).toContainText("Сразу поставщику")
   })
 
   await test.step("the supplier accepts the order and a deal opens", async () => {
@@ -69,7 +70,7 @@ test("a buyer buys from the cabinet catalog, pays at once and reviews the item",
     await supplier.getByRole("main").getByRole("searchbox", { name: "Поиск по заявкам покупателей" }).fill(SERVICE)
     const card = supplier.getByRole("main").getByRole("listitem").filter({ hasText: "оплата сразу" }).first()
     await card.getByRole("link", { name: SERVICE }).click()
-    await expect(supplier.getByRole("main")).toContainText("Сразу вам: деньги приходят в момент оплаты")
+    await expect(supplier.getByRole("main")).toContainText("Деньги приходят вам в момент оплаты")
     await supplier.getByRole("button", { name: "Принять и открыть сделку" }).click()
     await expect(supplier).toHaveURL(/\/supplier\/contracts\/\d+$/)
     contractId = supplier.url().split("/").pop()!

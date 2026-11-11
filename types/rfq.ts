@@ -101,6 +101,8 @@ export type ServiceRfq = RfqBase & {
   type: "service"
   project_duration: string
   start_date: string
+  /** The work deadline; requests made before this field existed have none. */
+  delivery_date?: string | null
   team_size_required: number | null
   experience_required: string | null
 }
@@ -138,6 +140,7 @@ export type ServiceRfqCreate = RfqBaseCreate & {
   type: "service"
   project_duration: string
   start_date: string
+  delivery_date?: string | null
   team_size_required?: number | null
   experience_required?: string | null
 }

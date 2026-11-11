@@ -61,16 +61,18 @@ const resolveSection = (role: CabinetRole, pathname: string, search: string) => 
   const cfg = CONFIG[role]
   const hub = matchHub(cfg.hubs, pathname, cfg.home)
   if (!hub) return null
-  const tabs = cfg.subtabs[hub.id]
-  if (!tabs?.length) return null
-  const active = matchSubtab(tabs, pathname, search)
-  // Only list pages own the section header; a deal or a dispute opened from
-  // the list gets its own title and a back link instead of a second heading.
-  const isRoot = Boolean(
-    active &&
-      [active.href.split("?")[0], ...(active.match ?? [])].some((p) => p === pathname),
-  )
-  return { hub, tabs, active, isRoot, meta: cfg.titles[hub.id] as SectionMeta | undefined }
+  const tabs = cfg.subtabs[hub.id] ?? []
+  const meta = cfg.titles[hub.id] as SectionMeta | undefined
+  // A page of the menu has a header when the menu names it; some keep tabs inside.
+  if (!tabs.length && !meta) return null
+  const active = tabs.length ? matchSubtab(tabs, pathname, search) : null
+  // Only the pages the menu opens own the header; a deal or a dispute opened
+  // from a list gets its own title and a trail back instead of a second heading.
+  const roots = active
+    ? [active.href.split("?")[0], ...(active.match ?? [])]
+    : [hub.href.split("?")[0], ...hub.match]
+  const isRoot = roots.some((p) => p === pathname)
+  return { hub, tabs, active, isRoot, meta }
 }
 
 /**
@@ -88,9 +90,10 @@ export function useInSectionHub(): boolean {
 }
 
 /**
- * Section header for merged cabinet hubs, in one row: the section's menu icon
- * and title, then its tabs. Kept short so the list starts high on the screen;
- * the section's one-line description is the title's tooltip.
+ * The header of a page opened from the menu: the same icon and the same name
+ * the menu uses, and one line on what the page is for — so a person always
+ * knows where they are and what they can do here. Sections that keep two
+ * views inside show them as tabs next to the name.
  */
 export function SectionHub({ role, badges }: SectionHubProps) {
   const pathname = usePathname()
@@ -102,22 +105,25 @@ export function SectionHub({ role, badges }: SectionHubProps) {
   const Icon = HUB_ICONS[role][hub.id]
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+    <div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-3">
       {meta ? (
-        <div className="flex min-w-0 items-center gap-2.5">
+        <div className="flex min-w-0 items-center gap-3">
           {Icon ? (
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-tile text-white">
-              <Icon weight="fill" className="size-5" aria-hidden />
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-tile text-white">
+              <Icon weight="fill" className="size-[22px]" aria-hidden />
             </span>
           ) : null}
-          <h1
-            title={meta.description || undefined}
-            className="truncate text-[21px] font-semibold leading-tight tracking-[-0.02em] text-ink"
-          >
-            {meta.title}
-          </h1>
+          <div className="min-w-0">
+            <h1 className="truncate text-[21px] font-semibold leading-tight tracking-[-0.02em] text-ink">
+              {meta.title}
+            </h1>
+            {meta.description ? (
+              <p className="mt-0.5 text-[13.5px] leading-snug text-mute">{meta.description}</p>
+            ) : null}
+          </div>
         </div>
       ) : null}
+      {tabs.length > 1 ? (
       <LayoutGroup id={`hub-${role}-${hub.id}`}>
       <div
         role="tablist"
@@ -165,6 +171,7 @@ export function SectionHub({ role, badges }: SectionHubProps) {
         })}
       </div>
       </LayoutGroup>
+      ) : null}
     </div>
   )
 }
