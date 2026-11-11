@@ -24,10 +24,11 @@ import { cn } from "@/lib/utils"
 
 const KEY = ["admin-telegram"] as const
 
-type Form = { enabled: boolean; token: string; channel: string; siteUrl: string }
+type Form = { enabled: boolean; assistant: boolean; token: string; channel: string; siteUrl: string }
 
 const toForm = (s: TelegramSettings): Form => ({
   enabled: s.enabled,
+  assistant: s.assistant_enabled,
   token: "",
   channel: s.channel_id ?? "",
   siteUrl: s.site_url === s.default_site_url ? "" : s.site_url,
@@ -50,6 +51,7 @@ export default function AdminTelegramPage() {
     mutationFn: (f: Form) =>
       telegramApi.update({
         enabled: f.enabled,
+        assistant_enabled: f.assistant,
         bot_token: f.token.trim() || undefined,
         channel_id: f.channel.trim() || undefined,
         site_url: f.siteUrl.trim() || undefined,
@@ -163,6 +165,25 @@ export default function AdminTelegramPage() {
                   checked={form.enabled}
                   disabled={!canEdit}
                   onCheckedChange={(enabled) => setForm({ ...form, enabled })}
+                />
+              </div>
+
+              <div className="flex items-start justify-between gap-4 rounded-xl border border-line p-4">
+                <div className="grid gap-0.5">
+                  <Label htmlFor="tg-assistant" className="text-[15px] font-semibold">
+                    Заявки и ответы прямо в боте
+                  </Label>
+                  <span className="text-[13px] text-mute">
+                    Люди подключают аккаунт в «Мой профиль» → «Telegram». Покупатель пишет боту, что ему нужно, и
+                    публикует заявку; поставщик листает заявки и отвечает ценой. Уведомления площадки приходят в тот же
+                    чат. Нужен только токен бота; канал не обязателен.
+                  </span>
+                </div>
+                <Switch
+                  id="tg-assistant"
+                  checked={form.assistant}
+                  disabled={!canEdit}
+                  onCheckedChange={(assistant) => setForm({ ...form, assistant })}
                 />
               </div>
 
