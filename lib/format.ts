@@ -188,13 +188,16 @@ export const formatRelativeTime = (timestamp: number | string): string => {
 
 export const formatRelativeIso = (iso: string): string => formatRelativeTime(iso)
 
+/** A request without a budget: the price comes from the suppliers' offers. */
+export const RFQ_BUDGET_BY_PROPOSALS = "По предложениям"
+
 export const formatRfqBudget = (
   budgetType: string,
   budgetFrom: number | null,
   budgetTo: number | null,
   currency: string,
 ): string => {
-  if (budgetType === "open") return "Не указан"
+  if (budgetType === "open") return RFQ_BUDGET_BY_PROPOSALS
   if (budgetType === "fixed" && budgetFrom != null) {
     return formatCurrency(budgetFrom, currency)
   }
@@ -202,5 +205,5 @@ export const formatRfqBudget = (
     return `${formatCurrency(budgetFrom, currency)} – ${formatCurrency(budgetTo, currency)}`
   }
   if (budgetFrom != null) return formatCurrency(budgetFrom, currency)
-  return "Не указан"
+  return RFQ_BUDGET_BY_PROPOSALS
 }

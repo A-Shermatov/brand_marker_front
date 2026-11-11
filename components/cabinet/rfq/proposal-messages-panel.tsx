@@ -31,6 +31,8 @@ type ProposalMessagesPanelProps = {
   subject?: string
   headerActions?: ReactNode
   headerChildren?: ReactNode
+  /** The other party's profile; the header name links to it. */
+  profileHref?: string
   className?: string
 }
 
@@ -44,6 +46,7 @@ export const ProposalMessagesPanel = ({
   subject,
   headerActions,
   headerChildren,
+  profileHref,
   className,
 }: ProposalMessagesPanelProps) => {
   const useApi = isApiEnabled()
@@ -78,6 +81,7 @@ export const ProposalMessagesPanel = ({
       className={className}
       header={
         <ChatHeader
+          href={profileHref}
           name={peerName}
           avatar={avatar}
           subtitle={subject ? <>Предложение · {subject}</> : "Обсуждение предложения"}

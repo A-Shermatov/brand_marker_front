@@ -117,7 +117,7 @@ export default function SupplierContractDetailPage({ params }: PageProps) {
 
   const meta = contractStatusMeta[contract.status]
   const buyer = buyerQuery.data
-  const buyerName = buyer?.display_name ?? "Покупатель"
+  const buyerName = buyer?.display_name ?? contract.buyer_name ?? "Покупатель"
   const hasReview = Boolean(
     givenReviews?.items?.some((review) => review.contract_id === contractId),
   )

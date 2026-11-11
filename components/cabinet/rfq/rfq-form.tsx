@@ -5,7 +5,6 @@ import Link from "next/link"
 import {
   ArrowLeftIcon as ArrowLeft,
   ArrowRightIcon as ArrowRight,
-  BriefcaseIcon as Briefcase,
   CalendarDotsIcon,
   CoinsIcon,
   FlagCheckeredIcon,
@@ -15,7 +14,6 @@ import {
   PaperPlaneRightIcon as Send,
   PaperclipIcon as Paperclip,
   ShieldCheckIcon,
-  ShoppingCartIcon as ShoppingCart,
   XIcon as X,
 } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
@@ -30,6 +28,7 @@ import { PageFrame, PageHeader } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { DateTimeInput } from "@/components/ui/date-time-input"
 import { RfqReview } from "@/components/cabinet/rfq/rfq-form-review"
+import { RfqHowItWorks, RfqWizardSteps } from "@/components/cabinet/rfq/rfq-wizard-chrome"
 import type { RequestFact } from "@/components/rfq/fact-tile"
 import { InlineHint } from "@/components/process"
 import type { PaymentMode, RfqCreate, RfqWithRelations } from "@/types"
@@ -39,6 +38,7 @@ import { useCategoryOptions } from "@/hooks/use-category-options"
 import {
   PRODUCT_WIZARD_STEPS,
   ProductConditionsStep,
+  ProductTypeToggle,
   ProductWhatStep,
   cityFromAddress,
   composeProductDescription,
@@ -191,7 +191,7 @@ const defaultValues = (
 
 /** Budget choices as the buyer reads them; "open" means no budget at all. */
 const BUDGET_CHOICE: Record<FormState["budget_type"], string> = {
-  open: "Без бюджета",
+  open: "По предложениям",
   fixed: "Точная сумма",
   range: "Диапазон",
 }
@@ -551,39 +551,7 @@ export const RfqForm = ({
 
   const renderServiceWhatStep = () => (
     <>
-      <div className="grid grid-cols-2 gap-3">
-        {([
-          { value: "service" as const, title: "Услуга", desc: "Работа или сервис", Icon: Briefcase },
-          { value: "product" as const, title: "Товар", desc: "Закупка товара", Icon: ShoppingCart },
-        ]).map(({ value, title, desc, Icon }) => {
-          const active = values.type === value
-          return (
-            <button
-              key={value}
-              type="button"
-              onClick={() => switchType(value)}
-              disabled={!!initial}
-              aria-pressed={active}
-              className={cn(
-                "text-left rounded-2xl border-2 p-4 transition-all",
-                active ? "border-primary bg-secondary shadow-sm" : "border-border bg-card hover:border-primary/40",
-                initial && "opacity-70 cursor-not-allowed",
-              )}
-            >
-              <div
-                className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center mb-2.5",
-                  active ? "bg-primary text-primary-foreground" : "bg-secondary text-primary",
-                )}
-              >
-                <Icon size={18} />
-              </div>
-              <div className="text-sm font-bold text-foreground">{title}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">{desc}</div>
-            </button>
-          )
-        })}
-      </div>
+      <ProductTypeToggle type={values.type} locked={!!initial} onChange={switchType} />
 
       <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 space-y-5">
         <div>
@@ -989,66 +957,14 @@ export const RfqForm = ({
         </div>
       )}
 
-      <div className={cn("mx-auto w-full max-w-3xl", isProduct ? "" : "space-y-6")}>
-        {isProduct ? (
-          <ol className="mb-6 grid grid-cols-3 gap-2" aria-label="Шаги создания заявки">
-            {wizardSteps.map((item) => (
-              <li
-                key={item.step}
-                className={cn(
-                  "grid gap-2 text-[13px]",
-                  item.step === step ? "font-semibold text-ink" : "text-mute",
-                )}
-                aria-current={item.step === step ? "step" : undefined}
-              >
-                <span
-                  className={cn(
-                    "h-1 rounded-full",
-                    item.step <= step ? "bg-brand-600" : "bg-line",
-                  )}
-                />
-                <span>
-                  <span className="mr-1 font-mono tnum">{item.step}</span>
-                  {item.label}
-                </span>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <div>
-            <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="font-semibold text-ink">
-                {wizardSteps[step - 1].label}
-              </span>
-              <span className="text-mute">Шаг {step} из 3</span>
-            </div>
-            <ol className="grid grid-cols-3 gap-2" aria-label="Шаги создания заявки">
-              {wizardSteps.map((item) => (
-                <li key={item.step} aria-current={item.step === step ? "step" : undefined}>
-                  <span
-                    className={cn(
-                      "block h-1.5 rounded-full transition-colors",
-                      item.step <= step ? "bg-brand-600" : "bg-line",
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      "mt-1.5 hidden text-xs sm:block",
-                      item.step === step ? "font-semibold text-ink" : "text-mute",
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
+      <div className="grid w-full max-w-[1100px] items-start gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+      <div className={cn("min-w-0", isProduct ? "" : "space-y-6")}>
+        <RfqWizardSteps steps={wizardSteps} current={step} />
 
         {step === 3 ? (
           renderReviewStep()
         ) : isProduct ? (
-          <div className="grid gap-5 rounded-xl border border-border bg-card p-5 md:p-6">
+          <div className="grid gap-6 rounded-2xl border border-line bg-card p-5 md:p-7">
             {step === 1 && (
               <ProductWhatStep
                 errors={errors}
@@ -1130,14 +1046,9 @@ export const RfqForm = ({
                 <ArrowLeft /> Назад
               </Button>
             ) : null}
-            <button
-              type="button"
-              onClick={handleSaveDraft}
-              disabled={isSubmitting}
-              className="px-2 text-[13.5px] font-medium text-muted-foreground hover:text-foreground disabled:opacity-50"
-            >
+            <Button type="button" variant="outline" onClick={handleSaveDraft} disabled={isSubmitting}>
               Сохранить черновик
-            </button>
+            </Button>
             <span className="flex-1" />
             {step < 3 ? (
               <Button type="button" onClick={handleNext}>
@@ -1187,6 +1098,8 @@ export const RfqForm = ({
             </div>
           </div>
         )}
+      </div>
+      <RfqHowItWorks />
       </div>
     </PageFrame>
   )

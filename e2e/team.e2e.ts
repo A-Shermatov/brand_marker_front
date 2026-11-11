@@ -1,7 +1,8 @@
 import type { Browser, Page } from "@playwright/test"
 import { API_URL, accounts } from "./support/accounts"
 import { expect, runId, test } from "./support/fixtures"
-import { signIn } from "./support/login"
+import { signIn, signInAdmin } from "./support/login"
+import { approveProfileChanges } from "./support/moderation"
 
 const PASSWORD = "Team-E2E-2026!"
 
@@ -125,10 +126,10 @@ test("a director invites an employee, changes the access and takes it away", asy
 
   await test.step("the manager does what a manager may: writes a request for the company", async () => {
     expect(await apiAs(employee, "POST", "/buyer/rfqs/", draftRequest(requestTitle))).toBe(200)
-    await employee.goto("/customer/rfqs?status=draft")
+    await employee.goto("/customer/rfqs")
     await expect(employee.getByRole("main")).toContainText(requestTitle)
     // The director sees it too: the request belongs to the company.
-    await director.goto("/customer/rfqs?status=draft")
+    await director.goto("/customer/rfqs")
     await expect(director.getByRole("main")).toContainText(requestTitle)
   })
 
@@ -162,7 +163,7 @@ test("a director invites an employee, changes the access and takes it away", asy
     await employee.goto("/customer")
     await expect(employee.getByTestId("viewer-notice")).toContainText("доступ только для просмотра")
     // Still sees the company's requests, but can no longer write one.
-    await employee.goto("/customer/rfqs?status=draft")
+    await employee.goto("/customer/rfqs")
     await expect(employee.getByRole("main")).toContainText(requestTitle)
     expect(await apiAs(employee, "POST", "/buyer/rfqs/", draftRequest(`Не выйдет ${runId}`))).toBe(403)
   })
@@ -176,11 +177,11 @@ test("a director invites an employee, changes the access and takes it away", asy
     await expect(director.getByRole("main").getByText("Алишер Менеджеров")).toHaveCount(0)
 
     // The very next page the employee opens says why, and the cabinet becomes their own.
-    await employee.goto("/customer/rfqs?status=draft")
+    await employee.goto("/customer/rfqs")
     await expect(employee.getByText(`У вас больше нет доступа к компании «${company}»`)).toBeVisible()
     await expect(employee).toHaveURL(/\/customer\?left=1$/)
     await expect(employee.getByTestId("active-profile")).toHaveText("Личный профиль")
-    await employee.goto("/customer/rfqs?status=draft")
+    await employee.goto("/customer/rfqs")
     await expect(employee.getByRole("main")).not.toContainText(requestTitle)
   })
 
@@ -223,7 +224,12 @@ test("a freelancer registers, fills in their page and it opens to the public", a
     await form.getByLabel("Название работы 1").fill("Сайт для автосервиса")
     await form.getByLabel("Описание работы 1").fill("Запись на ремонт и напоминания клиентам.")
     await form.getByRole("button", { name: "Сохранить страничку" }).click()
-    await expect(page.getByText("Страница сохранена")).toBeVisible()
+    // What the public sees waits for an admin.
+    await expect(page.getByText(/Страница отправлена на проверку/)).toBeVisible()
+    const admin = await newPerson(browser)
+    await signInAdmin(admin, accounts.admin)
+    await approveProfileChanges(admin, new RegExp(`Рустам ${surname}`))
+    await admin.context().close()
 
     const href = await form.getByRole("link", { name: "Как видят меня другие" }).getAttribute("href")
     expect(href).toMatch(/^\/performers\/\d+/)

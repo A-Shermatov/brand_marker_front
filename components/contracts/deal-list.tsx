@@ -62,6 +62,19 @@ const toneOf = (contract: ContractWithRelations): CardTone => {
   return "brand"
 }
 
+/** The other party as people know them: company title or the person's name. */
+const counterpartName = (
+  role: DealRole,
+  contract: ContractWithRelations,
+  fallback: (contract: ContractWithRelations) => string,
+) => (role === "supplier" ? contract.buyer_name : contract.supplier_name)?.trim() || fallback(contract)
+
+/** Profiles are keyed by the party's actor id. */
+const counterpartHref = (role: DealRole, contract: ContractWithRelations) =>
+  role === "supplier"
+    ? `/supplier/customers/${contract.buyer_actor_id}`
+    : `/customer/suppliers/${contract.supplier_actor_id}`
+
 /**
  * Deals as cards: title and the other party on the left; on the right the
  * amount, how far the deal has come, and what happens next — in bold blue
@@ -107,7 +120,12 @@ export const DealList = ({ contracts, role, getCounterpartName }: DealListProps)
             <CardTitle href={href}>{contract.title}</CardTitle>
             <CardLine icon={BuildingsIcon}>
               <span className="text-mute">{COUNTERPART[role]}:</span>
-              {getCounterpartName(contract)}
+              <Link
+                href={counterpartHref(role, contract)}
+                className="font-medium text-ink underline-offset-2 hover:text-brand-700 hover:underline"
+              >
+                {counterpartName(role, contract, getCounterpartName)}
+              </Link>
             </CardLine>
           </ListCardBody>
         </ListCard>

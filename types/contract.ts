@@ -135,6 +135,9 @@ export type Contract = {
   proposal_id: number
   buyer_actor_id: number
   supplier_actor_id: number
+  /** Company title, or the person's name for an individual account. */
+  buyer_name?: string | null
+  supplier_name?: string | null
   title: string
   description: string | null
   agreed_amount: number

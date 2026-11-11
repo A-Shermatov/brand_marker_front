@@ -67,10 +67,6 @@ const EMPTY_TAB: Partial<Record<BuyerRfqStatusFilter, { title: string; text: str
     title: "Заявок со сделкой нет",
     text: "Заявка попадёт сюда, когда вы выберете предложение поставщика.",
   },
-  draft: {
-    title: "Черновиков нет",
-    text: "Здесь лежат заявки, которые вы сохранили, но ещё не опубликовали.",
-  },
   closed: {
     title: "Закрытых заявок нет",
     text: "Сюда попадают завершённые, отменённые заявки и те, у которых истёк срок.",
@@ -146,7 +142,6 @@ const MyRfqsContent = () => {
         all: undefined as number | undefined,
         quotes: navCounts.rfqs,
         deal: undefined as number | undefined,
-        draft: undefined as number | undefined,
         closed: undefined as number | undefined,
         archived: undefined as number | undefined,
       }
@@ -164,7 +159,6 @@ const MyRfqsContent = () => {
       all: count("all"),
       quotes: count("quotes"),
       deal: count("deal"),
-      draft: count("draft"),
       closed: count("closed"),
       archived: count("archived"),
     }

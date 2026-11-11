@@ -63,8 +63,8 @@ const buildQueues = (m: AdminDashboardMetrics): QueueTile[] => [
   },
   {
     id: "changes",
-    label: "Изменения данных",
-    hint: "название, директор, адрес",
+    label: "Изменения профилей",
+    hint: "компании и личные профили",
     count: m.pending_company_changes ?? 0,
     href: "/admin/verification?tab=changes",
     Icon: QUEUE_ICONS.changes,

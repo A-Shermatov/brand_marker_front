@@ -22,27 +22,102 @@ const formatDate = (value: string) =>
     year: "numeric",
   }).format(new Date(value))
 
+type MediaPair = { before: string | string[] | null; after: string | string[] | null }
+
+const PAGE_LABELS: Record<string, string> = {
+  headline: "Чем занимается",
+  about: "О себе",
+  skills: "Навыки",
+  city: "Город",
+  website: "Сайт",
+  rate_amount: "Ставка",
+  portfolio: "Работы",
+}
+
+/** A proposed value as the admin reads it: text, a list, a picture or a page. */
+const ChangeValue = ({
+  value,
+  media,
+  tone,
+}: {
+  value: unknown
+  media?: string | string[] | null
+  tone: "before" | "after"
+}) => {
+  const textClass = cn("text-sm font-medium", tone === "after" ? "text-primary" : "text-foreground")
+  if (typeof media === "string") {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={media} alt="" className="max-h-40 rounded-lg border border-border object-contain" />
+    )
+  }
+  if (Array.isArray(media) && media.length > 0) {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {media.map((src) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={src} src={src} alt="" className="size-20 rounded-lg border border-border object-cover" />
+        ))}
+      </div>
+    )
+  }
+  if (value == null || value === "" || (Array.isArray(value) && value.length === 0)) {
+    return <p className={textClass}>—</p>
+  }
+  if (Array.isArray(value)) {
+    return <p className={textClass}>{value.map((v) => (typeof v === "object" ? JSON.stringify(v) : String(v))).join(", ")}</p>
+  }
+  if (typeof value === "object") {
+    const page = value as Record<string, unknown>
+    return (
+      <dl className="grid gap-1 text-sm">
+        {Object.entries(PAGE_LABELS).map(([key, label]) => {
+          const item = page[key]
+          if (item == null || item === "" || (Array.isArray(item) && item.length === 0)) return null
+          const text =
+            key === "portfolio" && Array.isArray(item)
+              ? item.map((w) => (w as { title?: string }).title ?? "").filter(Boolean).join(", ")
+              : Array.isArray(item)
+                ? item.join(", ")
+                : key === "rate_amount"
+                  ? `${item} ${page.rate_currency ?? ""}`
+                  : String(item)
+          return (
+            <div key={key}>
+              <dt className="text-[11px] text-muted-foreground">{label}</dt>
+              <dd className={cn("whitespace-pre-line", tone === "after" ? "text-primary" : "text-foreground")}>{text}</dd>
+            </div>
+          )
+        })}
+      </dl>
+    )
+  }
+  return <p className={cn(textClass, "whitespace-pre-line break-words")}>{String(value)}</p>
+}
+
 const DiffRow = ({
   label,
   before,
   after,
+  media,
 }: {
   label: string
-  before: string | null | undefined
-  after: string | null | undefined
+  before: unknown
+  after: unknown
+  media?: MediaPair
 }) => (
   <div className="rounded-lg border border-border p-3">
     <p className="text-[12.5px] font-medium text-muted-foreground">
       {label}
     </p>
-    <div className="mt-2 grid gap-2 sm:grid-cols-2">
-      <div>
+    <div className="mt-2 grid gap-3 sm:grid-cols-2">
+      <div className="grid content-start gap-1">
         <p className="text-[11px] text-muted-foreground">Сейчас</p>
-        <p className="text-sm font-medium text-foreground">{before || "—"}</p>
+        <ChangeValue value={before} media={media?.before} tone="before" />
       </div>
-      <div>
+      <div className="grid content-start gap-1">
         <p className="text-[11px] text-muted-foreground">Запрошено</p>
-        <p className="text-sm font-medium text-primary">{after || "—"}</p>
+        <ChangeValue value={after} media={media?.after} tone="after" />
       </div>
     </div>
   </div>
@@ -61,7 +136,7 @@ const STATUS_OPTIONS: Array<{ value: ChangeRequestStatus; label: string }> = [
 ]
 
 const EMPTY_DESCRIPTIONS: Record<ChangeRequestStatus, string> = {
-  pending: "Смена названия, ИНН или адреса появится здесь после подачи заявки.",
+  pending: "Изменения профилей компаний и пользователей появятся здесь, как только их отправят.",
   approved: "Одобренных заявок пока нет.",
   rejected: "Отклонённых заявок пока нет.",
 }
@@ -159,7 +234,10 @@ export const CompanyChangesQueuePanel = ({
                     {item.company_title || `Компания #${item.company_id}`}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    {Object.keys(item.proposed).length} полей · {formatDate(item.created_at)}
+                    {item.kind === "user" ? "Личный профиль" : "Компания"} ·{" "}
+                    {Object.values(item.field_labels ?? {}).join(", ").toLowerCase() ||
+                      `${Object.keys(item.proposed).length} полей`}{" "}
+                    · {formatDate(item.created_at)}
                   </p>
                 </button>
               </li>
@@ -198,7 +276,7 @@ export const CompanyChangesQueuePanel = ({
           <PageEmptyState
             icon={<Building2 />}
             title="Выберите заявку"
-            description="Слева список заявок на изменение реквизитов."
+            description="Слева изменения профилей компаний и пользователей, которые ждут проверки."
           />
         ) : (
           <div className="space-y-5">
@@ -208,13 +286,18 @@ export const CompanyChangesQueuePanel = ({
                   {selected.company_title || `Компания #${selected.company_id}`}
                 </h2>
                 <p className="text-sm text-muted-foreground">
+                  {selected.kind === "user" ? "Личный профиль: имя, фото, личная страница" : "Профиль компании"}
+                </p>
+                <p className="text-sm text-muted-foreground">
                   Заявка от {formatDate(selected.created_at)}
                 </p>
               </div>
               <Button asChild variant="outline" size="sm">
-                <Link href={`/admin/companies/${selected.company_id}`}>
-                  Карточка компании
-                </Link>
+                {selected.kind === "user" && selected.target_user_id ? (
+                  <Link href={`/admin/users/${selected.target_user_id}`}>Карточка пользователя</Link>
+                ) : (
+                  <Link href={`/admin/companies/${selected.company_id}`}>Карточка компании</Link>
+                )}
               </Button>
             </div>
 
@@ -231,6 +314,7 @@ export const CompanyChangesQueuePanel = ({
                   label={selected.field_labels?.[key] || key}
                   before={selected.current_snapshot[key]}
                   after={selected.proposed[key]}
+                  media={selected.media?.[key]}
                 />
               ))}
             </div>

@@ -20,7 +20,7 @@ const HUB_TABS: {
   { value: "suppliers", label: "Поставщики (компании)", countKey: "supplier_companies" },
   { value: "buyers", label: "Покупатели (компании)", countKey: "buyer_companies" },
   { value: "individuals", label: "Физлица", countKey: "individuals" },
-  { value: "changes", label: "Изменения данных", countKey: "changes" },
+  { value: "changes", label: "Изменения профилей", countKey: "changes" },
 ]
 
 const HubSkeleton = () => (
@@ -40,7 +40,7 @@ const VerificationHub = () => {
   // `?tab=queue` (sidebar badge link) opens the first queue that has pending items.
   const hotTab =
     rawTab === "queue" && counts
-      ? HUB_TABS.find((option) => option.value !== "changes" && counts[option.countKey] > 0)
+      ? HUB_TABS.find((option) => counts[option.countKey] > 0)
           ?.value ?? null
       : null
   const tab = hotTab ?? pickHubTab(rawTab, HUB_TABS, () => true)

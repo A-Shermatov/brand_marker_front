@@ -1,5 +1,6 @@
 import type { IndividualPage, InvitationPreview, MyInvitation } from "@/types"
 import { apiFetch, tokenStorage, type TokenPair } from "./client"
+import type { CompanyChangeRequest } from "./companies"
 
 export type ActorSummary = {
   id: number
@@ -24,6 +25,8 @@ export type MeResponse = {
     totp_enabled?: boolean
     /** Public link to the person's photo; null until they upload one. */
     avatar_url?: string | null
+    /** Name or photo changes waiting for an admin. */
+    pending_changes?: string[]
   }
   actors: ActorSummary[]
   active_actor_id: number | null
@@ -229,6 +232,9 @@ export const authApi = {
   },
 
   deleteAvatar: () => apiFetch<MeResponse["user"]>("/auth/me/avatar", { method: "DELETE" }),
+
+  /** My name, photo or page changes waiting for an admin, or null. */
+  myChanges: () => apiFetch<CompanyChangeRequest | null>("/auth/me/changes"),
 
   /** My page as a private person. */
   getPage: () => apiFetch<IndividualPage>("/auth/me/page"),

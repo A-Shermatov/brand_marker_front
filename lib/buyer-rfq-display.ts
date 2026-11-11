@@ -36,13 +36,12 @@ export const ACTIVE_RFQ_STATUSES: RfqStatus[] = [
 ]
 
 export const BUYER_RFQ_V5_TABS: {
-  value: Extract<BuyerRfqStatusFilter, "all" | "quotes" | "deal" | "draft" | "closed" | "archived">
+  value: Extract<BuyerRfqStatusFilter, "all" | "quotes" | "deal" | "closed" | "archived">
   label: string
 }[] = [
   { value: "all", label: "Все" },
   { value: "quotes", label: "Приём КП" },
   { value: "deal", label: "Сделка" },
-  { value: "draft", label: "Черновики" },
   { value: "closed", label: "Закрытые" },
   { value: "archived", label: "Архив" },
 ]

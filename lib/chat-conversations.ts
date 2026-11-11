@@ -82,9 +82,13 @@ const toContractProject = (
   contract: ContractWithRelations,
   currentUserId: number,
   counterpartId: number,
-  counterpartName: string,
+  fallbackName: string,
   hrefBase: "customer" | "supplier",
 ): InboxProject => {
+  // The API names the other party (company title or person's name); the
+  // caller's lookup is only a fallback for older responses and demo data.
+  const apiName = hrefBase === "supplier" ? contract.buyer_name : contract.supplier_name
+  const counterpartName = apiName?.trim() || fallbackName
   const messages = contract.conversation?.messages ?? []
   const last = messages[messages.length - 1] ?? null
   const lastMessage: InboxLastMessage | null = last

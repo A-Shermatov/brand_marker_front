@@ -8,6 +8,7 @@ import {
   PaperPlaneRightIcon,
   ShieldCheckIcon,
 } from "@phosphor-icons/react/dist/ssr"
+import Link from "next/link"
 import { UserAvatar } from "@/components/bm/user-avatar"
 import { cn } from "@/lib/utils"
 import type { MessageDeliveryStatus } from "@/types"
@@ -71,21 +72,40 @@ export function ChatHeader({
   name,
   avatar,
   subtitle,
+  href,
   actions,
   children,
 }: {
   name: string
   avatar?: string | null
   subtitle?: ReactNode
+  /** The other party's profile: the photo and the name open it. */
+  href?: string
   actions?: ReactNode
   children?: ReactNode
 }) {
   return (
     <header className="border-b border-line bg-card">
       <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
-        <UserAvatar src={avatar} name={name} size={40} />
+        {href ? (
+          <Link href={href} className="shrink-0 rounded-full" aria-hidden tabIndex={-1}>
+            <UserAvatar src={avatar} name={name} size={40} />
+          </Link>
+        ) : (
+          <UserAvatar src={avatar} name={name} size={40} />
+        )}
         <div className="grid min-w-0 flex-1">
-          <b className="truncate text-[15.5px] font-semibold text-ink">{name}</b>
+          {href ? (
+            <Link
+              href={href}
+              title="Открыть профиль"
+              className="w-fit max-w-full truncate text-[15.5px] font-semibold text-ink underline-offset-2 hover:text-brand-700 hover:underline"
+            >
+              {name}
+            </Link>
+          ) : (
+            <b className="truncate text-[15.5px] font-semibold text-ink">{name}</b>
+          )}
           {subtitle ? <span className="truncate text-[13px] text-mute">{subtitle}</span> : null}
         </div>
         {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}

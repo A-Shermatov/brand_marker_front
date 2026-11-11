@@ -21,6 +21,7 @@ import {
 import { useCategoryOptions } from "@/hooks/use-category-options"
 import { buyerRfqBadgeLabel, isModeratedRfq } from "@/lib/buyer-rfq-display"
 import { formatIsoDate, formatRfqBudget, pluralRu } from "@/lib/format"
+import { cn } from "@/lib/utils"
 import { RfqActionsMenu } from "@/components/cabinet/rfq/rfq-manage"
 
 type RfqListProps = {
@@ -69,10 +70,22 @@ export const RfqList = ({ rfqs, getProposalCount }: RfqListProps) => {
                   <CardFact label="Бюджет" className="min-w-[150px]">
                     {formatRfqBudget(rfq.budget_type, rfq.budget_from, rfq.budget_to, rfq.currency)}
                   </CardFact>
-                  <CardFact label="Предложения" className="min-w-[96px]">
-                    <span className={offers && collecting ? "text-brand-700" : undefined}>
-                      {offers} {pluralRu(offers, "КП", "КП", "КП")}
-                    </span>
+                  <CardFact label="Предложения" className="min-w-[132px]">
+                    {offers > 0 ? (
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[13px] font-semibold tnum",
+                          collecting ? "bg-brand-50 text-brand-700" : "bg-surface-muted text-ink",
+                        )}
+                      >
+                        {collecting ? <span className="size-1.5 rounded-full bg-brand-500" aria-hidden /> : null}
+                        {offers} {pluralRu(offers, "предложение", "предложения", "предложений")}
+                      </span>
+                    ) : (
+                      <span className="font-normal text-mute">
+                        {rfq.status === "draft" ? "—" : collecting ? "Пока нет" : "Не было"}
+                      </span>
+                    )}
                   </CardFact>
                   {collecting && rfq.deadline ? (
                     <StatusPill tone="brand" icon={ClockIcon}>

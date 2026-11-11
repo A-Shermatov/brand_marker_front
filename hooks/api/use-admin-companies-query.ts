@@ -105,7 +105,7 @@ export const useAdminCompanyChangeRequestActionMutation = () => {
       reason?: string
     }) => adminApi.applyCompanyChangeRequestAction(requestId, action, reason),
     onSuccess: async (data) => {
-      await invalidateCompanyQueries(queryClient, data.company_id)
+      await invalidateCompanyQueries(queryClient, data.company_id ?? undefined)
       await queryClient.invalidateQueries({
         queryKey: adminCompaniesKeys.changeRequest(data.id),
       })

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CheckIcon as Check, EyeIcon as Eye, PlusIcon as Plus, StarIcon as Star, TrashIcon as Trash2, UploadSimpleIcon as Upload } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { useAuthStore } from "@/lib/store/auth-store"
@@ -25,8 +25,9 @@ import { publicApi } from "@/lib/api/public"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ImageCropDialog } from "@/components/ui/image-crop-dialog"
+import { ImageCropDialog, useCropBeforeUpload } from "@/components/ui/image-crop-dialog"
 import { PageFrame, PageHeader } from "@/components/layout"
+import { PendingReviewNotice } from "@/components/profile/pending-review-notice"
 import { ProfileSectionCard } from "@/components/supplier/company/profile-section-card"
 import { ReviewsReceivedTable } from "@/components/supplier/finance/reviews-received-table"
 import { EmployeeList } from "@/components/cabinet/company/employee-list"
@@ -139,6 +140,13 @@ export default function SupplierCompanyPage() {
     queryKey: ["company-reviews", company?.id],
     queryFn: () => publicApi.companyReviews(company!.id),
     enabled: hydrated && useApi && Boolean(company?.id),
+  })
+
+  const queryClient = useQueryClient()
+  const { data: pendingChange } = useQuery({
+    queryKey: ["supplier-company-change-pending", company?.id],
+    queryFn: () => supplierCompaniesApi.pendingChangeRequest(company!.id),
+    enabled: hydrated && useApi && Boolean(company?.id) && canManage,
   })
 
   const rawReviews = useApi
@@ -290,6 +298,21 @@ export default function SupplierCompanyPage() {
     toast.success("Сотрудник удалён")
   }
 
+  const logoCrop = useCropBeforeUpload({
+    aspect: 1,
+    title: "Логотип компании",
+    description: "Выберите часть картинки для логотипа: он квадратный и виден в каталоге, чатах и сделках.",
+    confirmLabel: "Сохранить логотип",
+    onCropped: (file) => uploadBrandImage("logo", file),
+  })
+  const coverCrop = useCropBeforeUpload({
+    aspect: 5,
+    title: "Обложка компании",
+    description: "Обложка — широкая полоса вверху страницы компании. Передвиньте картинку и выберите масштаб.",
+    confirmLabel: "Сохранить обложку",
+    onCropped: (file) => uploadBrandImage("cover", file),
+  })
+
   /** Logo and cover go through the same upload; the page keeps the link until "Save". */
   const handleBrandImage = async (kind: "logo" | "cover", file: File | undefined) => {
     if (!file) return
@@ -301,6 +324,12 @@ export default function SupplierCompanyPage() {
       toast.error("Картинка должна быть не больше 5 МБ")
       return
     }
+    // The person frames the picture first; the cropped part is what uploads.
+    if (kind === "logo") logoCrop.choose(file)
+    else coverCrop.choose(file)
+  }
+
+  const uploadBrandImage = async (kind: "logo" | "cover", file: File) => {
     if (!useApi) {
       const local = URL.createObjectURL(file)
       if (kind === "logo") setLogo(local)
@@ -507,7 +536,12 @@ export default function SupplierCompanyPage() {
           city,
         })
       }
-      toast.success("Страница компании сохранена")
+      await queryClient.invalidateQueries({ queryKey: ["supplier-company-change-pending"] })
+      toast.success(
+        useApi
+          ? "Изменения отправлены на проверку: их увидят после одобрения администратором"
+          : "Страница компании сохранена",
+      )
     } catch (err) {
       toast.error(getApiErrorMessage(err, "Не удалось сохранить"))
     } finally {
@@ -553,6 +587,11 @@ export default function SupplierCompanyPage() {
             </Button>
           </div>
         }
+      />
+
+      <PendingReviewNotice
+        className="mb-5"
+        fields={pendingChange ? Object.keys(pendingChange.proposed) : null}
       />
 
       {!company ? (
@@ -943,6 +982,9 @@ export default function SupplierCompanyPage() {
         busy={teamBusy}
         onInvite={handleInvite}
       />
+
+      {logoCrop.dialog}
+      {coverCrop.dialog}
 
       <ImageCropDialog
         open={Boolean(photoCrop)}

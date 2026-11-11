@@ -1,7 +1,13 @@
 "use client"
 
 import type { ChangeEvent, RefObject } from "react"
-import { PaperclipIcon as Paperclip, PlusIcon as Plus, XIcon as X } from "@phosphor-icons/react/dist/ssr"
+import {
+  BriefcaseIcon as Briefcase,
+  PackageIcon as Package,
+  PaperclipIcon as Paperclip,
+  PlusIcon as Plus,
+  XIcon as X,
+} from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
 import { RFQ_TITLE_MAX_LENGTH } from "@/lib/schemas/rfq-form"
 import { DateTimeInput } from "@/components/ui/date-time-input"
@@ -155,6 +161,12 @@ type Step1Props = SharedProps & {
   onRemovePendingAttachment?: (id: string) => void
 }
 
+const TYPE_OPTIONS = [
+  { value: "product" as const, title: "Товары", desc: "Закупка партии, поставка", Icon: Package },
+  { value: "service" as const, title: "Услуги", desc: "Работа, проект, подряд", Icon: Briefcase },
+]
+
+/** Goods or services, as two cards with what each one means. */
 export const ProductTypeToggle = ({
   type,
   locked,
@@ -164,13 +176,8 @@ export const ProductTypeToggle = ({
   locked?: boolean
   onChange: (type: "product" | "service") => void
 }) => (
-  <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-border text-[14px] font-medium">
-    {(
-      [
-        { value: "product" as const, label: "Товары" },
-        { value: "service" as const, label: "Услуги" },
-      ] as const
-    ).map(({ value, label }) => {
+  <div className="grid grid-cols-2 gap-3" role="group" aria-label="Что вы ищете">
+    {TYPE_OPTIONS.map(({ value, title, desc, Icon }) => {
       const active = type === value
       return (
         <button
@@ -180,15 +187,36 @@ export const ProductTypeToggle = ({
           disabled={locked}
           aria-pressed={active}
           className={cn(
-            "py-2 transition-colors",
-            active ? "bg-primary text-primary-foreground" : "hover:bg-secondary",
+            "flex items-center gap-3 rounded-xl border p-3.5 text-left transition-[border-color,background-color,box-shadow]",
+            active
+              ? "border-brand-600 bg-brand-50 shadow-[0_0_0_1px_var(--color-brand-600)]"
+              : "border-line bg-card hover:border-line-strong",
             locked && "cursor-not-allowed opacity-70",
           )}
         >
-          {label}
+          <span
+            className={cn(
+              "grid size-10 shrink-0 place-items-center rounded-lg",
+              active ? "bg-brand-600 text-white" : "bg-surface-muted text-ink-soft",
+            )}
+          >
+            <Icon className="size-5" aria-hidden />
+          </span>
+          <span className="grid min-w-0">
+            <b className="text-[14.5px] font-semibold text-ink">{title}</b>
+            <span className="truncate text-[12.5px] text-mute">{desc}</span>
+          </span>
         </button>
       )
     })}
+  </div>
+)
+
+/** A heading for one part of the form, with a line on what to put there. */
+const SectionHead = ({ title, hint }: { title: string; hint?: string }) => (
+  <div className="grid gap-0.5">
+    <h2 className="text-[15.5px] font-semibold text-ink">{title}</h2>
+    {hint ? <p className="text-[13px] text-mute">{hint}</p> : null}
   </div>
 )
 
@@ -219,6 +247,8 @@ export const ProductWhatStep = ({
   const attachmentsCount = attachments.length + pendingAttachments.length
   return (
     <>
+      <section className="grid gap-4">
+      <SectionHead title="Что вы ищете" hint="Короткое название поможет поставщикам быстрее понять заявку." />
       <ProductTypeToggle type={type} locked={typeLocked} onChange={onTypeChange} />
 
       <div className="grid gap-4 sm:grid-cols-[1.4fr_1fr]">
@@ -259,10 +289,12 @@ export const ProductWhatStep = ({
         </div>
       </div>
 
-      <div className="grid gap-2">
-        <span className={labelClass}>Позиции</span>
-        <div className="overflow-hidden rounded-xl border border-border">
-          <div className="hidden grid-cols-[1fr_110px_110px_40px] gap-2 bg-secondary px-3 py-2 text-[12px] text-muted-foreground sm:grid">
+      </section>
+
+      <section className="grid gap-3 border-t border-line pt-6">
+        <SectionHead title="Позиции" hint="Каждая строка — отдельный товар: модель, характеристики и количество." />
+        <div className="overflow-hidden rounded-xl border border-line">
+          <div className="hidden grid-cols-[1fr_110px_110px_40px] gap-2 bg-surface-muted px-3 py-2 text-[12.5px] font-medium text-ink-soft sm:grid">
             <span>Наименование и требования</span>
             <span>Количество</span>
             <span>Ед.</span>
@@ -330,11 +362,13 @@ export const ProductWhatStep = ({
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
+      <section className="grid gap-4 border-t border-line pt-6">
+      <SectionHead title="Подробности" hint="Необязательно, но так предложения будут точнее." />
       <div>
         <label htmlFor="w-note" className={labelClass}>
-          Дополнительно
+          Пожелания к товару
         </label>
         <textarea
           id="w-note"
@@ -410,6 +444,7 @@ export const ProductWhatStep = ({
           </ul>
         )}
       </div>
+      </section>
     </>
   )
 }
@@ -504,7 +539,7 @@ export const ProductConditionsStep = ({
           className={cn(inputClass("budget_from"), "font-mono")}
           aria-invalid={!!errors.budget_from}
         />
-        <p className={hintClass}>Поставщики увидят сумму. Без бюджета предложения разбросаны сильнее.</p>
+        <p className={hintClass}>Поставщики увидят сумму. Можно не указывать: тогда цену назовут поставщики в своих предложениях.</p>
         <FieldError message={errors.budget_from} />
       </div>
       <div>

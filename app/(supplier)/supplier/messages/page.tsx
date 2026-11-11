@@ -284,6 +284,7 @@ export default function SupplierMessagesPage() {
         </PageSurface>
       ) : (
         <MessagesWorkspace
+          profileHref={(actorId) => `/supplier/customers/${actorId}`}
           groups={groups}
           selectedGroup={selectedGroup}
           selected={selected}

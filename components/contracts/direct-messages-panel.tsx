@@ -23,6 +23,8 @@ type DirectMessagesPanelProps = {
   counterpartAvatar?: string | null
   headerActions?: ReactNode
   headerChildren?: ReactNode
+  /** The other party's profile; the header name links to it. */
+  profileHref?: string
   className?: string
 }
 
@@ -35,6 +37,7 @@ export const DirectMessagesPanel = ({
   counterpartAvatar,
   headerActions,
   headerChildren,
+  profileHref,
   className,
 }: DirectMessagesPanelProps) => {
   const { data: thread } = useDirectChatQuery(role, chatId, chatId > 0)
@@ -81,6 +84,7 @@ export const DirectMessagesPanel = ({
       className={className}
       header={
         <ChatHeader
+          href={profileHref}
           name={counterpartName}
           avatar={avatar}
           subtitle="Личные сообщения"
