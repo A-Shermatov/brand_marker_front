@@ -21,21 +21,21 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://brand-marker-front.vercel.app"),
-  title: "Brend Market — B2B маркетплейс для бизнеса",
+  title: "Brand Market — B2B маркетплейс для бизнеса",
   description:
     "B2B-площадка для закупок компаний Таджикистана. Каталог, заявки, сделки с гарантией оплаты через банк-партнёр.",
   openGraph: {
-    title: "Brend Market — B2B маркетплейс для бизнеса",
+    title: "Brand Market — B2B маркетплейс для бизнеса",
     description:
       "B2B-площадка для закупок компаний Таджикистана. Каталог, заявки, сделки с гарантией оплаты через банк-партнёр.",
     url: "https://brand-marker-front.vercel.app",
-    siteName: "Brend Market",
+    siteName: "Brand Market",
     locale: "ru_TJ",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Brend Market — B2B маркетплейс для бизнеса",
+    title: "Brand Market — B2B маркетплейс для бизнеса",
     description:
       "B2B-площадка для закупок компаний Таджикистана.",
   },

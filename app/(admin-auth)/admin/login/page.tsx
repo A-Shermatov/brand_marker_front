@@ -143,7 +143,7 @@ const AdminLoginContent = () => {
             Вход администратора
           </h1>
           <p className="mb-6 text-[15px] text-mute">
-            Служебная зона Brend Market
+            Служебная зона Brand Market
           </p>
 
           <form onSubmit={handleSubmit(handleLogin)} className="grid gap-4" noValidate>

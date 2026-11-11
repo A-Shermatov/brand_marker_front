@@ -31,7 +31,7 @@ const GLOSS = "M7 9h34v11c-9.5-4.2-23.5-3.4-34 3.2Z"
 // Where our B sits on the shields: centre of the inner face, and its size.
 const SHIELD_LOGO = { x: 24, y: 23.2, height: 16, cut: 1.7 }
 
-// Diamond: a cut crystal shield with the Brend Market B. The outline is the
+// Diamond: a cut crystal shield with the B glyph. The outline is the
 // same eight-sided shape as before. Back to front: a thick polished pink-violet
 // metal rim, a magenta inner bevel, a violet face cut into eight facets, an inner
 // glow, gloss, our B, then the moving lights. Sides are numbered clockwise

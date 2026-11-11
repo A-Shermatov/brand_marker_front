@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { InviteContent } from "./invite-content"
 
 export const metadata: Metadata = {
-  title: "Приглашение в компанию — Brend Market",
+  title: "Приглашение в компанию — Brand Market",
   robots: { index: false, follow: false },
 }
 

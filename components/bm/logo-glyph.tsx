@@ -1,6 +1,6 @@
 /**
- * The Brend Market B, drawn once and reused: in the logo tile, at the heart of
- * the reliability marks, in the exported icons.
+ * The B glyph, drawn once and reused: at the heart of the reliability and plan
+ * marks and in their exported icons.
  *
  * A bold B with a "play" triangle cut into its stem: two cuts meet at the
  * waist (from the top-left and from the bottom-left), then one runs on right.

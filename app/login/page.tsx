@@ -211,7 +211,7 @@ function LoginContent() {
 
           <SessionEndedNotice />
           <h1 className="mb-1 text-[24px] font-semibold tracking-[-0.02em] text-ink">
-            Вход в Brend Market
+            Вход в Brand Market
           </h1>
           <p className="mb-6 text-[15px] text-mute">
             Для покупателей и поставщиков

@@ -51,7 +51,7 @@ const formatListTime = (value: string | null) => {
 }
 
 const WARN_TEXT =
-  "Напоминаем: оплата и общение — только через Brend Market. Оплата мимо площадки лишает защиты сделки и ведёт к блокировке."
+  "Напоминаем: оплата и общение — только через Brand Market. Оплата мимо площадки лишает защиты сделки и ведёт к блокировке."
 
 const AdminChatsContent = () => {
   const router = useRouter()
