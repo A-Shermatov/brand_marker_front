@@ -98,7 +98,7 @@ export default function Footer() {
 
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-[1200px] flex-wrap gap-x-6 gap-y-1 px-4 py-5 text-[13px] text-mute lg:px-8">
-          <span>© 2026 Brend Market</span>
+          <span>© 2026 Brand Market</span>
           <Link href={helpUrl()} className="hover:text-ink">
             Конфиденциальность
           </Link>

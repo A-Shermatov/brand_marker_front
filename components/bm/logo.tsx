@@ -3,10 +3,11 @@
 import { useId } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { LogoGlyph } from "@/components/bm/logo-glyph"
+import { BRAND_NAME, BRAND_WORDMARK } from "@/lib/brand"
 
 type BrandLogoProps = {
   href?: string
+  /** On the blue brand field: the mark and the name in white. */
   dark?: boolean
   small?: boolean
   className?: string
@@ -14,22 +15,67 @@ type BrandLogoProps = {
 }
 
 /**
- * The B mark on a rounded tile: white B on brand blue, or, with `dark`, blue
- * B on a white tile for blue surfaces.
+ * The deal mark: buyer and supplier as two rounded diamonds that meet; where
+ * they overlap, a tick — the deal went through.
+ *
+ * Geometry in a 72 × 48 box: each diamond is 48 across, the right one starts
+ * at the centre of the left, so the overlap is a diamond half their size.
  */
+const SIDE = 24 * Math.SQRT2
+const RADIUS = 7.5
+
+const diamond = (cx: number) => ({
+  x: cx - SIDE / 2,
+  y: 24 - SIDE / 2,
+  width: SIDE,
+  height: SIDE,
+  rx: RADIUS,
+  transform: `rotate(45 ${cx} 24)`,
+})
+
+const TICK = "M31.2 24.6 34.7 28 40.9 20.8"
+
+type MarkColors = { left: string; right: string; overlap: string; tick: string }
+
+/** Light pages and dark theme follow the CSS tokens; `mono` sits on brand blue. */
+const THEMED: MarkColors = {
+  left: "var(--logo-left)",
+  right: "var(--logo-right)",
+  overlap: "var(--logo-overlap)",
+  tick: "var(--logo-tick)",
+}
+const MONO: MarkColors = {
+  left: "rgb(255 255 255 / 0.62)",
+  right: "rgb(255 255 255 / 0.42)",
+  overlap: "#FFFFFF",
+  tick: "var(--logo-left)",
+}
+
 export function LogoMark({ dark = false, className }: { dark?: boolean; className?: string }) {
-  // Ids unique per mark: a copy inside a hidden menu must not own the gradient.
+  // Ids unique per mark: a copy inside a hidden menu must not own the clip.
   const id = `bm-logo${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`
+  const c = dark ? MONO : THEMED
   return (
-    <svg className={cn("shrink-0", className)} viewBox="0 0 100 100" aria-hidden="true">
+    <svg className={cn("shrink-0", className)} viewBox="0 0 72 48" aria-hidden="true">
       <defs>
-        <linearGradient id={`${id}-g`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#2F80FF" />
-          <stop offset="1" stopColor="#0047B8" />
-        </linearGradient>
+        <clipPath id={`${id}-left`}>
+          <rect {...diamond(24)} />
+        </clipPath>
       </defs>
-      <rect width="100" height="100" rx="26" fill={dark ? "#FFFFFF" : `url(#${id}-g)`} />
-      <LogoGlyph uid={id} x={51} y={50} height={50.4} cut={3.6} layers={[{ fill: dark ? "#0050C8" : "#FFFFFF" }]} />
+      <rect {...diamond(24)} fill={c.left} />
+      <rect {...diamond(48)} fill={c.right} />
+      {/* The clip sits on a group: on the rotated rect it would turn with it. */}
+      <g clipPath={`url(#${id}-left)`}>
+        <rect {...diamond(48)} fill={c.overlap} />
+      </g>
+      <path
+        d={TICK}
+        fill="none"
+        stroke={c.tick}
+        strokeWidth={3.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
@@ -44,20 +90,20 @@ export function BrandLogo({
   const content = (
     <span
       className={cn(
-        "inline-flex max-w-none shrink-0 select-none items-center gap-2.5 whitespace-nowrap",
+        "inline-flex max-w-none shrink-0 select-none items-center gap-2 whitespace-nowrap",
         className,
       )}
     >
-      <LogoMark dark={dark} className={small ? "size-8" : "size-9"} />
+      <LogoMark dark={dark} className={small ? "h-[22px] w-[33px]" : "h-[26px] w-[39px]"} />
       {showWordmark ? (
         <span
           className={cn(
-            "whitespace-nowrap leading-none font-bold tracking-[-0.025em]",
-            small ? "text-[17px]" : "text-[20px]",
+            "whitespace-nowrap leading-none font-bold tracking-[-0.035em]",
+            small ? "text-[18px]" : "text-[21px]",
             dark ? "text-white" : "text-ink",
           )}
         >
-          Brend&nbsp;Market
+          {BRAND_WORDMARK}
         </span>
       ) : null}
     </span>
@@ -68,7 +114,7 @@ export function BrandLogo({
     <Link
       href={href}
       className="inline-flex shrink-0 whitespace-nowrap"
-      aria-label="Brend Market — на главную"
+      aria-label={`${BRAND_NAME} — на главную`}
     >
       {content}
     </Link>

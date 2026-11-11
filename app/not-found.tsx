@@ -9,7 +9,7 @@ import {
 import { PageShell } from "@/components/marketplace/page-shell"
 import { Button } from "@/components/ui/button"
 
-export const metadata = { title: "Страница не найдена — Brend Market" }
+export const metadata = { title: "Страница не найдена — Brand Market" }
 
 const WAYS = [
   {

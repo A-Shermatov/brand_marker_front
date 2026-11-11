@@ -191,7 +191,7 @@ export default function AdminTelegramPage() {
                   value={form.channel}
                   disabled={!canEdit}
                   onChange={(e) => setForm({ ...form, channel: e.target.value })}
-                  placeholder="@brendmarket_zayavki или -1001234567890"
+                  placeholder="@brandmarket_zayavki или -1001234567890"
                 />
                 <p className="text-[12.5px] text-mute">
                   Публичный канал — по имени через @. Закрытый — по числовому id, он начинается с −100.
@@ -292,7 +292,7 @@ export default function AdminTelegramPage() {
             <h2 className="text-[16px] font-semibold text-ink">Так выглядит пост</h2>
             <TelegramPostPreview />
             <p className="text-[12.5px] text-mute">
-              Картинка с логотипом покупателя и Brend Market, под ней текст заявки и кнопка «Открыть заявку».
+              Картинка с логотипом покупателя и Brand Market, под ней текст заявки и кнопка «Открыть заявку».
             </p>
           </PageSurface>
         </aside>

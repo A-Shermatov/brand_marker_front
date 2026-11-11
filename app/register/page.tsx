@@ -194,7 +194,7 @@ function RegisterContent() {
           </div>
 
           <h1 className="mb-1 text-[26px] font-bold tracking-[-0.02em] text-ink">
-            Регистрация в Brend Market
+            Регистрация в Brand Market
           </h1>
 
           {invite ? (

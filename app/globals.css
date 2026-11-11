@@ -6,10 +6,17 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Brend Market v9. Bright "bank" blue with white, the way money brands in
+  /* Brand Market v9. Bright "bank" blue with white, the way money brands in
      the region look: the blue frame people steer by (cabinet menu, hero),
      the same blue for actions, a sun-yellow spark for what needs attention
      on blue. Green stays only as the "money is safe / paid" signal. */
+  /* The deal mark: buyer (blue) and supplier (navy) meet; the tick sits
+     where they overlap. */
+  --logo-left: #1F6BEB;
+  --logo-right: #0B2559;
+  --logo-overlap: #83ADF3;
+  --logo-tick: #0B2559;
+
   --brand-50: #EEF4FF;
   --brand-100: #DBE7FF;
   --brand-200: #B3CDFF;
@@ -123,6 +130,12 @@
    the page glows. Same token names as the day theme. */
 .dark {
   color-scheme: dark;
+
+  /* The mark on navy: the supplier turns pale, the overlap deep blue. */
+  --logo-left: #4C8BFF;
+  --logo-right: #DCE8FF;
+  --logo-overlap: #1B3F99;
+  --logo-tick: #FFFFFF;
 
   --brand-50: #14244F;
   --brand-100: #1B3168;
