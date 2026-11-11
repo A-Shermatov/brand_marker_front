@@ -14,6 +14,7 @@ export const COMPANY_ROLES = [
   "admin",
   "moderator",
   "accountant",
+  "viewer",
 ] as const
 
 export type CompanyRole = (typeof COMPANY_ROLES)[number]

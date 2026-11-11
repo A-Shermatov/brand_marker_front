@@ -1,3 +1,4 @@
+import type { IndividualPage, InvitationPreview, MyInvitation } from "@/types"
 import { apiFetch, tokenStorage, type TokenPair } from "./client"
 
 export type ActorSummary = {
@@ -30,6 +31,10 @@ export type MeResponse = {
     buyer: boolean
     supplier: boolean
   }
+  /** Listed among suppliers as a private person. */
+  accepts_orders?: boolean
+  /** The cabinet opens in the person's company, not as themselves. */
+  prefers_company?: boolean
   companies: Array<{
     id: number
     title: string
@@ -124,6 +129,10 @@ export const authApi = {
     last_name: string
     phone?: string
     role: "buyer" | "supplier" | "both"
+    account_type?: "individual" | "company"
+    company_title?: string
+    headline?: string
+    invite_token?: string
   }): Promise<TokenPair> => {
     const data = await apiFetch<TokenPair>("/auth/register", {
       method: "POST",
@@ -166,6 +175,9 @@ export const authApi = {
   },
 
   me: () => apiFetch<MeResponse>("/auth/me"),
+
+  /** Who I am now, whatever profile this browser remembers: the server picks the start. */
+  meFresh: () => apiFetch<MeResponse>("/auth/me", { skipActor: true }),
 
   logout: async () => {
     if (tokenStorage.hasSession()) {
@@ -217,4 +229,48 @@ export const authApi = {
   },
 
   deleteAvatar: () => apiFetch<MeResponse["user"]>("/auth/me/avatar", { method: "DELETE" }),
+
+  /** My page as a private person. */
+  getPage: () => apiFetch<IndividualPage>("/auth/me/page"),
+
+  updatePage: (data: Omit<IndividualPage, "supplier_actor_id">) =>
+    apiFetch<IndividualPage>("/auth/me/page", { method: "PUT", body: JSON.stringify(data) }),
+
+  /** A picture for the portfolio; the answer carries its public link. */
+  uploadPageImage: (file: File) => {
+    const form = new FormData()
+    form.append("file", file)
+    return apiFetch<{ image: string }>("/auth/me/page/image", { method: "POST", body: form })
+  },
+}
+
+/** Invitations to company teams addressed to the signed-in person. */
+export const invitationsApi = {
+  mine: () => apiFetch<MyInvitation[]>("/auth/invitations"),
+
+  accept: (invitationId: number) =>
+    apiFetch<{ company_id: number }>(`/auth/invitations/${invitationId}/accept`, {
+      method: "POST",
+    }),
+
+  decline: (invitationId: number) =>
+    apiFetch<void>(`/auth/invitations/${invitationId}/decline`, { method: "POST" }),
+
+  acceptByLink: (token: string) =>
+    apiFetch<{ company_id: number }>("/auth/invitations/accept", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    }),
+
+  declineByLink: (token: string) =>
+    apiFetch<void>("/auth/invitations/decline", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    }),
+
+  /** What the link shows; works without signing in. */
+  preview: (token: string) =>
+    apiFetch<InvitationPreview>(`/public/invitations/${encodeURIComponent(token)}`, {
+      skipAuth: true,
+    }),
 }

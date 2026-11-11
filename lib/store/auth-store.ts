@@ -35,6 +35,10 @@ export type SessionUser = {
   company?: string
   /** Public link to the person's photo. */
   avatarUrl?: string | null
+  /** Listed among suppliers as a private person. */
+  acceptsOrders?: boolean
+  /** The cabinet opens in the person's company, not as themselves. */
+  prefersCompany?: boolean
 }
 
 export type LoginFlowResult =
@@ -76,7 +80,25 @@ interface AuthState {
     last_name: string
     phone?: string
     role: MarketplaceSessionRole
-  }) => Promise<void>
+    /** Who registers: a company (or sole trader) or a private person. */
+    accountType?: "individual" | "company"
+    companyTitle?: string
+    /** A private supplier: what they do, in one line. */
+    headline?: string
+    /** Registering from an invitation link: joins that company. */
+    inviteToken?: string
+  }) => Promise<MarketplaceSessionRole>
+  /**
+   * Reads the person's profiles again and stands in one they still have.
+   * With `companyId`, enters that company (after accepting an invitation).
+   * Resolves with the cabinet to open.
+   */
+  refreshSession: (options?: { companyId?: number }) => Promise<MarketplaceSessionRole | null>
+  /**
+   * Reads the person's profiles and access levels again without moving them:
+   * a director may have changed their access since they signed in.
+   */
+  syncProfiles: () => Promise<void>
   restoreSession: () => Promise<boolean>
   /** Ends the session; with `redirectTo` reloads that page so no data of this user stays in memory. */
   logout: (redirectTo?: string) => Promise<void>
@@ -103,10 +125,12 @@ const demoCompanyIdForRole = (role: MarketplaceSessionRole): number =>
 const sideForRole = (role: MarketplaceSessionRole): "buyer" | "supplier" =>
   role === "supplier" ? "supplier" : "buyer"
 
-const pickActorForRole = (
+export const pickActorForRole = (
   actors: ActorSummary[],
   role: MarketplaceSessionRole,
   preferredId?: number | null,
+  /** The person works for a company: start there, not in the personal profile. */
+  preferCompany = false,
 ): ActorSummary | undefined => {
   const side = sideForRole(role)
   const forSide = actors.filter((a) => a.side === side)
@@ -114,10 +138,9 @@ const pickActorForRole = (
     const match = forSide.find((a) => a.id === preferredId)
     if (match) return match
   }
-  return (
-    forSide.find((a) => a.kind === "individual") ??
-    forSide[0]
-  )
+  const company = forSide.find((a) => a.kind === "company")
+  const personal = forSide.find((a) => a.kind === "individual")
+  return (preferCompany ? company ?? personal : personal ?? company) ?? forSide[0]
 }
 
 const sessionFromMe = (
@@ -147,7 +170,7 @@ const sessionFromMe = (
     }
   }
 
-  const active = pickActorForRole(me.actors, role, me.active_actor_id)
+  const active = pickActorForRole(me.actors, role, me.active_actor_id, me.prefers_company)
   const actorId = active?.id ?? 0
   const companyIds = me.companies.map((c) => c.id)
   const name = `${me.user.first_name} ${me.user.last_name}`.trim()
@@ -174,6 +197,8 @@ const sessionFromMe = (
     company: active?.display_name,
     phone: me.user.phone ?? undefined,
     avatarUrl: me.user.avatar_url ?? null,
+    acceptsOrders: Boolean(me.accepts_orders),
+    prefersCompany: Boolean(me.prefers_company),
   }
 }
 
@@ -192,11 +217,11 @@ const finalizeMarketplaceSession = async (
     })
     return "admin"
   }
-  let active = pickActorForRole(me.actors, role, me.active_actor_id)
+  let active = pickActorForRole(me.actors, role, me.active_actor_id, me.prefers_company)
   if (!active) {
     try {
       me = await authApi.activateRole(sideForRole(role))
-      active = pickActorForRole(me.actors, role, me.active_actor_id)
+      active = pickActorForRole(me.actors, role, me.active_actor_id, me.prefers_company)
     } catch {
       // fall through
     }
@@ -359,18 +384,22 @@ export const useAuthStore = create<AuthState>()(
         first_name,
         last_name,
         phone,
-        role,
+        role: wantedRole,
+        accountType,
+        companyTitle,
+        headline,
+        inviteToken,
       }) => {
         if (!isApiEnabled()) {
           get().login({
             email,
-            role,
+            role: wantedRole,
             name: `${first_name} ${last_name}`.trim(),
           })
-          return
+          return wantedRole
         }
 
-        const apiRole = role === "supplier" ? "supplier" : "buyer"
+        const apiRole = wantedRole === "supplier" ? "supplier" : "buyer"
         await authApi.register({
           email,
           password,
@@ -378,9 +407,21 @@ export const useAuthStore = create<AuthState>()(
           last_name,
           phone: phone || undefined,
           role: apiRole,
+          ...(inviteToken
+            ? { invite_token: inviteToken }
+            : {
+                account_type: accountType ?? "individual",
+                ...(accountType === "company" ? { company_title: companyTitle } : {}),
+                ...(headline ? { headline } : {}),
+              }),
         })
         const me = await authApi.me()
-        const active = pickActorForRole(me.actors, role, me.active_actor_id)
+        // An invited person lands in the company's cabinet: purchases or sales,
+        // whichever the company does.
+        const start = me.actors.find((a) => a.id === me.active_actor_id)
+        const role: MarketplaceSessionRole =
+          inviteToken && start ? (start.side === "supplier" ? "supplier" : "customer") : wantedRole
+        const active = pickActorForRole(me.actors, role, me.active_actor_id, me.prefers_company)
         if (!active) {
           const sideLabel = role === "customer" ? "покупателя" : "поставщика"
           throw new Error(
@@ -392,6 +433,44 @@ export const useAuthStore = create<AuthState>()(
           isReady: true,
           user: sessionFromMe(me, role),
         })
+        return role
+      },
+
+      refreshSession: async (options) => {
+        if (!isApiEnabled()) return null
+        const current = get().user
+        if (!current || current.role === "admin") return null
+        const me = await authApi.meFresh()
+        let role: MarketplaceSessionRole = current.role
+        let target: ActorSummary | undefined
+        if (options?.companyId) {
+          const inCompany = me.actors.filter((a) => a.company_id === options.companyId)
+          target = inCompany.find((a) => a.side === sideForRole(role)) ?? inCompany[0]
+        }
+        target ??= pickActorForRole(me.actors, role, me.active_actor_id, me.prefers_company)
+        // No profile left on this side (the company was the only one): the other cabinet.
+        target ??= me.actors.find((a) => a.id === me.active_actor_id) ?? me.actors[0]
+        if (!target) return null
+        role = target.side === "supplier" ? "supplier" : "customer"
+        set({
+          isAuthenticated: true,
+          isReady: true,
+          user: sessionFromMe({ ...me, active_actor_id: target.id }, role),
+        })
+        return role
+      },
+
+      syncProfiles: async () => {
+        if (!isApiEnabled()) return
+        const current = get().user
+        if (!current || current.role === "admin") return
+        const me = await authApi.me()
+        if (get().user?.userId !== me.user.id) return
+        const activeId = current.activeActorId
+        // The profile the person works in is gone (removed from the company): leave
+        // that to the next request, whose refusal explains it and moves them.
+        if (activeId && !me.actors.some((a) => a.id === activeId)) return
+        set({ user: sessionFromMe({ ...me, active_actor_id: activeId ?? me.active_actor_id }, current.role) })
       },
 
       restoreSession: async () => {
@@ -534,7 +613,12 @@ export const useAuthStore = create<AuthState>()(
         const side = sideForRole(role)
         const hasCapability =
           side === "buyer" ? state.user.capabilities.buyer : state.user.capabilities.supplier
-        const existing = pickActorForRole(state.user.actors, role)
+        const existing = pickActorForRole(
+          state.user.actors,
+          role,
+          undefined,
+          state.user.prefersCompany,
+        )
 
         if (hasCapability && existing) {
           const me = await authApi.switchActor(existing.id)

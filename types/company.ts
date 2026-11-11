@@ -71,7 +71,73 @@ export type CompanyUser = {
   supplier_role?: SideRole | null
 }
 
-export type SideRole = "admin" | "moderator" | "accountant" | "none"
+export type SideRole = "admin" | "moderator" | "accountant" | "viewer" | "none"
+
+/** An invitation to the team, as the company's director or admin sees it. */
+export type CompanyInvitation = {
+  id: number
+  company_id: number
+  email: string
+  role: Exclude<CompanyRole, "director">
+  status: "pending" | "expired" | "declined" | "accepted" | "cancelled"
+  invited_by_name: string | null
+  created_at: string
+  expires_at: string
+  responded_at: string | null
+  /** Only in the answer to "invite" and "send again". */
+  invite_url: string | null
+  /** The platform sent a letter with the link. */
+  email_sent: boolean
+}
+
+/** An invitation waiting for my answer. */
+export type MyInvitation = {
+  id: number
+  company_id: number
+  company_title: string
+  company_logo: string | null
+  role: Exclude<CompanyRole, "director">
+  invited_by_name: string | null
+  created_at: string
+  expires_at: string
+}
+
+/** What an invitation link shows before signing in. */
+export type InvitationPreview = {
+  status: CompanyInvitation["status"]
+  company_title: string
+  company_logo: string | null
+  role: Exclude<CompanyRole, "director">
+  email: string
+  invited_by_name: string | null
+  expires_at: string
+}
+
+export type PortfolioItem = {
+  title: string
+  description: string | null
+  /** Public link to the picture; null when the work has none. */
+  image: string | null
+  link: string | null
+}
+
+export type RateUnit = "hour" | "project"
+
+/** A private person's own page: what they do, skills, rate, portfolio. */
+export type IndividualPage = {
+  headline: string | null
+  about: string | null
+  skills: string[]
+  city: string | null
+  website: string | null
+  rate_amount: number | null
+  rate_currency: string
+  rate_unit: RateUnit
+  portfolio: PortfolioItem[]
+  /** Listed among suppliers as a private person. */
+  accepts_orders: boolean
+  supplier_actor_id?: number | null
+}
 
 export type ReviewPhoto = {
   id?: number | null
@@ -144,6 +210,8 @@ export type Company = {
   website: string | null
   description: string | null
   logo: string | null
+  /** The wide picture at the top of the company page. */
+  cover?: string | null
   country: string | null
   city: string | null
   address: string | null
@@ -178,6 +246,7 @@ export type PublicCompanyDetail = Pick<
   | "website"
   | "description"
   | "logo"
+  | "cover"
   | "country"
   | "city"
   | "verification_status"
@@ -303,6 +372,15 @@ export type PublicSupplier = {
   active_contracts?: number
   disputed_contracts?: number
   success_rate?: number | null
+  /** Company: the wide picture at the top of its page. */
+  cover?: string | null
+  /** A private person's page (kind === "individual"); logo is then their photo. */
+  headline?: string | null
+  skills?: string[]
+  rate_amount?: number | null
+  rate_currency?: string | null
+  rate_unit?: RateUnit | null
+  portfolio?: PortfolioItem[]
 }
 
 export type PublicBuyer = {

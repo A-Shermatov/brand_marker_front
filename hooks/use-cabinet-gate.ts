@@ -61,6 +61,7 @@ export const useCabinetGate = (expectedRole: MarketplaceSessionRole): GateStatus
       const forSide = user.actors.filter((a) => a.side === expectedSide)
       const target =
         forSide.find((a) => a.id === activeId)
+        ?? forSide.find((a) => a.kind === (user.prefersCompany ? "company" : "individual"))
         ?? forSide.find((a) => a.kind === "individual")
         ?? forSide[0]
 

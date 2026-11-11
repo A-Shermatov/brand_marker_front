@@ -13,6 +13,8 @@ import { TwoFactorSettings } from "@/components/auth/two-factor-settings"
 import { IdentityVerificationCard } from "@/components/verification/identity-verification-card"
 import { authApi } from "@/lib/api/auth"
 import { AvatarUploader } from "@/components/profile/avatar-uploader"
+import { IndividualPageCard } from "@/components/profile/individual-page-card"
+import { useSearchParams } from "next/navigation"
 import { getApiErrorMessage } from "@/lib/api/client"
 import { toast } from "sonner"
 
@@ -24,6 +26,8 @@ export default function SupplierProfilePage() {
   const useApi = isApiEnabled()
   const actsAsIndividual =
     user?.actors?.find((actor) => actor.id === user.activeActorId)?.kind === "individual"
+
+  const welcome = useSearchParams().get("welcome") === "1"
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -87,7 +91,7 @@ export default function SupplierProfilePage() {
     <PageFrame>
       <PageHeader
         title="Профиль поставщика"
-        description="Контактные данные и настройки доставки"
+        description="Ваши контакты, личная страничка и вход"
       />
 
       <div className="space-y-6">
@@ -157,6 +161,7 @@ export default function SupplierProfilePage() {
           </Button>
         </div>
       </form>
+      <IndividualPageCard welcome={welcome} />
       <IdentityVerificationCard enabled={useApi && actsAsIndividual} />
       <ChangePasswordCard />
       <TwoFactorSettings />

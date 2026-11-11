@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { statusPillClass } from "@/components/ui/status-badge"
-import type { Proposal, PublicSupplier } from "@/types"
+import type { Proposal, ProposalWithRelations, PublicSupplier } from "@/types"
+import { ContactPerson } from "@/components/company/contact-person"
 import { proposalStatusMeta } from "@/lib/proposal-display"
 import { formatDeliveryTime, formatMoneyDisplay } from "@/lib/format"
 import { SupplierProposalInfo } from "@/components/cabinet/rfq/supplier-proposal-info"
@@ -31,6 +32,8 @@ export const ProposalReviewCard = ({
   marks = [],
 }: ProposalReviewCardProps) => {
   const meta = proposalStatusMeta[proposal.status]
+  // The offer comes from a company: show which of its people wrote it.
+  const contact = (proposal as ProposalWithRelations).actor
   const isFinal = ["accepted", "rejected", "withdrawn", "archived", "pending_supplier"].includes(
     proposal.status,
   )
@@ -43,6 +46,11 @@ export const ProposalReviewCard = ({
         supplier={supplier}
         supplierId={proposal.supplier_actor_id}
         supplierName={supplierName}
+      />
+      <ContactPerson
+        name={contact?.kind === "company" ? contact.contact_name : null}
+        role={contact?.contact_role}
+        className="mt-2"
       />
 
       {marks.length > 0 && (

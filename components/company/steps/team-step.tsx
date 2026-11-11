@@ -8,8 +8,9 @@ import { WizardField, wizardInputClass } from "@/components/company/wizard-field
 const ROLE_LABELS: Record<(typeof COMPANY_ROLES)[number], string> = {
   director: "Директор",
   admin: "Администратор",
-  moderator: "Модератор",
+  moderator: "Менеджер",
   accountant: "Бухгалтер",
+  viewer: "Наблюдатель",
 }
 
 const emptyMember = (): CompanyWizardTeamMember => ({
@@ -44,8 +45,8 @@ export const TeamStep = ({ data, errors, onChange }: TeamStepProps) => {
   return (
     <div className="space-y-5">
       <p className="text-sm text-muted-foreground">
-        Пригласите коллег по email. В демо-режиме приглашения сохраняются без
-        отправки письма.
+        Пригласите коллег по email — это можно сделать и позже. Каждый появится в
+        команде, когда примет приглашение.
       </p>
 
       {data.team.length === 0 && (
@@ -99,7 +100,7 @@ export const TeamStep = ({ data, errors, onChange }: TeamStepProps) => {
                 }
                 className={wizardInputClass}
               >
-                {COMPANY_ROLES.map((role) => (
+                {COMPANY_ROLES.filter((role) => role !== "director").map((role) => (
                   <option key={role} value={role}>
                     {ROLE_LABELS[role]}
                   </option>

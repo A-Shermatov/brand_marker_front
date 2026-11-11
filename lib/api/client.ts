@@ -1,6 +1,7 @@
 import { API_URL } from "./config"
 import { translateApiMessage } from "./error-messages"
 import { notifySessionEnded, sessionEndFromMessage } from "./session-events"
+import { COMPANY_ACCESS_REVOKED, notifyCompanyAccessRevoked } from "./access-events"
 
 export type ApiError = {
   status: number
@@ -181,9 +182,11 @@ export const apiFetch = async <T>(
     actorId?: number | null
     companyId?: number | null
     skipAuth?: boolean
+    /** Send no profile headers: the server answers for the person, not a company. */
+    skipActor?: boolean
   } = {},
 ): Promise<T> => {
-  const { actorId, companyId, skipAuth, ...init } = options
+  const { actorId, companyId, skipAuth, skipActor, ...init } = options
   const headers = new Headers(init.headers)
 
   if (!skipAuth) {
@@ -194,8 +197,12 @@ export const apiFetch = async <T>(
   }
 
   const sessionActorId = sessionActorResolver?.() ?? null
-  const activeActor = actorId ?? sessionActorId ?? tokenStorage.getActorId()
-  if (activeActor) {
+  const activeActor = skipActor
+    ? null
+    : (actorId ?? sessionActorId ?? tokenStorage.getActorId())
+  if (skipActor) {
+    // no X-Actor-Id / X-Company-Id
+  } else if (activeActor) {
     headers.set("X-Actor-Id", String(activeActor))
   } else {
     const activeCompany = companyId ?? tokenStorage.getCompanyId()
@@ -224,13 +231,23 @@ export const apiFetch = async <T>(
 
   if (!res.ok) {
     let message = res.statusText
+    let code: string | undefined
     try {
       const err = await res.json()
       message = readErrorMessage(err, message)
+      if (err && typeof err === "object" && typeof err.code === "string") code = err.code
     } catch {
       // ignore
     }
-    const error: ApiError = { status: res.status, message: translateApiMessage(String(message)) }
+    const error: ApiError = {
+      status: res.status,
+      message: translateApiMessage(String(message)),
+      code,
+    }
+    if (code === COMPANY_ACCESS_REVOKED) {
+      // The person was removed from the company they were working in.
+      notifyCompanyAccessRevoked(error.message)
+    }
     throw error
   }
 

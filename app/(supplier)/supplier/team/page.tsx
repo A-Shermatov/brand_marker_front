@@ -9,8 +9,8 @@ import { EmployeeList } from "@/components/cabinet/company/employee-list"
 import { InviteEmployeeDialog } from "@/components/cabinet/company/invite-employee-dialog"
 import { useCompanyTeam } from "@/hooks/use-company-team"
 import { SideReputationList } from "@/components/company/side-reputation"
-import { COMPANY_ROLE_LABELS, COMPANY_ROLE_RIGHTS } from "@/lib/company-team"
-import { COMPANY_ROLES } from "@/types"
+import { TeamInvitations } from "@/components/cabinet/company/team-invitations"
+import { AccessLevelsCard } from "@/components/cabinet/company/access-levels-card"
 
 /** Supplier side: the company's people and what each of them may do. */
 export default function SupplierTeamPage() {
@@ -50,12 +50,12 @@ export default function SupplierTeamPage() {
     <PageFrame>
       <PageHeader
         title="Сотрудники и роли"
-        description={`${team.company.title}: кто работает в кабинете и что ему доступно. Руководителя компании изменить нельзя.`}
+        description={`${team.company.title}: кто работает в кабинете и что ему доступно.`}
         actions={
           team.canManage ? (
             <Button size="lg" disabled={team.busy} onClick={() => setInviteOpen(true)}>
               <Plus size={16} />
-              Добавить сотрудника
+              Пригласить сотрудника
             </Button>
           ) : null
         }
@@ -64,6 +64,7 @@ export default function SupplierTeamPage() {
       <SideReputationList reputation={team.company.reputation} className="mb-5" />
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid min-w-0 gap-5">
         <EmployeeList
           employees={team.employees}
           canManage={team.canManage}
@@ -71,23 +72,21 @@ export default function SupplierTeamPage() {
           onInviteClick={() => setInviteOpen(true)}
           onChangeRole={(userId, role) => void team.changeRole(userId, role).catch(() => {})}
           onRemove={(userId) => void team.removeMember(userId).catch(() => {})}
+          onLeave={() =>
+            void team
+              .leave()
+              .then(() => window.location.assign("/supplier?left=1"))
+              .catch(() => {})
+          }
           sides={team.sides}
           onChangeSideRole={(userId, side, role) =>
             void team.changeSideRole(userId, side, role).catch(() => {})
           }
         />
+        <TeamInvitations side="supplier" companyId={team.company.id} canManage={team.canManage} />
+        </div>
 
-        <section className="rounded-2xl border border-line bg-card p-5">
-          <h2 className="text-[15.5px] font-semibold">Что может каждая роль</h2>
-          <dl className="mt-3 grid gap-3">
-            {COMPANY_ROLES.map((role) => (
-              <div key={role}>
-                <dt className="text-[14px] font-semibold">{COMPANY_ROLE_LABELS[role]}</dt>
-                <dd className="text-[13.5px] text-mute">{COMPANY_ROLE_RIGHTS[role]}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
+        <AccessLevelsCard />
       </div>
 
       {!team.canManage ? (
@@ -101,9 +100,7 @@ export default function SupplierTeamPage() {
         open={inviteOpen}
         onOpenChange={setInviteOpen}
         busy={team.busy}
-        onInvite={async (data) => {
-          await team.invite(data)
-        }}
+        onInvite={(data) => team.invite(data)}
       />
     </PageFrame>
   )

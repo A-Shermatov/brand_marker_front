@@ -30,6 +30,8 @@ type EmployeeListProps = {
   onInviteClick?: () => void
   onChangeRole: (userId: number, role: CompanyRole) => void
   onRemove: (userId: number) => void
+  /** Leave the company yourself; offered to everyone except the director. */
+  onLeave?: () => void
   /** The company buys and sells: show access to each side. */
   sides?: TeamSideKey[]
   onChangeSideRole?: (userId: number, side: TeamSideKey, role: SideRole | null) => void
@@ -42,6 +44,7 @@ export const EmployeeList = ({
   onInviteClick,
   onChangeRole,
   onRemove,
+  onLeave,
   sides = [],
   onChangeSideRole,
 }: EmployeeListProps) => {
@@ -49,6 +52,7 @@ export const EmployeeList = ({
   const [removeTarget, setRemoveTarget] = useState<CompanyTeamEmployee | null>(
     null,
   )
+  const [leaveOpen, setLeaveOpen] = useState(false)
 
   const confirmRemove = () => {
     if (!removeTarget) return
@@ -63,8 +67,8 @@ export const EmployeeList = ({
         <div>
           <b className="text-[15px]">В команде пока никого</b>
           <p className="mt-1 text-[13.5px] text-mute">
-            Добавьте сотрудника по email — он должен быть зарегистрирован на
-            площадке.
+            Пригласите сотрудника по email — он появится здесь, когда примет
+            приглашение.
           </p>
         </div>
         {canManage && onInviteClick ? (
@@ -75,7 +79,7 @@ export const EmployeeList = ({
             onClick={onInviteClick}
             disabled={busy}
           >
-            Добавить сотрудника
+            Пригласить сотрудника
           </Button>
         ) : null}
       </div>
@@ -156,13 +160,23 @@ export const EmployeeList = ({
                       size="icon"
                       className="size-8 shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
                       disabled={busy}
-                      aria-label={`Удалить ${employee.name}`}
+                      aria-label={`Убрать из компании: ${employee.name}`}
                       onClick={() => setRemoveTarget(employee)}
                     >
                       <Trash2 className="size-4" aria-hidden />
                     </Button>
                   ) : null}
                 </div>
+                {employee.me && !isDirector && onLeave ? (
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => setLeaveOpen(true)}
+                    className="text-[13px] font-medium text-red-600 underline-offset-2 hover:underline disabled:opacity-60"
+                  >
+                    Выйти из компании
+                  </button>
+                ) : null}
                 {twoSided ? (
                   <SideAccess
                     employee={employee}
@@ -184,11 +198,11 @@ export const EmployeeList = ({
       >
         <DialogContent className="sm:max-w-md rounded-xl">
           <DialogHeader>
-            <DialogTitle>Удалить сотрудника?</DialogTitle>
+            <DialogTitle>Убрать из компании?</DialogTitle>
           </DialogHeader>
           <p className="text-[14.5px] text-mute">
             {removeTarget
-              ? `${removeTarget.name} (${removeTarget.email}) потеряет доступ к кабинету компании.`
+              ? `${removeTarget.name} (${removeTarget.email}) сразу потеряет доступ к кабинету компании. Заявки, сделки и переписка, которые он вёл, останутся у компании.`
               : null}
           </p>
           <DialogFooter className="gap-2">
@@ -205,7 +219,35 @@ export const EmployeeList = ({
               disabled={busy}
               onClick={confirmRemove}
             >
-              Удалить
+              Убрать из компании
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={leaveOpen} onOpenChange={setLeaveOpen}>
+        <DialogContent className="sm:max-w-md rounded-xl">
+          <DialogHeader>
+            <DialogTitle>Выйти из компании?</DialogTitle>
+          </DialogHeader>
+          <p className="text-[14.5px] text-mute">
+            Вы потеряете доступ к кабинету компании. Ваш вход на площадку и личный
+            профиль сохранятся. Вернуться можно только по новому приглашению.
+          </p>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="ghost" onClick={() => setLeaveOpen(false)}>
+              Остаться
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={busy}
+              onClick={() => {
+                setLeaveOpen(false)
+                onLeave?.()
+              }}
+            >
+              Выйти из компании
             </Button>
           </DialogFooter>
         </DialogContent>

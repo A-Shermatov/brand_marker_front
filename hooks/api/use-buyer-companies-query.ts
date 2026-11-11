@@ -82,8 +82,8 @@ export const useAddBuyerTeamMemberMutation = () => {
     }) => buyerCompaniesApi.addTeamMember(companyId, data),
     onSuccess: () => invalidateBuyerCompanies(qc),
     meta: {
-      successMessage: "Сотрудник добавлен",
-      errorMessage: "Не удалось добавить сотрудника",
+      successMessage: "Приглашение отправлено",
+      errorMessage: "Не удалось отправить приглашение",
     },
   })
 }
@@ -120,8 +120,45 @@ export const useRemoveBuyerTeamMemberMutation = () => {
     }) => buyerCompaniesApi.removeTeamMember(companyId, targetUserId),
     onSuccess: () => invalidateBuyerCompanies(qc),
     meta: {
-      successMessage: "Сотрудник удалён",
-      errorMessage: "Не удалось удалить сотрудника",
+      successMessage: "Доступ к компании закрыт",
+      errorMessage: "Не удалось убрать сотрудника",
+    },
+  })
+}
+
+/** Invitations of a company; only its director and admins may see them. */
+export const useBuyerInvitationsQuery = (
+  companyId: number | null | undefined,
+  enabled = true,
+) =>
+  useQuery({
+    queryKey: [...buyerCompanyKeys.all, "invitations", companyId ?? 0] as const,
+    queryFn: () => buyerCompaniesApi.invitations(companyId!),
+    enabled: enabled && isApiEnabled() && Boolean(companyId),
+  })
+
+export const useResendBuyerInvitationMutation = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ companyId, invitationId }: { companyId: number; invitationId: number }) =>
+      buyerCompaniesApi.resendInvitation(companyId, invitationId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: buyerCompanyKeys.all }),
+    meta: {
+      successMessage: "Приглашение отправлено ещё раз",
+      errorMessage: "Не удалось отправить приглашение",
+    },
+  })
+}
+
+export const useCancelBuyerInvitationMutation = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ companyId, invitationId }: { companyId: number; invitationId: number }) =>
+      buyerCompaniesApi.cancelInvitation(companyId, invitationId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: buyerCompanyKeys.all }),
+    meta: {
+      successMessage: "Приглашение отменено",
+      errorMessage: "Не удалось отменить приглашение",
     },
   })
 }

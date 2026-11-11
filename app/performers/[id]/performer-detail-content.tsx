@@ -15,6 +15,8 @@ import {
   MapPinIcon as MapPin,
   ChatTextIcon as MessageSquare,
   SealCheckIcon as SealCheck,
+  UserIcon as UserMark,
+  ArrowSquareOutIcon as ExternalLink,
   StarIcon as Star,
 } from "@phosphor-icons/react/dist/ssr"
 import { PageShell } from "@/components/marketplace/page-shell"
@@ -46,6 +48,8 @@ import type { MarketplacePerformer } from "@/types/marketplace"
 import { SideReputationList } from "@/components/company/side-reputation"
 import { CardChip, CardList, ListCard, StatusPill } from "@/components/layout/card-list"
 import { RatingStars } from "@/components/reviews/review-card-list"
+import { reviewAuthorLabel } from "@/lib/review-party"
+import { formatRate } from "@/lib/account-type"
 
 type PerformerDetailContentProps = {
   performerId: number
@@ -152,6 +156,12 @@ export const PerformerDetailContent = ({
     success_rate: apiSupplier?.success_rate,
   })
   const yearsLabel = performer.years !== "—" ? performer.years : "—"
+  // A private person (freelancer, craftsman) and not a company.
+  const isPerson = apiSupplier?.kind === "individual"
+  const skills = apiSupplier?.skills ?? []
+  const portfolio = apiSupplier?.portfolio ?? []
+  const rate = formatRate(apiSupplier?.rate_amount, apiSupplier?.rate_currency, apiSupplier?.rate_unit)
+  const cover = apiSupplier?.cover ? resolveFileUrl(apiSupplier.cover) || apiSupplier.cover : null
   const profile = apiCompany?.profile
   const gallery = Array.isArray(profile?.gallery) ? profile.gallery : []
   const facts = [
@@ -194,7 +204,7 @@ export const PerformerDetailContent = ({
 
   const tabs: { id: StoreTab; label: string; count?: number }[] = [
     { id: "goods", label: "Товары и услуги", count: services.length },
-    { id: "about", label: "Проверка компании" },
+    { id: "about", label: isPerson ? "Проверка личности" : "Проверка компании" },
     { id: "reviews", label: "Отзывы", count: performer.reviews },
   ]
 
@@ -208,14 +218,18 @@ export const PerformerDetailContent = ({
             </span>
             <span className="min-w-[220px] flex-1">
               <b className="block text-[15px]">
-                Предпросмотр — так гости видят вашу компанию
+                {isPerson
+                  ? "Предпросмотр — так покупатели видят вашу страницу"
+                  : "Предпросмотр — так гости видят вашу компанию"}
               </b>
               <span className="text-[13.5px] text-white/65">
                 Публичная витрина на площадке
               </span>
             </span>
             <Button asChild variant="secondary" className="!bg-card !text-ink">
-              <Link href="/supplier/company">Вернуться к редактированию</Link>
+              <Link href={isPerson ? "/supplier/profile" : "/supplier/company"}>
+                Вернуться к редактированию
+              </Link>
             </Button>
           </div>
         ) : (
@@ -230,8 +244,13 @@ export const PerformerDetailContent = ({
 
         <section className="overflow-hidden rounded-3xl border border-line bg-card shadow-[0_18px_40px_-28px_rgb(0_50_140/0.45)]">
           {/* Cover: the brand field, so every company page opens the same way. */}
-          <div className="relative h-28 bg-brand-field md:h-36" aria-hidden>
-            <span className="absolute inset-0 bg-[radial-gradient(60%_120%_at_10%_100%,rgb(255_255_255/0.14),transparent_60%)]" />
+          <div className="relative h-28 overflow-hidden bg-brand-field md:h-36" aria-hidden>
+            {cover ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={cover} alt="" className="absolute inset-0 size-full object-cover" data-testid="company-cover" />
+            ) : (
+              <span className="absolute inset-0 bg-[radial-gradient(60%_120%_at_10%_100%,rgb(255_255_255/0.14),transparent_60%)]" />
+            )}
           </div>
           <div className="px-5 pb-6 md:px-8">
             <div className="relative z-10 -mt-12 flex flex-wrap items-end justify-between gap-4 md:-mt-14">
@@ -284,7 +303,17 @@ export const PerformerDetailContent = ({
                 />
                 <ReputationBadge tier={profileTier} size={22} />
               </div>
+              {isPerson && apiSupplier?.headline ? (
+                <p className="text-[17px] font-semibold text-ink" data-testid="person-headline">
+                  {apiSupplier.headline}
+                </p>
+              ) : null}
               <div className="flex flex-wrap items-center gap-2">
+                {isPerson ? (
+                  <StatusPill tone="muted" icon={UserMark} className="text-ink">
+                    Частное лицо
+                  </StatusPill>
+                ) : null}
                 {performer.verified ? (
                   <StatusPill tone="safe" icon={SealCheck}>
                     {apiSupplier?.kind === "individual" ? "Личность подтверждена" : "Проверенная компания"}
@@ -308,6 +337,11 @@ export const PerformerDetailContent = ({
                     .filter(Boolean)
                     .join(", ")}
                 </StatusPill>
+                {rate ? (
+                  <StatusPill tone="muted" className="text-ink">
+                    <b className="tnum">{rate}</b>
+                  </StatusPill>
+                ) : null}
               </div>
               {performer.description ? (
                 <p className="max-w-3xl text-[15.5px] leading-relaxed text-ink-soft">{performer.description}</p>
@@ -318,6 +352,24 @@ export const PerformerDetailContent = ({
                     <CardChip key={industry}>{industry}</CardChip>
                   ))}
                 </div>
+              ) : null}
+              {skills.length ? (
+                <div className="flex flex-wrap gap-2" aria-label="Навыки">
+                  {skills.map((skill) => (
+                    <CardChip key={skill}>{skill}</CardChip>
+                  ))}
+                </div>
+              ) : null}
+              {isPerson && apiSupplier?.website ? (
+                <a
+                  href={apiSupplier.website}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="inline-flex w-fit items-center gap-1.5 text-[14.5px] font-medium text-brand-700 hover:underline"
+                >
+                  <ExternalLink className="size-4" aria-hidden />
+                  {apiSupplier.website.replace(/^https?:\/\//, "")}
+                </a>
               ) : null}
               <SideReputationList reputation={apiCompany?.reputation} />
             </div>
@@ -344,6 +396,48 @@ export const PerformerDetailContent = ({
             </dl>
           </div>
         </section>
+
+        {portfolio.length > 0 ? (
+          <section className="mt-8" aria-labelledby="portfolio-title">
+            <h2 id="portfolio-title" className="mb-4 text-[20px] font-bold tracking-[-0.01em] text-ink">
+              Портфолио
+            </h2>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {portfolio.map((work, index) => (
+                <li
+                  key={`${work.title}-${index}`}
+                  className="overflow-hidden rounded-2xl border border-line bg-card"
+                >
+                  {work.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={resolveFileUrl(work.image) || work.image}
+                      alt=""
+                      className="aspect-[16/10] w-full border-b border-line object-cover"
+                    />
+                  ) : null}
+                  <div className="grid gap-1.5 p-4">
+                    <b className="text-[15.5px] leading-snug text-ink">{work.title}</b>
+                    {work.description ? (
+                      <p className="text-[14px] leading-relaxed text-ink-soft">{work.description}</p>
+                    ) : null}
+                    {work.link ? (
+                      <a
+                        href={work.link}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        className="inline-flex w-fit items-center gap-1.5 text-[14px] font-medium text-brand-700 hover:underline"
+                      >
+                        <ExternalLink className="size-4" aria-hidden />
+                        Посмотреть работу
+                      </a>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         <div className="mt-8">
           <div className="mb-5 inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-line bg-card p-1">
@@ -376,9 +470,11 @@ export const PerformerDetailContent = ({
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-line-strong bg-card px-6 py-14 text-center">
-                <b className="text-[16px]">Пока нет товаров</b>
+                <b className="text-[16px]">{isPerson ? "В каталоге пока пусто" : "Пока нет товаров"}</b>
                 <p className="mt-1 text-[14px] text-mute">
-                  Компания ещё не добавила предложения.
+                  {isPerson
+                    ? "Напишите или запросите цену — специалист ответит на вашу задачу."
+                    : "Компания ещё не добавила предложения."}
                 </p>
               </div>
             )
@@ -387,7 +483,13 @@ export const PerformerDetailContent = ({
           {tab === "about" ? (
             <div className="grid max-w-5xl gap-4">
               <div className="grid max-w-3xl gap-4 rounded-2xl border border-line bg-card p-6">
-                {performer.verified ? (
+                {isPerson ? (
+                  <p className={cn("text-[15px]", performer.verified ? "text-ink" : "text-amber-800")}>
+                    {performer.verified
+                      ? "Площадка проверила документ, удостоверяющий личность: человек тот, за кого себя выдаёт."
+                      : "Личность ещё не подтверждена документом. Работайте только с гарантией сделки: деньги удерживает банк до приёмки."}
+                  </p>
+                ) : performer.verified ? (
                   <>
                     <p className="text-[15px]">
                       Площадка проверила документы компании:
@@ -455,7 +557,7 @@ export const PerformerDetailContent = ({
 
           {tab === "reviews" ? (
             apiReviews.length > 0 ? (
-              <CardList label="Отзывы о компании" className="max-w-3xl">
+              <CardList label={isPerson ? "Отзывы о специалисте" : "Отзывы о компании"} className="max-w-3xl">
                 {apiReviews.map((review) => (
                   <ListCard key={review.id} tone={review.rating >= 4 ? "safe" : review.rating <= 2 ? "danger" : "warn"}>
                     <div className="grid gap-2 p-4 pl-5">
@@ -468,6 +570,7 @@ export const PerformerDetailContent = ({
                       <p className={cn("text-[15px] leading-relaxed", review.comment ? "text-ink-soft" : "text-mute")}>
                         {review.comment || "Без комментария"}
                       </p>
+                      <p className="text-[13px] text-mute">{reviewAuthorLabel(review)}</p>
                     </div>
                   </ListCard>
                 ))}
