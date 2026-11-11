@@ -336,12 +336,16 @@ export type AdminPendingVerificationParams = {
 
 export type AdminCompanyChangeRequest = {
   id: number
-  company_id: number
+  /** "company": a company page; "user": a person's name, photo or page. */
+  kind?: "company" | "user"
+  company_id: number | null
+  target_user_id?: number | null
   company_title?: string | null
   requested_by_user_id: number
   status: string
-  proposed: Record<string, string>
-  current_snapshot: Record<string, string | null>
+  proposed: Record<string, unknown>
+  current_snapshot: Record<string, unknown>
+  media?: Record<string, { before: string | string[] | null; after: string | string[] | null }>
   reason_from_user: string | null
   admin_reason: string | null
   reviewed_by_user_id: number | null

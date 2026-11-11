@@ -137,6 +137,8 @@ export type IndividualPage = {
   /** Listed among suppliers as a private person. */
   accepts_orders: boolean
   supplier_actor_id?: number | null
+  /** Edits wait for an admin; the public page shows the last approved one. */
+  pending_review?: boolean
 }
 
 export type ReviewPhoto = {
@@ -232,6 +234,8 @@ export type CompanyWithRelations = Company & {
   reputation?: SideReputation[]
   owner?: UserPublic
   team?: UserPublic[]
+  /** Fields of the page waiting for an admin; others still see the old ones. */
+  pending_changes?: string[]
 }
 
 export type CompanyPublic = Company

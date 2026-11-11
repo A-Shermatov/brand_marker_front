@@ -13,7 +13,13 @@ import { CreateCompanyCard } from "@/components/company/create-company-card"
 import { TwoFactorSettings } from "@/components/auth/two-factor-settings"
 import { IdentityVerificationCard } from "@/components/verification/identity-verification-card"
 import { authApi } from "@/lib/api/auth"
+import { useQueryClient } from "@tanstack/react-query"
 import { AvatarUploader } from "@/components/profile/avatar-uploader"
+import {
+  PendingReviewNotice,
+  myChangesKey,
+  useMyPendingChanges,
+} from "@/components/profile/pending-review-notice"
 import { IndividualPageCard } from "@/components/profile/individual-page-card"
 import { useSearchParams } from "next/navigation"
 import { getApiErrorMessage } from "@/lib/api/client"
@@ -37,6 +43,8 @@ export default function SupplierProfilePage() {
   const [hasDelivery, setHasDelivery] = useState(false)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
+  const queryClient = useQueryClient()
+  const pendingChanges = useMyPendingChanges().data
 
   useEffect(() => {
     if (user) {
@@ -57,15 +65,22 @@ export default function SupplierProfilePage() {
 
     setSaving(true)
     try {
+      let nameWaits = false
       if (useApi) {
-        await authApi.updateProfile({
+        const saved = await authApi.updateProfile({
           first_name: firstName,
           last_name: lastName,
           phone: phone.trim() || null,
         })
+        // A new name is shown to others only after an admin approves it.
+        nameWaits = Boolean(
+          saved.pending_changes?.some((f) => f === "first_name" || f === "last_name"),
+        )
+        await queryClient.invalidateQueries({ queryKey: myChangesKey })
+        if (nameWaits) toast.success("Новое имя отправлено на проверку администратору")
       }
       updateProfile({
-        name: trimmedName,
+        name: nameWaits ? (user?.name ?? trimmedName) : trimmedName,
         phone: phone.trim() || undefined,
         city: city.trim() || undefined,
         hasDelivery,
@@ -96,6 +111,7 @@ export default function SupplierProfilePage() {
       />
 
       <div className="space-y-6">
+      <PendingReviewNotice fields={pendingChanges ? Object.keys(pendingChanges.proposed) : null} />
       <AvatarUploader />
       <form onSubmit={(e) => void handleSave(e)} className="space-y-6">
         <PageSurface className="space-y-5 p-5 sm:p-6">

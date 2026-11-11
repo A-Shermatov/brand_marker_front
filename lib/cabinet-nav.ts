@@ -134,13 +134,6 @@ export const BUYER_HUBS: CabinetNavHub[] = [
     group: "Аккаунт",
   },
   {
-    id: "plan",
-    label: "Тариф",
-    href: "/customer/plan",
-    match: ["/customer/plan"],
-    group: "Аккаунт",
-  },
-  {
     id: "reviews",
     label: "Отзывы",
     href: "/customer/reviews",
@@ -204,10 +197,6 @@ export const BUYER_SECTION_TITLE: Record<string, SectionMeta> = {
   profile: {
     title: "Мой профиль",
     description: "Имя, фото, пароль и защита входа",
-  },
-  plan: {
-    title: "Тариф",
-    description: "Что включено сейчас и что можно подключить",
   },
   reviews: {
     title: "Отзывы",
@@ -468,7 +457,7 @@ export const ADMIN_SUBTABS: Record<string, CabinetSubtab[]> = {
     },
     {
       id: "changes",
-      label: "Изменения данных",
+      label: "Изменения профилей",
       href: "/admin/companies",
       match: ["/admin/companies"],
     },

@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import { PageSurface } from "@/components/layout"
+import { PendingReviewNotice } from "@/components/profile/pending-review-notice"
 import { Button } from "@/components/ui/button"
 import { authApi } from "@/lib/api/auth"
 import { getApiErrorMessage } from "@/lib/api/client"
@@ -101,7 +102,11 @@ export function IndividualPageCard({ welcome = false }: { welcome?: boolean }) {
       updateProfile({ acceptsOrders: next.accepts_orders })
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
-      toast.success("Страница сохранена")
+      toast.success(
+        next.pending_review
+          ? "Страница отправлена на проверку: её увидят после одобрения администратором"
+          : "Страница сохранена",
+      )
     },
     onError: (err) => toast.error(getApiErrorMessage(err, "Не удалось сохранить страницу")),
   })
@@ -151,6 +156,9 @@ export function IndividualPageCard({ welcome = false }: { welcome?: boolean }) {
       }}
       className="space-y-6"
     >
+      {page?.pending_review ? (
+        <PendingReviewNotice fields={["page"]} />
+      ) : null}
       <PageSurface className="space-y-5 p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test"
 import { expect, ruDate, runId, test } from "./support/fixtures"
+import { approveProfileChanges } from "./support/moderation"
 
 /** The smallest valid PNG: one pixel. */
 const PNG = Buffer.from(
@@ -72,7 +73,14 @@ test("a profile photo shows in the menu and next to the person's messages", asyn
       mimeType: "image/png",
       buffer: PNG,
     })
-    await expect(buyer.getByText("Фото профиля обновлено")).toBeVisible()
+    // The person frames the photo before it uploads, then an admin approves it.
+    await buyer.getByRole("dialog").getByRole("button", { name: "Сохранить фото" }).click()
+    await expect(buyer.getByText(/Фото отправлено на проверку/)).toBeVisible()
+    await expect(buyer.getByText("Новое фото на проверке")).toBeVisible()
+    const admin = await pageAs("admin")
+    const buyerName = (await buyer.getByLabel("Имя / контактное лицо").inputValue()).trim()
+    await approveProfileChanges(admin, new RegExp(buyerName))
+    await buyer.reload()
     await expect(buyer.getByRole("button", { name: "Сменить фото" })).toBeVisible()
     await expect(buyer.getByRole("button", { name: "Аккаунт" }).locator("img")).toBeVisible()
   })

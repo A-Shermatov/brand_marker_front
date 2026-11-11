@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, type ReactNode } from "react"
 import Cropper, { type Area } from "react-easy-crop"
 import "react-easy-crop/react-easy-crop.css"
 import {
@@ -21,6 +21,8 @@ type ImageCropDialogProps = {
   fileName?: string
   /** Crop aspect ratio (width / height). Default 4/3 for company gallery. */
   aspect?: number
+  /** A round frame for profile photos and logos shown in circles. */
+  round?: boolean
   title?: string
   description?: string
   confirmLabel?: string
@@ -34,6 +36,7 @@ export function ImageCropDialog({
   imageSrc,
   fileName = "photo.jpg",
   aspect = 4 / 3,
+  round = false,
   title = "Обрезать фото",
   description = "Перетащите фото и настройте границы рамки. Масштаб — ползунком.",
   confirmLabel = "Добавить",
@@ -95,7 +98,8 @@ export function ImageCropDialog({
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropComplete}
-              showGrid
+              showGrid={!round}
+              cropShape={round ? "round" : "rect"}
               objectFit="contain"
             />
           ) : null}
@@ -144,4 +148,69 @@ export function ImageCropDialog({
       </DialogContent>
     </Dialog>
   )
+}
+
+type CropBeforeUploadOptions = {
+  aspect: number
+  round?: boolean
+  title: string
+  description: string
+  confirmLabel?: string
+  /** Receives the cropped picture; the dialog closes when it resolves. */
+  onCropped: (file: File) => void | Promise<void>
+}
+
+/**
+ * Pick a picture, then choose the part of it to keep before it is uploaded.
+ * `choose(file)` opens the frame; `dialog` must be rendered once on the page.
+ */
+export function useCropBeforeUpload({
+  aspect,
+  round,
+  title,
+  description,
+  confirmLabel = "Сохранить",
+  onCropped,
+}: CropBeforeUploadOptions): { choose: (file: File) => void; dialog: ReactNode; busy: boolean } {
+  const [source, setSource] = useState<{ src: string; name: string } | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  useEffect(
+    () => () => {
+      if (source) URL.revokeObjectURL(source.src)
+    },
+    [source],
+  )
+
+  const dialog = (
+    <ImageCropDialog
+      open={Boolean(source)}
+      imageSrc={source?.src ?? null}
+      fileName={source?.name}
+      aspect={aspect}
+      round={round}
+      title={title}
+      description={description}
+      confirmLabel={confirmLabel}
+      busy={busy}
+      onOpenChange={(open) => {
+        if (!open && !busy) setSource(null)
+      }}
+      onConfirm={async (file) => {
+        setBusy(true)
+        try {
+          await onCropped(file)
+          setSource(null)
+        } finally {
+          setBusy(false)
+        }
+      }}
+    />
+  )
+
+  return {
+    choose: (file: File) => setSource({ src: URL.createObjectURL(file), name: file.name }),
+    dialog,
+    busy,
+  }
 }

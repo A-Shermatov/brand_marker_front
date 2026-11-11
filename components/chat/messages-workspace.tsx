@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils"
 export type ChatSlot = {
   headerActions: ReactNode
   headerChildren: ReactNode
+  /** The other party's profile, when it has one. */
+  profileHref?: string
   className: string
 }
 
@@ -28,6 +30,7 @@ export function MessagesWorkspace({
   searchPlaceholder,
   renderChat,
   noChat,
+  profileHref,
 }: {
   groups: CounterpartChatGroup[]
   selectedGroup?: CounterpartChatGroup
@@ -38,6 +41,8 @@ export function MessagesWorkspace({
   renderChat: (slot: ChatSlot) => ReactNode
   /** Shown on the right when no conversation is open. */
   noChat?: ReactNode
+  /** Where the other party's profile lives, by their actor id. */
+  profileHref?: (counterpartId: number) => string
 }) {
   const [phoneShowsChat, setPhoneShowsChat] = useState(false)
 
@@ -85,6 +90,10 @@ export function MessagesWorkspace({
                 onSelect={onSelectProject}
               />
             ),
+            profileHref:
+              profileHref && selected.counterpartId > 0
+                ? profileHref(selected.counterpartId)
+                : undefined,
             className: "h-full min-h-0",
           })
         ) : (

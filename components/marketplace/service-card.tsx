@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ClockIcon as Clock, CrownIcon as Crown } from "@phosphor-icons/react/dist/ssr"
+import { ClockIcon as Clock, CrownIcon as Crown, MapPinIcon as MapPin } from "@phosphor-icons/react/dist/ssr"
 import { CompanyName } from "@/components/bm"
 import type { MarketplaceService } from "@/types/marketplace"
 import { getIcon } from "@/lib/icon-map"
@@ -22,6 +22,16 @@ const isVipBadge = (label: string) => /vip|премиум|топ/i.test(label)
 const isRequestPrice = (price: string) =>
   /запрос|договорённост/i.test(price)
 
+/** "21 750 TJS" → amount "21 750" and unit "TJS", so the number reads first. */
+const splitPrice = (price: string) => {
+  const match = price.trim().match(/^(.*\d)\s+([^\d\s][^\d]*)$/)
+  return match ? { amount: match[1], unit: match[2] } : { amount: price, unit: "" }
+}
+
+/** One or two lines of the description, without markup or line breaks. */
+const toSummary = (text: string) =>
+  text.replace(/[#*_`>]/g, "").replace(/\s+/g, " ").trim()
+
 export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
   const Icon = getIcon(service.icon)
   const detailHref = href ?? serviceUrl(service.id)
@@ -29,12 +39,15 @@ export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
   const showImage = Boolean(service.imageUrl) && !imageBroken
   const showVip = Boolean(service.badge && isVipBadge(service.badge.label))
   const requestPrice = isRequestPrice(service.price)
+  const price = splitPrice(service.price)
+  const summary = toSummary(service.description ?? "")
+  const city = service.city && service.city !== "—" ? service.city : ""
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition-[border-color,box-shadow] hover:border-line-strong hover:shadow-[0_10px_24px_-12px_rgba(28,28,26,.18)]">
       <Link
         href={detailHref}
-        className="relative aspect-square w-full overflow-hidden bg-canvas"
+        className="relative aspect-[4/3] w-full overflow-hidden bg-canvas"
         aria-label={service.title}
       >
         {showImage ? (
@@ -63,8 +76,8 @@ export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
         ) : null}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-1.5 p-3.5">
-        <h3 className="min-h-[40px] text-[14.5px] leading-snug text-ink">
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="text-[15px] font-semibold leading-[1.35] text-ink">
           <Link
             href={detailHref}
             className="after:absolute after:inset-0 hover:text-brand-700"
@@ -73,35 +86,60 @@ export const ServiceCard = ({ service, href, actions }: ServiceCardProps) => {
           </Link>
         </h3>
 
-        {requestPrice ? (
-          <b className="text-[15.5px] font-semibold text-ink">Цена по запросу</b>
-        ) : (
-          <b className="text-[17px] font-semibold tracking-[-0.01em] text-ink tnum">
-            {service.price}
-          </b>
-        )}
-
-        {service.moqLabel ? (
-          <p className="text-[13px] text-mute">{service.moqLabel}</p>
+        {summary ? (
+          <p className="mt-1 line-clamp-2 text-[13px] leading-[1.45] text-mute">{summary}</p>
         ) : null}
 
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-2.5">
-          <CompanyName
-            name={service.provider || "…"}
-            verified={service.verified}
-            tier={service.providerTier}
-            plan={service.providerPlan}
-            size="sm"
-            nameClassName="text-[12.5px] font-medium text-ink-soft"
-            className="relative z-10"
-          />
+        <div className="mt-3">
+          {requestPrice ? (
+            <b className="text-[16px] font-semibold text-ink">Цена по запросу</b>
+          ) : (
+            <p className="flex flex-wrap items-baseline gap-x-1.5 text-ink">
+              <b className="text-[19px] font-bold leading-none tracking-[-0.015em] tnum">
+                {price.amount}
+              </b>
+              {price.unit ? (
+                <span className="text-[13px] font-medium text-ink-soft">{price.unit}</span>
+              ) : null}
+            </p>
+          )}
+          {service.moqLabel || city ? (
+            <p className="mt-2 flex flex-wrap gap-1.5 text-[12.5px] text-ink-soft">
+              {service.moqLabel ? (
+                <span className="rounded-md bg-surface-muted px-2 py-0.5">
+                  {service.moqLabel.replace(/^Мин\. заказ:\s*/, "Заказ от ")}
+                </span>
+              ) : null}
+              {city ? (
+                <span className="inline-flex items-center gap-1 rounded-md bg-surface-muted px-2 py-0.5">
+                  <MapPin className="size-3.5 text-mute" aria-hidden />
+                  {city}
+                </span>
+              ) : null}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3">
+          <span className="grid min-w-0 gap-0.5">
+            <span className="text-[11.5px] text-mute">Поставщик</span>
+            <CompanyName
+              name={service.provider || "…"}
+              verified={service.verified}
+              tier={service.providerTier}
+              plan={service.providerPlan}
+              size="sm"
+              nameClassName="text-[13px] font-semibold text-ink"
+              className="relative z-10"
+            />
+          </span>
           {!service.verified ? (
             <span title="Компания на проверке" className="relative z-10 inline-flex">
               <Clock size={16} className="shrink-0 text-amber-600" aria-label="Компания на проверке" />
             </span>
           ) : null}
         </div>
-        {actions ? <div className="relative z-10 grid gap-2 pt-1">{actions}</div> : null}
+        {actions ? <div className="relative z-10 mt-3 grid gap-2">{actions}</div> : null}
       </div>
     </article>
   )

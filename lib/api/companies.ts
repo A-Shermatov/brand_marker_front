@@ -43,14 +43,23 @@ export type CompanyChangeRequestPayload = {
   reason?: string
 }
 
+/** Pictures in a change request: what is shown now and what was sent. */
+export type ChangeRequestMedia = Record<
+  string,
+  { before: string | string[] | null; after: string | string[] | null }
+>
+
 export type CompanyChangeRequest = {
   id: number
-  company_id: number
+  kind?: "company" | "user"
+  company_id: number | null
+  target_user_id?: number | null
   company_title?: string | null
   requested_by_user_id: number
   status: string
-  proposed: Record<string, string>
-  current_snapshot: Record<string, string | null>
+  proposed: Record<string, unknown>
+  current_snapshot: Record<string, unknown>
+  media?: ChangeRequestMedia
   reason_from_user: string | null
   admin_reason: string | null
   reviewed_by_user_id: number | null

@@ -7,6 +7,7 @@ import { WizardField, wizardInputClass, wizardTextareaClass } from "@/components
 import { isApiEnabled } from "@/lib/api/config"
 import { buyerCompaniesApi } from "@/lib/api/companies"
 import { supplierCompaniesApi } from "@/lib/api/supplier/companies"
+import { useCropBeforeUpload } from "@/components/ui/image-crop-dialog"
 
 type BasicInfoStepProps = {
   data: CompanyWizardInput
@@ -46,11 +47,15 @@ export const BasicInfoStep = ({
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
 
-  const handleLogoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     event.target.value = ""
     if (!file) return
+    // The person frames the logo first; the cropped square is what uploads.
+    logoCrop.choose(file)
+  }
 
+  const uploadLogo = async (file: File) => {
     setUploadError(null)
     setUploading(true)
     try {
@@ -72,8 +77,17 @@ export const BasicInfoStep = ({
     }
   }
 
+  const logoCrop = useCropBeforeUpload({
+    aspect: 1,
+    title: "Логотип компании",
+    description: "Выберите часть картинки для логотипа: он квадратный и виден в каталоге, чатах и сделках.",
+    confirmLabel: "Сохранить логотип",
+    onCropped: uploadLogo,
+  })
+
   return (
     <div className="space-y-5">
+      {logoCrop.dialog}
       {showActorTypes && (
         <WizardField label="Роли компании" required error={errors.actor_types}>
           <div className="flex flex-wrap gap-3">

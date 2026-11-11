@@ -154,7 +154,7 @@ export default function CustomerDashboard() {
   const { data: rfqCounts } = useQuery({
     queryKey: ["buyer-rfq-counts", actorId],
     queryFn: async () => {
-      const tabs = ["quotes", "deal", "draft", "closed"] as const
+      const tabs = ["quotes", "deal", "closed"] as const
       const pages = await Promise.all(tabs.map((tab) => rfqsApi.list(tab, { page: 1, pageSize: 1 })))
       return Object.fromEntries(tabs.map((tab, i) => [tab, pages[i]!.total])) as Record<
         (typeof tabs)[number],
@@ -355,7 +355,7 @@ export default function CustomerDashboard() {
               facts={[
                 { label: "Ждут предложений", value: rfqCounts?.quotes ?? 0 },
                 { label: "По ним идёт сделка", value: rfqCounts?.deal ?? 0 },
-                { label: "Черновики", value: rfqCounts?.draft ?? 0, attention: (rfqCounts?.draft ?? 0) > 0 },
+                { label: "Закрыты", value: rfqCounts?.closed ?? 0 },
               ]}
               href="/customer/rfqs"
               linkLabel="Открыть мои заявки"

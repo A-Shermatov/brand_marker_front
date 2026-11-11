@@ -20,6 +20,8 @@ type ContractMessagesPanelProps = {
   onMarkRead?: (contractId: number) => void
   headerActions?: ReactNode
   headerChildren?: ReactNode
+  /** The other party's profile; the header name links to it. */
+  profileHref?: string
   className?: string
 }
 
@@ -33,6 +35,7 @@ export const ContractMessagesPanel = ({
   onMarkRead,
   headerActions,
   headerChildren,
+  profileHref,
   className,
 }: ContractMessagesPanelProps) => {
   const messages = useMemo(() => contract.conversation?.messages ?? [], [contract])
@@ -76,6 +79,7 @@ export const ContractMessagesPanel = ({
       className={className}
       header={
         <ChatHeader
+          href={profileHref}
           name={counterpartName}
           avatar={avatar}
           subtitle={<>Сделка · {contract.title}</>}
