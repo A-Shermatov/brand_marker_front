@@ -35,6 +35,7 @@ export const useCompanyTeam = (side: TeamSide) => {
   const hydrated = useHydrated()
   const useApi = isApiEnabled()
   const user = useAuthStore((s) => s.user)
+  const refreshSession = useAuthStore((s) => s.refreshSession)
 
   const buyer = useBuyerCompaniesQuery(hydrated && useApi && side === "buyer")
   const supplier = useSupplierCompaniesQuery(hydrated && useApi && side === "supplier")
@@ -92,9 +93,16 @@ export const useCompanyTeam = (side: TeamSide) => {
       company
         ? remove.mutateAsync({ companyId: company.id, targetUserId })
         : Promise.resolve(undefined),
+    /** Sends an invitation; resolves with it (and its link). */
     invite: (data: { email: string; role: CompanyRole }) =>
       company
         ? add.mutateAsync({ companyId: company.id, data })
         : Promise.resolve(undefined),
+    /** Leave the company yourself, then drop back to the personal profile. */
+    leave: async () => {
+      if (!company || !user?.userId) return
+      await remove.mutateAsync({ companyId: company.id, targetUserId: user.userId })
+      await refreshSession()
+    },
   }
 }

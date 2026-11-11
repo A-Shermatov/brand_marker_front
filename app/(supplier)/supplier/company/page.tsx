@@ -31,6 +31,8 @@ import { ProfileSectionCard } from "@/components/supplier/company/profile-sectio
 import { ReviewsReceivedTable } from "@/components/supplier/finance/reviews-received-table"
 import { EmployeeList } from "@/components/cabinet/company/employee-list"
 import { InviteEmployeeDialog } from "@/components/cabinet/company/invite-employee-dialog"
+import { TeamInvitations } from "@/components/cabinet/company/team-invitations"
+import { resolveFileUrl } from "@/lib/file-url"
 import { scoreLevel } from "@/lib/catalog-quality-score"
 import { performerUrl } from "@/lib/marketplace-routes"
 import {
@@ -154,6 +156,9 @@ export default function SupplierCompanyPage() {
 
   const [about, setAbout] = useState("")
   const [city, setCity] = useState("")
+  const [logo, setLogo] = useState("")
+  const [cover, setCover] = useState("")
+  const [imageBusy, setImageBusy] = useState<"logo" | "cover" | null>(null)
   const [extra, setExtra] = useState<SupplierCompanyProfileExtra>(
     DEFAULT_SUPPLIER_PROFILE_EXTRA,
   )
@@ -169,6 +174,8 @@ export default function SupplierCompanyPage() {
     if (!company) return
     setAbout(company.description ?? "")
     setCity(company.city ?? "")
+    setLogo(company.logo ?? "")
+    setCover(company.cover ?? "")
     const fromProfile = company.profile
     if (useApi && fromProfile) {
       const gallery = Array.isArray(fromProfile.gallery)
@@ -283,18 +290,42 @@ export default function SupplierCompanyPage() {
     toast.success("Сотрудник удалён")
   }
 
+  /** Logo and cover go through the same upload; the page keeps the link until "Save". */
+  const handleBrandImage = async (kind: "logo" | "cover", file: File | undefined) => {
+    if (!file) return
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast.error("Загрузите картинку в формате JPG, PNG или WEBP")
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Картинка должна быть не больше 5 МБ")
+      return
+    }
+    if (!useApi) {
+      const local = URL.createObjectURL(file)
+      if (kind === "logo") setLogo(local)
+      else setCover(local)
+      return
+    }
+    setImageBusy(kind)
+    try {
+      const res = await supplierCompaniesApi.uploadLogo(file)
+      if (kind === "logo") setLogo(res.logo)
+      else setCover(res.logo)
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Не удалось загрузить картинку"))
+    } finally {
+      setImageBusy(null)
+    }
+  }
+
   const handleInvite = async (data: { email: string; role: CompanyRole }) => {
     if (useApi && company) {
-      try {
-        await addMember.mutateAsync({
-          companyId: company.id,
-          data: { email: data.email, role: data.role },
-        })
-      } catch (err) {
-        toast.error(getApiErrorMessage(err, "Не удалось добавить сотрудника"))
-        throw err
-      }
-      return
+      // The dialog shows what went wrong (already invited, already in the team).
+      return addMember.mutateAsync({
+        companyId: company.id,
+        data: { email: data.email, role: data.role },
+      })
     }
     const employee: CompanyTeamEmployee = {
       userId: Date.now(),
@@ -439,7 +470,8 @@ export default function SupplierCompanyPage() {
             legal_name: company.legal_name ?? "",
             tax_number: company.tax_number ?? "",
             description: about,
-            logo: company.logo ?? "",
+            logo,
+            cover,
             country: company.country ?? "",
             city,
             address: company.address ?? "",
@@ -510,7 +542,7 @@ export default function SupplierCompanyPage() {
                 onClick={() => setInviteOpen(true)}
               >
                 <Plus size={16} />
-                Добавить в команду
+                Пригласить сотрудника
               </Button>
             ) : null}
             <Button asChild variant="outline" size="lg">
@@ -545,6 +577,77 @@ export default function SupplierCompanyPage() {
               title="О компании"
               hint="Чем занимаетесь, для кого и почему с вами удобно"
             >
+              <div className="mb-5 grid gap-3">
+                <span className="text-[14px] font-medium">Логотип и обложка</span>
+                <div className="relative overflow-hidden rounded-xl border border-line">
+                  <div className="relative h-28 bg-brand-field sm:h-32">
+                    {cover ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={resolveFileUrl(cover) || cover}
+                        alt=""
+                        className="absolute inset-0 size-full object-cover"
+                        data-testid="cover-preview"
+                      />
+                    ) : null}
+                  </div>
+                  <div className="flex flex-wrap items-end gap-3 px-4 pb-4">
+                    <div className="-mt-9 grid size-[72px] shrink-0 place-items-center overflow-hidden rounded-xl border-4 border-card bg-surface-muted text-[12px] text-mute">
+                      {logo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={resolveFileUrl(logo) || logo} alt="" className="size-full object-cover" />
+                      ) : (
+                        "Логотип"
+                      )}
+                    </div>
+                    {canManage ? (
+                      <div className="flex flex-wrap gap-2 pt-3">
+                        <Button asChild variant="outline" size="sm" disabled={imageBusy !== null}>
+                          <label className="cursor-pointer">
+                            <Upload aria-hidden />
+                            {imageBusy === "logo" ? "Загрузка…" : logo ? "Заменить логотип" : "Загрузить логотип"}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="sr-only"
+                              onChange={(e) => {
+                                void handleBrandImage("logo", e.target.files?.[0])
+                                e.target.value = ""
+                              }}
+                            />
+                          </label>
+                        </Button>
+                        <Button asChild variant="outline" size="sm" disabled={imageBusy !== null}>
+                          <label className="cursor-pointer">
+                            <Upload aria-hidden />
+                            {imageBusy === "cover" ? "Загрузка…" : cover ? "Заменить обложку" : "Загрузить обложку"}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="sr-only"
+                              data-testid="cover-input"
+                              onChange={(e) => {
+                                void handleBrandImage("cover", e.target.files?.[0])
+                                e.target.value = ""
+                              }}
+                            />
+                          </label>
+                        </Button>
+                        {cover ? (
+                          <Button type="button" variant="ghost" size="sm" onClick={() => setCover("")}>
+                            Убрать обложку
+                          </Button>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+                <p className="text-[13px] text-mute">
+                  {canManage
+                    ? "Обложка — широкая картинка вверху страницы компании: склад, продукция или фирменный фон. Лучше всего смотрится 1600×400."
+                    : "Оформлять страницу компании могут руководитель и администратор."}
+                </p>
+              </div>
               <div className="grid gap-2">
                 <Label htmlFor="cp-about">Описание</Label>
                 <textarea
@@ -600,6 +703,9 @@ export default function SupplierCompanyPage() {
                   }
                   onRemove={(userId) => void handleRemove(userId)}
                 />
+                {useApi ? (
+                  <TeamInvitations side="supplier" companyId={company.id} canManage={canManage} />
+                ) : null}
               </div>
             </ProfileSectionCard>
 

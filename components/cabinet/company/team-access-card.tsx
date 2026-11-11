@@ -72,9 +72,7 @@ export const TeamAccessCard = ({ side, teamHref, limit = 4, className }: TeamAcc
           open={inviteOpen}
           onOpenChange={setInviteOpen}
           busy={team.busy}
-          onInvite={async (data) => {
-            await team.invite(data)
-          }}
+          onInvite={(data) => team.invite(data)}
         />
       ) : null}
     </DashboardPanel>

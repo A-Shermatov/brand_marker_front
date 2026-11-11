@@ -1,6 +1,7 @@
 import { buildPageQuery, type Page, type PageParams } from "@/lib/pagination"
 import type {
   CompanyCertificate,
+  CompanyInvitation,
   CompanyUser,
   CompanyWizardInput,
   CompanyWithRelations,
@@ -23,6 +24,8 @@ export type CompanyProfileExtras = {
   brands?: string | null
   notable_clients?: string | null
   gallery?: Array<{ src: string; name: string }>
+  /** The wide picture at the top of the page; "" removes it. */
+  cover?: string | null
 }
 
 type CompanyUpdatePayload = {
@@ -32,6 +35,7 @@ type CompanyUpdatePayload = {
   website?: string | null
   description?: string | null
   logo?: string | null
+  cover?: string | null
   country?: string | null
   city?: string | null
   address?: string | null
@@ -68,6 +72,7 @@ const wizardToUpdate = (
   brands: data.brands ?? null,
   notable_clients: data.notable_clients ?? null,
   gallery: data.gallery ?? [],
+  ...(data.cover !== undefined ? { cover: data.cover } : {}),
 })
 
 export const supplierCompaniesApi = {
@@ -131,10 +136,25 @@ export const supplierCompaniesApi = {
       method: "DELETE",
     }),
 
+  /** Invites a person; they join the team after accepting. */
   addTeamMember: (companyId: number, data: TeamMemberPayload) =>
-    apiFetch<{ id: number }>(`${PREFIX}/${companyId}/team`, {
+    apiFetch<CompanyInvitation>(`${PREFIX}/${companyId}/team`, {
       method: "POST",
       body: JSON.stringify(data),
+    }),
+
+  invitations: (companyId: number) =>
+    apiFetch<CompanyInvitation[]>(`${PREFIX}/${companyId}/invitations`),
+
+  /** A new link; the old one stops working. */
+  resendInvitation: (companyId: number, invitationId: number) =>
+    apiFetch<CompanyInvitation>(`${PREFIX}/${companyId}/invitations/${invitationId}/resend`, {
+      method: "POST",
+    }),
+
+  cancelInvitation: (companyId: number, invitationId: number) =>
+    apiFetch<void>(`${PREFIX}/${companyId}/invitations/${invitationId}`, {
+      method: "DELETE",
     }),
 
   updateTeamMember: (

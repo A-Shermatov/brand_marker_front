@@ -27,6 +27,9 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>
 
+/** An invitation link opened before signing in: the person returns to it afterwards. */
+const isInvitePath = (path: string) => /^\/invite\/[\w-]+$/.test(path) || path === "/invitations"
+
 const roleCards: {
   role: MarketplaceSessionRole
   title: string
@@ -72,7 +75,7 @@ function LoginContent() {
     const marketplaceRedirect =
       redirect &&
       !redirect.startsWith("/admin") &&
-      redirect.startsWith(roleHome)
+      (redirect.startsWith(roleHome) || isInvitePath(redirect))
         ? redirect
         : null
     router.replace(marketplaceRedirect || roleHome)
@@ -99,7 +102,7 @@ function LoginContent() {
     const safeRedirect =
       redirect
       && !redirect.startsWith("/admin")
-      && redirect.startsWith(roleHome)
+      && (redirect.startsWith(roleHome) || isInvitePath(redirect))
         ? redirect
         : roleHome
     router.replace(safeRedirect)

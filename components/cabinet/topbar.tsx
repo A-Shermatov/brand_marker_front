@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils"
 import { RAIL_SURFACE } from "@/components/layout/cabinet-sidebar-parts"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { UserAvatar } from "@/components/bm/user-avatar"
+import { ActiveProfileLine, ProfileSwitchMenu } from "@/components/company/profile-switch-menu"
 import { CartButton } from "@/components/cart/cart-button"
 
 export default function CustomerTopbar({
@@ -68,8 +69,9 @@ export default function CustomerTopbar({
                     <User size={15} />
                   </span>
                 )}
-                <span className="hidden text-[14px] font-medium md:block">
-                  {displayName.split(" ")[0]}
+                <span className="hidden text-left text-[14px] font-medium leading-tight md:block">
+                  {((hydrated && user?.name) || displayName).split(" ")[0]}
+                  {hydrated ? <ActiveProfileLine side="buyer" /> : null}
                 </span>
                 <ChevronDown className="hidden size-4 text-mute md:block" />
               </button>
@@ -77,13 +79,14 @@ export default function CustomerTopbar({
             <DropdownMenuContent align="end" className="w-72">
               <DropdownMenuLabel>
                 <div className="flex flex-col">
-                  <span className="font-semibold">{displayName}</span>
+                  <span className="font-semibold">{(hydrated && user?.name) || displayName}</span>
                   <span className="text-xs font-normal text-mute">
                     {hydrated && user ? user.email : ""}
                   </span>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              {hydrated ? <ProfileSwitchMenu side="buyer" /> : null}
               <DropdownMenuItem asChild>
                 <Link href="/customer/profile" className="cursor-pointer">
                   <User size={15} /> Профиль

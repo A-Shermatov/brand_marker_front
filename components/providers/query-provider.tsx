@@ -9,6 +9,7 @@ import { useState, type ReactNode } from "react"
 import { toast } from "sonner"
 import { getApiErrorMessage, isUnauthorizedError } from "@/lib/api/client"
 import { SessionEndedHandler } from "@/components/auth/session-ended"
+import { CompanyAccessWatcher } from "@/components/auth/company-access-watcher"
 
 export const QueryProvider = ({ children }: { children: ReactNode }) => {
   const [client] = useState(
@@ -45,6 +46,7 @@ export const QueryProvider = ({ children }: { children: ReactNode }) => {
   return (
     <QueryClientProvider client={client}>
       <SessionEndedHandler />
+      <CompanyAccessWatcher />
       {children}
     </QueryClientProvider>
   )

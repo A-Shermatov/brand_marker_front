@@ -4,13 +4,14 @@ import type {
   AdminCompanyVerificationStatus,
 } from "@/lib/api/admin"
 
-export type AdminCompanyMemberRole = "admin" | "moderator" | "accountant"
+export type AdminCompanyMemberRole = "admin" | "moderator" | "accountant" | "viewer"
 
 export const ADMIN_COMPANY_MEMBER_ROLE_LABELS: Record<string, string> = {
   director: "Директор",
   admin: "Администратор",
   moderator: "Модератор",
   accountant: "Бухгалтер",
+  viewer: "Наблюдатель",
 }
 
 export type AdminCompanyUpdateInput = Partial<{

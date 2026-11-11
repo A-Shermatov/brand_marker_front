@@ -25,6 +25,7 @@ export const SIDE_ROLE_OPTIONS: { value: SideRole; label: string }[] = [
   { value: "admin", label: "Администратор" },
   { value: "moderator", label: "Менеджер" },
   { value: "accountant", label: "Бухгалтер" },
+  { value: "viewer", label: "Наблюдатель" },
   { value: "none", label: "Нет доступа" },
 ]
 
@@ -40,6 +41,7 @@ export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = {
   admin: "Администратор",
   moderator: "Менеджер",
   accountant: "Бухгалтер",
+  viewer: "Наблюдатель",
 }
 
 // Same split as the server (app/core/permissions.py): committing the company
@@ -49,6 +51,51 @@ export const COMPANY_ROLE_RIGHTS: Record<CompanyRole, string> = {
   admin: "Всё, кроме смены руководителя",
   moderator: "Заявки, предложения, каталог, переписка",
   accountant: "Оплата, вывод денег, подписка",
+  viewer: "Только просмотр",
+}
+
+/** What each access level may and may not do, for the "who can do what" panel. */
+export const COMPANY_ROLE_ACCESS: Record<CompanyRole, { can: string; cannot: string | null }> = {
+  director: {
+    can: "Всё: заявки, сделки, деньги, команда, страница и реквизиты компании",
+    cannot: null,
+  },
+  admin: {
+    can: "Всё, включая команду и страницу компании",
+    cannot: "Менять руководителя и других администраторов",
+  },
+  moderator: {
+    can: "Заявки, предложения, каталог, переписка, ведение сделок, отзывы",
+    cannot: "Команда, реквизиты, выпуск денег без согласования",
+  },
+  accountant: {
+    can: "Оплата, вывод денег, тариф; видит всё",
+    cannot: "Заявки и предложения, команда",
+  },
+  viewer: {
+    can: "Видит заявки, сделки, переписку и документы компании",
+    cannot: "Любые действия: только просмотр",
+  },
+}
+
+export const isViewerRole = (role: string | null | undefined): boolean => role === "viewer"
+
+export const INVITATION_STATUS_LABELS: Record<string, string> = {
+  pending: "Приглашён, ждём ответа",
+  expired: "Срок приглашения истёк",
+  declined: "Отказался",
+  accepted: "Принял приглашение",
+  cancelled: "Отменено",
+}
+
+export const invitationStatusLabel = (status: string): string =>
+  INVITATION_STATUS_LABELS[status] ?? status
+
+/** "до 25 ноября" for an invitation's last day. */
+export const formatInviteDeadline = (iso: string): string => {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ""
+  return `до ${date.toLocaleDateString("ru-RU", { day: "numeric", month: "long" })}`
 }
 
 export const ASSIGNABLE_COMPANY_ROLES = COMPANY_ROLES.filter(

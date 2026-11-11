@@ -7,6 +7,7 @@ import CustomerTopbar from "@/components/cabinet/topbar"
 import { CabinetShell } from "@/components/layout/cabinet-shell"
 import { CabinetSkeleton } from "@/components/layout/cabinet-skeleton"
 import { PageTransition } from "@/components/layout/page-transition"
+import { CabinetNotices } from "@/components/company/cabinet-notices"
 import { CabinetMobileNav } from "@/components/layout/cabinet-mobile-nav"
 import { SectionHub } from "@/components/layout/section-hub"
 import { SupportChatProvider } from "@/components/support/support-chat-context"
@@ -94,6 +95,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           />
         }
       >
+        <CabinetNotices />
         <PageTransition>{children}</PageTransition>
         <Suspense fallback={null}>
           <SupportChatWidget role="buyer" />

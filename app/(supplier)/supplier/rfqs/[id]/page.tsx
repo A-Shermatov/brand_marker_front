@@ -14,6 +14,7 @@ import { useAuthStore } from "@/lib/store/auth-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { getActorId } from "@/lib/auth-display"
 import { getRfqBuyerName, getRfqBuyerSummary } from "@/lib/buyer-display"
+import { ContactPerson } from "@/components/company/contact-person"
 import { useCategoryOptions } from "@/hooks/use-category-options"
 import { OPEN_RFQ_STATUSES } from "@/lib/rfq-display"
 import {
@@ -212,6 +213,11 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
                 <div className="mt-0.5">
                   <VerifiedChip verified={verified} />
                 </div>
+                <ContactPerson
+                  name={rfq.buyer?.kind === "company" ? rfq.created_by : null}
+                  role={rfq.contact_role}
+                  className="mt-1"
+                />
               </div>
             </div>
             <p className="mt-3 text-[13px] text-mute">

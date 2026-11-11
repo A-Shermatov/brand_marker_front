@@ -18,6 +18,8 @@ test.describe("sign-in and access", () => {
     // An account of its own each run: the guide depends on the cabinet being empty.
     const email = `newcomer.${Date.now().toString(36)}@example.com`
     await page.goto("/register")
+    // The form opens on "Компания или ИП": its name is all it asks about the company.
+    await page.locator("#company_title").fill("ООО Новичок")
     await page.locator("#first_name").fill("Нигина")
     await page.locator("#last_name").fill("Новая")
     await page.locator("#email").fill(email)

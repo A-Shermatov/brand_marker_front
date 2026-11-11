@@ -32,7 +32,7 @@ import {
 
 type Member = AdminCompanyDetail["members"][number]
 
-const ASSIGNABLE_ROLES: AdminCompanyMemberRole[] = ["admin", "moderator", "accountant"]
+const ASSIGNABLE_ROLES: AdminCompanyMemberRole[] = ["admin", "moderator", "accountant", "viewer"]
 
 const roleLabel = (role: string) => ADMIN_COMPANY_MEMBER_ROLE_LABELS[role] ?? role
 

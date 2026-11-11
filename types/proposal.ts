@@ -61,6 +61,11 @@ export type ProposalCounterpart = {
   name: string
   rating: number
   photo: string | null
+  /** "company" or "individual" (a private person). */
+  kind?: "company" | "individual" | null
+  /** For a company: the employee who wrote the request / the offer, and their role. */
+  contact_name?: string | null
+  contact_role?: string | null
 }
 
 export type ProposalWithRelations = Proposal & {

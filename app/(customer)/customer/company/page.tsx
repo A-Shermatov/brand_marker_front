@@ -27,6 +27,8 @@ import {
   type CompanyRequisites,
 } from "@/components/cabinet/company/company-requisites-card"
 import { InviteEmployeeDialog } from "@/components/cabinet/company/invite-employee-dialog"
+import { TeamInvitations } from "@/components/cabinet/company/team-invitations"
+import { AccessLevelsCard } from "@/components/cabinet/company/access-levels-card"
 import {
   canManageTeam,
   COMPANY_ROLE_LABELS,
@@ -81,7 +83,7 @@ const mockEmployeesToTeam = (): CompanyTeamEmployee[] =>
         Руководитель: "director",
         Закупщик: "moderator",
         Бухгалтер: "accountant",
-        Наблюдатель: "accountant",
+        Наблюдатель: "viewer",
       } as const
     )[e.role],
     rights: COMPANY_ROLE_RIGHTS[
@@ -90,7 +92,7 @@ const mockEmployeesToTeam = (): CompanyTeamEmployee[] =>
           Руководитель: "director",
           Закупщик: "moderator",
           Бухгалтер: "accountant",
-          Наблюдатель: "accountant",
+          Наблюдатель: "viewer",
         } as const
       )[e.role]
     ],
@@ -101,6 +103,7 @@ export default function CustomerCompanyPage() {
   const hydrated = useHydrated()
   const useApi = isApiEnabled()
   const user = useAuthStore((s) => s.user)
+  const refreshSession = useAuthStore((s) => s.refreshSession)
   const actorId = getActorId(user)
   const getMyCompany = useCompaniesStore((s) => s.getMyCompany)
 
@@ -265,7 +268,7 @@ export default function CustomerCompanyPage() {
           targetUserId: userId,
         })
       } catch (err) {
-        toast.error(getApiErrorMessage(err, "Не удалось удалить сотрудника"))
+        toast.error(getApiErrorMessage(err, "Не удалось убрать сотрудника"))
       }
       return
     }
@@ -279,16 +282,11 @@ export default function CustomerCompanyPage() {
 
   const handleInvite = async (data: { email: string; role: CompanyRole }) => {
     if (useApi && company) {
-      try {
-        await addMember.mutateAsync({
-          companyId: company.id,
-          data: { email: data.email, role: data.role },
-        })
-      } catch (err) {
-        toast.error(getApiErrorMessage(err, "Не удалось добавить сотрудника"))
-        throw err
-      }
-      return
+      // The dialog shows what went wrong (already invited, already in the team).
+      return addMember.mutateAsync({
+        companyId: company.id,
+        data: { email: data.email, role: data.role },
+      })
     }
 
     const employee: CompanyTeamEmployee = {
@@ -369,7 +367,7 @@ export default function CustomerCompanyPage() {
               onClick={() => setInviteOpen(true)}
             >
               <Plus size={16} />
-              Добавить сотрудника
+              Пригласить сотрудника
             </Button>
           ) : null
         }
@@ -386,6 +384,16 @@ export default function CustomerCompanyPage() {
             onInviteClick={() => setInviteOpen(true)}
             onChangeRole={(userId, role) => void handleRoleChange(userId, role)}
             onRemove={(userId) => void handleRemove(userId)}
+            onLeave={
+              useApi && company && user?.userId
+                ? () =>
+                    void removeMember
+                      .mutateAsync({ companyId: company.id, targetUserId: user.userId })
+                      .then(() => refreshSession())
+                      .then(() => window.location.assign("/customer?left=1"))
+                      .catch(() => {})
+                : undefined
+            }
             sides={companySides}
             onChangeSideRole={(userId, side, role) => {
               if (!useApi || !company) return
@@ -398,6 +406,10 @@ export default function CustomerCompanyPage() {
                 .catch(() => {})
             }}
           />
+
+          {useApi ? (
+            <TeamInvitations side="buyer" companyId={company?.id} canManage={canManage} />
+          ) : null}
 
           {!useApi ? (
             <section className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgba(28,28,26,.04)] md:p-6">
@@ -428,6 +440,7 @@ export default function CustomerCompanyPage() {
           ) : null}
         </div>
 
+        <div className="grid min-w-0 gap-5">
         <CompanyRequisitesCard
           company={requisites}
           companyId={company?.id}
@@ -440,6 +453,8 @@ export default function CustomerCompanyPage() {
               : undefined
           }
         />
+        <AccessLevelsCard />
+        </div>
       </div>
 
       {!canManage ? (

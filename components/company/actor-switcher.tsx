@@ -13,6 +13,7 @@ import {
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import type { ActorType } from "@/types"
+import { companyRoleLabel } from "@/lib/company-team"
 
 type ActorSwitcherProps = {
   actorType: ActorType
@@ -69,7 +70,7 @@ export const ActorSwitcher = ({ actorType, basePath }: ActorSwitcherProps) => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">
-        <DropdownMenuLabel>Активный профиль</DropdownMenuLabel>
+        <DropdownMenuLabel>От чьего имени работаю</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {myActors.map((actor) => (
           <DropdownMenuItem
@@ -85,8 +86,11 @@ export const ActorSwitcher = ({ actorType, basePath }: ActorSwitcherProps) => {
             <div className="flex flex-col min-w-0">
               <span className="truncate text-sm">{actor.display_name}</span>
               <span className="text-[10px] text-muted-foreground">
-                {actor.kind === "individual" ? "Личный профиль" : "Компания"} ·{" "}
-                {trustLabel(actor.trust_level)}
+                {actor.kind === "individual"
+                  ? "Личный профиль"
+                  : actor.company_role
+                    ? `Компания · ${companyRoleLabel(actor.company_role).toLowerCase()}`
+                    : `Компания · ${trustLabel(actor.trust_level)}`}
               </span>
             </div>
             {actor.id === user.activeActorId && (

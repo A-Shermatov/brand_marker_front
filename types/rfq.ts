@@ -60,6 +60,8 @@ type RfqBase = {
   id: string
   actor_id: string
   created_by: string
+  /** Role of the person who wrote the request in the buying company, if any. */
+  contact_role?: string | null
   title: string
   description: string | null
   category_id: string
