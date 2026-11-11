@@ -2,6 +2,7 @@ import { API_URL } from "./config"
 import { translateApiMessage } from "./error-messages"
 import { notifySessionEnded, sessionEndFromMessage } from "./session-events"
 import { COMPANY_ACCESS_REVOKED, notifyCompanyAccessRevoked } from "./access-events"
+import { applyDeviceHeaders } from "../device"
 
 export type ApiError = {
   status: number
@@ -129,10 +130,15 @@ const refreshAccessToken = (): Promise<string | null> => {
     // httpOnly cookie carries it.
     const legacyRefresh = tokenStorage.getRefresh()
     try {
+      const refreshHeaders = new Headers({
+        "Content-Type": "application/json",
+        [REFRESH_COOKIE_HEADER]: "1",
+      })
+      applyDeviceHeaders(refreshHeaders)
       const res = await fetch(`${API_URL}/auth/refresh`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json", [REFRESH_COOKIE_HEADER]: "1" },
+        headers: refreshHeaders,
         body: JSON.stringify(legacyRefresh ? { refresh_token: legacyRefresh } : {}),
       })
       if (res.status === 401 || res.status === 403) {
@@ -217,6 +223,8 @@ export const apiFetch = async <T>(
 
   // Login, 2FA, register and password change then set the refresh cookie.
   headers.set(REFRESH_COOKIE_HEADER, "1")
+  // Which browser this is: the journal ties a person's actions to their device.
+  applyDeviceHeaders(headers)
 
   const sentToken = headers.get("Authorization")
   let res = await fetch(`${API_URL}${path}`, { credentials: "include", ...init, headers })

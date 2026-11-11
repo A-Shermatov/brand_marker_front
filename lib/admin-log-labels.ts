@@ -1,4 +1,6 @@
 import type {
+  AdminDeviceFlag,
+  AdminDeviceKind,
   AdminLogAudience,
   AdminLogEventCategory,
   AdminLogKind,
@@ -39,6 +41,13 @@ export const LOG_SECTION_LABELS: Record<AdminLogSection, string> = {
   subscription: "Подписка",
   users: "Пользователи",
   settings: "Настройки",
+  profiles: "Профили участников",
+  messages: "Сообщения",
+  support: "Поддержка",
+  approvals: "Согласования",
+  overview: "Обзор и аналитика",
+  journal: "Журнал и логи",
+  service: "Служебные запросы сайта",
   other: "Прочее",
 }
 
@@ -94,6 +103,7 @@ export const LOG_STATUS_META: Record<
 }
 
 export const LOG_PERIOD_LABELS: Record<AdminLogPeriod, string> = {
+  "1h": "За час",
   "24h": "За сутки",
   "7d": "За 7 дней",
   "30d": "За 30 дней",
@@ -190,13 +200,123 @@ const FIELD_LABELS: Record<string, string> = {
   quantity: "Количество",
   budget_from: "Бюджет от",
   budget_to: "Бюджет до",
+  new_device: "Вход с нового устройства",
+  command: "Команда",
+  text: "Текст",
+  request: "Запрос окна бота",
+  error: "Ошибка",
+  telegram_id: "Telegram ID",
+  username: "Имя в Telegram",
+  via: "Способ подтверждения",
+  account_type: "Тип аккаунта",
 }
 
 export const getLogFieldLabel = (key: string) => FIELD_LABELS[key] ?? key
 
 export const LOG_SOURCE_LABELS: Record<AdminLogSource, string> = {
   events: "События",
-  http: "HTTP-запросы",
+  http: "Все действия",
+  pages: "Страницы",
+}
+
+/** What each view of the journal holds, in one line under the page title. */
+export const LOG_VIEW_HINTS: Record<AdminLogSource | "devices", string> = {
+  events: "Значимые события: кто и что изменил в компаниях, заявках, контрактах и платежах",
+  http: "Каждое обращение к платформе: просмотры, изменения, отказы и ошибки, с устройством и адресом",
+  pages: "Какие страницы сайта открывали и сколько на них пробыли",
+  devices: "Все устройства, с которых заходили на платформу, и кто ими пользовался",
+}
+
+export const DEVICE_KIND_LABELS: Record<AdminDeviceKind, string> = {
+  desktop: "Компьютер",
+  mobile: "Телефон",
+  tablet: "Планшет",
+  messenger: "Чат в Telegram",
+  bot: "Программа или бот",
+  other: "Неизвестное устройство",
+}
+
+export const getDeviceKindLabel = (kind: string) =>
+  DEVICE_KIND_LABELS[kind as AdminDeviceKind] ?? DEVICE_KIND_LABELS.other
+
+export const DEVICE_FLAG_LABELS: Record<AdminDeviceFlag, string> = {
+  shared: "Несколько аккаунтов",
+  bot: "Боты и программы",
+  automated: "Управляется программой",
+  unidentified: "Без своего идентификатора",
+}
+
+/** «Windows 11 · Chrome 142», or what is known of it. */
+export const describeDevice = (device: { os: string | null; browser: string | null }) =>
+  [device.os, device.browser].filter(Boolean).join(" · ") || "Устройство не определено"
+
+const regionNames =
+  typeof Intl !== "undefined" && "DisplayNames" in Intl
+    ? new Intl.DisplayNames(["ru"], { type: "region" })
+    : null
+
+/** «Таджикистан» for «TJ»; Cloudflare's «T1» is the Tor network. */
+export const getCountryLabel = (code: string | null | undefined): string | null => {
+  if (!code) return null
+  if (code === "T1") return "Сеть Tor"
+  try {
+    return regionNames?.of(code) ?? code
+  } catch {
+    return code
+  }
+}
+
+/** What a browser reported about its machine, in the order it is shown. */
+const CLIENT_FIELD_LABELS: [string, string][] = [
+  ["platform", "Система"],
+  ["platform_version", "Версия системы"],
+  ["architecture", "Архитектура"],
+  ["bitness", "Разрядность"],
+  ["model", "Модель"],
+  ["mobile", "Мобильное устройство"],
+  ["brands", "Браузер"],
+  ["language", "Язык"],
+  ["languages", "Языки"],
+  ["timezone", "Часовой пояс"],
+  ["timezone_offset", "Смещение от UTC, мин"],
+  ["screen", "Экран"],
+  ["viewport", "Окно браузера"],
+  ["pixel_ratio", "Плотность пикселей"],
+  ["color_depth", "Глубина цвета, бит"],
+  ["cpu_cores", "Ядер процессора"],
+  ["memory_gb", "Память, ГБ"],
+  ["touch_points", "Касаний одновременно"],
+  ["gpu", "Видеокарта"],
+  ["gpu_vendor", "Производитель видеокарты"],
+  ["connection", "Соединение"],
+  ["cookies", "Cookie включены"],
+  ["standalone", "Открыт как приложение"],
+  ["webdriver", "Управляется программой"],
+  ["dark", "Тёмная тема системы"],
+  ["referrer", "Откуда пришёл"],
+]
+
+const clientValue = (value: unknown): string => {
+  if (typeof value === "boolean") return value ? "Да" : "Нет"
+  if (Array.isArray(value)) return value.join(", ")
+  return String(value)
+}
+
+/** The browser's report as rows to show; width and height become one «1920 × 1080». */
+export const getClientReportRows = (client: Record<string, unknown>): { label: string; value: string }[] => {
+  const size = (width: unknown, height: unknown) =>
+    typeof width === "number" && typeof height === "number" ? `${width} × ${height}` : undefined
+  const merged: Record<string, unknown> = {
+    ...client,
+    screen: size(client.screen_width, client.screen_height),
+    viewport: size(client.viewport_width, client.viewport_height),
+  }
+  return CLIENT_FIELD_LABELS.flatMap(([key, label]) => {
+    const value = merged[key]
+    if (value === undefined || value === null || value === "") return []
+    if (Array.isArray(value) && value.length === 0) return []
+    return [{ label, value: clientValue(value) }]
+  })
 }
 
 export const LOG_EVENT_CATEGORY_LABELS: Record<AdminLogEventCategory, string> = {
@@ -210,6 +330,7 @@ export const LOG_EVENT_CATEGORY_LABELS: Record<AdminLogEventCategory, string> = 
   finance: "Выводы средств",
   review: "Отзывы",
   dispute: "Споры",
+  telegram: "Telegram-бот",
   "admin.company": "Админ: компании",
   "admin.user": "Админ: пользователи",
   "admin.catalog": "Админ: каталог",
@@ -291,6 +412,15 @@ const EVENT_ACTION_LABELS: Record<string, string> = {
   "dispute.open": "Открыт спор",
   "dispute.statement": "Добавлено заявление по спору",
   "dispute.evidence.add": "Добавлено доказательство по спору",
+
+  "telegram.account.link": "Telegram подключён к аккаунту",
+  "telegram.account.unlink": "Telegram отключён от аккаунта",
+  "telegram.command": "Команда боту в Telegram",
+  "telegram.request.start": "Боту написан текст заявки",
+  "telegram.request.publish": "Заявка опубликована из Telegram",
+  "telegram.feed.view": "Просмотр заявки в Telegram",
+  "telegram.offer.submit": "Предложение отправлено из Telegram",
+  "telegram.widget": "Нажатие в окне бота",
 
   "admin.company.approve": "Компания верифицирована",
   "admin.company.reject": "Верификация компании отклонена",

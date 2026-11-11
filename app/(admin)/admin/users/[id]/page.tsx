@@ -2,6 +2,9 @@
 
 import { use, useMemo, useState } from "react"
 import Link from "next/link"
+import { AdminLink } from "@/components/admin/admin-link"
+import { DeviceSheet, journalHref } from "@/components/admin/logs/device-sheet"
+import { DevicesPanel } from "@/components/admin/logs/devices-panel"
 import { AdminMarksCard } from "@/components/admin/marks/admin-marks-card"
 import { useSearchParams } from "next/navigation"
 import { WarningIcon as AlertTriangle, ProhibitIcon as Ban, FileTextIcon as FileText, EnvelopeIcon as Mail, ArrowsCounterClockwiseIcon as RefreshCcw, StarIcon as Star, UserCheckIcon as UserCheck } from "@phosphor-icons/react/dist/ssr"
@@ -50,9 +53,9 @@ import { resolveFileUrl } from "@/lib/file-url"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { cn } from "@/lib/utils"
 
-type DetailTab = "dossier" | "deals" | "hist" | "chats" | "docs"
+type DetailTab = "dossier" | "deals" | "hist" | "devices" | "chats" | "docs"
 
-const DETAIL_TABS: readonly DetailTab[] = ["dossier", "deals", "hist", "chats", "docs"]
+const DETAIL_TABS: readonly DetailTab[] = ["dossier", "deals", "hist", "devices", "chats", "docs"]
 
 const roleLabels: Record<AdminUserRole, string> = {
   buyer: "Покупатель",
@@ -161,6 +164,7 @@ export default function AdminUserDetailPage({ params }: PageProps) {
   const updateStatusMutation = useUpdateAdminUserStatusMutation()
   const revokeSessionsMutation = useRevokeAdminUserSessionsMutation()
   const canUpdateUsers = useAdminPermission("admin_users.update")
+  const canViewJournal = useAdminPermission("audit_logs.view")
   const currentUser = useAuthStore((state) => state.user)
   const searchParams = useSearchParams()
   const requestedTab = searchParams.get("tab") as DetailTab | null
@@ -454,6 +458,7 @@ export default function AdminUserDetailPage({ params }: PageProps) {
             { value: "dossier" as const, label: "Досье" },
             { value: "deals" as const, label: "Сделки", count: user.contracts.length },
             { value: "hist" as const, label: "История", count: user.history.length },
+            ...(canViewJournal ? [{ value: "devices" as const, label: "Устройства" }] : []),
             { value: "chats" as const, label: "Переписки", count: user.chats.length },
             { value: "docs" as const, label: "Документы" },
           ]}
@@ -465,6 +470,7 @@ export default function AdminUserDetailPage({ params }: PageProps) {
         {tab === "dossier" && <UserDossierTab userId={user.id} />}
         {tab === "deals" && <DealsTab user={user} />}
         {tab === "hist" && <HistoryTab items={user.history} />}
+        {tab === "devices" && canViewJournal && <DevicesTab userId={user.id} />}
         {tab === "chats" && <ChatsTab user={user} />}
         {tab === "docs" && <DocsTab user={user} />}
       </div>
@@ -668,6 +674,26 @@ function DealsTab({ user }: { user: AdminUserDetail }) {
         на {formatMoneyDisplay(user.stats.contracts_sum, "TJS")}.
       </p>
     </PageSurface>
+  )
+}
+
+/** Where the person signs in from; a device shared with other accounts is marked. */
+function DevicesTab({ userId }: { userId: number }) {
+  const [deviceKey, setDeviceKey] = useState<string | null>(null)
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">
+          Устройства, с которых пользователь заходил на платформу. Если устройством пользуются
+          и другие аккаунты, это отмечено.
+        </p>
+        <Button asChild variant="outline" size="sm">
+          <AdminLink href={journalHref({ userId })}>Все действия пользователя</AdminLink>
+        </Button>
+      </div>
+      <DevicesPanel userId={userId} compact onOpen={setDeviceKey} />
+      <DeviceSheet deviceKey={deviceKey} onClose={() => setDeviceKey(null)} onOpenDevice={setDeviceKey} />
+    </div>
   )
 }
 

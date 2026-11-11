@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 
+import { Suspense } from 'react'
 import { IBM_Plex_Mono, Onest } from 'next/font/google'
+import { ActivityTracker } from '@/components/activity/activity-tracker'
 import { QueryProvider } from '@/components/providers/query-provider'
 import { ThemeProvider } from '@/components/theme-provider'
+import { SITE_TITLE } from '@/lib/site'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
@@ -21,11 +24,11 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://brand-marker-front.vercel.app"),
-  title: "Brand Market — B2B маркетплейс для бизнеса",
+  title: SITE_TITLE,
   description:
     "B2B-площадка для закупок компаний Таджикистана. Каталог, заявки, сделки с гарантией оплаты через банк-партнёр.",
   openGraph: {
-    title: "Brand Market — B2B маркетплейс для бизнеса",
+    title: SITE_TITLE,
     description:
       "B2B-площадка для закупок компаний Таджикистана. Каталог, заявки, сделки с гарантией оплаты через банк-партнёр.",
     url: "https://brand-marker-front.vercel.app",
@@ -35,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Brand Market — B2B маркетплейс для бизнеса",
+    title: SITE_TITLE,
     description:
       "B2B-площадка для закупок компаний Таджикистана.",
   },
@@ -76,6 +79,10 @@ export default function RootLayout({
           <QueryProvider>
             {children}
             <Toaster richColors position="bottom-right" />
+            {/* Reads the address bar, so it waits for the browser like any such component. */}
+            <Suspense fallback={null}>
+              <ActivityTracker />
+            </Suspense>
           </QueryProvider>
         </ThemeProvider>
       </body>
