@@ -12,6 +12,8 @@ export type TelegramPost = {
 /** The channel bot as the admin sees it. The token itself never comes back. */
 export type TelegramSettings = {
   enabled: boolean
+  /** Requests and answers inside Telegram, in private chats with the bot. */
+  assistant_enabled: boolean
   has_token: boolean
   token_hint: string | null
   bot_username: string | null
@@ -28,6 +30,7 @@ export type TelegramSettings = {
 
 export type TelegramSettingsInput = {
   enabled: boolean
+  assistant_enabled: boolean
   /** Empty keeps the saved token. */
   bot_token?: string
   channel_id?: string
