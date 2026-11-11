@@ -1417,10 +1417,12 @@ export const adminApi = {
   }) => {
     const { API_URL } = await import("./config")
     const { ensureAccessToken } = await import("./client")
+    const { applyDeviceHeaders } = await import("../device")
     const searchParams = new URLSearchParams({ view })
     if (query?.trim()) searchParams.set("query", query.trim())
     if (paymentId) searchParams.set("payment_id", String(paymentId))
     const headers = new Headers()
+    applyDeviceHeaders(headers)
     const token = await ensureAccessToken()
     if (token) headers.set("Authorization", `Bearer ${token}`)
     const res = await fetch(
@@ -1574,6 +1576,9 @@ export const adminApi = {
     resourceType,
     resourceId,
     userId,
+    ip,
+    device,
+    visit,
     period,
     query,
   }: AdminLogParams) => {
@@ -1588,16 +1593,34 @@ export const adminApi = {
       if (kind) searchParams.set("kind", kind)
       if (section) searchParams.set("section", section)
       if (status) searchParams.set("status", status)
-    } else {
+    } else if (source === "events") {
       if (category) searchParams.set("category", category)
       if (action?.trim()) searchParams.set("action", action.trim())
     }
     if (resourceType?.trim()) searchParams.set("resource_type", resourceType.trim())
     if (resourceId?.trim()) searchParams.set("resource_id", resourceId.trim())
     if (userId) searchParams.set("user_id", String(userId))
+    if (ip?.trim()) searchParams.set("ip", ip.trim())
+    if (device?.trim()) searchParams.set("device", device.trim())
+    if (visit?.trim()) searchParams.set("visit", visit.trim())
     if (query.trim()) searchParams.set("query", query.trim())
     return apiFetch<AdminLogListResponse>(`/admin/logs?${searchParams.toString()}`)
   },
+  getDevices: ({ page, pageSize, query, userId, ip, flag, type, period }: AdminDeviceParams) => {
+    const searchParams = new URLSearchParams({
+      page: String(page),
+      page_size: String(pageSize),
+      period: period ?? "all",
+    })
+    if (query?.trim()) searchParams.set("query", query.trim())
+    if (userId) searchParams.set("user_id", String(userId))
+    if (ip?.trim()) searchParams.set("ip", ip.trim())
+    if (flag) searchParams.set("flag", flag)
+    if (type) searchParams.set("type", type)
+    return apiFetch<AdminDeviceListResponse>(`/admin/devices?${searchParams.toString()}`)
+  },
+  getDevice: (deviceKey: string) =>
+    apiFetch<AdminDeviceDetail>(`/admin/devices/${encodeURIComponent(deviceKey)}`),
   getLog: (logId: number) => apiFetch<AnyAdminLogDetail>(`/admin/logs/${logId}`),
   getEntityLogs: ({ resourceType, resourceId, page, pageSize }: AdminEntityLogParams) => {
     const searchParams = new URLSearchParams({
@@ -1684,11 +1707,19 @@ export type AdminLogSection =
   | "subscription"
   | "users"
   | "settings"
+  | "profiles"
+  | "messages"
+  | "support"
+  | "approvals"
+  | "overview"
+  | "journal"
+  | "service"
   | "other"
 
-export type AdminLogPeriod = "24h" | "7d" | "30d" | "all"
+export type AdminLogPeriod = "1h" | "24h" | "7d" | "30d" | "all"
 
-export type AdminLogSource = "events" | "http"
+/** Significant events, every request (views too), or the pages people opened. */
+export type AdminLogSource = "events" | "http" | "pages"
 
 export type AdminLogEventCategory =
   | "auth"
@@ -1711,6 +1742,7 @@ export type AdminLogEventCategory =
   | "review"
   | "dispute"
   | "finance"
+  | "telegram"
   | "other"
 
 export type AdminLogParams = {
@@ -1726,6 +1758,10 @@ export type AdminLogParams = {
   resourceType?: string | null
   resourceId?: string | null
   userId?: number | null
+  ip?: string | null
+  device?: string | null
+  /** One browser tab from opening to closing. */
+  visit?: string | null
   period: AdminLogPeriod
   query: string
 }
@@ -1739,6 +1775,56 @@ export type AdminEntityLogParams = {
 
 export type AdminLogUser = { id: number; email: string; name: string; role: string }
 
+export type AdminDeviceKind = "desktop" | "mobile" | "tablet" | "messenger" | "bot" | "other"
+
+/** The device a journal row came from, as short as a table row needs it. */
+export type AdminLogDevice = {
+  /** Null for rows written before devices were kept. */
+  key: string | null
+  /** The browser named itself; false when the device is told apart by its address and headers. */
+  identified: boolean
+  type: AdminDeviceKind | string
+  os: string | null
+  browser: string | null
+  model: string | null
+  is_bot: boolean
+}
+
+export type AdminLogDeviceFull = AdminLogDevice & {
+  language?: string | null
+  timezone?: string | null
+  screen?: string | null
+  first_seen_at?: string | null
+  last_seen_at?: string | null
+  users_count?: number
+}
+
+/** The raw side of a row, for whoever investigates. */
+export type AdminLogTechnical = {
+  method: string | null
+  path: string | null
+  query: Record<string, unknown>
+  status_code: number | null
+  duration_ms: number | null
+  request_id: string | null
+  visit: string | null
+  user_agent: string | null
+}
+
+/** Another row written while the same request was served. */
+export type AdminLogRelated = {
+  id: number
+  source: "http" | "event" | "page"
+  action: string
+  created_at: string
+}
+
+type AdminLogDetailExtra = {
+  device: AdminLogDeviceFull | null
+  technical: AdminLogTechnical
+  related: AdminLogRelated[]
+}
+
 export type AdminLogItem = {
   source: "http"
   id: number
@@ -1750,12 +1836,42 @@ export type AdminLogItem = {
   section: AdminLogSection
   status: AdminLogStatus
   object_id: string | null
+  /** What was asked for, as the API saw it. */
+  path: string | null
   ip_address: string | null
+  country: string | null
+  device: AdminLogDevice | null
+  /** The same view came this many more times, until `repeated_until`. */
+  repeats: number
+  repeated_until: string | null
 }
 
-export type AdminLogDetail = AdminLogItem & {
-  fields: Array<{ key: string; value: string; hidden: boolean }>
+export type AdminLogDetail = AdminLogItem &
+  AdminLogDetailExtra & {
+    fields: Array<{ key: string; value: string; hidden: boolean }>
+  }
+
+/** A page of the site somebody opened. */
+export type AdminLogPageItem = {
+  source: "page"
+  id: number
+  created_at: string
+  audience: AdminLogAudience
+  user: AdminLogUser | null
+  path: string
+  title: string | null
+  query: Record<string, unknown>
+  referrer: string | null
+  /** Time on the page; null while it is still open. */
+  seconds: number | null
+  active_seconds: number | null
+  object_id: string | null
+  ip_address: string | null
+  country: string | null
+  device: AdminLogDevice | null
 }
+
+export type AdminLogPageDetail = AdminLogPageItem & AdminLogDetailExtra
 
 export type AdminLogEventItem = {
   source: "event"
@@ -1771,15 +1887,88 @@ export type AdminLogEventItem = {
   company_id: number | null
   details: Record<string, unknown>
   ip_address: string | null
+  country?: string | null
+  device?: AdminLogDevice | null
 }
 
-export type AdminLogEventDetail = AdminLogEventItem & {
+export type AdminLogEventDetail = AdminLogEventItem &
+  Partial<AdminLogDetailExtra> & {
+    user_agent: string | null
+  }
+
+export type AnyAdminLogItem = AdminLogItem | AdminLogEventItem | AdminLogPageItem
+
+export type AnyAdminLogDetail = AdminLogDetail | AdminLogEventDetail | AdminLogPageDetail
+
+export type AdminDeviceFlag = "shared" | "bot" | "automated" | "unidentified"
+
+export type AdminDeviceParams = {
+  page: number
+  pageSize: number
+  query?: string
+  userId?: number | null
+  ip?: string | null
+  flag?: AdminDeviceFlag | null
+  type?: AdminDeviceKind | null
+  period?: AdminLogPeriod
+}
+
+export type AdminDeviceItem = AdminLogDevice & {
+  key: string
+  /** The browser says a program drives it (Selenium, Playwright). */
+  automated: boolean
+  language: string | null
+  timezone: string | null
+  screen: string | null
+  country: string | null
+  first_seen_at: string
+  last_seen_at: string
+  last_ip: string | null
+  requests_count: number
+  users_count: number
+  ips_count: number
+  users: AdminLogUser[]
+}
+
+export type AdminDeviceUser = AdminLogUser & {
+  first_seen_at: string
+  last_seen_at: string
+  last_ip: string | null
+  requests_count: number
+}
+
+export type AdminDeviceIp = {
+  ip_address: string
+  country: string | null
+  first_seen_at: string
+  last_seen_at: string
+  requests_count: number
+}
+
+export type AdminDeviceSimilar = AdminLogDevice & {
+  key: string
+  last_seen_at: string
+  users: AdminLogUser[]
+}
+
+export type AdminDeviceDetail = Omit<AdminDeviceItem, "users"> & {
   user_agent: string | null
+  /** What the browser reported about the machine; empty until it does. */
+  client: Record<string, unknown>
+  reported_at: string | null
+  users: AdminDeviceUser[]
+  ips: AdminDeviceIp[]
+  /** Other devices whose machine looks the same. */
+  similar: AdminDeviceSimilar[]
 }
 
-export type AnyAdminLogItem = AdminLogItem | AdminLogEventItem
-
-export type AnyAdminLogDetail = AdminLogDetail | AdminLogEventDetail
+export type AdminDeviceListResponse = {
+  items: AdminDeviceItem[]
+  total: number
+  page: number
+  page_size: number
+  pages: number
+}
 
 export type AdminLogEntityResponse = {
   items: AdminLogEventItem[]
