@@ -6,8 +6,8 @@ import { AdminLink } from "@/components/admin/admin-link"
 import { DeviceSheet, journalHref } from "@/components/admin/logs/device-sheet"
 import { DevicesPanel } from "@/components/admin/logs/devices-panel"
 import { AdminMarksCard } from "@/components/admin/marks/admin-marks-card"
-import { useSearchParams } from "next/navigation"
-import { WarningIcon as AlertTriangle, ProhibitIcon as Ban, FileTextIcon as FileText, EnvelopeIcon as Mail, ArrowsCounterClockwiseIcon as RefreshCcw, StarIcon as Star, UserCheckIcon as UserCheck } from "@phosphor-icons/react/dist/ssr"
+import { useRouter, useSearchParams } from "next/navigation"
+import { WarningIcon as AlertTriangle, ProhibitIcon as Ban, FileTextIcon as FileText, EnvelopeIcon as Mail, ChatTextIcon as ChatText, ArrowsCounterClockwiseIcon as RefreshCcw, StarIcon as Star, UserCheckIcon as UserCheck } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import {
   PageEmptyState,
@@ -51,6 +51,8 @@ import type {
 import { formatMoneyDisplay } from "@/lib/format"
 import { resolveFileUrl } from "@/lib/file-url"
 import { useAuthStore } from "@/lib/store/auth-store"
+import { adminSupportApi } from "@/lib/api/admin/support"
+import { getApiErrorMessage } from "@/lib/api/client"
 import { cn } from "@/lib/utils"
 
 type DetailTab = "dossier" | "deals" | "hist" | "devices" | "chats" | "docs"
@@ -165,6 +167,9 @@ export default function AdminUserDetailPage({ params }: PageProps) {
   const revokeSessionsMutation = useRevokeAdminUserSessionsMutation()
   const canUpdateUsers = useAdminPermission("admin_users.update")
   const canViewJournal = useAdminPermission("audit_logs.view")
+  const canWrite = useAdminPermission("admin_support.update")
+  const router = useRouter()
+  const [opening, setOpening] = useState<"buyer" | "supplier" | null>(null)
   const currentUser = useAuthStore((state) => state.user)
   const searchParams = useSearchParams()
   const requestedTab = searchParams.get("tab") as DetailTab | null
@@ -175,6 +180,18 @@ export default function AdminUserDetailPage({ params }: PageProps) {
   const [unblockOpen, setUnblockOpen] = useState(false)
   const [reason, setReason] = useState("")
   const [banDuration, setBanDuration] = useState<number | "permanent">(7)
+
+  /** Opens the person's support chat on that side (or starts one) and goes there. */
+  const writeTo = async (side: "buyer" | "supplier") => {
+    setOpening(side)
+    try {
+      const ticket = await adminSupportApi.openForUser(userId, side)
+      router.push(`/admin/support?status=open&ticket=${ticket.id}`)
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Не удалось открыть чат"))
+      setOpening(null)
+    }
+  }
 
   const BAN_OPTIONS: Array<{ value: number | "permanent"; label: string }> = [
     { value: 1, label: "1 день" },
@@ -374,10 +391,33 @@ export default function AdminUserDetailPage({ params }: PageProps) {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
+          {canWrite && (user.role === "buyer" || user.role === "both") ? (
+            <Button
+              type="button"
+              size="sm"
+              disabled={opening !== null}
+              onClick={() => void writeTo("buyer")}
+            >
+              <ChatText aria-hidden="true" />
+              {user.role === "both" ? "Написать как покупателю" : "Написать"}
+            </Button>
+          ) : null}
+          {canWrite && (user.role === "supplier" || user.role === "both") ? (
+            <Button
+              type="button"
+              size="sm"
+              variant={user.role === "both" ? "outline" : "default"}
+              disabled={opening !== null}
+              onClick={() => void writeTo("supplier")}
+            >
+              <ChatText aria-hidden="true" />
+              {user.role === "both" ? "Написать как поставщику" : "Написать"}
+            </Button>
+          ) : null}
           <Button asChild variant="outline" size="sm">
             <a href={`mailto:${user.email}`}>
               <Mail aria-hidden="true" />
-              Написать
+              Письмо на почту
             </a>
           </Button>
           {canManage && (

@@ -15,6 +15,13 @@ export type AdminSupportListParams = PageParams & {
 }
 
 export const adminSupportApi = {
+  /** Start a conversation with a person: their open support chat on that side, or a new one. */
+  openForUser: (userId: number, side?: "buyer" | "supplier") =>
+    apiFetch<SupportTicket>(`${PREFIX}/users/${userId}/ticket`, {
+      method: "POST",
+      body: JSON.stringify({ side: side ?? null }),
+    }),
+
   list: (params: AdminSupportListParams = {}) => {
     const { status = "open", page, pageSize } = params
     return apiFetch<Page<SupportTicketListItem>>(
