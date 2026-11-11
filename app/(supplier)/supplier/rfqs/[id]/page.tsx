@@ -37,7 +37,6 @@ import {
   RfqTermsCard,
 } from "@/components/rfq/rfq-v5-detail-cards"
 import { SupplierLeadAside } from "@/components/supplier/rfq/supplier-lead-aside"
-import { RfqAttachmentsSection } from "@/components/rfq/rfq-attachments-section"
 import type { Currency } from "@/types"
 import type { ProposalFormValues } from "@/components/supplier/proposal-form"
 
@@ -200,15 +199,22 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
 
       <div className="grid items-start gap-5 lg:grid-cols-[1fr_400px]">
         <div className="grid gap-5">
-          <section className="rounded-xl border border-line bg-card p-5">
-            <h2 className="text-[12.5px] font-medium text-mute">
-              Покупатель
-            </h2>
-            <div className="mt-3 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-canvas text-[14px] font-semibold text-ink">
+          <RfqPositionsCard rfq={rfq} categoryLabel={getRfqCategoryLabel(rfq.category_id)} />
+          <RfqTermsCard rfq={rfq} audience="supplier" />
+
+          <section
+            aria-label="Покупатель"
+            className="rounded-2xl border border-line bg-card p-5 shadow-[0_1px_2px_rgb(14_22_48/0.04)]"
+          >
+            <h2 className="mb-3 text-[16px] font-semibold text-ink">Покупатель</h2>
+            <div className="flex flex-wrap items-center gap-3">
+              <div
+                className="grid size-11 shrink-0 place-items-center rounded-full bg-canvas text-[14px] font-semibold text-ink"
+                aria-hidden
+              >
                 {buyerName.slice(0, 1).toUpperCase()}
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <b className="text-ink">{buyerName}</b>
                 <div className="mt-0.5">
                   <VerifiedChip verified={verified} />
@@ -219,34 +225,20 @@ export default function SupplierRfqDetailPage({ params }: PageProps) {
                   className="mt-1"
                 />
               </div>
-            </div>
-            <p className="mt-3 text-[13px] text-mute">
-              Контакты покупателя откроются после выбора вашего КП. Вопросы — в
-              чате площадки.
-            </p>
-            {myProposal ? (
-              <div className="mt-3">
-                <Button asChild variant="outline" size="sm" className="h-9">
+              {myProposal ? (
+                <Button asChild variant="outline" size="sm" className="h-9 shrink-0">
                   <Link href={`/supplier/messages?proposal=${myProposal.id}`}>
                     <MessageSquare size={15} /> Задать вопрос
                   </Link>
                 </Button>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
+            <p className="mt-3 text-[13px] leading-relaxed text-mute">
+              {myProposal
+                ? "Контакты покупателя откроются после выбора вашего КП. Вопросы — в чате площадки."
+                : "Контакты покупателя откроются после выбора вашего КП. Задать вопрос в чате можно, когда вы отправите предложение."}
+            </p>
           </section>
-
-          <RfqPositionsCard rfq={rfq} />
-          <RfqTermsCard
-            rfq={rfq}
-            paymentLabel={
-              rfq.payment_mode === "direct"
-                ? "Сразу вам: деньги приходят в момент оплаты"
-                : "С гарантией: покупатель оплачивает до отгрузки, деньги придут после приёмки"
-            }
-          />
-          {rfq.attachments?.length ? (
-            <RfqAttachmentsSection attachments={rfq.attachments} />
-          ) : null}
         </div>
 
         <SupplierLeadAside

@@ -40,7 +40,7 @@ export function CabinetNavLink({
       aria-current={active ? "page" : undefined}
       className={cn(
         "group relative flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors",
-        quiet ? "h-9 text-[14px]" : "h-10 text-[15px]",
+        quiet ? "h-9 text-[14px]" : "h-[38px] text-[14.5px]",
         active
           ? "font-semibold text-brand-700"
           : "font-medium text-rail-mute hover:bg-rail-hover hover:text-rail-ink",

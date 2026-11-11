@@ -28,7 +28,12 @@ export function PageHead({
   className,
 }: PageHeadProps) {
   const inHub = useInSectionHub()
-  if (sub || inHub) {
+  if (inHub && !sub) {
+    // The page header from the menu already says what the page is for.
+    if (!actions) return null
+    return <div className={cn("mb-4 flex flex-wrap justify-end gap-2", className)}>{actions}</div>
+  }
+  if (sub) {
     if (!description && !actions) return null
     return (
       <div

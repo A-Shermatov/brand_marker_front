@@ -18,7 +18,7 @@ async function publishServiceRequest(buyer: Page, title: string) {
   await buyer.getByRole("button", { name: /Далее/ }).click()
   await buyer.locator("#deadline").fill(ruDate(20))
   await buyer.locator("#start-date").fill(ruDate(25))
-  await buyer.locator("#duration").fill("1 неделя")
+  await buyer.locator("#work-deadline").fill(ruDate(32))
   await buyer.getByRole("button", { name: /Далее/ }).click()
   await buyer.getByRole("button", { name: "Опубликовать заявку" }).click()
   await expect(buyer).toHaveURL(/\/customer\/rfqs\/[0-9a-f-]{36}$/)

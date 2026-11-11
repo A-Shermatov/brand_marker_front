@@ -46,11 +46,13 @@ test("a deal goes from a published request to a paid, reviewed contract", async 
     await buyer.locator("#budget-from").fill("15000")
     await buyer.locator("#deadline").fill(ruDate(30))
     await buyer.locator("#start-date").fill(ruDate(35))
-    await buyer.locator("#duration").fill("2 недели")
+    await buyer.locator("#work-deadline").fill(ruDate(49))
+    await buyer.locator("#work-deadline-time").fill("18:00")
     await buyer.getByRole("button", { name: /Далее/ }).click()
 
     // The review step repeats what was entered.
-    await expect(buyer.getByRole("definition").filter({ hasText: title })).toBeVisible()
+    await expect(buyer.getByRole("heading", { name: title })).toBeVisible()
+    await expect(buyer.getByRole("definition").filter({ hasText: /18:00/ })).toBeVisible()
     await expect(buyer.getByRole("definition").filter({ hasText: /15\s000\sTJS/ })).toBeVisible()
     await buyer.getByRole("button", { name: "Опубликовать заявку" }).click()
 

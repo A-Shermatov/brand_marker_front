@@ -9,6 +9,7 @@ import { useAuthStore } from "@/lib/store/auth-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { isApiEnabled } from "@/lib/api/config"
 import { ChangePasswordCard } from "@/components/auth/change-password-card"
+import { CreateCompanyCard } from "@/components/company/create-company-card"
 import { TwoFactorSettings } from "@/components/auth/two-factor-settings"
 import { IdentityVerificationCard } from "@/components/verification/identity-verification-card"
 import { authApi } from "@/lib/api/auth"
@@ -163,6 +164,7 @@ export default function SupplierProfilePage() {
       </form>
       <IndividualPageCard welcome={welcome} />
       <IdentityVerificationCard enabled={useApi && actsAsIndividual} />
+      <CreateCompanyCard side="supplier" />
       <ChangePasswordCard />
       <TwoFactorSettings />
       </div>

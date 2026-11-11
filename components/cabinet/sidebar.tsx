@@ -3,24 +3,19 @@
 import { LayoutGroup } from "motion/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  HouseIcon,
-  LockKeyIcon,
-  PlusIcon,
-  StarIcon,
-} from "@phosphor-icons/react/dist/ssr"
+import { PlusIcon } from "@phosphor-icons/react/dist/ssr"
 import { HUB_ICONS } from "@/lib/cabinet-icons"
-import { CabinetNavLink } from "@/components/layout/cabinet-nav-link"
+import { CabinetMenu } from "@/components/layout/cabinet-menu"
 import {
   initialsOf,
   RAIL_ACTION,
   SidebarAccount,
-  SidebarSection,
   SidebarSupport,
   SidebarTop,
 } from "@/components/layout/cabinet-sidebar-parts"
 import { Button } from "@/components/ui/button"
 import { useSupportChat } from "@/components/support/support-chat-context"
+import { useSideProfiles } from "@/components/company/profile-switch-menu"
 import {
   emptyBuyerNavCounts,
   useBuyerNavCounts,
@@ -29,9 +24,7 @@ import { useBuyerMarks } from "@/hooks/use-buyer-marks"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useCartStore } from "@/lib/store/cart-store"
-import { BUYER_HUBS, matchHub } from "@/lib/cabinet-nav"
-
-const ICONS = HUB_ICONS.buyer
+import { BUYER_HUBS, hubsFor, matchHub } from "@/lib/cabinet-nav"
 
 export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
@@ -41,8 +34,13 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
   const counts = countsQuery.data ?? emptyBuyerNavCounts()
   const { openSupport } = useSupportChat()
   const marks = useBuyerMarks()
-  const activeHub = matchHub(BUYER_HUBS, pathname, "/customer")
   const cartLines = useCartStore((s) => s.items.length)
+  // A private person has no company to manage: the menu follows the profile
+  // the person works from right now.
+  const { active } = useSideProfiles("buyer")
+  const kind = hydrated ? (active?.kind ?? null) : null
+  const hubs = hubsFor(BUYER_HUBS, kind)
+  const activeHub = matchHub(hubs, pathname, "/customer")
 
   const badgeFor = (keys?: string[]) => {
     if (!hydrated || !keys?.length) return 0
@@ -66,7 +64,7 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
       <SidebarTop onClose={onNavigate} />
 
       <SidebarAccount
-        href="/customer/company"
+        href={kind === "company" ? "/customer/company" : "/customer/profile"}
         name={companyName}
         role="Кабинет покупателя"
         initials={initialsOf(companyName, "ПК")}
@@ -83,47 +81,15 @@ export default function CustomerSidebar({ onNavigate }: { onNavigate?: () => voi
         </Link>
       </Button>
 
-      <SidebarSection>
-        {BUYER_HUBS.filter((hub) => !hub.more).map((hub) => (
-          <CabinetNavLink
-            key={hub.id}
-            href={hub.href}
-            label={hub.label}
-            icon={ICONS[hub.id] ?? HouseIcon}
-            active={activeHub?.id === hub.id}
-            badge={badgeFor(hub.badgeKeys)}
-            onClick={onNavigate}
-          />
-        ))}
-      </SidebarSection>
+      <CabinetMenu
+        hubs={hubs}
+        activeId={activeHub?.id}
+        icons={HUB_ICONS.buyer}
+        badgeFor={badgeFor}
+        onNavigate={onNavigate}
+      />
 
-      <SidebarSection label="Ещё" className="mt-4">
-        {BUYER_HUBS.filter((hub) => hub.more).map((hub) => (
-          <CabinetNavLink
-            key={hub.id}
-            href={hub.href}
-            label={hub.label}
-            icon={ICONS[hub.id] ?? HouseIcon}
-            active={activeHub?.id === hub.id}
-            onClick={onNavigate}
-            quiet
-          />
-        ))}
-        <CabinetNavLink
-          href="/customer/reviews"
-          label="Отзывы"
-          icon={StarIcon}
-          active={pathname.startsWith("/customer/reviews")}
-          onClick={onNavigate}
-          quiet
-        />
-      </SidebarSection>
-
-      <div className="mt-auto grid gap-2 pt-6">
-        <p className="flex gap-2 px-1 text-[12.5px] leading-snug text-mute">
-          <LockKeyIcon className="mt-px size-4 shrink-0 text-safe-500" aria-hidden />
-          Деньги держит банк‑партнёр. Поставщик получит их после вашей приёмки.
-        </p>
+      <div className="mt-auto pt-5">
         <SidebarSupport
           onClick={() => {
             openSupport()

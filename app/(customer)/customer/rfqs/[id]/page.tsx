@@ -276,8 +276,8 @@ export default function BuyerRfqDetailPage({ params }: PageProps) {
           </section>
         ) : null}
 
-        <section className="grid gap-5 lg:grid-cols-2">
-          <RfqPositionsCard rfq={rfq} />
+        <section className="grid items-start gap-5 lg:grid-cols-2">
+          <RfqPositionsCard rfq={rfq} categoryLabel={getRfqCategoryLabel(rfq.category_id)} />
           <RfqTermsCard
             rfq={rfq}
             footer={

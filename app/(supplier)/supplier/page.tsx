@@ -2,14 +2,13 @@
 
 import Link from "next/link"
 import {
-  ArrowDownLeftIcon,
   HandshakeIcon,
   HeadsetIcon,
-  LockKeyIcon,
   PackageIcon,
   PlusIcon as Plus,
   TrayIcon,
   TrayIcon as Inbox,
+  WalletIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useContractsStore } from "@/lib/store/contracts-store"
@@ -33,7 +32,6 @@ import {
 import { useSupplierFinanceDestinationsQuery } from "@/hooks/api/use-supplier-finance-query"
 import { useSupplierCatalogQuery } from "@/hooks/api/use-supplier-catalog-query"
 import { useSupplierCompaniesQuery } from "@/hooks/api/use-supplier-companies-query"
-import { useSupplierSubscriptionQuery } from "@/hooks/api/use-supplier-subscription-query"
 import { formatCount, formatIsoDateTime, formatPrice } from "@/lib/format"
 import {
   getNewRfqsWithoutProposal,
@@ -41,19 +39,14 @@ import {
 } from "@/lib/supplier-dashboard"
 import { dealNeedsAction, getDealPhase, isDealOpen } from "@/lib/process/deal-stages"
 import { buildSupplierTodo } from "@/lib/process/todo"
-import { planName } from "@/lib/subscription"
-import { reputationTierLabel } from "@/lib/trust-levels"
 import { useSupplierMarks } from "@/hooks/use-supplier-marks"
 import { Button } from "@/components/ui/button"
 import { PageFrame } from "@/components/layout"
-import { CompanyName, PlanMark, TrustMark } from "@/components/bm"
+import { CompanyName } from "@/components/bm"
 import { ActivateRoleBanner } from "@/components/company/activate-role-banner"
 import { ActiveContractsPanel } from "@/components/supplier/dashboard/active-contracts-panel"
 import { DashboardPanel } from "@/components/cabinet/dashboard/dashboard-panel"
-import { TeamAccessCard } from "@/components/cabinet/company/team-access-card"
-import { KpiTile } from "@/components/cabinet/dashboard/kpi-tile"
-import { MonthlyChart } from "@/components/cabinet/dashboard/monthly-chart"
-import { BreakdownCard } from "@/components/cabinet/dashboard/breakdown-card"
+import { HomeHeading, StatusCard } from "@/components/cabinet/dashboard/status-card"
 import { monthlySeries } from "@/lib/dashboard-series"
 import {
   OpsList,
@@ -63,12 +56,10 @@ import { TodoList, ProfileChecklist, type ChecklistItem } from "@/components/pro
 import { FirstSteps } from "@/components/process/first-steps"
 import { buildSupplierFirstSteps } from "@/lib/process/first-steps"
 import { ShortcutCards } from "@/components/cabinet/dashboard/shortcut-cards"
-import { CountUp } from "@/components/ui/count-up"
 import { useSupportChat } from "@/components/support/support-chat-context"
 import { useSavedValue } from "@/hooks/use-saved-value"
 import { firstName, greet } from "@/lib/greet"
 import type { ContractWithRelations } from "@/types"
-import type { SubscriptionPlan } from "@/lib/store/subscription-store"
 import { useMemo } from "react"
 
 const OPS_STATUS_LABELS: Record<string, string> = {
@@ -118,7 +109,6 @@ export default function SupplierDashboard() {
   const { data: apiDestinations } = useSupplierFinanceDestinationsQuery(apiEnabled)
   const { data: apiItems } = useSupplierCatalogQuery(undefined, apiEnabled)
   const { data: apiCompanies } = useSupplierCompaniesQuery(apiEnabled)
-  const { data: apiSub } = useSupplierSubscriptionQuery(apiEnabled)
   const { data: paymentHistoryPage } = useSupplierPaymentHistoryQuery(
     apiEnabled,
     { page: 1, pageSize: 100 },
@@ -238,10 +228,6 @@ export default function SupplierDashboard() {
   }
 
   const loading = !hydrated || (useApi && (contractsLoading || rfqsLoading))
-  const payoutAccount = destinations?.[0]
-  const payoutLabel = payoutAccount
-    ? [payoutAccount.label, payoutAccount.details].filter(Boolean).join(" · ")
-    : "не указан"
 
   const ops: OpsItem[] = useMemo(() => {
     const history = paymentHistoryPage?.items ?? []
@@ -281,8 +267,6 @@ export default function SupplierDashboard() {
   const companyTitle =
     marks.title ?? myCompany?.title ?? (hydrated && user?.company ? user.company : "Поставщик")
   const name = firstName(user?.name)
-  const subPlan = (apiSub?.plan ?? "none") as SubscriptionPlan
-  const planActive = Boolean(apiSub?.is_active)
   const incompleteChecklist = checklist.filter((c) => !c.done)
 
   // The path to a first deal. The profile step lists what the checklist
@@ -383,176 +367,86 @@ export default function SupplierDashboard() {
       ) : null}
 
       {showNumbers ? (
-      <div className="space-y-5 bm-rise">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiTile
-          label="Поступит после приёмки"
-          loading={loading}
-          value={<CountUp value={expectedAmount} format={formatPrice} />}
-          hint={
-            expectedDeals.length > 0
-              ? `Деньги уже у банка · ${formatCount(expectedDeals.length, "сделка", "сделки", "сделок")}`
-              : "Сделок с деньгами на гарантии нет"
-          }
-          icon={LockKeyIcon}
-          tone="brand"
-          href="/supplier/contracts?tab=active"
-        />
-        <KpiTile
-          label="Зачислено в этом месяце"
-          loading={loading}
-          value={<CountUp value={monthReleased} format={formatPrice} />}
-          hint={
-            balance ? `На счёте ${formatPrice(balance.available)}` : "История выплат"
-          }
-          icon={ArrowDownLeftIcon}
-          href="/supplier/finance"
-        />
-        <KpiTile
-          label="Сделки в работе"
-          loading={loading}
-          value={<CountUp value={openDeals.length} />}
-          hint={
-            unreadCount > 0
-              ? formatCount(unreadCount, "новое сообщение", "новых сообщения", "новых сообщений")
-              : "Отгрузки и сдача работ"
-          }
-          icon={HandshakeIcon}
-          tone={unreadCount > 0 ? "attention" : "default"}
-          href="/supplier/contracts?tab=active"
-        />
-        <KpiTile
-          label="Новые заявки"
-          loading={loading}
-          value={<CountUp value={newRfqs.length} />}
-          hint={newRfqs.length > 0 ? "Без вашего предложения" : "Новых заявок нет"}
-          icon={TrayIcon}
-          tone={newRfqs.length > 0 ? "attention" : "default"}
-          href="/supplier/rfqs?response=open"
-        />
-      </div>
-
-      <div className="grid items-stretch gap-5 xl:grid-cols-[1.6fr_1fr]">
-        <MonthlyChart
-          title="Поступления по месяцам"
-          points={incomePoints}
-          series={[
-            { key: "released", label: "Зачислено", color: "var(--brand-600)" },
-            { key: "held", label: "Ждёт приёмки", color: "var(--brand-200)" },
-          ]}
-          emptyText="Здесь появятся оплаты по вашим сделкам: сначала на гарантии банка, после приёмки — на вашем счёте."
-          loading={loading}
-        />
-        <BreakdownCard
-          title="Воронка продаж"
-          rows={[
-            {
-              label: "Новые заявки",
-              value: newRfqs.length,
-              href: "/supplier/rfqs?response=open",
-              color: "var(--verify-600)",
-            },
-            {
-              label: "КП ждут ответа",
-              value: waitingProposals,
-              href: "/supplier/proposals",
-              color: "var(--brand-300)",
-            },
-            {
-              label: "Сделки в работе",
-              value: openDeals.length,
-              href: "/supplier/contracts?tab=active",
-              color: "var(--brand-600)",
-            },
-            {
-              label: "Завершено",
-              value: completedDeals,
-              href: "/supplier/contracts?tab=completed",
-              color: "var(--brand-900)",
-            },
-          ]}
-          footer={
-            payoutAccount ? (
-              <p className="text-[13px] text-mute">
-                Выплаты на: <span className="font-medium text-ink">{payoutLabel}</span>
-              </p>
-            ) : (
-              <Link href="/supplier/finance#payout" className="text-[13.5px] font-medium text-brand-700 hover:underline">
-                Добавить счёт для выплат
-              </Link>
-            )
-          }
-        />
-      </div>
-
-      {incompleteChecklist.length > 0 ? (
-        <ProfileChecklist items={checklist} />
-      ) : null}
-
-      <div className="grid items-start gap-5 xl:grid-cols-[1.15fr_1fr]">
-        <DashboardPanel
-          title="Нужно сделать"
-          badge={
-            todo.length > 0 ? (
-              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-amber-100 px-1.5 text-[12px] font-semibold text-amber-900 tnum">
-                {todo.length}
-              </span>
-            ) : null
-          }
-        >
+      <div className="space-y-7 bm-rise">
+        <section aria-label="Что нужно сделать сейчас">
+          <HomeHeading
+            title="Что нужно сделать сейчас"
+            hint="Дела, которые ждут именно вас: без них заказы стоят на месте."
+            badge={
+              todo.length > 0 ? (
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-amber-100 px-1.5 text-[12px] font-semibold text-amber-900 tnum">
+                  {todo.length}
+                </span>
+              ) : null
+            }
+          />
           <TodoList
             items={todo}
             loading={loading}
-            emptyText="Новых дел нет. Загляните в заявки — там могут быть новые заказы."
+            emptyText="Сейчас от вас ничего не требуется. Загляните в заявки покупателей: там могут быть новые заказы."
             title=""
           />
-        </DashboardPanel>
-        <DashboardPanel title="Операции" href="/supplier/finance">
-          <OpsList items={ops} />
-        </DashboardPanel>
-      </div>
+        </section>
 
-      <section className="grid gap-4 rounded-2xl border border-line bg-card p-5 md:grid-cols-[1fr_1fr_auto] md:items-center">
-        <div className="flex items-center gap-3.5">
-          <TrustMark tier={marks.tier} size={44} />
-          <div className="min-w-0">
-            <p className="text-[13px] text-mute">Знак надёжности</p>
-            <p className="text-[15.5px] font-semibold text-ink">
-              {marks.tier !== "none" ? reputationTierLabel(marks.tier) : "Пока без знака"}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3.5 border-line md:border-l md:pl-5">
-          {planActive ? (
-            <PlanMark plan={subPlan} size={36} />
-          ) : (
-            <span className="grid size-9 place-items-center rounded-lg border border-dashed border-line-strong text-faint">
-              <Plus className="size-4" aria-hidden />
-            </span>
-          )}
-          <div className="min-w-0">
-            <p className="text-[13px] text-mute">Тариф подписки</p>
-            <p className="text-[15.5px] font-semibold text-ink">
-              {planActive && apiSub?.active_until
-                ? `${planName(subPlan)} · до ${new Date(apiSub.active_until).toLocaleDateString("ru-RU")}`
-                : "Не подключён"}
-            </p>
-          </div>
-        </div>
-        <Button asChild variant="outline" size="sm" className="justify-self-start">
-          <Link href="/supplier/trust">Условия и тарифы</Link>
-        </Button>
-      </section>
+        {incompleteChecklist.length > 0 ? <ProfileChecklist items={checklist} /> : null}
 
-      <ActiveContractsPanel
-        contracts={openDeals}
-        hydrated={!loading}
-        getBuyerName={getBuyerName}
-      />
+        <section aria-label="Ваши дела">
+          <HomeHeading
+            title="Ваши дела"
+            hint="Коротко о заявках, сделках и деньгах. Каждый блок открывает свой раздел меню."
+          />
+          <div className="grid gap-4 md:grid-cols-3">
+            <StatusCard
+              icon={TrayIcon}
+              title="Заявки покупателей"
+              loading={loading}
+              facts={[
+                { label: "Новые, без вашего ответа", value: newRfqs.length, attention: newRfqs.length > 0 },
+                { label: "Ваши КП ждут решения", value: waitingProposals },
+              ]}
+              href="/supplier/rfqs?response=open"
+              linkLabel="Открыть заявки"
+            />
+            <StatusCard
+              icon={HandshakeIcon}
+              title="Сделки"
+              loading={loading}
+              facts={[
+                { label: "В работе", value: openDeals.length },
+                { label: "Завершено", value: completedDeals },
+                { label: "Новых сообщений", value: unreadCount, attention: unreadCount > 0 },
+              ]}
+              href="/supplier/contracts?tab=active"
+              linkLabel="Открыть сделки"
+            />
+            <StatusCard
+              icon={WalletIcon}
+              title="Деньги"
+              loading={loading}
+              facts={[
+                { label: "Поступит после приёмки", value: formatPrice(expectedAmount) },
+                { label: "Зачислено в этом месяце", value: formatPrice(monthReleased) },
+                ...(balance ? [{ label: "На счёте", value: formatPrice(balance.available) }] : []),
+              ]}
+              href="/supplier/finance"
+              linkLabel="Открыть деньги"
+            />
+          </div>
+        </section>
+
+        {/* Deal cards need the full width; the money log sits under them. */}
+        <div className="grid gap-5">
+          <ActiveContractsPanel
+            contracts={openDeals}
+            hydrated={!loading}
+            getBuyerName={getBuyerName}
+          />
+          <DashboardPanel title="Последние операции" href="/supplier/finance">
+            <OpsList items={ops.slice(0, 5)} />
+          </DashboardPanel>
+        </div>
       </div>
       ) : null}
-
-      <TeamAccessCard side="supplier" teamHref="/supplier/team" />
 
       <ActivateRoleBanner
         targetSide="buyer"

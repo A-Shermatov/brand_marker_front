@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import type { ProposalStatus, RfqWithRelations } from "@/types"
 import { cn } from "@/lib/utils"
 import { formatCurrency, formatRfqBudget, getDaysLeft, pluralRu } from "@/lib/format"
+import { isDeadlinePassed, splitDateTime } from "@/lib/iso-date"
 import { OPEN_RFQ_STATUSES } from "@/lib/rfq-display"
 import { isCatalogOfferRfq, isPendingCatalogOffer } from "@/lib/rfq-board"
 
@@ -47,9 +48,16 @@ const isClosed = (rfq: RfqWithRelations) =>
 /** How much time is left to answer, as words and a colour that says how urgent it is. */
 function deadlineBadge(rfq: RfqWithRelations): { label: string; className: string } {
   if (isClosed(rfq)) return { label: "Приём закрыт", className: "bg-surface-muted text-mute" }
+  // A deadline with a time of day can run out in the middle of its last day.
+  if (isDeadlinePassed(rfq.deadline)) return { label: "Срок вышел", className: "bg-red-50 text-red-700" }
   const days = getDaysLeft(rfq.deadline)
-  if (days < 0) return { label: "Срок вышел", className: "bg-red-50 text-red-700" }
-  const label = days === 0 ? "Последний день" : `Осталось ${days} ${pluralRu(days, "день", "дня", "дней")}`
+  const { time } = splitDateTime(rfq.deadline)
+  const label =
+    days <= 0
+      ? time
+        ? `Сегодня до ${time}`
+        : "Последний день"
+      : `Осталось ${days} ${pluralRu(days, "день", "дня", "дней")}`
   return days <= URGENT_DAYS
     ? { label, className: "bg-amber-50 text-amber-800" }
     : { label, className: "bg-brand-50 text-brand-700" }

@@ -32,7 +32,7 @@ test.describe("on a phone", () => {
     await expect(menu).toBeVisible()
     await menu.getByRole("link", { name: "Сделки" }).click()
     await expect(page).toHaveURL(/\/customer\/contracts/)
-    await menu.getByRole("link", { name: "Закупки" }).click()
+    await menu.getByRole("link", { name: "Заявки" }).click()
     await expect(page).toHaveURL(/\/customer\/rfqs/)
     expect(health.take()).toEqual([])
   })

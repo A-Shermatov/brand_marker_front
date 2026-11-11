@@ -1,5 +1,6 @@
 /**
- * CNAV v7 + SUBTABS + SECTION_TITLE from BrendMarket-v7.1.html
+ * Menus of the three cabinets, the tabs some sections keep inside, and the
+ * name and one-line description each page shows at its top.
  */
 
 export type CabinetRole = "buyer" | "supplier" | "admin"
@@ -12,8 +13,29 @@ export type CabinetNavHub = {
   /** Path prefixes that belong to this hub (for active state) */
   match: string[]
   badgeKeys?: string[]
-  /** Listed under "Ещё" in the menu rather than among the main sections. */
-  more?: boolean
+  /** Heading of the menu group the item stands in; items without one come first. */
+  group?: string
+  /** Shown only when the person works as a company, or only as a private person. */
+  only?: ProfileKind
+}
+
+/** On whose behalf the person works in the cabinet right now. */
+export type ProfileKind = "individual" | "company"
+
+/** The menu for this kind of profile; while the kind is unknown, only what everyone has. */
+export const hubsFor = (hubs: CabinetNavHub[], kind: ProfileKind | null): CabinetNavHub[] =>
+  hubs.filter((hub) => !hub.only || hub.only === kind)
+
+/** Menu items in the order they are drawn, cut into groups by their headings. */
+export const groupHubs = (hubs: CabinetNavHub[]): { label: string | null; hubs: CabinetNavHub[] }[] => {
+  const groups: { label: string | null; hubs: CabinetNavHub[] }[] = []
+  for (const hub of hubs) {
+    const label = hub.group ?? null
+    const last = groups[groups.length - 1]
+    if (last && last.label === label) last.hubs.push(hub)
+    else groups.push({ label, hubs: [hub] })
+  }
+  return groups
 }
 
 export type CabinetSubtab = {
@@ -28,6 +50,12 @@ export type SectionMeta = {
   description: string
 }
 
+/**
+ * The buyer's menu. Every page a person needs is one click away and is called
+ * by what they do there; items that open one after another stand together
+ * under a short heading. "Компания" and "Согласования" make sense only for a
+ * company profile: a private person sees "Мой профиль" there instead.
+ */
 export const BUYER_HUBS: CabinetNavHub[] = [
   {
     id: "home",
@@ -37,23 +65,41 @@ export const BUYER_HUBS: CabinetNavHub[] = [
   },
   {
     id: "rfqs",
-    label: "Закупки",
-    href: "/customer/rfqs?status=quotes",
-    match: ["/customer/rfqs", "/customer/approvals"],
-    badgeKeys: ["rfqs", "approvals"],
+    label: "Мои заявки",
+    href: "/customer/rfqs",
+    match: ["/customer/rfqs"],
+    badgeKeys: ["rfqs"],
+    group: "Покупки",
   },
   {
-    id: "deals",
-    label: "Сделки и оплаты",
-    href: "/customer/contracts?tab=active",
-    match: ["/customer/contracts", "/customer/payments"],
-    badgeKeys: ["deals"],
+    id: "catalog",
+    label: "Каталог",
+    href: "/customer/catalog",
+    match: ["/customer/catalog", "/customer/cart"],
+    badgeKeys: ["cart"],
+    group: "Покупки",
   },
   {
     id: "suppliers",
     label: "Поставщики",
     href: "/customer/suppliers",
     match: ["/customer/suppliers"],
+    group: "Покупки",
+  },
+  {
+    id: "deals",
+    label: "Сделки",
+    href: "/customer/contracts?tab=active",
+    match: ["/customer/contracts"],
+    badgeKeys: ["deals"],
+    group: "Сделки",
+  },
+  {
+    id: "payments",
+    label: "Оплаты и документы",
+    href: "/customer/payments",
+    match: ["/customer/payments"],
+    group: "Сделки",
   },
   {
     id: "messages",
@@ -61,52 +107,50 @@ export const BUYER_HUBS: CabinetNavHub[] = [
     href: "/customer/messages",
     match: ["/customer/messages"],
     badgeKeys: ["messages"],
-  },
-  {
-    id: "catalog",
-    label: "Каталог товаров",
-    href: "/customer/catalog",
-    match: ["/customer/catalog", "/customer/cart"],
-    badgeKeys: ["cart"],
+    group: "Сделки",
   },
   {
     id: "company",
     label: "Компания",
     href: "/customer/company",
-    match: ["/customer/company", "/customer/plan", "/customer/profile"],
-    more: true,
+    match: ["/customer/company"],
+    group: "Аккаунт",
+    only: "company",
+  },
+  {
+    id: "approvals",
+    label: "Согласования",
+    href: "/customer/approvals",
+    match: ["/customer/approvals"],
+    badgeKeys: ["approvals"],
+    group: "Аккаунт",
+    only: "company",
+  },
+  {
+    id: "profile",
+    label: "Мой профиль",
+    href: "/customer/profile",
+    match: ["/customer/profile"],
+    group: "Аккаунт",
+  },
+  {
+    id: "plan",
+    label: "Тариф",
+    href: "/customer/plan",
+    match: ["/customer/plan"],
+    group: "Аккаунт",
+  },
+  {
+    id: "reviews",
+    label: "Отзывы",
+    href: "/customer/reviews",
+    match: ["/customer/reviews"],
+    group: "Аккаунт",
   },
 ]
 
 export const BUYER_SUBTABS: Record<string, CabinetSubtab[]> = {
-  rfqs: [
-    {
-      id: "rfqs",
-      label: "Заявки",
-      href: "/customer/rfqs?status=quotes",
-      match: ["/customer/rfqs"],
-    },
-    {
-      id: "approvals",
-      label: "Согласования",
-      href: "/customer/approvals",
-      match: ["/customer/approvals"],
-    },
-  ],
-  deals: [
-    {
-      id: "deals",
-      label: "Сделки",
-      href: "/customer/contracts?tab=active",
-      match: ["/customer/contracts"],
-    },
-    {
-      id: "finance",
-      label: "Платежи и документы",
-      href: "/customer/payments",
-      match: ["/customer/payments"],
-    },
-  ],
+  // The cart belongs to the catalogue: two views of one purchase.
   catalog: [
     {
       id: "catalog",
@@ -121,41 +165,57 @@ export const BUYER_SUBTABS: Record<string, CabinetSubtab[]> = {
       match: ["/customer/cart"],
     },
   ],
-  company: [
-    {
-      id: "company",
-      label: "Сотрудники и реквизиты",
-      href: "/customer/company",
-      match: ["/customer/company", "/customer/profile"],
-    },
-    {
-      id: "plan",
-      label: "Тариф и услуги",
-      href: "/customer/plan",
-      match: ["/customer/plan"],
-    },
-  ],
 }
 
+/** The name of each page as the menu calls it, and one line on what is there. */
 export const BUYER_SECTION_TITLE: Record<string, SectionMeta> = {
   rfqs: {
-    title: "Закупки",
-    description: "Заявки поставщикам и согласование покупок",
-  },
-  deals: {
-    title: "Сделки и оплаты",
-    description: "Договоры, деньги на гарантии и документы",
+    title: "Мои заявки",
+    description: "Что вы ищете и какие предложения прислали поставщики",
   },
   catalog: {
-    title: "Каталог товаров",
-    description: "Покупайте у проверенных поставщиков без заявки",
+    title: "Каталог",
+    description: "Готовые товары и услуги: можно купить сразу, без заявки",
+  },
+  suppliers: {
+    title: "Поставщики",
+    description: "Компании и специалисты, которые продают на площадке",
+  },
+  deals: {
+    title: "Сделки",
+    description: "Ваши покупки: что в работе, что нужно оплатить или принять",
+  },
+  payments: {
+    title: "Оплаты и документы",
+    description: "Ваши платежи, деньги на гарантии банка, счета и возвраты",
+  },
+  messages: {
+    title: "Сообщения",
+    description: "Переписка с поставщиками по заявкам и сделкам",
   },
   company: {
     title: "Компания",
-    description: "Сотрудники, реквизиты и тариф",
+    description: "Сотрудники, их права и реквизиты компании",
+  },
+  approvals: {
+    title: "Согласования",
+    description: "Покупки сотрудников, которые ждут решения руководителя",
+  },
+  profile: {
+    title: "Мой профиль",
+    description: "Имя, фото, пароль и защита входа",
+  },
+  plan: {
+    title: "Тариф",
+    description: "Что включено сейчас и что можно подключить",
+  },
+  reviews: {
+    title: "Отзывы",
+    description: "Оценки, которые вы оставили поставщикам и получили от них",
   },
 }
 
+/** The supplier's menu, built the same way as the buyer's. */
 export const SUPPLIER_HUBS: CabinetNavHub[] = [
   {
     id: "home",
@@ -165,24 +225,26 @@ export const SUPPLIER_HUBS: CabinetNavHub[] = [
   },
   {
     id: "leads",
-    label: "Заявки и КП",
+    label: "Заявки покупателей",
     href: "/supplier/rfqs?response=open",
-    match: ["/supplier/rfqs", "/supplier/proposals"],
+    match: ["/supplier/rfqs"],
     badgeKeys: ["rfqs"],
+    group: "Заказы",
+  },
+  {
+    id: "quotes",
+    label: "Мои предложения",
+    href: "/supplier/proposals",
+    match: ["/supplier/proposals"],
+    group: "Заказы",
   },
   {
     id: "deals",
-    label: "Сделки и деньги",
+    label: "Сделки",
     href: "/supplier/contracts?tab=active",
-    match: ["/supplier/contracts", "/supplier/finance"],
+    match: ["/supplier/contracts"],
     badgeKeys: ["deals"],
-  },
-  {
-    id: "products",
-    label: "Витрина",
-    href: "/supplier/catalog",
-    match: ["/supplier/catalog", "/supplier/listings"],
-    badgeKeys: ["catalog"],
+    group: "Заказы",
   },
   {
     id: "messages",
@@ -190,59 +252,71 @@ export const SUPPLIER_HUBS: CabinetNavHub[] = [
     href: "/supplier/messages",
     match: ["/supplier/messages"],
     badgeKeys: ["messages"],
+    group: "Заказы",
+  },
+  {
+    id: "products",
+    label: "Товары и услуги",
+    href: "/supplier/catalog",
+    match: ["/supplier/catalog", "/supplier/listings"],
+    badgeKeys: ["catalog"],
+    group: "Мой магазин",
+  },
+  {
+    id: "customers",
+    label: "Покупатели",
+    href: "/supplier/customers",
+    match: ["/supplier/customers"],
+    group: "Мой магазин",
+  },
+  {
+    id: "reviews",
+    label: "Отзывы",
+    href: "/supplier/reviews",
+    match: ["/supplier/reviews"],
+    group: "Мой магазин",
+  },
+  {
+    id: "finance",
+    label: "Деньги",
+    href: "/supplier/finance",
+    match: ["/supplier/finance"],
+    group: "Деньги",
   },
   {
     id: "tariff",
-    label: "Надёжность и тариф",
+    label: "Тариф и надёжность",
     href: "/supplier/trust",
     match: ["/supplier/trust", "/supplier/subscription"],
+    group: "Деньги",
   },
   {
     id: "company",
     label: "Компания",
     href: "/supplier/team",
-    match: ["/supplier/team", "/supplier/company", "/supplier/profile"],
+    match: ["/supplier/team", "/supplier/company"],
+    group: "Аккаунт",
+    only: "company",
+  },
+  {
+    id: "profile",
+    label: "Мой профиль",
+    href: "/supplier/profile",
+    match: ["/supplier/profile"],
+    group: "Аккаунт",
   },
 ]
 
 export const SUPPLIER_SUBTABS: Record<string, CabinetSubtab[]> = {
-  leads: [
-    {
-      id: "leads",
-      label: "Заявки покупателей",
-      href: "/supplier/rfqs?response=open",
-      match: ["/supplier/rfqs"],
-    },
-    {
-      id: "quotes",
-      label: "Мои КП",
-      href: "/supplier/proposals",
-      match: ["/supplier/proposals"],
-    },
-  ],
-  deals: [
-    {
-      id: "deals",
-      label: "Сделки",
-      href: "/supplier/contracts?tab=active",
-      match: ["/supplier/contracts"],
-    },
-    {
-      id: "finance",
-      label: "Деньги",
-      href: "/supplier/finance",
-      match: ["/supplier/finance"],
-    },
-  ],
   company: [
     {
       id: "team",
       label: "Сотрудники и роли",
       href: "/supplier/team",
-      match: ["/supplier/team", "/supplier/profile"],
+      match: ["/supplier/team"],
     },
     {
-      id: "profile",
+      id: "page",
       label: "Страница компании",
       href: "/supplier/company",
       match: ["/supplier/company"],
@@ -266,24 +340,48 @@ export const SUPPLIER_SUBTABS: Record<string, CabinetSubtab[]> = {
 
 export const SUPPLIER_SECTION_TITLE: Record<string, SectionMeta> = {
   leads: {
-    title: "Заявки и КП",
-    description: "Найдите покупателя и отправьте предложение",
+    title: "Заявки покупателей",
+    description: "Что сейчас ищут покупатели. Откройте заявку и отправьте своё предложение",
+  },
+  quotes: {
+    title: "Мои предложения",
+    description: "Ваши КП (коммерческие предложения) и что по ним решил покупатель",
   },
   deals: {
-    title: "Сделки и деньги",
-    description: "Отгрузки, поступления и выплаты",
+    title: "Сделки",
+    description: "Заказы в работе: что отгрузить, что сдать и что уже оплачено",
+  },
+  messages: {
+    title: "Сообщения",
+    description: "Переписка с покупателями по заявкам и сделкам",
   },
   products: {
-    title: "Витрина",
-    description: "Ваши товары и услуги в каталоге",
+    title: "Товары и услуги",
+    description: "Ваша витрина: то, что покупатели видят в каталоге",
+  },
+  customers: {
+    title: "Покупатели",
+    description: "С кем у вас были сделки",
+  },
+  reviews: {
+    title: "Отзывы",
+    description: "Оценки покупателей и ваши оценки им",
+  },
+  finance: {
+    title: "Деньги",
+    description: "Поступления по сделкам, баланс и выплаты на ваш счёт",
+  },
+  tariff: {
+    title: "Тариф и надёжность",
+    description: "Знак надёжности зарабатывается сделками, тариф поднимает вас в каталоге",
   },
   company: {
     title: "Компания",
-    description: "Сотрудники, роли и страница компании",
+    description: "Сотрудники, их права и страница компании",
   },
-  tariff: {
-    title: "Надёжность и тариф",
-    description: "Знак надёжности зарабатывается сделками, тариф подписки поднимает в каталоге",
+  profile: {
+    title: "Мой профиль",
+    description: "Ваша страничка для покупателей, имя, фото, пароль и защита входа",
   },
 }
 

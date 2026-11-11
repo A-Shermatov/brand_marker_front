@@ -14,10 +14,14 @@ import {
 import { budgetTypeMeta, rfqStatusMeta, rfqTypeLabel } from "@/lib/rfq-display"
 import { proposalStatusMeta } from "@/lib/proposal-display"
 import { resolveFileUrl } from "@/lib/file-url"
-import { formatDeliveryTime, formatMoneyDisplay } from "@/lib/format"
+import { formatDeliveryTime, formatIsoDate, formatMoneyDisplay } from "@/lib/format"
+import { isValidIsoDateTime } from "@/lib/iso-date"
 import type { BudgetType, ProposalStatus, RfqStatus, RfqType } from "@/types"
 
 const sectionClassName = "scroll-mt-24 rounded-xl border border-border bg-card p-5 sm:p-6"
+
+/** A request date the way people read it; anything else stays as it is stored. */
+const requestDate = (value: string) => (isValidIsoDateTime(value) ? formatIsoDate(value) : value)
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat("ru-RU", {
@@ -87,10 +91,18 @@ export const AdminRfqDetailSections = ({ rfq }: { rfq: AdminRfqDetail }) => {
           </div>
           <div>
             <dt className="text-[12.5px] font-medium text-muted-foreground">
-              Дедлайн
+              Дедлайн заявки
             </dt>
-            <dd className="mt-1 text-sm font-medium">{requirements.deadline}</dd>
+            <dd className="mt-1 text-sm font-medium">{requestDate(requirements.deadline)}</dd>
           </div>
+          {requirements.delivery_date && requirements.delivery_date !== requirements.deadline && (
+            <div>
+              <dt className="text-[12.5px] font-medium text-muted-foreground">
+                {requirements.project_duration ? "Дедлайн работы" : "Дедлайн поставки"}
+              </dt>
+              <dd className="mt-1 text-sm font-medium">{requestDate(requirements.delivery_date)}</dd>
+            </div>
+          )}
           <div>
             <dt className="text-[12.5px] font-medium text-muted-foreground">
               Видимость

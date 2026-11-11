@@ -62,21 +62,18 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
                 match: (p) => p === "/customer",
               },
               {
-                href: "/customer/rfqs?status=quotes",
-                label: "Закупки",
+                href: "/customer/rfqs",
+                label: "Заявки",
                 Icon: FileText,
-                badge: hydrated ? counts.rfqs_new + counts.approvals_new : 0,
-                match: (p) =>
-                  p.startsWith("/customer/rfqs") || p.startsWith("/customer/approvals"),
+                badge: hydrated ? counts.rfqs_new : 0,
+                match: (p) => p.startsWith("/customer/rfqs"),
               },
               {
                 href: "/customer/contracts?tab=active",
                 label: "Сделки",
                 Icon: Briefcase,
                 badge: hydrated ? counts.deals_new : 0,
-                match: (p) =>
-                  p.startsWith("/customer/contracts") ||
-                  p.startsWith("/customer/payments"),
+                match: (p) => p.startsWith("/customer/contracts"),
               },
               {
                 href: "/customer/messages",

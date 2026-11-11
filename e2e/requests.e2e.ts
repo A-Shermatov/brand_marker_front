@@ -18,7 +18,7 @@ test("a buyer publishes a request without a budget", async ({ pageAs }) => {
     await expect(buyer.locator("#budget-from")).toHaveCount(0)
     await buyer.locator("#deadline").fill(ruDate(20))
     await buyer.locator("#start-date").fill(ruDate(25))
-    await buyer.locator("#duration").fill("1 неделя")
+    await buyer.locator("#work-deadline").fill(ruDate(32))
     await buyer.getByRole("button", { name: /Далее/ }).click()
 
     await expect(buyer.getByRole("definition").filter({ hasText: "Не указан" })).toBeVisible()

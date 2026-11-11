@@ -31,6 +31,9 @@ export const getRfqRequirements = (rfq: Rfq): RfqRequirement[] => {
     ...base,
     { label: "Длительность проекта", value: rfq.project_duration },
     { label: "Дата начала", value: formatIsoDate(rfq.start_date) },
+    ...(rfq.delivery_date
+      ? [{ label: "Дедлайн работы", value: formatIsoDate(rfq.delivery_date) }]
+      : []),
     ...(rfq.team_size_required != null
       ? [{ label: "Размер команды", value: `${rfq.team_size_required} чел.` }]
       : []),

@@ -3,10 +3,9 @@
 import type { ChangeEvent, RefObject } from "react"
 import { PaperclipIcon as Paperclip, PlusIcon as Plus, XIcon as X } from "@phosphor-icons/react/dist/ssr"
 import { cn } from "@/lib/utils"
-import { formatCurrency, formatIsoDate } from "@/lib/format"
-import { DateInputRu } from "@/components/ui/date-input-ru"
-import type { ReactNode } from "react"
-import { PAYMENT_MODE_LABEL, PaymentModeChoice } from "@/components/payments/payment-mode-choice"
+import { RFQ_TITLE_MAX_LENGTH } from "@/lib/schemas/rfq-form"
+import { DateTimeInput } from "@/components/ui/date-time-input"
+import { PaymentModeChoice } from "@/components/payments/payment-mode-choice"
 import type { PaymentMode } from "@/types"
 
 export type ProductLineItem = {
@@ -228,7 +227,7 @@ export const ProductWhatStep = ({
             Название заявки
           </label>
           <input
-            maxLength={100}
+            maxLength={RFQ_TITLE_MAX_LENGTH}
             id="w-title"
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
@@ -418,38 +417,78 @@ export const ProductWhatStep = ({
 type Step2Props = SharedProps & {
   budgetFrom: string
   deadline: string
+  deliveryDate: string
   deliveryAddress: string
-  visibility: "public" | "invited_only"
   paymentMode: PaymentMode
-  invitedLocked?: boolean
   dateMin: string
   dateMax: string
+  /** Today as an ISO day: the calendars do not offer days before it. */
+  today: string
   onBudgetChange: (value: string) => void
   onDeadlineChange: (value: string) => void
+  onDeliveryDateChange: (value: string) => void
   onDeliveryChange: (value: string) => void
-  onVisibilityChange: (value: "public" | "invited_only") => void
   onPaymentModeChange: (value: PaymentMode) => void
 }
+
+const hintClass = "mt-1.5 text-[12.5px] text-muted-foreground"
+const dateFieldClass = "h-10 rounded-lg text-[15px]"
 
 export const ProductConditionsStep = ({
   errors,
   inputClass,
   budgetFrom,
   deadline,
+  deliveryDate,
   deliveryAddress,
-  visibility,
   paymentMode,
-  invitedLocked,
   dateMin,
   dateMax,
+  today,
   onBudgetChange,
   onDeadlineChange,
+  onDeliveryDateChange,
   onDeliveryChange,
-  onVisibilityChange,
   onPaymentModeChange,
 }: Step2Props) => (
   <>
     <div className="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label htmlFor="w-deadline" className={labelClass}>
+          Дедлайн заявки
+        </label>
+        <DateTimeInput
+          id="w-deadline"
+          label="дедлайн заявки"
+          min={dateMin}
+          max={dateMax}
+          notBefore={today}
+          value={deadline}
+          onChange={onDeadlineChange}
+          invalid={!!errors.deadline}
+          className={dateFieldClass}
+        />
+        <p className={hintClass}>До этого времени поставщики присылают предложения. Обычно 7–14 дней.</p>
+        <FieldError message={errors.deadline} />
+      </div>
+      <div>
+        <label htmlFor="w-work-deadline" className={labelClass}>
+          Дедлайн поставки
+        </label>
+        <DateTimeInput
+          id="w-work-deadline"
+          label="дедлайн поставки"
+          min={dateMin}
+          max={dateMax}
+          notBefore={deadline.slice(0, 10) || today}
+          value={deliveryDate}
+          onChange={onDeliveryDateChange}
+          invalid={!!errors.delivery_date}
+          className={dateFieldClass}
+        />
+        <p className={hintClass}>К этому времени товар должен быть у вас.</p>
+        <FieldError message={errors.delivery_date} />
+      </div>
       <div>
         <label htmlFor="w-budget" className={labelClass}>
           Бюджет, TJS
@@ -465,26 +504,8 @@ export const ProductConditionsStep = ({
           className={cn(inputClass("budget_from"), "font-mono")}
           aria-invalid={!!errors.budget_from}
         />
-        <p className="mt-1.5 text-[12.5px] text-muted-foreground">
-          Поставщики увидят сумму. Без бюджета предложения разбросаны сильнее.
-        </p>
+        <p className={hintClass}>Поставщики увидят сумму. Без бюджета предложения разбросаны сильнее.</p>
         <FieldError message={errors.budget_from} />
-      </div>
-      <div>
-        <label htmlFor="w-deadline" className={labelClass}>
-          Принимать КП до
-        </label>
-        <DateInputRu
-          id="w-deadline"
-          min={dateMin}
-          max={dateMax}
-          value={deadline}
-          onChange={onDeadlineChange}
-          className={inputClass("deadline")}
-          aria-invalid={!!errors.deadline}
-        />
-        <p className="mt-1.5 text-[12.5px] text-muted-foreground">Обычно 7–14 дней</p>
-        <FieldError message={errors.deadline} />
       </div>
       <div>
         <label htmlFor="w-delivery" className={labelClass}>
@@ -500,121 +521,11 @@ export const ProductConditionsStep = ({
         />
         <FieldError message={errors.delivery_address || errors.delivery_city} />
       </div>
-      <div>
-        <label htmlFor="w-who" className={labelClass}>
-          Кто видит заявку
-        </label>
-        <select
-          id="w-who"
-          value={visibility}
-          onChange={(e) =>
-            onVisibilityChange(e.target.value as "public" | "invited_only")
-          }
-          disabled={invitedLocked}
-          className={cn(inputClass("visibility"), "appearance-none")}
-        >
-          <option value="public">Все проверенные поставщики категории</option>
-          <option value="invited_only">Только приглашённые</option>
-        </select>
-      </div>
     </div>
 
     <PaymentModeChoice value={paymentMode} onChange={onPaymentModeChange} />
   </>
 )
-
-type ReviewProps = {
-  title: string
-  categoryLabel: string
-  items: ProductLineItem[]
-  budgetFrom: string
-  currency: string
-  deadline: string
-  deliveryAddress: string
-  paymentMode: PaymentMode
-  visibility: "public" | "invited_only"
-  invitedSupplierName?: string
-  onEdit: (step: 1 | 2) => void
-}
-
-export const ProductReviewStep = ({
-  title,
-  categoryLabel,
-  items,
-  budgetFrom,
-  currency,
-  deadline,
-  deliveryAddress,
-  paymentMode,
-  visibility,
-  invitedSupplierName,
-  onEdit,
-}: ReviewProps) => {
-  const positionsLabel = items
-    .filter((item) => item.name.trim())
-    .map((item) => `${item.name.trim()} — ${item.qty} ${item.unit}`)
-    .join("\n")
-  const budgetLabel = budgetFrom.trim()
-    ? formatCurrency(Number(budgetFrom), currency)
-    : "Не указан"
-
-  const rows: { label: string; value: ReactNode; editStep: 1 | 2 }[] = [
-    {
-      label: "Заявка",
-      value: (
-        <>
-          <b>{title || "—"}</b>
-          <br />
-          <span className="text-muted-foreground">
-            Товары · {categoryLabel}
-          </span>
-        </>
-      ),
-      editStep: 1,
-    },
-    {
-      label: "Позиции",
-      value: <span className="whitespace-pre-line">{positionsLabel || "—"}</span>,
-      editStep: 1,
-    },
-    { label: "Бюджет", value: budgetLabel, editStep: 2 },
-    {
-      label: "Приём КП",
-      value: deadline ? `до ${formatIsoDate(deadline)}` : "—",
-      editStep: 2,
-    },
-    { label: "Доставка", value: deliveryAddress.trim() || "—", editStep: 2 },
-    { label: "Оплата", value: PAYMENT_MODE_LABEL[paymentMode], editStep: 2 },
-  ]
-
-  return (
-    <>
-      <dl className="divide-y divide-border overflow-hidden rounded-xl border border-border">
-        {rows.map((row) => (
-          <div
-            key={row.label}
-            className="grid gap-1 px-4 py-3 sm:grid-cols-[150px_1fr_auto] sm:gap-4"
-          >
-            <dt className="text-[13px] text-muted-foreground">{row.label}</dt>
-            <dd className="text-[14px] text-foreground">{row.value}</dd>
-            <button
-              type="button"
-              onClick={() => onEdit(row.editStep)}
-              className="justify-self-start text-[13px] font-medium text-primary"
-            >
-              Изменить
-            </button>
-          </div>
-        ))}
-      </dl>
-      <p className="text-[13px] text-muted-foreground">
-        {visibility === "invited_only" && invitedSupplierName
-          ? `После публикации заявку увидит ${invitedSupplierName}. Контакты скрыты — общение только в чате площадки.`
-          : `После публикации поставщики категории «${categoryLabel}» получат уведомление. Ваши контакты не показываются — общение только в чате площадки.`}
-      </p>
-    </>
-  )
-}
 
 export const PRODUCT_WIZARD_STEPS = [
   { step: 1 as const, label: "Что купить" },

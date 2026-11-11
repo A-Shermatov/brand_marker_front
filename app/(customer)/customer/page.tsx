@@ -4,14 +4,13 @@ import { useMemo } from "react"
 import Link from "next/link"
 import {
   BuildingsIcon,
+  ClipboardTextIcon,
   HandshakeIcon,
   HeadsetIcon,
   LockKeyIcon,
   PlusIcon as Plus,
-  ReceiptIcon,
   ShoppingCartIcon as ShoppingCart,
   ShieldCheckIcon,
-  WalletIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { useAuthStore } from "@/lib/store/auth-store"
@@ -22,7 +21,7 @@ import { useContractsStore } from "@/lib/store/contracts-store"
 import { useCompaniesStore } from "@/lib/store/companies-store"
 import { useHydrated } from "@/hooks/use-hydrated"
 import { getActorId } from "@/lib/auth-display"
-import { formatCount, formatCurrency, formatIsoDateTime, formatPrice } from "@/lib/format"
+import { formatCurrency, formatIsoDateTime, formatPrice } from "@/lib/format"
 import { isApiEnabled } from "@/lib/api/config"
 import { useRfqsQuery } from "@/hooks/api/use-rfqs-query"
 import { useContractsQuery } from "@/hooks/api/use-contracts-query"
@@ -42,11 +41,9 @@ import { usePaymentHistoryQuery } from "@/hooks/api/use-payments-query"
 import { Button } from "@/components/ui/button"
 import { PageFrame } from "@/components/layout"
 import { CompanyName } from "@/components/bm"
-import { MonthlyChart } from "@/components/cabinet/dashboard/monthly-chart"
-import { KpiTile } from "@/components/cabinet/dashboard/kpi-tile"
-import { BreakdownCard } from "@/components/cabinet/dashboard/breakdown-card"
 import { HomeDealsPanel } from "@/components/cabinet/dashboard/home-deals-panel"
 import { DashboardPanel } from "@/components/cabinet/dashboard/dashboard-panel"
+import { HomeHeading, StatusCard } from "@/components/cabinet/dashboard/status-card"
 import {
   OpsList,
   type OpsItem,
@@ -56,7 +53,6 @@ import { TodoList } from "@/components/process"
 import { FirstSteps } from "@/components/process/first-steps"
 import { buildBuyerFirstSteps } from "@/lib/process/first-steps"
 import { ShortcutCards } from "@/components/cabinet/dashboard/shortcut-cards"
-import { CountUp } from "@/components/ui/count-up"
 import { useSupportChat } from "@/components/support/support-chat-context"
 import { useSavedValue } from "@/hooks/use-saved-value"
 import { firstName, greet } from "@/lib/greet"
@@ -65,7 +61,6 @@ import {
   sumEscrowHeld,
 } from "@/lib/dashboard-money"
 import type { ContractWithRelations, Proposal, RfqWithRelations } from "@/types"
-import { TeamAccessCard } from "@/components/cabinet/company/team-access-card"
 
 export default function CustomerDashboard() {
   const hydrated = useHydrated()
@@ -326,128 +321,83 @@ export default function CustomerDashboard() {
       ) : null}
 
       {showNumbers ? (
-      <div className="space-y-5 bm-rise">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiTile
-          label="На гарантии в банке"
-          loading={loading}
-          value={<CountUp value={heldAmount} format={formatPrice} />}
-          hint="Поставщик получит после вашей приёмки"
-          icon={LockKeyIcon}
-          tone="brand"
-          href="/customer/payments"
-        />
-        <KpiTile
-          label="Ждёт оплаты"
-          loading={loading}
-          value={<CountUp value={toPayAmount} format={formatPrice} />}
-          hint={toPayAmount > 0 ? "Оплатите, чтобы поставщик начал работу" : "Неоплаченных этапов нет"}
-          icon={WalletIcon}
-          tone={toPayAmount > 0 ? "attention" : "default"}
-          href="/customer/payments"
-        />
-        <KpiTile
-          label="Оплачено в этом месяце"
-          loading={loading}
-          value={<CountUp value={monthSpend} format={formatPrice} />}
-          hint="Все оплаты по сделкам"
-          icon={ReceiptIcon}
-          href="/customer/payments"
-        />
-        <KpiTile
-          label="Сделки в работе"
-          loading={loading}
-          value={<CountUp value={openDeals.length} />}
-          hint={
-            unreadMessages > 0
-              ? formatCount(unreadMessages, "новое сообщение", "новых сообщения", "новых сообщений")
-              : "Все сделки"
-          }
-          icon={HandshakeIcon}
-          tone={unreadMessages > 0 ? "attention" : "default"}
-          href="/customer/contracts?tab=active"
-        />
-      </div>
-
-      <div className="grid items-stretch gap-5 xl:grid-cols-[1.6fr_1fr]">
-        <MonthlyChart
-          title="Оплаты по месяцам"
-          points={spendPoints}
-          series={[
-            { key: "released", label: "Передано поставщикам", color: "var(--brand-600)" },
-            { key: "held", label: "На гарантии", color: "var(--brand-200)" },
-          ]}
-          emptyText="Здесь появятся ваши оплаты по сделкам. Деньги хранит банк, пока вы не примете работу."
-          loading={loading}
-        />
-        <BreakdownCard
-          title="Мои заявки"
-          rows={[
-            {
-              label: "Приём предложений",
-              value: rfqCounts?.quotes ?? 0,
-              href: "/customer/rfqs?status=quotes",
-              color: "var(--brand-600)",
-            },
-            {
-              label: "Сделка заключена",
-              value: rfqCounts?.deal ?? 0,
-              href: "/customer/rfqs?status=deal",
-              color: "var(--verify-600)",
-            },
-            {
-              label: "Черновики",
-              value: rfqCounts?.draft ?? 0,
-              href: "/customer/rfqs?status=draft",
-              color: "var(--faint)",
-            },
-            {
-              label: "Архив",
-              value: rfqCounts?.closed ?? 0,
-              href: "/customer/rfqs?status=closed",
-              color: "var(--line-strong)",
-            },
-          ]}
-          footer={
-            <Link href="/customer/rfqs/new" className="text-[13.5px] font-medium text-brand-700 hover:underline">
-              Разместить новую заявку
-            </Link>
-          }
-        />
-      </div>
-
-      <div className="grid items-start gap-5 xl:grid-cols-[1.15fr_1fr]">
-        <DashboardPanel
-          title="Нужно сделать"
-          badge={
-            todo.length > 0 ? (
-              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-amber-100 px-1.5 text-[12px] font-semibold text-amber-900 tnum">
-                {todo.length}
-              </span>
-            ) : null
-          }
-        >
+      <div className="space-y-7 bm-rise">
+        <section aria-label="Что нужно сделать сейчас">
+          <HomeHeading
+            title="Что нужно сделать сейчас"
+            hint="Дела, которые ждут именно вас: без них заявки и сделки стоят на месте."
+            badge={
+              todo.length > 0 ? (
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-amber-100 px-1.5 text-[12px] font-semibold text-amber-900 tnum">
+                  {todo.length}
+                </span>
+              ) : null
+            }
+          />
           <TodoList
             items={todo}
             loading={loading}
-            emptyText="Всё сделано: сейчас от вас ничего не требуется."
+            emptyText="Сейчас от вас ничего не требуется."
             title=""
           />
-        </DashboardPanel>
-        <DashboardPanel title="Операции" href="/customer/payments">
-          <OpsList items={ops} />
-        </DashboardPanel>
-      </div>
+        </section>
 
-      <HomeDealsPanel
-        contracts={openDeals}
-        getSupplierName={getSupplierName}
-        loading={loading}
-      />
+        <section aria-label="Ваши дела">
+          <HomeHeading
+            title="Ваши дела"
+            hint="Коротко о заявках, сделках и деньгах. Каждый блок открывает свой раздел меню."
+          />
+          <div className="grid gap-4 md:grid-cols-3">
+            <StatusCard
+              icon={ClipboardTextIcon}
+              title="Мои заявки"
+              loading={loading}
+              facts={[
+                { label: "Ждут предложений", value: rfqCounts?.quotes ?? 0 },
+                { label: "По ним идёт сделка", value: rfqCounts?.deal ?? 0 },
+                { label: "Черновики", value: rfqCounts?.draft ?? 0, attention: (rfqCounts?.draft ?? 0) > 0 },
+              ]}
+              href="/customer/rfqs"
+              linkLabel="Открыть мои заявки"
+            />
+            <StatusCard
+              icon={HandshakeIcon}
+              title="Сделки"
+              loading={loading}
+              facts={[
+                { label: "В работе", value: openDeals.length },
+                { label: "Нужно оплатить", value: formatPrice(toPayAmount), attention: toPayAmount > 0 },
+                { label: "Новых сообщений", value: unreadMessages, attention: unreadMessages > 0 },
+              ]}
+              href="/customer/contracts?tab=active"
+              linkLabel="Открыть сделки"
+            />
+            <StatusCard
+              icon={LockKeyIcon}
+              title="Деньги"
+              loading={loading}
+              facts={[
+                { label: "Хранит банк до вашей приёмки", value: formatPrice(heldAmount) },
+                { label: "Оплачено в этом месяце", value: formatPrice(monthSpend) },
+              ]}
+              href="/customer/payments"
+              linkLabel="Оплаты и документы"
+            />
+          </div>
+        </section>
+
+        <div className="grid items-start gap-5 xl:grid-cols-[1.15fr_1fr]">
+          <HomeDealsPanel
+            contracts={openDeals}
+            getSupplierName={getSupplierName}
+            loading={loading}
+          />
+          <DashboardPanel title="Последние операции" href="/customer/payments">
+            <OpsList items={ops.slice(0, 5)} />
+          </DashboardPanel>
+        </div>
       </div>
       ) : null}
-
-      <TeamAccessCard side="buyer" teamHref="/customer/company" />
 
       <ActivateRoleBanner
         targetSide="supplier"

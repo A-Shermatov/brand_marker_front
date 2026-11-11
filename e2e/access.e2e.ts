@@ -35,9 +35,14 @@ test.describe("sign-in and access", () => {
     await expect(guide.locator('li[aria-current="step"]')).toContainText("Расскажите, что нужно")
     await expect(page.getByText("На гарантии в банке")).toHaveCount(0)
 
-    // An empty tab explains itself instead of answering "nothing found".
-    await page.getByRole("navigation", { name: "Меню кабинета" }).getByRole("link", { name: "Закупки" }).click()
-    await expect(page.getByRole("heading", { name: "Сейчас нет заявок, которые ждут предложений" })).toBeVisible()
+    // The menu names things by what the person does: their requests are "Мои заявки".
+    const menu = page.getByRole("navigation", { name: "Меню кабинета" })
+    await expect(menu.getByRole("link", { name: "Мои заявки" })).toBeVisible()
+
+    // An empty list explains itself instead of answering "nothing found".
+    await menu.getByRole("link", { name: "Мои заявки" }).click()
+    await expect(page).toHaveURL(/\/customer\/rfqs$/)
+    await expect(page.getByRole("heading", { name: "У вас пока нет заявок" })).toBeVisible()
 
     await page.goto("/customer")
     await guide.getByRole("link", { name: "Новая заявка" }).click()

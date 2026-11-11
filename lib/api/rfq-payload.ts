@@ -44,6 +44,7 @@ export const toRfqPayload = (input: RfqCreate): ApiRfqPayload => {
     ...base,
     project_duration: input.project_duration,
     start_date: input.start_date,
+    delivery_date: input.delivery_date ?? null,
     team_size_required: input.team_size_required ?? null,
     experience_required: input.experience_required ?? null,
   } as ApiRfqPayload
