@@ -25,7 +25,8 @@ export type AdminChatMessage = {
   id: number
   sender_id: number | null
   sender_name: string
-  side: "buyer" | "supplier" | "admin"
+  /** «other»: somebody who is no longer with either side (left the company). */
+  side: "buyer" | "supplier" | "admin" | "other"
   text: string
   created_at: string
   flagged: boolean

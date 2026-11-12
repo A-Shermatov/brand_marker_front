@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react"
 import { CircleNotchIcon as Loader2, LockIcon as Lock, ArrowsCounterClockwiseIcon as RefreshCcw, GearIcon as Settings } from "@phosphor-icons/react/dist/ssr"
-import { ChangePasswordCard } from "@/components/auth/change-password-card"
-import { TwoFactorSettings } from "@/components/auth/two-factor-settings"
 import { PageFrame, PageHeader, PageSurface } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -355,11 +353,7 @@ export default function AdminSettingsPage() {
         title="Настройки платформы"
         description="Комиссия за договор и максимальная сумма договора"
       />
-      <div className="space-y-6">
-        <ChangePasswordCard />
-        <TwoFactorSettings />
-        <SettingsFormCard settings={settingsQuery.data} />
-      </div>
+      <SettingsFormCard settings={settingsQuery.data} />
     </PageFrame>
   )
 }

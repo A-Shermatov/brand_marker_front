@@ -113,6 +113,8 @@ export const emptySupplierNavCounts = (): SupplierNavCounts => ({
 export const emptyAdminNavCounts = (): AdminNavCounts => ({
   companies: 0,
   moderation: 0,
+  catalog: 0,
+  reports: 0,
   support: 0,
   chats: 0,
   disputes: 0,

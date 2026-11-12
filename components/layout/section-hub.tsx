@@ -27,6 +27,8 @@ type SectionHubProps = {
   role: CabinetRole
   /** Optional badge counts keyed by subtab id */
   badges?: Record<string, number>
+  /** Tabs this person may open (the admin panel: by the rights of their role). */
+  allow?: (tab: CabinetSubtab) => boolean
 }
 
 const CONFIG = {
@@ -95,13 +97,16 @@ export function useInSectionHub(): boolean {
  * knows where they are and what they can do here. Sections that keep two
  * views inside show them as tabs next to the name.
  */
-export function SectionHub({ role, badges }: SectionHubProps) {
+export function SectionHub({ role, badges, allow }: SectionHubProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const section = resolveSection(role, pathname, searchParams.toString())
   const reduceMotion = useReducedMotion()
   if (!section?.isRoot) return null
-  const { hub, tabs, active, meta } = section
+  const { hub, meta } = section
+  const tabs = allow ? section.tabs.filter(allow) : section.tabs
+  // The page shows its first allowed tab when the address names one that is not theirs.
+  const active = section.active && tabs.includes(section.active) ? section.active : (tabs[0] ?? null)
   const Icon = HUB_ICONS[role][hub.id]
 
   return (
@@ -184,7 +189,7 @@ const PAGE_NAMES: [RegExp, string][] = [
   [/\/rfqs\/[^/]+$/, "Заявка"],
   [/\/contracts\/[^/]+$/, "Сделка"],
   [/\/disputes\/[^/]+$/, "Спор"],
-  [/\/proposals\/[^/]+$/, "КП"],
+  [/\/proposals\/[^/]+$/, "Предложение"],
   [/\/suppliers\/[^/]+$/, "Поставщик"],
   [/\/customers\/[^/]+$/, "Покупатель"],
   [/\/users\/[^/]+$/, "Пользователь"],

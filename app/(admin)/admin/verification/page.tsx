@@ -1,86 +1,58 @@
 "use client"
 
-import { Suspense, useCallback } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { Suspense, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { IndividualQueuePanel } from "@/components/admin/clients/individual-queue-panel"
 import { CompanyChangesQueuePanel } from "@/components/admin/companies/company-changes-queue-panel"
 import { AdminVerificationContent } from "@/components/admin/companies/verification-queue-panel"
-import { PageFrame, PageHeader, SegmentedControl } from "@/components/layout"
+import { PageFrame } from "@/components/layout"
 import { useAdminVerificationCountsQuery } from "@/hooks/api/use-client-verification-query"
 import type { AdminVerificationCounts } from "@/lib/api/client-verification"
-import { pickHubTab } from "@/lib/admin-hub"
 
-type VerificationHubTab = "suppliers" | "buyers" | "individuals" | "changes"
+type VerificationTab = "suppliers" | "buyers" | "individuals" | "changes"
 
-const HUB_TABS: {
-  value: VerificationHubTab
-  label: string
-  countKey: keyof AdminVerificationCounts
-}[] = [
-  { value: "suppliers", label: "Поставщики (компании)", countKey: "supplier_companies" },
-  { value: "buyers", label: "Покупатели (компании)", countKey: "buyer_companies" },
-  { value: "individuals", label: "Физлица", countKey: "individuals" },
-  { value: "changes", label: "Изменения профилей", countKey: "changes" },
+/** The queues in the order of the tabs, each with the counter that says how many wait. */
+const QUEUES: { tab: VerificationTab; countKey: keyof AdminVerificationCounts }[] = [
+  { tab: "suppliers", countKey: "supplier_companies" },
+  { tab: "buyers", countKey: "buyer_companies" },
+  { tab: "individuals", countKey: "individuals" },
+  { tab: "changes", countKey: "changes" },
 ]
 
-const HubSkeleton = () => (
+const tabHref = (tab: VerificationTab) =>
+  tab === "suppliers" ? "/admin/verification" : `/admin/verification?tab=${tab}`
+
+const PageSkeleton = () => (
   <PageFrame className="animate-pulse" aria-label="Загрузка">
-    <div className="h-16 w-80 max-w-full rounded-xl bg-muted" />
-    <div className="h-12 rounded-xl bg-muted" />
+    <div className="h-28 rounded-xl bg-muted" />
     <div className="h-96 rounded-xl bg-muted" />
   </PageFrame>
 )
 
-const VerificationHub = () => {
+const VerificationQueues = () => {
   const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const counts = useAdminVerificationCountsQuery().data
-  const rawTab = searchParams.get("tab")
-  // `?tab=queue` (sidebar badge link) opens the first queue that has pending items.
-  const hotTab =
-    rawTab === "queue" && counts
-      ? HUB_TABS.find((option) => counts[option.countKey] > 0)
-          ?.value ?? null
-      : null
-  const tab = hotTab ?? pickHubTab(rawTab, HUB_TABS, () => true)
+  const rawTab = useSearchParams().get("tab")
+  const wantsFirstBusy = rawTab === "queue"
+  const counts = useAdminVerificationCountsQuery(wantsFirstBusy).data
 
-  const setTab = useCallback(
-    (next: VerificationHubTab) => {
-      router.replace(next === "suppliers" ? pathname : `${pathname}?tab=${next}`, {
-        scroll: false,
-      })
-    },
-    [pathname, router],
-  )
+  // «?tab=queue» (the overview links here) opens the first queue where somebody waits.
+  useEffect(() => {
+    if (!wantsFirstBusy || !counts) return
+    const busy = QUEUES.find((queue) => counts[queue.countKey] > 0)?.tab ?? "suppliers"
+    router.replace(tabHref(busy))
+  }, [counts, router, wantsFirstBusy])
+
+  if (wantsFirstBusy) return <PageSkeleton />
+  const tab = QUEUES.find((queue) => queue.tab === rawTab)?.tab ?? "suppliers"
 
   return (
     <PageFrame>
-      <PageHeader
-        title="Проверка клиентов"
-        description="Подтверждайте только после сверки всех пунктов"
-      />
-
-      <SegmentedControl
-        value={tab}
-        options={HUB_TABS.map(({ value, label, countKey }) => {
-          const count = counts?.[countKey] ?? 0
-          return count > 0 ? { value, label, count } : { value, label }
-        })}
-        onChange={setTab}
-        ariaLabel="Разделы проверки клиентов"
-      />
-
       {tab === "changes" ? (
         <CompanyChangesQueuePanel embedded />
       ) : tab === "individuals" ? (
         <IndividualQueuePanel />
       ) : (
-        <AdminVerificationContent
-          key={tab}
-          embedded
-          actorType={tab === "buyers" ? "buyer" : "supplier"}
-        />
+        <AdminVerificationContent key={tab} embedded actorType={tab === "buyers" ? "buyer" : "supplier"} />
       )}
     </PageFrame>
   )
@@ -88,8 +60,8 @@ const VerificationHub = () => {
 
 export default function AdminVerificationPage() {
   return (
-    <Suspense fallback={<HubSkeleton />}>
-      <VerificationHub />
+    <Suspense fallback={<PageSkeleton />}>
+      <VerificationQueues />
     </Suspense>
   )
 }

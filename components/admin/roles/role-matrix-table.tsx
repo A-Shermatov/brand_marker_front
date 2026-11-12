@@ -15,7 +15,7 @@ export type RoleMatrixSelection = Record<string, Record<AdminPermissionBucket, b
 
 const BUCKETS: Array<{ key: AdminPermissionBucket; label: string; hint: string }> = [
   { key: "read", label: "Просмотр", hint: "Видеть раздел и карточки" },
-  { key: "write", label: "Изменение", hint: "Действия и модерация" },
+  { key: "write", label: "Изменение", hint: "Все действия раздела, кроме удаления" },
   { key: "delete", label: "Удаление", hint: "Удаление записей" },
 ]
 
@@ -85,7 +85,6 @@ export const RoleMatrixTable = ({
         <TableRow key={row.resource}>
           <TableCell className="px-5 py-3">
             <p className="font-semibold text-foreground">{row.alias_ru}</p>
-            <p className="text-xs text-muted-foreground">{row.resource}</p>
           </TableCell>
           {BUCKETS.map((bucket) => {
             const cell = row[bucket.key]
@@ -101,6 +100,8 @@ export const RoleMatrixTable = ({
               )
             }
 
+            // What the saved role lacks inside a box that is ticked (and has not been touched since).
+            const missing = checked && cell.enabled ? (cell.missing ?? []) : []
             return (
               <TableCell key={bucket.key} className="text-center">
                 <Checkbox
@@ -109,6 +110,11 @@ export const RoleMatrixTable = ({
                   onCheckedChange={(value) => onToggle(row.resource, bucket.key, value === true)}
                   aria-label={`${row.alias_ru}: ${bucket.label}`}
                 />
+                {missing.length > 0 && (
+                  <p className="mx-auto mt-1 max-w-28 text-[11px] leading-tight whitespace-normal text-muted-foreground">
+                    кроме: {missing.join(", ")}
+                  </p>
+                )}
               </TableCell>
             )
           })}

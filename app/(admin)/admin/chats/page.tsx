@@ -145,6 +145,7 @@ const AdminChatsContent = () => {
               value={filter}
               onChange={(value) => setParams({ filter: value === "all" ? null : value, chat: null, page: null })}
               options={filters}
+              ariaLabel="Какие переписки показывать"
             />
           </div>
 
@@ -253,7 +254,7 @@ const AdminChatsContent = () => {
                     href={entityHref}
                     className="inline-flex h-9 items-center rounded-lg border border-line px-3 text-[13px] font-semibold hover:bg-canvas"
                   >
-                    {chat.kind === "contract" ? "Сделка" : "КП"}
+                    {chat.kind === "contract" ? "Сделка" : "Предложение"}
                   </Link>
                 ) : null}
               </header>
@@ -284,6 +285,7 @@ const AdminChatsContent = () => {
                         )}
                       >
                         {msg.sender_name}
+                        {msg.side === "other" ? " · уже не участник сделки" : ""}
                       </span>
                       {msg.text}
                       {msg.flagged && !deleted ? (

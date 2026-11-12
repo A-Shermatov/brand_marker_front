@@ -317,7 +317,7 @@ export default function AdminCategoriesPage() {
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Название или slug"
+              placeholder="Название или адрес в ссылке"
               className="pl-11"
               aria-label="Поиск категорий"
             />

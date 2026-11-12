@@ -118,7 +118,7 @@ export const adminFinanceStatusMeta: Record<
 
 export const adminFinanceGatewayLabels: Record<string, string> = {
   manual: "Вручную",
-  mock: "Mock",
+  mock: "Тестовая оплата",
   stripe: "Stripe",
   yookassa: "ЮKassa",
 }

@@ -66,12 +66,13 @@ export const useDeleteMyVerificationDocumentMutation = () =>
 export const useSubmitMyVerificationMutation = () =>
   useMyVerificationMutation(() => myVerificationApi.submit(), "Не удалось отправить на проверку")
 
-export const useAdminVerificationCountsQuery = () =>
+export const useAdminVerificationCountsQuery = (enabled = true) =>
   useQuery({
     queryKey: adminClientsKeys.counts(),
     queryFn: () => adminClientsApi.getCounts(),
     staleTime: 15_000,
     refetchInterval: 60_000,
+    enabled,
   })
 
 export const useAdminIndividualsQuery = (params: AdminIndividualsParams) =>

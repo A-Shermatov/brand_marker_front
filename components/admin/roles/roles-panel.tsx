@@ -207,8 +207,10 @@ const RoleMatrixPanel = ({
           {canManage && (
             <div className="flex flex-col gap-3 border-t border-border p-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-muted-foreground">
-                «Изменение» и «Удаление» автоматически включают «Просмотр». Изменения
-                применяются к сотрудникам сразу после сохранения.
+                «Изменение» — это все действия раздела, кроме удаления, и вместе с ним включается
+                «Просмотр». Подпись «кроме: …» под галочкой значит, что этих действий у роли нет;
+                чтобы дать и их, снимите галочку, сохраните и поставьте снова. Изменения действуют
+                сразу после сохранения.
               </p>
               <div className="flex shrink-0 gap-2">
                 <Button
@@ -279,18 +281,16 @@ export function AdminRolesPanel({ embedded = true }: { embedded?: boolean } = {}
 
   return (
     <Frame>
-      {!embedded && (
-        <PageHeader
-          title="Роли и доступы"
-          description="Какие разделы панели управления видит и может изменять каждая роль сотрудников"
-          actions={
-            <Button type="button" onClick={() => setDialogState({ mode: "create" })}>
-              <Plus aria-hidden="true" />
-              Создать роль
-            </Button>
-          }
-        />
-      )}
+      <PageHeader
+        title="Роли и доступы"
+        description="Какие разделы панели управления видит и может изменять каждая роль сотрудников"
+        actions={
+          <Button type="button" onClick={() => setDialogState({ mode: "create" })}>
+            <Plus aria-hidden="true" />
+            Создать роль
+          </Button>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
         <PageSurface className="self-start">

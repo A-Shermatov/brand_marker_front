@@ -48,7 +48,7 @@ export const AdminFinanceDetailSections = ({
     <div className="space-y-5">
       <section id="transaction" className={sectionClassName}>
         <div className="mb-5 flex flex-wrap items-center gap-2">
-          <h2 className="text-lg font-bold">Транзакция</h2>
+          <h2 className="text-lg font-bold">Платёж</h2>
           <Badge variant="outline" className={statusMeta.className}>
             {statusMeta.label}
           </Badge>
@@ -113,7 +113,7 @@ export const AdminFinanceDetailSections = ({
       </section>
 
       <section id="gateway" className={sectionClassName}>
-        <h2 className="mb-5 text-lg font-bold">Шлюз</h2>
+        <h2 className="mb-5 text-lg font-bold">Через что прошёл</h2>
         <p className="text-sm font-medium">
           {adminLabel(adminFinanceGatewayLabels, payment.gateway)}
         </p>

@@ -120,7 +120,7 @@ const DossierBody = ({ dossier }: { dossier: AdminUserDossier }) => {
           <dl className="grid grid-cols-2 gap-2">
             <Fact label="Возраст аккаунта" value={`${user.account_age_days} дн.`} />
             <Fact
-              label="2FA"
+              label="Защита входа"
               value={user.totp_enabled ? "Включена" : "Выключена"}
             />
             <Fact
@@ -176,11 +176,11 @@ const DossierBody = ({ dossier }: { dossier: AdminUserDossier }) => {
               value={formatMoneyDisplay(money.supplier_turnover, currency)}
             />
             <Fact
-              label="В эскроу (оплачено им)"
+              label="На гарантии (оплачено им)"
               value={formatMoneyDisplay(money.escrow_held_as_buyer, currency)}
             />
             <Fact
-              label="В эскроу (к выплате ему)"
+              label="На гарантии (к выплате ему)"
               value={formatMoneyDisplay(money.escrow_held_as_supplier, currency)}
             />
             <Fact

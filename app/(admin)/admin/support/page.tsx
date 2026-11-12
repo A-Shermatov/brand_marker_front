@@ -23,6 +23,12 @@ import { useAuthStore } from "@/lib/store/auth-store"
 import { cn } from "@/lib/utils"
 import type { SupportTicketStatus } from "@/types/support"
 
+/** Which cabinet the person wrote from. */
+const SIDE_LABELS: Record<string, string> = {
+  buyer: "Покупатель",
+  supplier: "Поставщик",
+}
+
 const SUPPORT_PAGE_SIZE = 30
 
 const statusFilters: Array<{ value: SupportTicketStatus | "all"; label: string }> = [
@@ -155,6 +161,7 @@ const AdminSupportContent = () => {
               value={status}
               onChange={(value) => setParams({ status: value, ticket: null, page: null })}
               options={statusFilters}
+              ariaLabel="Какие обращения показывать"
             />
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -205,7 +212,7 @@ const AdminSupportContent = () => {
                         ) : null}
                       </div>
                       <p className="mt-0.5 text-[11px] text-faint">
-                        {item.side}
+                        {SIDE_LABELS[item.side] ?? item.side}
                         {item.status === "closed" ? " · закрыт" : ""}
                       </p>
                     </div>
@@ -273,7 +280,7 @@ const AdminSupportContent = () => {
                     {ticket.user_name || ticket.user_email}
                   </p>
                   <p className="truncate text-[12px] leading-tight text-white/80">
-                    {ticket.user_email} · {ticket.side} · #{ticket.id}
+                    {ticket.user_email} · {SIDE_LABELS[ticket.side] ?? ticket.side} · обращение № {ticket.id}
                     {ticket.status === "closed" ? " · закрыт" : ""}
                   </p>
                 </div>

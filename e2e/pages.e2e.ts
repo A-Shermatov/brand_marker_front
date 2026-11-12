@@ -79,12 +79,24 @@ for (const { role, home } of cabinets) {
     const pages = await menuPages(page, home)
     expect(pages.length, "menu links found").toBeGreaterThan(3)
 
-    for (const path of pages) {
+    const visited = new Set<string>()
+    const open = async (path: string) => {
+      visited.add(path)
       await test.step(path, async () => {
         await expectPageOpens(page, path, health)
         // A role must never be bounced out of its own menu.
         expect(new URL(page.url()).pathname.startsWith(home), `${path}: left the cabinet`).toBe(true)
       })
+    }
+    for (const path of pages) {
+      await open(path)
+      // The tabs of a section are pages of the menu as well.
+      const tabs = await page
+        .locator('main [role="tablist"] a[role="tab"]')
+        .evaluateAll((links) => links.map((a) => (a as HTMLAnchorElement).getAttribute("href") ?? ""))
+      for (const tab of tabs) {
+        if (tab && !visited.has(tab)) await open(tab)
+      }
     }
   })
 }

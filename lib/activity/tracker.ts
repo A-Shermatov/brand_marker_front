@@ -46,6 +46,8 @@ export type TrackerOptions = {
   entryReferrer?: () => string | undefined
 }
 
+/** How many events one report may carry (the API refuses more). */
+export const MAX_BATCH = 10
 const MAX_QUERY_KEYS = 20
 const MAX_VALUE = 200
 /** Search parameters that are a one-time secret (a password-reset or invitation link). */
@@ -111,7 +113,11 @@ export const createTracker = ({ now, send, title, entryReferrer }: TrackerOption
       ago_ms: Math.max(0, Math.round(now() - at)),
     }))
     queue = []
-    send(batch, final)
+    // The journal takes a few events per report: a longer queue (a tab that was
+    // offline for a while) goes in several.
+    for (let from = 0; from < batch.length; from += MAX_BATCH) {
+      send(batch.slice(from, from + MAX_BATCH), final)
+    }
   }
 
   /** A page was opened. The same page again (a re-render) is not a new view. */
