@@ -3,7 +3,7 @@
 import { useId } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { BRAND_NAME, BRAND_WORDMARK } from "@/lib/brand"
+import { BRAND_NAME, BRAND_WORDMARK_PARTS } from "@/lib/brand"
 
 type BrandLogoProps = {
   href?: string
@@ -100,10 +100,13 @@ export function BrandLogo({
           className={cn(
             "whitespace-nowrap leading-none font-bold tracking-[-0.035em]",
             small ? "text-[18px]" : "text-[21px]",
-            dark ? "text-white" : "text-ink",
           )}
         >
-          {BRAND_WORDMARK}
+          {/* Paired like the mark: "brand" in the buyer's blue, "market" in the
+              supplier's navy (pale on navy, white tones on brand blue). */}
+          <span className={dark ? "text-white" : "text-[var(--logo-left)]"}>{BRAND_WORDMARK_PARTS[0]}</span>
+          {"\u00a0"}
+          <span className={dark ? "text-white/75" : "text-[var(--logo-right)]"}>{BRAND_WORDMARK_PARTS[1]}</span>
         </span>
       ) : null}
     </span>
