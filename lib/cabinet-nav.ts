@@ -43,6 +43,8 @@ export type CabinetSubtab = {
   label: string
   href: string
   match?: string[]
+  /** Admin tabs: any of these rights lets a member of staff see the tab. */
+  permissions?: string[]
 }
 
 export type SectionMeta = {
@@ -401,6 +403,16 @@ export const SUPPLIER_SECTION_TITLE: Record<string, SectionMeta> = {
   },
 }
 
+/**
+ * The admin menu. Three groups, by what the administrator comes for: what
+ * waits for a decision, everything that is on the marketplace, and the panel
+ * itself. Every page has one place and is called by what is done there; a
+ * section never keeps more than one row of tabs.
+ */
+const ADMIN_QUEUE = "Требует решения"
+const ADMIN_MARKET = "Площадка"
+const ADMIN_PANEL = "Управление"
+
 export const ADMIN_HUBS: CabinetNavHub[] = [
   {
     id: "home",
@@ -410,163 +422,307 @@ export const ADMIN_HUBS: CabinetNavHub[] = [
   },
   {
     id: "verif",
-    label: "Проверки",
+    label: "Проверка клиентов",
     href: "/admin/verification",
-    match: [
-      "/admin/verification",
-      "/admin/moderation",
-      "/admin/companies",
-      "/admin/catalog",
-      "/admin/rfqs",
-      "/admin/proposals",
-      "/admin/trust",
-    ],
-    badgeKeys: ["companies", "moderation"],
+    match: ["/admin/verification"],
+    badgeKeys: ["companies"],
+    group: ADMIN_QUEUE,
+  },
+  {
+    id: "catalog",
+    label: "Товары и услуги",
+    href: "/admin/catalog",
+    match: ["/admin/catalog"],
+    badgeKeys: ["catalog"],
+    group: ADMIN_QUEUE,
+  },
+  {
+    id: "reports",
+    label: "Жалобы",
+    href: "/admin/moderation",
+    match: ["/admin/moderation"],
+    badgeKeys: ["reports"],
+    group: ADMIN_QUEUE,
   },
   {
     id: "disputes",
-    label: "Споры и чаты",
+    label: "Споры",
     href: "/admin/disputes",
-    match: [
-      "/admin/disputes",
-      "/admin/chats",
-      "/admin/support",
-      "/admin/contracts",
-    ],
-    badgeKeys: ["disputes", "chats", "support"],
+    match: ["/admin/disputes"],
+    badgeKeys: ["disputes"],
+    group: ADMIN_QUEUE,
   },
   {
-    id: "payouts",
-    label: "Деньги",
-    href: "/admin/finance",
-    match: ["/admin/finance", "/admin/escrow", "/admin/gateway-logs"],
-    badgeKeys: ["finance"],
+    id: "support",
+    label: "Поддержка",
+    href: "/admin/support",
+    match: ["/admin/support"],
+    badgeKeys: ["support"],
+    group: ADMIN_QUEUE,
   },
   {
     id: "users",
     label: "Пользователи",
     href: "/admin/users",
-    match: ["/admin/users"],
+    match: ["/admin/users", "/admin/companies", "/admin/trust"],
+    group: ADMIN_MARKET,
+  },
+  {
+    id: "deals",
+    label: "Заявки и сделки",
+    href: "/admin/rfqs",
+    match: ["/admin/rfqs", "/admin/proposals", "/admin/contracts"],
+    group: ADMIN_MARKET,
+  },
+  {
+    id: "chats",
+    label: "Переписки",
+    href: "/admin/chats",
+    match: ["/admin/chats"],
+    badgeKeys: ["chats"],
+    group: ADMIN_MARKET,
+  },
+  {
+    id: "money",
+    label: "Деньги",
+    href: "/admin/finance",
+    match: ["/admin/finance", "/admin/escrow", "/admin/gateway-logs"],
+    badgeKeys: ["finance"],
+    group: ADMIN_MARKET,
   },
   {
     id: "audit",
     label: "Журнал действий",
     href: "/admin/logs",
     match: ["/admin/logs"],
+    group: ADMIN_PANEL,
   },
   {
-    id: "cats",
+    id: "staff",
+    label: "Сотрудники и доступ",
+    href: "/admin/staff",
+    match: ["/admin/staff", "/admin/roles"],
+    group: ADMIN_PANEL,
+  },
+  {
+    id: "settings",
     label: "Настройки",
     href: "/admin/settings",
-    match: [
-      "/admin/settings",
-      "/admin/categories",
-      "/admin/staff",
-      "/admin/roles",
-      "/admin/telegram",
-    ],
+    match: ["/admin/settings", "/admin/categories", "/admin/telegram"],
+    group: ADMIN_PANEL,
   },
 ]
 
+/**
+ * The tabs of the admin sections that keep several pages. A tab is a link:
+ * to a page of its own, or to the same page with a search parameter. Each
+ * names the right a member of staff needs to see it.
+ */
 export const ADMIN_SUBTABS: Record<string, CabinetSubtab[]> = {
   verif: [
     {
-      id: "verif",
-      label: "Компании",
+      id: "suppliers",
+      label: "Компании-поставщики",
       href: "/admin/verification",
-      match: ["/admin/verification"],
+      permissions: ["admin_companies.view"],
     },
     {
-      id: "moder",
-      label: "Товары и жалобы",
-      href: "/admin/moderation",
-      match: ["/admin/moderation", "/admin/catalog", "/admin/rfqs", "/admin/proposals"],
+      id: "buyers",
+      label: "Компании-покупатели",
+      href: "/admin/verification?tab=buyers",
+      permissions: ["admin_companies.view"],
+    },
+    {
+      id: "individuals",
+      label: "Частные лица",
+      href: "/admin/verification?tab=individuals",
+      permissions: ["admin_companies.view", "admin_users.view"],
     },
     {
       id: "changes",
       label: "Изменения профилей",
-      href: "/admin/companies",
-      match: ["/admin/companies"],
+      href: "/admin/verification?tab=changes",
+      permissions: ["admin_companies.view"],
+    },
+  ],
+  users: [
+    {
+      id: "people",
+      label: "Люди",
+      href: "/admin/users",
+      match: ["/admin/users"],
+      permissions: ["admin_users.view"],
     },
     {
-      id: "trustadm",
+      id: "companies",
+      label: "Компании",
+      href: "/admin/companies",
+      match: ["/admin/companies"],
+      permissions: ["admin_companies.view"],
+    },
+    {
+      id: "trust",
       label: "Знак надёжности",
       href: "/admin/trust",
       match: ["/admin/trust"],
+      permissions: ["admin_companies.view"],
     },
   ],
-  disputes: [
+  deals: [
     {
-      id: "disputes",
-      label: "Споры",
-      href: "/admin/disputes",
-      match: ["/admin/disputes", "/admin/contracts"],
+      id: "rfqs",
+      label: "Заявки",
+      href: "/admin/rfqs",
+      match: ["/admin/rfqs"],
+      permissions: ["admin_rfqs.view"],
     },
     {
-      id: "chats",
-      label: "Все переписки",
-      href: "/admin/chats",
-      match: ["/admin/chats", "/admin/support"],
+      id: "proposals",
+      label: "Предложения",
+      href: "/admin/proposals",
+      match: ["/admin/proposals"],
+      permissions: ["admin_proposals.view"],
+    },
+    {
+      id: "contracts",
+      label: "Сделки",
+      href: "/admin/contracts",
+      match: ["/admin/contracts"],
+      permissions: ["admin_contracts.view"],
     },
   ],
-  payouts: [
+  money: [
     {
-      id: "payouts",
-      label: "Выплаты",
-      href: "/admin/finance?view=payouts",
-      match: ["/admin/finance", "/admin/escrow"],
+      id: "ledger",
+      label: "Платежи",
+      href: "/admin/finance",
+      match: ["/admin/finance"],
+      permissions: ["admin_finance.view"],
+    },
+    {
+      id: "escrow",
+      label: "На гарантии",
+      href: "/admin/finance?tab=escrow",
+      permissions: ["admin_finance.view"],
     },
     {
       id: "billing",
       label: "Подписки и доходы",
       href: "/admin/finance?view=billing",
-      match: [],
+      permissions: ["admin_finance.view"],
     },
     {
-      id: "bank-logs",
-      label: "Логи банка",
+      id: "merchants",
+      label: "Счета продавцов",
+      href: "/admin/finance?tab=merchants",
+      permissions: ["admin_finance.view"],
+    },
+    {
+      id: "bank",
+      label: "Обмен с банком",
       href: "/admin/gateway-logs",
       match: ["/admin/gateway-logs"],
+      permissions: ["admin_finance.view"],
     },
   ],
-  cats: [
+  staff: [
     {
-      id: "cats",
+      id: "staff",
+      label: "Сотрудники",
+      href: "/admin/staff",
+      permissions: ["admin_staff.view"],
+    },
+    {
+      id: "roles",
+      label: "Роли и права",
+      href: "/admin/staff?tab=roles",
+      permissions: ["roles.manage"],
+    },
+  ],
+  settings: [
+    {
+      id: "fees",
+      label: "Комиссия и лимиты",
+      href: "/admin/settings",
+      match: ["/admin/settings"],
+      permissions: ["platform_settings.view"],
+    },
+    {
+      id: "categories",
       label: "Категории",
       href: "/admin/categories",
       match: ["/admin/categories"],
-    },
-    {
-      id: "tierset",
-      label: "Тарифы и правила",
-      href: "/admin/settings",
-      match: ["/admin/settings", "/admin/staff", "/admin/roles"],
+      permissions: ["admin_catalog.view"],
     },
     {
       id: "telegram",
       label: "Telegram-бот",
       href: "/admin/telegram",
       match: ["/admin/telegram"],
+      permissions: ["platform_settings.view"],
     },
   ],
 }
 
+/** The right each admin page without tabs asks for. */
+export const ADMIN_HUB_PERMISSIONS: Record<string, string[]> = {
+  home: ["admin_dashboard.view"],
+  catalog: ["admin_catalog.view"],
+  reports: ["admin_reports.view"],
+  disputes: ["admin_disputes.view"],
+  support: ["admin_support.view"],
+  chats: ["admin_contracts.view", "admin_proposals.view"],
+  audit: ["audit_logs.view"],
+}
+
 export const ADMIN_SECTION_TITLE: Record<string, SectionMeta> = {
   verif: {
-    title: "Проверки",
-    description: "Все проверки проходят через администратора",
+    title: "Проверка клиентов",
+    description: "Документы компаний и людей. Подтверждайте только после сверки всех пунктов",
+  },
+  catalog: {
+    title: "Товары и услуги",
+    description: "Всё, что продают на площадке. Новые позиции выходят в каталог после вашего одобрения",
+  },
+  reports: {
+    title: "Жалобы",
+    description: "На что пожаловались пользователи: товары, заявки и предложения",
   },
   disputes: {
-    title: "Споры и чаты",
-    description: "Решение конфликтов на основе переписки и документов",
+    title: "Споры",
+    description: "Деньги по спорной сделке остаются на гарантии, пока вы не примете решение",
   },
-  payouts: {
+  support: {
+    title: "Поддержка",
+    description: "Вопросы пользователей к площадке. Вы отвечаете от имени поддержки",
+  },
+  users: {
+    title: "Пользователи",
+    description: "Люди и компании площадки: кто это, чем занят и можно ли ему доверять",
+  },
+  deals: {
+    title: "Заявки и сделки",
+    description: "Что покупают, что предлагают и о чём уже договорились",
+  },
+  chats: {
+    title: "Переписки",
+    description: "О чём стороны пишут друг другу. Сообщения с признаками обхода площадки помечены",
+  },
+  money: {
     title: "Деньги",
-    description: "Выплаты, подписки и логи банка для сверки с шлюзом",
+    description: "Платежи, деньги на гарантии, подписки и сверка с банком",
   },
-  cats: {
+  audit: {
+    title: "Журнал действий",
+    description: "Кто, что и с какого устройства делал на площадке",
+  },
+  staff: {
+    title: "Сотрудники и доступ",
+    description: "Кто работает в этой панели и что ему разрешено",
+  },
+  settings: {
     title: "Настройки",
-    description: "Категории, цены тарифов и правила Щита доверия",
+    description: "Правила площадки: комиссия, категории каталога и Telegram-бот",
   },
 }
 
@@ -597,28 +753,42 @@ export function matchHub(
   return best
 }
 
+/** A tab's address split into the path and the search parameters it names. */
+const tabTarget = (href: string) => {
+  const [path = "", query = ""] = href.split("?")
+  return { path, params: new URLSearchParams(query) }
+}
+
+/**
+ * The tab the address belongs to. A tab that names search parameters
+ * («?tab=escrow») is the page only with those parameters; among the tabs that
+ * fit, the one with the longest path wins, then the one that names more.
+ */
 export function matchSubtab(
   tabs: CabinetSubtab[],
   pathname: string,
   search?: string,
 ): CabinetSubtab | null {
-  // Prefer query-aware finance billing tab
-  if (search?.includes("view=billing")) {
-    const billing = tabs.find((t) => t.id === "billing")
-    if (billing) return billing
-  }
+  const current = new URLSearchParams(search ?? "")
   let best: CabinetSubtab | null = null
-  let bestLen = -1
+  let bestScore = -1
   for (const tab of tabs) {
-    const prefixes = tab.match?.length
-      ? tab.match
-      : [tab.href.split("?")[0]!]
+    const { path, params } = tabTarget(tab.href)
+    let named = 0
+    let fits = true
+    params.forEach((value, key) => {
+      named += 1
+      if (current.get(key) !== value) fits = false
+    })
+    if (!fits) continue
+    const prefixes = tab.match?.length ? tab.match : [path]
     for (const prefix of prefixes) {
       if (!prefix) continue
       if (pathname === prefix || pathname.startsWith(`${prefix}/`)) {
-        if (prefix.length > bestLen) {
+        const score = prefix.length * 10 + named
+        if (score > bestScore) {
           best = tab
-          bestLen = prefix.length
+          bestScore = score
         }
       }
     }

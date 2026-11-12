@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, Fragment} from "react"
-import { ProhibitIcon as Ban, PencilSimpleIcon as Pencil, PlusIcon as Plus, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, UserCheckIcon as UserCheck, UserGearIcon as UserCog } from "@phosphor-icons/react/dist/ssr"
+import { ProhibitIcon as Ban, CopyIcon, PencilSimpleIcon as Pencil, PlusIcon as Plus, ArrowsCounterClockwiseIcon as RefreshCcw, MagnifyingGlassIcon as Search, UserCheckIcon as UserCheck, UserGearIcon as UserCog } from "@phosphor-icons/react/dist/ssr"
 import { toast } from "sonner"
 import {
   StaffFormDialog,
@@ -41,6 +41,7 @@ import {
   getStaffRoleLabel,
 } from "@/lib/admin-permissions"
 import type { AdminStaffMember, AdminStaffStatus } from "@/lib/api/admin"
+import { accessNote, type StaffCredentials } from "@/lib/staff-access"
 import { useAuthStore } from "@/lib/store/auth-store"
 
 const SEARCH_DEBOUNCE_MS = 300
@@ -86,6 +87,8 @@ export function AdminStaffPanel({ embedded = true }: { embedded?: boolean } = {}
   const [query, setQuery] = useState("")
   const [dialogState, setDialogState] = useState<StaffFormDialogState>(null)
   const [statusTarget, setStatusTarget] = useState<AdminStaffMember | null>(null)
+  // Shown once, right after somebody is added: the password is not kept anywhere to show again.
+  const [created, setCreated] = useState<StaffCredentials | null>(null)
 
   const staffQuery = useAdminStaffQuery(query)
   const rolesQuery = useAdminRolesQuery(canCreate || canUpdate)
@@ -138,20 +141,18 @@ export function AdminStaffPanel({ embedded = true }: { embedded?: boolean } = {}
 
   return (
     <Frame>
-      {!embedded && (
-        <PageHeader
-          title="Сотрудники"
-          description="Учётные записи панели управления и их роли"
-          actions={
-            canCreate && (
-              <Button type="button" onClick={() => setDialogState({ mode: "create" })}>
-                <Plus aria-hidden="true" />
-                Добавить сотрудника
-              </Button>
-            )
-          }
-        />
-      )}
+      <PageHeader
+        title="Сотрудники"
+        description="Учётные записи панели управления и их роли"
+        actions={
+          canCreate && (
+            <Button type="button" onClick={() => setDialogState({ mode: "create" })}>
+              <Plus aria-hidden="true" />
+              Добавить сотрудника
+            </Button>
+          )
+        }
+      />
 
       <PageSurface>
         <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -182,6 +183,14 @@ export function AdminStaffPanel({ embedded = true }: { embedded?: boolean } = {}
               query
                 ? "Попробуйте изменить запрос."
                 : "Добавьте сотрудника и назначьте ему роль с нужными доступами."
+            }
+            action={
+              !query && canCreate ? (
+                <Button type="button" onClick={() => setDialogState({ mode: "create" })}>
+                  <Plus aria-hidden="true" />
+                  Добавить сотрудника
+                </Button>
+              ) : undefined
             }
           />
         ) : (
@@ -271,7 +280,51 @@ export function AdminStaffPanel({ embedded = true }: { embedded?: boolean } = {}
         state={dialogState}
         roles={assignableRoles}
         onClose={() => setDialogState(null)}
+        onCreated={setCreated}
       />
+
+      <AlertDialog open={Boolean(created)} onOpenChange={(open) => !open && setCreated(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Сотрудник добавлен</AlertDialogTitle>
+            <AlertDialogDescription>
+              Передайте эти данные {created?.name}. Пароль показан один раз: после закрытия окна
+              его можно будет только заменить новым.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {created && (
+            <dl className="grid grid-cols-[110px_1fr] gap-x-3 gap-y-2 rounded-xl border border-border bg-muted/30 p-4 text-sm">
+              <dt className="text-muted-foreground">Роль</dt>
+              <dd className="font-medium">{created.role}</dd>
+              <dt className="text-muted-foreground">Вход</dt>
+              <dd className="break-all">{`${window.location.origin}/admin/login`}</dd>
+              <dt className="text-muted-foreground">Email</dt>
+              <dd className="break-all">{created.email}</dd>
+              <dt className="text-muted-foreground">Пароль</dt>
+              <dd className="font-mono break-all" data-testid="new-staff-password">
+                {created.password}
+              </dd>
+            </dl>
+          )}
+          <AlertDialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                if (!created) return
+                void navigator.clipboard
+                  ?.writeText(accessNote(created, window.location.origin))
+                  .then(() => toast.success("Скопировано: можно вставить в сообщение"))
+                  .catch(() => toast.error("Не удалось скопировать. Выделите текст вручную"))
+              }}
+            >
+              <CopyIcon aria-hidden="true" />
+              Скопировать сообщение для сотрудника
+            </Button>
+            <AlertDialogAction onClick={() => setCreated(null)}>Готово</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog
         open={Boolean(statusTarget)}

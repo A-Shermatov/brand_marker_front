@@ -1,8 +1,13 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CircleNotchIcon as Loader2 } from "@phosphor-icons/react/dist/ssr"
+import {
+  CircleNotchIcon as Loader2,
+  EyeIcon,
+  EyeSlashIcon,
+  SparkleIcon,
+} from "@phosphor-icons/react/dist/ssr"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -30,6 +35,7 @@ import {
 } from "@/hooks/api/use-admin-staff-query"
 import { getStaffRoleLabel } from "@/lib/admin-permissions"
 import type { AdminRole, AdminStaffMember, AdminStaffUpdateInput } from "@/lib/api/admin"
+import { generatePassword, type StaffCredentials } from "@/lib/staff-access"
 
 const baseSchema = {
   first_name: z.string().trim().min(1, "Введите имя").max(100, "Не более 100 символов"),
@@ -61,6 +67,8 @@ type StaffFormDialogProps = {
   state: StaffFormDialogState
   roles: AdminRole[]
   onClose: () => void
+  /** A new member of staff was added: what to hand over to them. */
+  onCreated?: (credentials: StaffCredentials) => void
 }
 
 const EMPTY_VALUES: StaffFormValues = {
@@ -81,17 +89,20 @@ const FieldError = ({ id, message }: { id: string; message?: string }) => {
   )
 }
 
-export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps) => {
+export const StaffFormDialog = ({ state, roles, onClose, onCreated }: StaffFormDialogProps) => {
   const createMutation = useCreateAdminStaffMutation()
   const updateMutation = useUpdateAdminStaffMutation()
   const isPending = createMutation.isPending || updateMutation.isPending
   const editing = state?.mode === "edit" ? state.member : null
+  const [passwordShown, setPasswordShown] = useState(false)
 
   const {
     register,
     control,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<StaffFormValues>({
     resolver: zodResolver(editing ? editSchema : createSchema),
@@ -113,10 +124,14 @@ export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps)
     ]
   }, [editing, roles])
 
+  const chosenRole = roleOptions.find((role) => String(role.id) === watch("role_id"))
+
   useEffect(() => {
     if (!state) return
+    setPasswordShown(false)
     if (!editing) {
-      reset(EMPTY_VALUES)
+      // A role that is the only one to give is chosen already.
+      reset({ ...EMPTY_VALUES, role_id: roles.length === 1 ? String(roles[0].id) : "" })
       return
     }
     reset({
@@ -127,7 +142,12 @@ export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps)
       role_id: editing.role_id ? String(editing.role_id) : "",
       password: "",
     })
-  }, [editing, reset, state])
+  }, [editing, reset, roles, state])
+
+  const handleGenerate = () => {
+    setValue("password", generatePassword(), { shouldValidate: true, shouldDirty: true })
+    setPasswordShown(true)
+  }
 
   const handleOpenChange = (open: boolean) => {
     if (!open && !isPending) onClose()
@@ -156,7 +176,13 @@ export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps)
           password: values.password,
           role_id: roleId,
         })
-        toast.success("Сотрудник создан")
+        toast.success("Сотрудник добавлен")
+        onCreated?.({
+          name: `${values.first_name} ${values.last_name}`.trim(),
+          email: values.email,
+          password: values.password,
+          role: getStaffRoleLabel(chosenRole?.name ?? ""),
+        })
       }
       onClose()
     } catch {
@@ -173,7 +199,7 @@ export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps)
             <DialogDescription>
               {editing
                 ? "Доступ к разделам определяется ролью сотрудника."
-                : "Сотрудник сможет войти в панель управления с этим email и паролем."}
+                : "Человек сможет войти в панель управления с этим email и паролем. Что ему доступно, решает роль."}
             </DialogDescription>
           </DialogHeader>
 
@@ -257,9 +283,14 @@ export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps)
                 </Select>
               )}
             />
-            {roleOptions.length === 0 && (
+            {roleOptions.length === 0 ? (
               <p className="text-xs text-muted-foreground">
-                Нет ролей, которые вы можете назначить. Создайте роль в разделе «Роли и доступы».
+                Нет ролей, которые вы можете назначить. Создайте роль на вкладке «Роли и права».
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {chosenRole?.description ? `${chosenRole.description}. ` : ""}
+                Что именно разрешено роли, видно и меняется на вкладке «Роли и права».
               </p>
             )}
             <FieldError id="staff-role-error" message={errors.role_id?.message} />
@@ -267,17 +298,41 @@ export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps)
 
           <div className="space-y-2">
             <Label htmlFor="staff-password">{editing ? "Новый пароль" : "Пароль"}</Label>
-            <Input
-              id="staff-password"
-              type="password"
-              autoComplete="new-password"
-              maxLength={128}
-              placeholder={editing ? "Оставьте пустым, чтобы не менять" : "Минимум 8 символов"}
-              aria-invalid={Boolean(errors.password)}
-              aria-describedby={errors.password ? "staff-password-error" : undefined}
-              {...register("password")}
-            />
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Input
+                  id="staff-password"
+                  type={passwordShown ? "text" : "password"}
+                  autoComplete="new-password"
+                  maxLength={128}
+                  placeholder={editing ? "Оставьте пустым, чтобы не менять" : "Минимум 8 символов"}
+                  className="pr-10"
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={errors.password ? "staff-password-error" : "staff-password-hint"}
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 grid w-10 place-items-center text-muted-foreground hover:text-foreground"
+                  onClick={() => setPasswordShown((shown) => !shown)}
+                  aria-label={passwordShown ? "Скрыть пароль" : "Показать пароль"}
+                >
+                  {passwordShown ? <EyeSlashIcon className="size-4" /> : <EyeIcon className="size-4" />}
+                </button>
+              </div>
+              <Button type="button" variant="outline" onClick={handleGenerate}>
+                <SparkleIcon aria-hidden="true" />
+                Придумать
+              </Button>
+            </div>
             <FieldError id="staff-password-error" message={errors.password?.message} />
+            {!errors.password && (
+              <p id="staff-password-hint" className="text-xs text-muted-foreground">
+                {editing
+                  ? "Новый пароль передайте сотруднику сами: площадка его не отправляет."
+                  : "После добавления вы увидите данные для входа, чтобы передать их сотруднику."}
+              </p>
+            )}
           </div>
 
           <DialogFooter>
@@ -286,7 +341,7 @@ export const StaffFormDialog = ({ state, roles, onClose }: StaffFormDialogProps)
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="animate-spin" aria-hidden="true" />}
-              {editing ? "Сохранить" : "Создать"}
+              {editing ? "Сохранить" : "Добавить сотрудника"}
             </Button>
           </DialogFooter>
         </form>

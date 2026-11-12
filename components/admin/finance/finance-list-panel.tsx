@@ -175,33 +175,31 @@ export function AdminFinanceContent({ embedded = true }: { embedded?: boolean } 
 
   return (
     <Frame>
-      {!embedded && (
-        <PageHeader
-          title={isBilling ? "Подписки и доходы" : "Финансы"}
-          description={
-            isBilling
-              ? "Тарифы поставщиков, услуги покупателям и комиссия площадки"
-              : "Выручка, подписки, комиссии, возвраты и выплаты"
-          }
-          actions={
-            <div className="flex items-center gap-3">
-              <p className="text-sm text-muted-foreground">
-                Найдено <strong className="ml-1 text-foreground">{total}</strong>
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleExport}
-                disabled={exporting}
-              >
-                <Download aria-hidden="true" />
-                Экспорт
-              </Button>
-            </div>
-          }
-        />
-      )}
+      <PageHeader
+        title={isBilling ? "Подписки и доходы" : "Финансы"}
+        description={
+          isBilling
+            ? "Тарифы поставщиков, услуги покупателям и комиссия площадки"
+            : "Выручка, подписки, комиссии, возвраты и выплаты"
+        }
+        actions={
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              Найдено <strong className="ml-1 text-foreground">{total}</strong>
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              disabled={exporting}
+            >
+              <Download aria-hidden="true" />
+              Экспорт
+            </Button>
+          </div>
+        }
+      />
 
       {isBilling ? <AdminBillingSummaryPanel /> : null}
 
@@ -217,7 +215,7 @@ export function AdminFinanceContent({ embedded = true }: { embedded?: boolean } 
               type="search"
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Название, ID или external id"
+              placeholder="Название, номер платежа или номер в банке"
               className="pl-11"
               aria-label="Поиск по платежам"
             />
@@ -233,6 +231,7 @@ export function AdminFinanceContent({ embedded = true }: { embedded?: boolean } 
               }))}
               onChange={(next) => replaceSearchParams({ view: next, page: null })}
               className="w-full max-w-full border-0 bg-transparent p-0"
+              ariaLabel="Вид платежей"
             />
           </div>
         ) : (
@@ -254,8 +253,8 @@ export function AdminFinanceContent({ embedded = true }: { embedded?: boolean } 
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Транзакция</TableHead>
-                <TableHead>Шлюз</TableHead>
+                <TableHead>Платёж</TableHead>
+                <TableHead>Через что прошёл</TableHead>
                 <TableHead>Сумма</TableHead>
                 <TableHead>Комиссия</TableHead>
                 <TableHead>Статус</TableHead>

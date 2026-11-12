@@ -45,7 +45,7 @@ const isEscrowView = (value: string | null): value is AdminEscrowView =>
   viewOptions.some((option) => option.value === value)
 
 const EscrowSkeleton = () => (
-  <PageFrame className="animate-pulse" aria-label="Загрузка эскроу">
+  <PageFrame className="animate-pulse" aria-label="Загрузка денег на гарантии">
     <div className="h-16 w-80 max-w-full rounded-xl bg-muted" />
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {summaryCards.map((card) => (
@@ -139,7 +139,7 @@ export function AdminEscrowContent({ embedded = true }: { embedded?: boolean } =
       <div className="flex min-h-[55dvh] items-center justify-center">
         <div className="w-full max-w-lg rounded-xl border border-destructive/20 bg-card p-8 text-center">
           <WalletCards className="mx-auto text-destructive" aria-hidden="true" />
-          <h1 className="mt-4 text-xl font-bold">Не удалось загрузить эскроу</h1>
+          <h1 className="mt-4 text-xl font-bold">Не удалось загрузить деньги на гарантии</h1>
           <Button type="button" className="mt-5" onClick={() => escrowQuery.refetch()}>
             <RefreshCcw aria-hidden="true" />
             Повторить
@@ -155,7 +155,7 @@ export function AdminEscrowContent({ embedded = true }: { embedded?: boolean } =
     <Frame>
       {!embedded && (
         <PageHeader
-        title="Escrow"
+        title="На гарантии"
         description="Средства покупателей, удерживаемые платформой до приёмки работ"
       />
       )}
@@ -176,7 +176,7 @@ export function AdminEscrowContent({ embedded = true }: { embedded?: boolean } =
               onChange={(event) => setSearchInput(event.target.value)}
               placeholder="Название договора или #ID"
               className="pl-11"
-              aria-label="Поиск договоров в эскроу"
+              aria-label="Поиск сделок с деньгами на гарантии"
             />
           </div>
         </div>
@@ -185,7 +185,7 @@ export function AdminEscrowContent({ embedded = true }: { embedded?: boolean } =
             value={view}
             options={viewOptions.map((option) => ({ ...option, count: viewCounts[option.value] }))}
             onChange={(next) => replaceSearchParams({ view: next, page: null })}
-            ariaLabel="Раздел эскроу"
+            ariaLabel="Состояние денег на гарантии"
             className="w-full max-w-full border-0 bg-transparent p-0"
           />
         </div>
@@ -250,7 +250,7 @@ export function AdminEscrowContent({ embedded = true }: { embedded?: boolean } =
       )}
 
       {pages > 1 && (
-        <nav className="flex items-center justify-between gap-3" aria-label="Пагинация эскроу">
+        <nav className="flex items-center justify-between gap-3" aria-label="Страницы списка">
           <Button
             type="button"
             variant="outline"

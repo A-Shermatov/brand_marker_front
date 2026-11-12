@@ -387,14 +387,9 @@ export function AdminCatalogItemsPage() {
         title="Товары и услуги"
         description="Все позиции каталога платформы: поиск, фильтры, редактирование и модерация"
         actions={
-          <div className="flex items-center gap-3">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/admin/moderation?tab=catalog">Очередь модерации</Link>
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              Найдено <strong className="ml-1 text-foreground">{total}</strong>
-            </p>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Найдено <strong className="ml-1 text-foreground">{total}</strong>
+          </p>
         }
       />
 

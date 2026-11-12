@@ -15,6 +15,13 @@ import { cn } from "@/lib/utils"
 
 const TIER_ORDER: ReputationTier[] = ["diamond", "gold", "silver", "none"]
 
+const VERIFICATION_LABELS: Record<string, string> = {
+  verified: "Проверена",
+  pending: "Ждёт проверки",
+  needs_documents: "Нужны документы",
+  rejected: "Отклонена",
+}
+
 export default function AdminTrustPage() {
   const [query, setQuery] = useState("")
   const { data, isLoading, isError, refetch } = useAdminCompaniesQuery({
@@ -22,7 +29,6 @@ export default function AdminTrustPage() {
     pageSize: 100,
     status: "all",
     query: "",
-    actorType: "supplier",
     sort: "rating",
     order: "desc",
   })
@@ -43,7 +49,7 @@ export default function AdminTrustPage() {
         rating: c.rating,
         completed,
         verified: c.verification_status === "verified",
-        verification: c.verification_status,
+        verification: VERIFICATION_LABELS[c.verification_status] ?? "Не проверена",
         tier,
       }
     })
@@ -97,10 +103,14 @@ export default function AdminTrustPage() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Поиск поставщика"
-            aria-label="Поиск поставщика"
+            placeholder="Название компании"
+            aria-label="Поиск компании"
             className="max-w-md"
           />
+          <p className="mt-2 max-w-prose text-[13px] text-mute">
+            Знак считается сам: по проверке компании, завершённым сделкам и отзывам, и один на оба
+            кабинета. Выдать или снять его вручную можно в карточке пользователя (Пользователи → Люди).
+          </p>
         </div>
 
         {isLoading ? (
@@ -117,13 +127,13 @@ export default function AdminTrustPage() {
             </button>
           </div>
         ) : filtered.length === 0 ? (
-          <p className="p-8 text-center text-sm text-mute">Поставщики не найдены</p>
+          <p className="p-8 text-center text-sm text-mute">Компании не найдены</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-[14px]">
               <thead className="border-b border-line bg-canvas text-[12.5px] text-mute">
                 <tr>
-                  <th className="px-4 py-3 font-semibold">Поставщик</th>
+                  <th className="px-4 py-3 font-semibold">Компания</th>
                   <th className="px-4 py-3 font-semibold">Знак надёжности</th>
                   <th className="px-4 py-3 font-semibold">Проверка</th>
                   <th className="px-4 py-3 font-semibold">Сделки</th>
@@ -154,10 +164,10 @@ export default function AdminTrustPage() {
                       <span
                         className={cn(
                           "inline-flex items-center gap-1 text-[13px]",
-                          row.verified ? "text-brand-700" : "text-red-600",
+                          row.verified ? "text-brand-700" : "text-amber-700",
                         )}
                       >
-                        {row.verified ? "да" : row.verification}
+                        {row.verification}
                       </span>
                     </td>
                     <td className="px-4 py-3 tnum">{row.completed}</td>

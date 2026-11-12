@@ -11,12 +11,12 @@ import {
   QueueTiles,
   type QueueTile,
 } from "@/components/admin/dashboard/queue-tiles"
-import {
-  AttentionList,
-  type AttentionItem,
-} from "@/components/admin/dashboard/attention-list"
+import { emptyAdminNavCounts, useAdminNavCounts } from "@/hooks/api/use-nav-counts-query"
+import { useAdminPermission } from "@/hooks/use-admin-permission"
+import { canAccessAdminPath } from "@/lib/admin-permissions"
+import type { AdminNavCounts } from "@/lib/api/nav-counts"
 import { formatCurrency, formatCurrencyExact, pluralRu } from "@/lib/format"
-import type { AdminDashboardMetrics } from "@/lib/api/admin"
+import { useAuthStore } from "@/lib/store/auth-store"
 
 const formatDateRu = (date: Date) =>
   new Intl.DateTimeFormat("ru-RU", {
@@ -36,92 +36,75 @@ const formatActivityTime = (iso: string) => {
   }).format(d)
 }
 
-const buildQueues = (m: AdminDashboardMetrics): QueueTile[] => [
+/**
+ * What waits for a decision: the queues of the menu, with the same numbers the
+ * menu shows next to them.
+ */
+const buildQueues = (counts: AdminNavCounts): QueueTile[] => [
   {
     id: "companies",
-    label: "Компании",
-    hint: "документы на проверке",
-    count: m.pending_verifications ?? 0,
-    href: "/admin/verification",
+    label: "Проверка клиентов",
+    hint: "компании, люди и изменения профилей",
+    count: counts.companies,
+    href: "/admin/verification?tab=queue",
     Icon: QUEUE_ICONS.companies,
   },
   {
     id: "catalog",
-    label: "Товары",
-    hint: "карточки на модерации",
-    count: m.pending_catalog ?? 0,
-    href: "/admin/moderation?tab=catalog&view=draft",
+    label: "Товары и услуги",
+    hint: "ждут одобрения перед выходом в каталог",
+    count: counts.catalog,
+    href: "/admin/catalog?status=pending_review",
     Icon: QUEUE_ICONS.catalog,
   },
   {
     id: "reports",
     label: "Жалобы",
-    hint: "на товары от покупателей",
-    count: m.open_reports ?? 0,
-    href: "/admin/moderation?tab=reports",
+    hint: "на товары, заявки и предложения",
+    count: counts.reports,
+    href: "/admin/moderation",
     Icon: QUEUE_ICONS.reports,
-  },
-  {
-    id: "changes",
-    label: "Изменения профилей",
-    hint: "компании и личные профили",
-    count: m.pending_company_changes ?? 0,
-    href: "/admin/verification?tab=changes",
-    Icon: QUEUE_ICONS.changes,
-  },
-  {
-    id: "chats",
-    label: "Переписки",
-    hint: "с признаками обхода площадки",
-    count: m.flagged_chats ?? 0,
-    href: "/admin/chats?filter=flag",
-    Icon: QUEUE_ICONS.chats,
   },
   {
     id: "disputes",
     label: "Споры",
-    hint: "ждут решения",
-    count: m.open_disputes ?? 0,
+    hint: "деньги на гарантии до вашего решения",
+    count: counts.disputes,
     href: "/admin/disputes",
     Icon: QUEUE_ICONS.disputes,
   },
   {
+    id: "support",
+    label: "Поддержка",
+    hint: "обращения без ответа",
+    count: counts.support,
+    href: "/admin/support",
+    Icon: QUEUE_ICONS.support,
+  },
+  {
+    id: "chats",
+    label: "Переписки",
+    hint: "с признаками оплаты мимо площадки",
+    count: counts.chats,
+    href: "/admin/chats?filter=flag",
+    Icon: QUEUE_ICONS.chats,
+  },
+  {
     id: "payouts",
     label: "Выплаты",
-    hint: "нужны две подписи",
-    count: m.pending_payouts ?? 0,
+    hint: "ждут подтверждения",
+    count: counts.finance,
     href: "/admin/finance?view=payouts",
     Icon: QUEUE_ICONS.payouts,
   },
 ]
 
-const buildAttention = (queues: QueueTile[]): AttentionItem[] => {
-  const hints: Record<string, string> = {
-    companies: "Без проверки поставщик не может получать выплаты",
-    catalog: "Карточки ждут одобрения перед публикацией в каталоге",
-    reports: "Проверьте жалобы покупателей на товары",
-    changes: "Смена реквизитов требует повторной проверки",
-    chats: "Возможные попытки оплаты мимо площадки",
-    disputes: "Деньги остаются на гарантии до решения",
-    payouts: "Нужны подписи двух администраторов",
-  }
-
-  return queues
-    .filter((q) => q.count > 0)
-    .map((q) => ({
-      id: q.id,
-      title:
-        q.id === "companies"
-          ? `${q.count} ${pluralRu(q.count, "компания ждёт", "компании ждут", "компаний ждут")} проверки`
-          : q.id === "disputes"
-            ? `${q.count} ${pluralRu(q.count, "открытый спор", "открытых спора", "открытых споров")}`
-            : q.id === "payouts"
-              ? `${q.count} ${pluralRu(q.count, "выплата ждёт", "выплаты ждут", "выплат ждут")} подтверждения`
-              : `${q.label}: ${q.count}`,
-      hint: hints[q.id] ?? q.hint,
-      href: q.href,
-      Icon: q.Icon,
-    }))
+/** What happened, in a word, before the name of whom or what it happened to. */
+const ACTIVITY_LABELS: Record<string, string> = {
+  registration: "Новый аккаунт",
+  contract: "Новая сделка",
+  payment: "Оплата",
+  dispute: "Открыт спор",
 }
 
 const DashboardSkeleton = () => (
@@ -144,6 +127,10 @@ const DashboardSkeleton = () => (
 export default function AdminDashboardPage() {
   const { data, isLoading, isError, isFetching, refetch } =
     useAdminDashboardQuery()
+  const user = useAuthStore((state) => state.user)
+  const navCounts = useAdminNavCounts()
+  const seesMoney = useAdminPermission("admin_finance.view")
+  const seesJournal = useAdminPermission("audit_logs.view")
 
   if (isLoading) return <DashboardSkeleton />
 
@@ -176,8 +163,10 @@ export default function AdminDashboardPage() {
     pending_company_changes: data.metrics.pending_company_changes ?? 0,
   }
 
-  const queues = buildQueues(metrics)
-  const attention = buildAttention(queues)
+  // Only the queues this member of staff can open: a tile never leads to a closed door.
+  const queues = buildQueues(navCounts.data ?? emptyAdminNavCounts()).filter((queue) =>
+    canAccessAdminPath(user, queue.href),
+  )
   const commission = metrics.monthly_commission ?? 0
   const commissionHint = metrics.commission_percent
     ? `${metrics.commission_percent}% с поставщиков`
@@ -200,9 +189,12 @@ export default function AdminDashboardPage() {
             type="button"
             variant="outline"
             size="lg"
-            onClick={() => refetch()}
+            onClick={() => {
+              void refetch()
+              void navCounts.refetch()
+            }}
             disabled={isFetching}
-            aria-label="Обновить данные дашборда"
+            aria-label="Обновить данные обзора"
           >
             <RefreshCcw
               size={15}
@@ -217,30 +209,32 @@ export default function AdminDashboardPage() {
       <div className="grid gap-6">
         <QueueTiles tiles={queues} />
 
-        <AttentionList items={attention} />
-
         <section
           className="grid grid-cols-2 gap-3 lg:grid-cols-4"
           aria-label="Ключевые показатели"
         >
-          <MetricTile
-            label="Оборот за месяц"
-            value={formatCurrency(metrics.monthly_revenue)}
-            valueTitle={formatCurrencyExact(metrics.monthly_revenue)}
-            hint="по завершённым и текущим сделкам"
-          />
-          <MetricTile
-            label="На гарантии"
-            value={formatCurrency(metrics.escrow_balance)}
-            valueTitle={formatCurrencyExact(metrics.escrow_balance)}
-            hint={`${metrics.active_contracts} ${pluralRu(metrics.active_contracts, "сделка", "сделки", "сделок")}`}
-          />
-          <MetricTile
-            label="Комиссия за месяц"
-            value={formatCurrency(commission)}
-            valueTitle={formatCurrencyExact(commission)}
-            hint={commissionHint}
-          />
+          {seesMoney && (
+            <>
+              <MetricTile
+                label="Оборот за месяц"
+                value={formatCurrency(metrics.monthly_revenue)}
+                valueTitle={formatCurrencyExact(metrics.monthly_revenue)}
+                hint="по завершённым и текущим сделкам"
+              />
+              <MetricTile
+                label="На гарантии"
+                value={formatCurrency(metrics.escrow_balance)}
+                valueTitle={formatCurrencyExact(metrics.escrow_balance)}
+                hint={`${metrics.active_contracts} ${pluralRu(metrics.active_contracts, "сделка", "сделки", "сделок")}`}
+              />
+              <MetricTile
+                label="Комиссия за месяц"
+                value={formatCurrency(commission)}
+                valueTitle={formatCurrencyExact(commission)}
+                hint={commissionHint}
+              />
+            </>
+          )}
           <MetricTile
             label="Компаний"
             value={String(metrics.total_companies)}
@@ -253,12 +247,11 @@ export default function AdminDashboardPage() {
             <span className="text-[13px] font-semibold text-mute">
               Безопасность за сутки
             </span>
-            <dl className="mt-3 grid grid-cols-3 gap-3">
+            <dl className="mt-3 grid grid-cols-2 gap-3">
               {(
                 [
                   ["Неудачных входов", String(metrics.failed_logins_24h ?? 0)],
-                  ["Заблокировано IP", "—"],
-                  ["Без 2FA", String(metrics.users_without_2fa ?? 0)],
+                  ["Аккаунтов без защиты входа", String(metrics.users_without_2fa ?? 0)],
                 ] as const
               ).map(([label, value]) => (
                 <div key={label}>
@@ -268,8 +261,12 @@ export default function AdminDashboardPage() {
               ))}
             </dl>
             <p className="mt-3 text-[13px] text-mute">
-              Рекомендуем включить 2FA в настройках аккаунта. Opt-in для всех
-              ролей; после включения код запрашивается при каждом входе.
+              Защита входа — это код из приложения при каждом входе: аккаунт не откроют, даже узнав
+              пароль. Включите её у себя в{" "}
+              <Link href="/admin/account" className="font-medium text-brand-700 hover:underline">
+                «Моём аккаунте»
+              </Link>
+              .
             </p>
           </div>
 
@@ -278,12 +275,14 @@ export default function AdminDashboardPage() {
               <span className="text-[13px] font-semibold text-mute">
                 Последние действия
               </span>
-              <Link
-                href="/admin/logs"
-                className="text-[13px] text-brand-700 hover:underline"
-              >
-                Журнал →
-              </Link>
+              {seesJournal && (
+                <Link
+                  href="/admin/logs"
+                  className="text-[13px] text-brand-700 hover:underline"
+                >
+                  Журнал →
+                </Link>
+              )}
             </div>
             {activity.length === 0 ? (
               <p className="mt-3 text-[14px] text-mute">Событий пока нет.</p>
@@ -298,8 +297,9 @@ export default function AdminDashboardPage() {
                       {formatActivityTime(item.happened_at)}
                     </span>
                     <span>
-                      <b className="font-medium">{item.title}:</b>{" "}
-                      {item.description}
+                      <b className="font-medium">{ACTIVITY_LABELS[item.type] ?? "Событие"}:</b>{" "}
+                      {item.title}
+                      <span className="text-mute"> · {item.description}</span>
                     </span>
                   </li>
                 ))}

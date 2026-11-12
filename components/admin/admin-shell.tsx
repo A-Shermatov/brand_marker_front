@@ -3,12 +3,12 @@
 import { Suspense, useEffect, useRef } from "react"
 import { CircleNotchIcon as Loader2, ShieldSlashIcon as ShieldOff } from "@phosphor-icons/react/dist/ssr"
 import { usePathname, useRouter } from "next/navigation"
+import { AdminSectionHub } from "@/components/admin/admin-section-hub"
 import AdminSidebar from "@/components/admin/admin-sidebar"
 import AdminTopbar from "@/components/admin/admin-topbar"
 import { CabinetShell } from "@/components/layout/cabinet-shell"
 import { CabinetSkeleton } from "@/components/layout/cabinet-skeleton"
 import { PageTransition } from "@/components/layout/page-transition"
-import { SectionHub } from "@/components/layout/section-hub"
 import { PageEmptyState } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { useHydrated } from "@/hooks/use-hydrated"
@@ -84,7 +84,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       topbar={<AdminTopbar />}
       sectionHub={
         <Suspense fallback={null}>
-          <SectionHub role="admin" />
+          <AdminSectionHub />
         </Suspense>
       }
     >

@@ -1,5 +1,20 @@
-import { redirect } from "next/navigation"
+"use client"
 
-export default function AdminProposalsRedirectPage() {
-  redirect("/admin/moderation?tab=proposals")
+import { Suspense } from "react"
+import { AdminProposalsContent } from "@/components/admin/proposals/proposals-list-panel"
+import { PageFrame } from "@/components/layout"
+
+const PageSkeleton = () => (
+  <PageFrame className="animate-pulse" aria-label="Загрузка">
+    <div className="h-28 rounded-xl bg-muted" />
+    <div className="h-96 rounded-xl bg-muted" />
+  </PageFrame>
+)
+
+export default function Page() {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <AdminProposalsContent embedded={false} />
+    </Suspense>
+  )
 }

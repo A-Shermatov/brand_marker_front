@@ -158,7 +158,7 @@ export const CategoryDialog = ({ state, categories, onClose }: CategoryDialogPro
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category-slug">Slug</Label>
+            <Label htmlFor="category-slug">Адрес в ссылке (латиницей)</Label>
             <Input
               id="category-slug"
               value={slug}

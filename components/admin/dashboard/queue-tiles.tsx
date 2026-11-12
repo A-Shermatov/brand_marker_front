@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BuildingsIcon as Building2, StackIcon as Boxes, FlagIcon as Flag, ArrowsClockwiseIcon as RefreshCw, ChatTextIcon as MessageSquare, ScalesIcon as Scale, BankIcon as Landmark } from "@phosphor-icons/react/dist/ssr"
+import { SealCheckIcon as Building2, StorefrontIcon as Boxes, FlagIcon as Flag, HeadsetIcon as Headset, ChatsCircleIcon as MessageSquare, ScalesIcon as Scale, BankIcon as Landmark } from "@phosphor-icons/react/dist/ssr"
 import type { Icon as PhosphorIcon } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
@@ -16,10 +16,16 @@ type QueueTilesProps = {
   tiles: QueueTile[]
 }
 
+/**
+ * The queues of the menu at a glance. A tile with something waiting is amber;
+ * each opens its queue.
+ */
 export const QueueTiles = ({ tiles }: QueueTilesProps) => (
-  <section className="grid gap-3" aria-label="Очереди проверок">
+  <section className="grid gap-3" aria-label="Требует решения">
     <span className="text-[13px] font-semibold text-mute">
-      Все проверки проходят через администратора
+      {tiles.some((tile) => tile.count > 0)
+        ? "Требует решения"
+        : "Очереди пусты: всё разобрано"}
     </span>
     <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
       {tiles.map((tile) => {
@@ -64,7 +70,7 @@ export const QUEUE_ICONS = {
   companies: Building2,
   catalog: Boxes,
   reports: Flag,
-  changes: RefreshCw,
+  support: Headset,
   chats: MessageSquare,
   disputes: Scale,
   payouts: Landmark,

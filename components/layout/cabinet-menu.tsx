@@ -10,6 +10,8 @@ type CabinetMenuProps = {
   activeId?: string
   icons: Record<string, PhosphorIcon>
   badgeFor: (keys?: string[]) => number
+  /** Red for what waits for a decision (the admin's queues); blue for news. */
+  badgeTone?: "brand" | "danger"
   onNavigate?: () => void
 }
 
@@ -18,7 +20,7 @@ type CabinetMenuProps = {
  * what you buy or sell, the deals, the account. Nothing is tucked behind a
  * second level, so the page a person needs is always in sight.
  */
-export function CabinetMenu({ hubs, activeId, icons, badgeFor, onNavigate }: CabinetMenuProps) {
+export function CabinetMenu({ hubs, activeId, icons, badgeFor, badgeTone, onNavigate }: CabinetMenuProps) {
   return (
     <div className="grid gap-0.5">
       {groupHubs(hubs).map((group) => (
@@ -36,6 +38,7 @@ export function CabinetMenu({ hubs, activeId, icons, badgeFor, onNavigate }: Cab
               icon={icons[hub.id] ?? HouseIcon}
               active={activeId === hub.id}
               badge={badgeFor(hub.badgeKeys)}
+              badgeTone={badgeTone}
               onClick={onNavigate}
             />
           ))}

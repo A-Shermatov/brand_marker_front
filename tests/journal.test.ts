@@ -126,6 +126,14 @@ describe("which pages a person opens and for how long", () => {
     expect(batches).toHaveLength(2)
   })
 
+  it("cuts a long queue into reports the journal accepts", () => {
+    const { tracker, batches } = setup()
+    for (let i = 0; i < 12; i += 1) tracker.page(`/services/${i}`)
+    tracker.flush()
+    // 12 views and the 11 pages left behind: 23 events, at most 10 in a report.
+    expect(batches.map((batch) => batch.events.length)).toEqual([10, 10, 3])
+  })
+
   it("never puts a one-time token into what it sends", () => {
     const { tracker, batches } = setup()
     tracker.page(`/invite/${TOKEN}`)

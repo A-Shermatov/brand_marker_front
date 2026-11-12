@@ -2068,6 +2068,8 @@ export type AdminPermissionCell = {
   permission_id: number | null
   code: string | null
   enabled: boolean
+  /** A ticked box that does not cover everything: the actions the role still lacks. */
+  missing?: string[]
 }
 
 export type AdminRoleMatrixRow = {

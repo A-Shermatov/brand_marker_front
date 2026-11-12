@@ -25,7 +25,12 @@ export type SupplierNavCounts = {
 
 export type AdminNavCounts = {
   companies: number
+  /** `catalog` and `reports` together. */
   moderation: number
+  /** Positions waiting for approval. */
+  catalog: number
+  /** Open complaints. */
+  reports: number
   support: number
   chats: number
   disputes: number

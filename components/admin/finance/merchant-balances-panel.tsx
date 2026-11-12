@@ -188,7 +188,7 @@ export function AdminMerchantBalancesContent({
     <Frame>
       {!embedded && (
         <PageHeader
-          title="Балансы мерчантов"
+          title="Счета продавцов"
           description="Удержание и выплаты по терминалам Alif Marketplace"
         />
       )}
@@ -197,7 +197,7 @@ export function AdminMerchantBalancesContent({
         {data.note}
         {!data.marketplace_enabled && (
           <span className="mt-1 block">
-            Marketplace выключен: не заданы оба ID мерчантов в настройках шлюза.
+            Выплаты продавцам через банк выключены: в настройках подключения к банку не заданы оба счёта площадки.
           </span>
         )}
       </PageSurface>

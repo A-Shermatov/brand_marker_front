@@ -111,8 +111,14 @@ export default function AdminTopbar() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem disabled>
-            <User size={15} />
+            <Shield size={15} />
             {roleLabel}
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild className="cursor-pointer">
+            <Link href="/admin/account">
+              <User size={15} />
+              Мой аккаунт: пароль и защита входа
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
